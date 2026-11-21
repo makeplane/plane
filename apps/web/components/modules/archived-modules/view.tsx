@@ -5,16 +5,15 @@
  */
 
 import { observer } from "mobx-react";
-// assets
-import AllFiltersImage from "@/app/assets/empty-state/module/all-filters.svg?url";
-import NameFilterImage from "@/app/assets/empty-state/module/name-filter.svg?url";
+// plane imports
+import { useTranslation } from "@plane/i18n";
+import { EmptyStateDetailed } from "@plane/blocks/empty-state";
 // components
 import { ModuleListItem, ModulePeekOverview } from "@/components/modules";
 // ui
 import { CycleModuleListLayoutLoader } from "@/components/ui/loader/cycle-module-list-loader";
 // hooks
 import { useModule } from "@/hooks/store/use-module";
-import { useModuleFilter } from "@/hooks/store/use-module-filter";
 
 export interface IArchivedModulesView {
   workspaceSlug: string;
@@ -25,7 +24,7 @@ export const ArchivedModulesView = observer(function ArchivedModulesView(props: 
   const { workspaceSlug, projectId } = props;
   // store hooks
   const { getFilteredArchivedModuleIds, loader } = useModule();
-  const { archivedModulesSearchQuery } = useModuleFilter();
+  const { t } = useTranslation();
   // derived values
   const filteredArchivedModuleIds = getFilteredArchivedModuleIds(projectId);
 
@@ -33,21 +32,11 @@ export const ArchivedModulesView = observer(function ArchivedModulesView(props: 
 
   if (filteredArchivedModuleIds.length === 0)
     return (
-      <div className="grid h-full w-full place-items-center">
-        <div className="text-center">
-          <img
-            src={archivedModulesSearchQuery.trim() === "" ? AllFiltersImage : NameFilterImage}
-            className="mx-auto h-36 w-36 sm:h-48 sm:w-48"
-            alt="No matching modules"
-          />
-          <h5 className="mt-7 mb-1 text-18 font-medium">No matching modules</h5>
-          <p className="text-14 text-placeholder">
-            {archivedModulesSearchQuery.trim() === ""
-              ? "Remove the filters to see all modules"
-              : "Remove the search criteria to see all modules"}
-          </p>
-        </div>
-      </div>
+      <EmptyStateDetailed
+        assetKey="search"
+        title={t("common_empty_state.search.title")}
+        description={t("common_empty_state.search.description")}
+      />
     );
 
   return (

@@ -6,17 +6,16 @@
 
 import type { SetStateAction } from "react";
 import { observer } from "mobx-react";
-import { Icon } from "@makeplane/propel/components/icon";
-import { IconButton } from "@makeplane/propel/components/icon-button";
-import { DragDropOutline, EditOutline } from "@makeplane/propel/icons";
+import { Badge } from "@makeplane/propel/components/badge";
+import { DragDropOutline } from "@makeplane/propel/icons";
 // plane imports
 import { StateGroupIcon } from "@plane/blocks/icons";
-import { EIconSize } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IState, TStateOperationsCallbacks } from "@plane/types";
+import { cn } from "@plane/utils";
 // local imports
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { StateDelete, StateMarksAsDefault } from "./options";
+import { StateQuickActions } from "./options";
 
 type TBaseStateItemTitleProps = {
   stateCount: number;
@@ -45,54 +44,42 @@ export const StateItemTitle = observer(function StateItemTitle(props: TStateItem
   // derived values
   const statePercentage = getStatePercentageInGroup(state.id);
   const percentage = statePercentage ? statePercentage / 100 : undefined;
+  const hasDescription = shouldShowDescription && !!state.description && state.description.trim() !== "";
 
   return (
-    <div className="flex w-full items-center justify-between gap-2">
-      <div className="flex items-center gap-1 px-1">
-        {/* draggable indicator */}
+    <div className={cn("flex w-full items-center justify-between gap-2", { "items-start": hasDescription })}>
+      <div className={cn("flex items-center gap-2", { "items-start": hasDescription })}>
+        {/* drag handle */}
         {!disabled && stateCount != 1 && (
-          <div className="absolute -left-1.5 hidden h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center rounded-xs bg-surface-2 text-secondary transition-colors group-hover:flex hover:text-primary">
-            <DragDropOutline className="h-3 w-3" />
+          <div className="absolute top-1/2 -left-1.5 hidden -translate-y-1/2 items-center justify-center rounded-sm border border-subtle bg-layer-2 py-0.5 text-secondary transition-colors group-hover:flex hover:bg-layer-2-hover hover:text-primary">
+            <DragDropOutline className="size-3" />
           </div>
         )}
         {/* state icon */}
-        <div className="flex-shrink-0">
-          <StateGroupIcon stateGroup={state.group} color={state.color} size={EIconSize.XL} percentage={percentage} />
-        </div>
+        <StateGroupIcon
+          stateGroup={state.group}
+          color={state.color}
+          size="lg"
+          percentage={percentage}
+          className={cn({ "mt-1": hasDescription })}
+        />
         {/* state title and description */}
-        <div className="min-h-5 px-2 text-13">
-          <h6 className="text-13 font-medium">{state.name}</h6>
-          {shouldShowDescription && <p className="text-11 text-secondary">{state.description}</p>}
+        <div>
+          <h6 className="text-body-sm-medium">{state.name}</h6>
+          {hasDescription && <p className="text-caption-sm-regular text-secondary">{state.description}</p>}
         </div>
       </div>
-      {!disabled && (
-        <div className="hidden items-center gap-2 group-hover:flex">
-          {/* state mark as default option */}
-          <div className="flex-shrink-0 text-11 transition-all">
-            <StateMarksAsDefault
-              stateId={state.id}
-              isDefault={state.default ? true : false}
-              markStateAsDefaultCallback={props.stateOperationsCallbacks.markStateAsDefault}
-            />
-          </div>
-          {/* state edit options */}
-          <div className="flex items-center gap-1 transition-all">
-            <IconButton
-              type="button"
-              variant="ghost"
-              size="xs"
-              aria-label={t("common.actions.edit")}
-              onClick={() => setUpdateStateModal(true)}
-              icon={<Icon icon={EditOutline} />}
-            />
-            <StateDelete
-              totalStates={stateCount}
-              state={state}
-              deleteStateCallback={props.stateOperationsCallbacks.deleteState}
-            />
-          </div>
-        </div>
-      )}
+      <div className={cn("flex shrink-0 items-center gap-2", { "mt-1": hasDescription })}>
+        {state.default && <Badge size="xs" variant="neutral" label={t("common.default")} />}
+        {!disabled && (
+          <StateQuickActions
+            totalStates={stateCount}
+            state={state}
+            onEdit={() => setUpdateStateModal(true)}
+            stateOperationsCallbacks={props.stateOperationsCallbacks}
+          />
+        )}
+      </div>
     </div>
   );
 });

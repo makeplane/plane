@@ -32,10 +32,10 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
   return (
     <div className="absolute top-0 left-0 flex h-max min-h-full w-max">
       {currentViewData && (
-        <div className="relative flex flex-col outline-[0.25px] outline-subtle-1">
+        <div className="relative flex flex-col">
           {/** Header Div */}
           <div
-            className="sticky top-0 z-[5] w-full flex-shrink-0 bg-surface-1"
+            className="sticky top-0 z-[5] w-full flex-shrink-0 bg-surface-1 after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-subtle-1"
             style={{
               height: `${HEADER_HEIGHT}px`,
             }}
@@ -45,18 +45,20 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
               {months?.map((monthBlock) => (
                 <div
                   key={`month-${monthBlock?.month}-${monthBlock?.year}`}
-                  className="flex outline-[0.5px] outline-subtle-1"
+                  className="flex border-r-[0.5px] border-b-[0.5px] border-subtle-1"
                   style={{ width: `${monthBlock.days * currentViewData?.data.dayWidth}px` }}
                 >
                   <div
-                    className="sticky z-[1] m-1 flex items-center bg-surface-1 px-3 py-1 text-14 font-regular whitespace-nowrap text-secondary capitalize"
+                    className="sticky z-[1] m-1 flex items-center bg-surface-1 px-3 py-1 text-body-sm-regular whitespace-nowrap text-secondary capitalize"
                     style={{
                       left: `${SIDEBAR_WIDTH}px`,
                     }}
                   >
                     {monthBlock?.title}
                     {monthBlock.today && (
-                      <span className={cn("ml-2 rounded-sm bg-accent-primary px-1 text-9 font-medium text-on-color")}>
+                      <span
+                        className={cn("ml-2 rounded-sm bg-accent-primary px-1 text-caption-2xs-medium text-on-color")}
+                      >
                         Current
                       </span>
                     )}
@@ -70,14 +72,14 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                 <div
                   key={`sub-title-${weekBlock.startDate.toString()}-${weekBlock.endDate.toString()}`}
                   className={cn(
-                    "flex flex-shrink-0 justify-between px-2 py-1 text-center capitalize outline-[0.25px] outline-subtle-1",
+                    "flex flex-shrink-0 justify-between border-r-[0.5px] border-subtle-1 px-2 py-1 text-center capitalize",
                     {
                       "bg-accent-primary/20": weekBlock.today,
                     }
                   )}
                   style={{ width: `${currentViewData?.data.dayWidth * 7}px` }}
                 >
-                  <div className="space-x-1 text-11 font-medium text-placeholder">
+                  <div className="space-x-1 text-caption-sm-medium text-placeholder">
                     <span
                       className={cn({
                         "rounded-sm bg-accent-primary px-1 text-on-color": weekBlock.today,
@@ -86,7 +88,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
                       {weekBlock.startDate.getDate()}-{weekBlock.endDate.getDate()}
                     </span>
                   </div>
-                  <div className="space-x-1 text-11 font-medium">{weekBlock.weekData.shortTitle}</div>
+                  <div className="space-x-1 text-caption-sm-medium">{weekBlock.weekData.shortTitle}</div>
                 </div>
               ))}
             </div>
@@ -96,7 +98,7 @@ export const MonthChartView = observer(function MonthChartView(_props: any) {
             {weeks?.map((weekBlock) => (
               <div
                 key={`column-${weekBlock.startDate.toString()}-${weekBlock.endDate.toString()}`}
-                className={cn("h-full overflow-hidden outline-[0.25px] outline-subtle", {
+                className={cn("h-full overflow-hidden border-r-[0.5px] border-subtle-1", {
                   "bg-accent-primary/20": weekBlock.today,
                 })}
                 style={{ width: `${currentViewData?.data.dayWidth * 7}px` }}

@@ -27,7 +27,8 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
   const {
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    reset,
+    formState: { errors, isDirty, isSubmitting },
   } = useForm<ImageConfigFormValues>({
     defaultValues: {
       UNSPLASH_ACCESS_KEY: config["UNSPLASH_ACCESS_KEY"],
@@ -37,15 +38,18 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
   const onSubmit = async (formData: ImageConfigFormValues) => {
     const payload: Partial<ImageConfigFormValues> = { ...formData };
 
-    await updateInstanceConfigurations(payload)
-      .then(() =>
-        setToast({
-          type: "success",
-          title: "Success",
-          message: "Image Configuration Settings updated successfully",
-        })
-      )
-      .catch((err) => console.error(err));
+    try {
+      await updateInstanceConfigurations(payload);
+      // the saved values become the new baseline, so Save disables again until the next edit
+      reset(formData);
+      setToast({
+        type: "success",
+        title: "Success",
+        message: "Image Configuration Settings updated successfully",
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -83,6 +87,7 @@ export function InstanceImageConfigForm(props: IInstanceImageConfigForm) {
           stretch="auto"
           onClick={handleSubmit(onSubmit)}
           loading={isSubmitting}
+          disabled={!isDirty}
           label={isSubmitting ? "Saving" : "Save changes"}
         />
       </div>

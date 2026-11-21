@@ -6,10 +6,9 @@
 
 import { useRef } from "react";
 import { observer } from "mobx-react";
-import { Menu } from "lucide-react";
 import { useOutsideClickDetector } from "@plane/hooks";
 import { useTranslation } from "@plane/i18n";
-import { ChevronRightOutline } from "@makeplane/propel/icons";
+import { ChevronRightOutline, MenuOutline } from "@makeplane/propel/icons";
 import { useUserSettings } from "@/hooks/store/user";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -43,7 +42,7 @@ export const SettingsMobileNav = observer(function SettingsMobileNav(props: Prop
           variant="secondary"
           size="sm"
           render={<button type="button" className="group z-50 shrink-0" />}
-          icon={<Icon icon={Menu} />}
+          icon={<Icon icon={MenuOutline} />}
           aria-label="Toggle settings menu"
           onClick={() => toggleSidebar()}
         />
@@ -51,7 +50,7 @@ export const SettingsMobileNav = observer(function SettingsMobileNav(props: Prop
       {/* path */}
       <div className="flex items-center gap-2">
         <ChevronRightOutline className="size-4 text-tertiary" />
-        <span className="text-13 font-medium text-secondary">{t(activePath)}</span>
+        <span className="text-body-xs-medium text-secondary">{t(activePath)}</span>
       </div>
     </div>
   );

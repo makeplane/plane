@@ -5,8 +5,10 @@
  */
 
 import * as React from "react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Pill, PillLabel } from "@makeplane/propel/elements/pill";
 import type { PillButtonSize } from "./helper";
-import { getPillButtonClassName, getPillButtonIconClassName } from "./helper";
+import { PROPEL_PILL_SIZE } from "./helper";
 import type { IconElement } from "../types/icon";
 import { cn } from "@plane/utils";
 
@@ -19,12 +21,11 @@ export type PillButtonContentProps = {
 
 const PillButtonContent = (props: PillButtonContentProps) => {
   const { size = "sm", prependIcon = null, appendIcon = null, children } = props;
-  const iconClassName = getPillButtonIconClassName(size);
   return (
     <>
-      {prependIcon && React.cloneElement(prependIcon, { className: cn(iconClassName) })}
+      {prependIcon && <Icon icon={prependIcon} size={PROPEL_PILL_SIZE[size]} />}
       {children}
-      {appendIcon && React.cloneElement(appendIcon, { className: cn(iconClassName) })}
+      {appendIcon && <Icon icon={appendIcon} size={PROPEL_PILL_SIZE[size]} />}
     </>
   );
 };
@@ -46,6 +47,7 @@ const PillButton = React.forwardRef(function PillButton(
     size = "sm",
     isActive = false,
     className,
+    style,
     type = "button",
     disabled = false,
     prependIcon,
@@ -55,17 +57,26 @@ const PillButton = React.forwardRef(function PillButton(
   } = props;
 
   return (
-    <button
+    <Pill
       ref={ref}
+      size={PROPEL_PILL_SIZE[size]}
+      variant="outline"
       type={type}
       disabled={disabled}
-      className={cn(getPillButtonClassName(size, isActive), className)}
+      data-popup-open={isActive ? "" : undefined}
+      render={(buttonProps) => (
+        <button
+          {...buttonProps}
+          className={cn(buttonProps.className, className)}
+          style={{ ...buttonProps.style, ...style }}
+        />
+      )}
       {...rest}
     >
       <PillButtonContent size={size} prependIcon={prependIcon} appendIcon={appendIcon}>
-        {children}
+        {typeof children === "string" || typeof children === "number" ? <PillLabel>{children}</PillLabel> : children}
       </PillButtonContent>
-    </button>
+    </Pill>
   );
 });
 

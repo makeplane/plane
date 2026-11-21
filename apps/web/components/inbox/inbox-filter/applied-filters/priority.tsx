@@ -8,10 +8,13 @@ import { observer } from "mobx-react";
 import { ISSUE_PRIORITIES } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { PriorityIcon } from "@plane/blocks/icons";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { CloseOutline } from "@makeplane/propel/icons";
 import type { TIssuePriorities } from "@plane/types";
 // hooks
 import { useProjectInbox } from "@/hooks/store/use-project-inbox";
+import { APPLIED_FILTER_GROUP_CLASSNAME, RemovableChip } from "@/components/common/removable-chip";
 
 export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppliedFiltersPriority() {
   // hooks
@@ -29,33 +32,31 @@ export const InboxIssueAppliedFiltersPriority = observer(function InboxIssueAppl
 
   if (filteredValues.length === 0) return <></>;
   return (
-    <div className="my-auto flex min-h-9 cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-subtle p-1.5 text-11 text-tertiary capitalize hover:text-secondary">
-      <div className="text-11 text-secondary">{t("common.priority")}</div>
+    <div className={APPLIED_FILTER_GROUP_CLASSNAME}>
+      <div className="text-caption-sm-regular text-secondary">{t("common.priority")}</div>
       {filteredValues.map((value) => {
         const optionDetail = currentOptionDetail(value);
         if (!optionDetail) return <></>;
         return (
-          <div key={value} className="relative flex items-center gap-1 rounded-sm bg-layer-1 p-1 text-11">
-            <div className="relative flex h-3 w-3 flex-shrink-0 items-center justify-center overflow-hidden">
-              <PriorityIcon priority={optionDetail.key} className="h-3 w-3" />
-            </div>
-            <div className="truncate text-11">{optionDetail?.title}</div>
-            <div
-              className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
-              onClick={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}
-            >
-              <CloseOutline className={`h-3 w-3`} />
-            </div>
-          </div>
+          <RemovableChip
+            key={value}
+            variant="soft"
+            icon={<PriorityIcon priority={optionDetail.key} className="h-3 w-3" />}
+            label={optionDetail.title}
+            ariaLabel={optionDetail.title}
+            onRemove={() => handleInboxIssueFilters("priority", handleFilterValue(optionDetail?.key))}
+          />
         );
       })}
 
-      <div
-        className="relative flex h-3 w-3 flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden text-tertiary transition-all hover:text-secondary"
+      <IconButton
+        type="button"
+        variant="ghost"
+        size="xs"
+        aria-label={`${t("aria_labels.common.remove")}: ${t("common.priority")}`}
         onClick={clearFilter}
-      >
-        <CloseOutline className={`h-3 w-3`} />
-      </div>
+        icon={<Icon icon={CloseOutline} />}
+      />
     </div>
   );
 });

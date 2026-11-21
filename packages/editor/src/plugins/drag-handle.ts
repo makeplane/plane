@@ -8,13 +8,13 @@ import type { Node, Schema } from "@tiptap/pm/model";
 import { Fragment, Slice } from "@tiptap/pm/model";
 import { NodeSelection } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
+import { MoreVerticalOutline } from "@makeplane/propel/icons";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // extensions
 import type { SideMenuHandleOptions, SideMenuPluginProps } from "@/extensions";
-
-const verticalEllipsisIcon =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>';
+// plugins
+import { mountHandleIcon } from "@/plugins/handle-icon";
 
 const generalSelectors = [
   "li",
@@ -41,7 +41,7 @@ function easeOutQuadAnimation(t: number) {
   return t * (2 - t);
 }
 
-const createDragHandleElement = (): HTMLElement => {
+const createDragHandleElement = () => {
   const dragHandleElement = document.createElement("button");
   dragHandleElement.type = "button";
   dragHandleElement.id = "drag-handle";
@@ -52,15 +52,21 @@ const createDragHandleElement = (): HTMLElement => {
 
   const iconElement1 = document.createElement("span");
   iconElement1.classList.value = "pointer-events-none text-tertiary";
-  iconElement1.innerHTML = verticalEllipsisIcon;
+  const destroyIcon1 = mountHandleIcon(iconElement1, MoreVerticalOutline);
   const iconElement2 = document.createElement("span");
   iconElement2.classList.value = "pointer-events-none text-tertiary -ml-2.5";
-  iconElement2.innerHTML = verticalEllipsisIcon;
+  const destroyIcon2 = mountHandleIcon(iconElement2, MoreVerticalOutline);
 
   dragHandleElement.appendChild(iconElement1);
   dragHandleElement.appendChild(iconElement2);
 
-  return dragHandleElement;
+  return {
+    element: dragHandleElement,
+    destroyIcons: () => {
+      destroyIcon1();
+      destroyIcon2();
+    },
+  };
 };
 
 const isScrollable = (node: HTMLElement | SVGElement) => {
@@ -222,7 +228,8 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
   };
 
   const view = (view: EditorView, sideMenu: HTMLDivElement | null) => {
-    dragHandleElement = createDragHandleElement();
+    const { element, destroyIcons } = createDragHandleElement();
+    dragHandleElement = element;
     dragHandleElement.addEventListener("dragstart", (e) => handleDragStart(e, view));
     dragHandleElement.addEventListener("dragend", (e) => handleDragEnd(e, view));
     dragHandleElement.addEventListener("click", (e) => handleClick(e, view));
@@ -271,6 +278,7 @@ export const DragHandlePlugin = (options: SideMenuPluginProps): SideMenuHandleOp
 
     return {
       destroy: () => {
+        destroyIcons();
         dragHandleElement?.remove?.();
         dragHandleElement = null;
         isDragging = false;

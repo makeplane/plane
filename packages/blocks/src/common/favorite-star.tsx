@@ -5,6 +5,8 @@
  */
 
 import React from "react";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import type { IconButtonSize, IconButtonVariant } from "@makeplane/propel/components/icon-button";
 import { StarFilled, StarOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
 // helpers
@@ -17,36 +19,54 @@ type Props = {
   iconClassName?: string;
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   selected: boolean;
+  /** Button box size; defaults to the compact `sm` used in list rows and headers. */
+  size?: IconButtonSize;
+  /** Button surface; `secondary` gives the star a bordered chip, e.g. on top of a cover image. */
+  variant?: IconButtonVariant;
 };
 
 export function FavoriteStar(props: Props) {
-  const { "aria-label": ariaLabel, buttonClassName, iconClassName, onClick, selected } = props;
+  const {
+    "aria-label": ariaLabel,
+    buttonClassName,
+    iconClassName,
+    onClick,
+    selected,
+    size = "sm",
+    variant = "ghost",
+  } = props;
   const { t } = useTranslation();
 
   return (
-    <button
+    <IconButton
       type="button"
-      className={cn("grid h-4 w-4 place-items-center", buttonClassName)}
+      variant={variant}
+      size={size}
+      showTooltip={false}
+      render={<button className={buttonClassName} />}
       onClick={onClick}
       aria-label={ariaLabel ?? t("add_to_favorites")}
       aria-pressed={selected}
-    >
-      <StarOutline
-        aria-hidden="true"
-        className={cn(
-          "col-start-1 row-start-1 h-4 w-4 text-tertiary transition-opacity motion-reduce:transition-none",
-          iconClassName,
-          selected ? "opacity-0" : "opacity-100"
-        )}
-      />
-      <StarFilled
-        aria-hidden="true"
-        className={cn(
-          "col-start-1 row-start-1 h-4 w-4 text-(--color-label-yellow-icon) transition-opacity motion-reduce:transition-none",
-          iconClassName,
-          selected ? "opacity-100" : "opacity-0"
-        )}
-      />
-    </button>
+      icon={
+        <span aria-hidden="true" className="grid place-items-center">
+          <StarOutline
+            aria-hidden="true"
+            className={cn(
+              "col-start-1 row-start-1 h-3.5 w-3.5 transition-opacity motion-reduce:transition-none",
+              iconClassName,
+              selected ? "opacity-0" : "opacity-100"
+            )}
+          />
+          <StarFilled
+            aria-hidden="true"
+            className={cn(
+              "col-start-1 row-start-1 h-3.5 w-3.5 text-label-yellow-icon-strong transition-opacity motion-reduce:transition-none",
+              iconClassName,
+              selected ? "opacity-100" : "opacity-0"
+            )}
+          />
+        </span>
+      }
+    />
   );
 }

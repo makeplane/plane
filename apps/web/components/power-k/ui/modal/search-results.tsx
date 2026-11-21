@@ -54,7 +54,9 @@ export const PowerKModalSearchResults = observer(function PowerKModalSearchResul
                 <PowerKModalCommandItem
                   key={item.id}
                   label={currentSection.itemName(item)}
+                  tooltipContent={item.name}
                   icon={currentSection.icon}
+                  iconNode={currentSection.iconNode?.(item)}
                   onSelect={() => {
                     closePalette();
                     router.push(currentSection.path(item, projectId));

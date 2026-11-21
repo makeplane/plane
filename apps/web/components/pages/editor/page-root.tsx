@@ -165,32 +165,35 @@ export const PageRoot = observer(function PageRoot(props: TPageRootProps) {
           restoreEnabled={isContentEditable}
           storeType={storeType}
         />
-        <PageEditorToolbarRoot
-          handleOpenNavigationPane={handleOpenNavigationPane}
-          isNavigationPaneOpen={isNavigationPaneOpen}
-          page={page}
-        />
         {showContentTooLargeBanner && (
           <Banner placement="page" variant="warning" title={t("page_content_limit_banner.message")} />
         )}
-        <PageEditorBody
-          config={config}
-          customRealtimeEventHandlers={mergedCustomEventHandlers}
-          editorReady={editorReady}
-          editorForwardRef={editorRef}
-          handleEditorReady={handleEditorReady}
-          handleOpenNavigationPane={handleOpenNavigationPane}
-          handlers={handlers}
-          isNavigationPaneOpen={isNavigationPaneOpen}
-          page={page}
-          projectId={projectId}
-          storeType={storeType}
-          webhookConnectionParams={webhookConnectionParams}
-          workspaceSlug={workspaceSlug}
-          extendedEditorProps={extendedEditorProps}
-          isFetchingFallbackBinary={isFetchingFallbackBinary}
-          onCollaborationStateChange={setCollaborationState}
-        />
+        {/* positioning context for the floating navigation pane button when the toolbar is hidden */}
+        <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden">
+          <PageEditorToolbarRoot
+            handleOpenNavigationPane={handleOpenNavigationPane}
+            isNavigationPaneOpen={isNavigationPaneOpen}
+            page={page}
+          />
+          <PageEditorBody
+            config={config}
+            customRealtimeEventHandlers={mergedCustomEventHandlers}
+            editorReady={editorReady}
+            editorForwardRef={editorRef}
+            handleEditorReady={handleEditorReady}
+            handleOpenNavigationPane={handleOpenNavigationPane}
+            handlers={handlers}
+            isNavigationPaneOpen={isNavigationPaneOpen}
+            page={page}
+            projectId={projectId}
+            storeType={storeType}
+            webhookConnectionParams={webhookConnectionParams}
+            workspaceSlug={workspaceSlug}
+            extendedEditorProps={extendedEditorProps}
+            isFetchingFallbackBinary={isFetchingFallbackBinary}
+            onCollaborationStateChange={setCollaborationState}
+          />
+        </div>
       </div>
       <PageNavigationPaneRoot
         storeType={storeType}

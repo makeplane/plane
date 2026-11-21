@@ -148,14 +148,14 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
               </div>
 
               <Tooltip label={issue.name} layout="stacked" disabled={isMobile}>
-                <span className="w-0 flex-1 truncate text-13 text-primary">{issue.name}</span>
+                <span className="w-0 flex-1 truncate text-body-xs-regular text-primary">{issue.name}</span>
               </Tooltip>
             </div>
             {/* The row's ControlLink activates on click and on Enter/Space, so a property picker's
                 own activation must not reach it. */}
             <div
               role="presentation"
-              className="flex-shrink-0 text-13"
+              className="flex-shrink-0 text-body-xs-regular"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -176,7 +176,7 @@ export const RelationIssueListItem = observer(function RelationIssueListItem(pro
                 activation must not reach it. */}
             <div
               role="presentation"
-              className="flex-shrink-0 pl-2 text-13"
+              className="flex-shrink-0 pl-2 text-body-xs-regular"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

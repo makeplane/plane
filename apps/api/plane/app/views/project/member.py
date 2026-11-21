@@ -175,7 +175,9 @@ class ProjectMemberViewSet(BaseViewSet):
             member__member_workspace__is_active=True,
         ).select_related("project", "member", "workspace")
 
-        serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role"), many=True)
+        serializer = ProjectMemberRoleSerializer(
+            project_members, fields=("id", "member", "role", "original_role", "created_at"), many=True
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -208,7 +210,9 @@ class ProjectMemberViewSet(BaseViewSet):
         if requesting_project_member.role > ROLE.GUEST.value:
             serializer = ProjectMemberAdminSerializer(project_member)
         else:
-            serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))
+            serializer = ProjectMemberRoleSerializer(
+                project_member, fields=("id", "member", "role", "original_role", "created_at")
+            )
 
         return Response(
             _without_personal_fields(serializer.data, project_member, request.user), status=status.HTTP_200_OK

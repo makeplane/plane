@@ -26,7 +26,8 @@
     },
     "empty_state": {
       "detail": {
-        "title": "Select to view details."
+        "title": "No notification selected",
+        "description": "Select a notification to view its details."
       },
       "all": {
         "title": "No work items assigned",
@@ -52,7 +53,15 @@
       "5_days": "5 days",
       "1_week": "1 week",
       "2_weeks": "2 weeks",
-      "custom": "Custom"
+      "custom": "Custom",
+      "modal": {
+        "title": "Customize snooze time",
+        "pick_a_date": "Pick a date",
+        "pick_a_time": "Pick a time",
+        "select_date": "Select date",
+        "select_time": "Select time",
+        "no_available_time": "No available time for this date"
+      }
     }
   }
 }

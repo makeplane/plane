@@ -212,11 +212,11 @@ export function GptAssistantPopover(props: Props) {
         {/* The popover owns the portal, positioning, enter/leave and the panel surface, so
             the old popper positioning, enter/leave transition and hand-rolled chrome all go. */}
         <PopoverContent variant="rich" side={side} align={align}>
-          <div className={cn("flex min-h-0 w-200 max-w-full flex-1 flex-col space-y-4 overflow-hidden", className)}>
+          <div className={cn("flex min-h-0 w-200 max-w-full flex-1 flex-col space-y-4", className)}>
             <PopoverBody tabIndex={0}>
               <div className="vertical-scroll-enable max-h-72 space-y-4 overflow-y-auto">
                 {prompt && (
-                  <div className="text-13">
+                  <div className="text-body-xs-regular">
                     Content:
                     <RichTextEditor
                       editable={false}
@@ -231,7 +231,7 @@ export function GptAssistantPopover(props: Props) {
                   </div>
                 )}
                 {response !== "" && (
-                  <div className="page-block-section max-h-[8rem] text-13">
+                  <div className="page-block-section max-h-[8rem] text-body-xs-regular">
                     Response:
                     <RichTextEditor
                       editable={false}
@@ -245,7 +245,7 @@ export function GptAssistantPopover(props: Props) {
                   </div>
                 )}
                 {invalidResponse && (
-                  <div className="text-13 text-danger-primary">
+                  <div className="text-body-xs-regular text-danger-primary">
                     No response could be generated. This may be due to insufficient content or task information. Please
                     try again.
                   </div>
@@ -280,7 +280,7 @@ export function GptAssistantPopover(props: Props) {
                 <>{responseActionButton}</>
               ) : (
                 <>
-                  <div className="flex items-start justify-center gap-2 text-13 text-accent-primary">
+                  <div className="flex items-center justify-center gap-2 text-body-xs-regular text-tertiary">
                     <WarningCircleOutline className="h-4 w-4" />
                     <p>By using this feature, you consent to sharing the message with a 3rd party service. </p>
                   </div>

@@ -6,14 +6,16 @@
 
 import React, { useState } from "react";
 import { observer } from "mobx-react";
-import { HelpOutline, PagesOutline, UserOutline } from "@makeplane/propel/icons";
+import { HelpOutline, PagesOutline, UserAltOutline } from "@makeplane/propel/icons";
+import { TALK_TO_SALES_URL } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
 import { Icon } from "@makeplane/propel/components/icon";
-import { Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { Menu, MenuContent, MenuFooter, MenuItem, MenuSeparator, MenuTrigger } from "@makeplane/propel/components/menu";
+import { Tooltip } from "@makeplane/propel/components/tooltip";
+import { IconButton } from "@makeplane/propel/elements/icon-button";
 // components
 import { ProductUpdatesModal } from "@/components/global";
-import { AppSidebarItem } from "@/components/sidebar/sidebar-item";
 import { PlaneVersionNumber } from "@/components/global/version-number";
 // hooks
 import { usePowerK } from "@/hooks/store/use-power-k";
@@ -23,35 +25,34 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
   const { t } = useTranslation();
   const { toggleShortcutsListModal } = usePowerK();
   // states
-  const [isNeedHelpOpen, setIsNeedHelpOpen] = useState(false);
   const [isProductUpdatesModalOpen, setProductUpdatesModalOpen] = useState(false);
 
   return (
     <>
       <ProductUpdatesModal isOpen={isProductUpdatesModalOpen} handleClose={() => setProductUpdatesModalOpen(false)} />
 
-      <Menu onOpenChange={setIsNeedHelpOpen}>
-        {/* propel: `AppSidebarItem` takes no arbitrary props, so it cannot be the Base UI trigger
-            — the popup would have no element to anchor to. The trigger is a plain button wearing
-            the same chrome, with the item's own icon part inside it. */}
-        <MenuTrigger
-          render={
-            <button
-              type="button"
-              className="group flex flex-col items-center justify-center gap-0.5 text-tertiary"
-              aria-label={t("power_k.group_titles.help")}
-            >
-              <AppSidebarItem.Icon icon={<HelpOutline className="size-5" />} highlight={isNeedHelpOpen} />
-            </button>
-          }
-        />
+      <Menu>
+        <Tooltip label={t("power_k.group_titles.help")} side="bottom">
+          <MenuTrigger
+            render={
+              <IconButton
+                variant="ghost"
+                size="md"
+                aria-label={t("power_k.group_titles.help")}
+                render={<button type="button" className="data-popup-open:bg-layer-transparent-active" />}
+              >
+                <HelpOutline className="size-4.5" />
+              </IconButton>
+            }
+          />
+        </Tooltip>
         <MenuContent
           side="bottom"
           align="end"
           footer={
-            <div className="text-11 text-secondary">
+            <MenuFooter>
               <PlaneVersionNumber />
-            </div>
+            </MenuFooter>
           }
         >
           <MenuItem
@@ -60,9 +61,9 @@ export const HelpMenuRoot = observer(function HelpMenuRoot() {
             onClick={() => window.open("https://go.plane.so/p-docs", "_blank")}
           />
           <MenuItem
-            icon={<Icon icon={UserOutline} tint="secondary" />}
+            icon={<Icon icon={UserAltOutline} tint="secondary" />}
             label={t("contact_sales")}
-            onClick={() => window.open("mailto:sales@plane.so", "_blank")}
+            onClick={() => window.open(TALK_TO_SALES_URL, "_blank", "noopener,noreferrer")}
           />
           <MenuSeparator />
           <MenuItem label={t("keyboard_shortcuts")} onClick={() => toggleShortcutsListModal(true)} />

@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { useId } from "react";
+import { Radio, RadioGroup, RadioIndicator } from "@makeplane/propel/elements/radio";
 // types
 import { useTranslation } from "@plane/i18n";
 import type { TWebhookEventTypes } from "@plane/types";
@@ -27,26 +29,44 @@ const WEBHOOK_EVENT_TYPES: { key: TWebhookEventTypes; i18n_label: string }[] = [
 export function WebhookOptions(props: Props) {
   const { value, onChange } = props;
   const { t } = useTranslation();
+  const questionId = useId();
 
   return (
     <>
-      <h6 className="text-13 font-medium">{t("workspace_settings.settings.webhooks.modal.question")}</h6>
-      <div className="space-y-3">
+      <h6 id={questionId} className="text-body-xs-medium">
+        {t("workspace_settings.settings.webhooks.modal.question")}
+      </h6>
+      <RadioGroup density="comfortable" role="radiogroup" aria-labelledby={questionId}>
         {WEBHOOK_EVENT_TYPES.map((option) => (
           <div key={option.key} className="flex items-center gap-2">
-            <input
-              id={option.key}
-              type="radio"
-              value={option.key}
-              checked={value == option.key}
-              onChange={() => onChange(option.key)}
-            />
-            <label className="text-13" htmlFor={option.key}>
+            <span className="relative flex shrink-0 items-center justify-center">
+              <Radio
+                data-checked={value === option.key ? "" : undefined}
+                render={
+                  <input
+                    id={option.key}
+                    type="radio"
+                    name="webhook-event-type"
+                    value={option.key}
+                    checked={value == option.key}
+                    onChange={() => onChange(option.key)}
+                    className="cursor-pointer appearance-none"
+                  />
+                }
+              />
+              {value === option.key && (
+                <RadioIndicator
+                  aria-hidden="true"
+                  render={<span className="pointer-events-none absolute text-icon-accent-primary" />}
+                />
+              )}
+            </span>
+            <label className="cursor-pointer text-body-xs-regular" htmlFor={option.key}>
               {t(option.i18n_label)}
             </label>
           </div>
         ))}
-      </div>
+      </RadioGroup>
     </>
   );
 }

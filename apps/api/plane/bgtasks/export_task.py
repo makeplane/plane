@@ -44,7 +44,7 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
     """
     Upload a ZIP file to S3 and generate a presigned URL.
     """
-    file_name = f"{workspace_id}/export-{slug}-{token_id[:6]}-{str(timezone.now().date())}.zip"
+    file_name = f"{workspace_id}/export-{slug}-{token_id}-{str(timezone.now().date())}.zip"
     expires_in = 7 * 24 * 60 * 60
 
     if settings.USE_MINIO:
@@ -59,7 +59,7 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
             zip_file,
             settings.AWS_STORAGE_BUCKET_NAME,
             file_name,
-            ExtraArgs={"ACL": "public-read", "ContentType": "application/zip"},
+            ExtraArgs={"ContentType": "application/zip"},
         )
 
         # Generate presigned url for the uploaded file with different base

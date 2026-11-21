@@ -65,12 +65,22 @@ export const FiltersToggle = observer(function FiltersToggle<P extends TFilterPr
   return (
     <IconButton
       size="md"
-      // Active filters: a filled chrome plus an accent glyph (Propel has no tinted-accent variant).
-      variant={showFilterRowChangesPill ? "tertiary" : "secondary"}
+      variant="secondary"
       icon={<Icon icon={<FilterIcon className={iconClassName} />} />}
       onClick={handleToggleFilter}
       aria-label={t("common.filters")}
       aria-pressed={isFilterRowVisible}
+      // Accent chrome while the filter row is open or any filter is applied (Propel has no tinted variant).
+      render={(buttonProps) => (
+        <button
+          type="button"
+          {...buttonProps}
+          className={cn(buttonProps.className, {
+            "border-accent-strong bg-accent-subtle text-accent-primary hover:bg-accent-subtle-hover active:bg-accent-subtle-active":
+              isFilterRowVisible || showFilterRowChangesPill,
+          })}
+        />
+      )}
     />
   );
 });

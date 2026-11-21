@@ -25,7 +25,7 @@ function LayoutErrorFallback({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-3 text-center">
       <WarningTriangleOutline className="size-8 text-tertiary" />
-      <p className="text-14 text-secondary">{t("something_went_wrong")}</p>
+      <p className="text-body-sm-regular text-secondary">{t("something_went_wrong")}</p>
       <Button variant="secondary" size="xs" stretch="auto" label={t("common.retry")} onClick={onRetry} />
     </div>
   );

@@ -26,6 +26,16 @@
           "highlight_changes": "Виділити зміни"
         }
       },
+      "version_history": {
+        "view_only": "Лише перегляд",
+        "loading_details": "Завантаження відомостей про версію",
+        "load_error_description": "Не вдалося завантажити версію. Будь ласка, спробуйте ще раз.",
+        "list_error_description": "Не вдалося завантажити історію версій.",
+        "try_again": "Спробувати ще раз",
+        "restoring": "Відновлення",
+        "restore_success": "Версію сторінки відновлено.",
+        "restore_failed": "Не вдалося відновити версію сторінки."
+      },
       "assets": {
         "label": "Ресурси",
         "download_button": "Завантажити",

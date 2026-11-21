@@ -217,6 +217,7 @@ export class FileService extends APIService {
 
   async deleteOldWorkspaceAsset(workspaceId: string, src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
+    if (!assetKey) return;
     return this.delete(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/`)
       .then((response) => response?.status)
       .catch((error) => {
@@ -226,6 +227,7 @@ export class FileService extends APIService {
 
   async deleteOldUserAsset(src: string): Promise<any> {
     const assetKey = getAssetIdFromUrl(src);
+    if (!assetKey) return;
     return this.delete(`/api/users/file-assets/${assetKey}/`)
       .then((response) => response?.status)
       .catch((error) => {
@@ -236,7 +238,7 @@ export class FileService extends APIService {
   async restoreNewAsset(workspaceSlug: string, src: string): Promise<void> {
     // remove the last slash and get the asset id
     const assetId = getAssetIdFromUrl(src);
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/restore/${assetId}/`)
+    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/restore/${encodeURIComponent(assetId)}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -249,7 +251,7 @@ export class FileService extends APIService {
   ): Promise<{
     exists: boolean;
   }> {
-    return this.get(`/api/assets/v2/workspaces/${workspaceSlug}/check/${assetId}/`)
+    return this.get(`/api/assets/v2/workspaces/${workspaceSlug}/check/${encodeURIComponent(assetId)}/`)
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;
@@ -258,6 +260,7 @@ export class FileService extends APIService {
 
   async restoreOldEditorAsset(workspaceId: string, src: string): Promise<void> {
     const assetKey = getAssetIdFromUrl(src);
+    if (!assetKey) return;
     return this.post(`/api/workspaces/file-assets/${workspaceId}/${assetKey}/restore/`)
       .then((response) => response?.data)
       .catch((error) => {
@@ -290,7 +293,10 @@ export class FileService extends APIService {
       project_id?: string;
     }
   ): Promise<{ asset_id: string }> {
-    return this.post(`/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${assetId}/`, data)
+    return this.post(
+      `/api/assets/v2/workspaces/${workspaceSlug}/duplicate-assets/${encodeURIComponent(assetId)}/`,
+      data
+    )
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

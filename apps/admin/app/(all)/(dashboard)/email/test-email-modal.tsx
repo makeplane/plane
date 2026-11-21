@@ -17,7 +17,7 @@ import {
   DialogMain,
   DialogTitle,
 } from "@makeplane/propel/components/dialog";
-import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { InputField } from "@makeplane/propel/components/input-field";
 import { InstanceService } from "@plane/services";
 
 type Props = {
@@ -81,7 +81,7 @@ export function SendTestEmailModal(props: Props) {
         if (!open) resetState();
       }}
     >
-      <DialogContent size="sm">
+      <DialogContent size="md">
         <DialogMain>
           <DialogHeader>
             <DialogHeading>
@@ -96,28 +96,28 @@ export function SendTestEmailModal(props: Props) {
           </DialogHeader>
           <DialogBody>
             {sendEmailStep === ESendEmailSteps.SEND_EMAIL && (
-              <InputGroup size="lg">
-                <Input
-                  id="receiver_email"
-                  type="email"
-                  size="lg"
-                  value={receiverEmail}
-                  onChange={(e) => setReceiverEmail(e.target.value)}
-                  placeholder="Receiver email"
-                  aria-label="Receiver email"
-                  tabIndex={0}
-                />
-              </InputGroup>
+              <InputField
+                id="receiver_email"
+                type="email"
+                size="lg"
+                orientation="vertical"
+                label="Receiver email"
+                value={receiverEmail}
+                onChange={(e) => setReceiverEmail(e.target.value)}
+                placeholder="Receiver email"
+                autoComplete="email"
+                tabIndex={0}
+              />
             )}
             {sendEmailStep === ESendEmailSteps.SUCCESS && (
-              <div className="flex flex-col gap-y-4 text-13">
+              <div className="flex flex-col gap-y-4 text-body-xs-regular">
                 <p>
                   We have sent the test email to {receiverEmail}. Please check your spam folder if you cannot find it.
                 </p>
                 <p>If you still cannot find it, recheck your SMTP configuration and trigger a new test email.</p>
               </div>
             )}
-            {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-13">{error}</div>}
+            {sendEmailStep === ESendEmailSteps.FAILED && <div className="text-body-xs-regular">{error}</div>}
           </DialogBody>
         </DialogMain>
         <DialogActions>

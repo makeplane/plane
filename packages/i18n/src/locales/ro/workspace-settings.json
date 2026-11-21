@@ -26,7 +26,8 @@
           "success_title": "Spațiul de lucru a fost șters.",
           "success_message": "Vei fi redirecționat în curând către pagina de profil.",
           "error_title": "Ceva nu a funcționat.",
-          "error_message": "Încearcă din nou, te rog."
+          "error_message": "Încearcă din nou, te rog.",
+          "confirm_description": "Ești pe cale să ștergi spațiul de lucru {workspaceName}. Vei pierde accesul la toate datele de lucru din acest spațiu și nu vor putea fi restaurate."
         },
         "errors": {
           "name": {
@@ -63,7 +64,10 @@
             "required": "Avem nevoie de o adresă de email pentru a trimite invitația.",
             "invalid": "Adresa de email este invalidă"
           }
-        }
+        },
+        "leave_input_label": "Introdu numele acestui spațiu de lucru pentru a continua.",
+        "description": "Gestionează accesul la acest spațiu de lucru.",
+        "leave_title": "Părăsești spațiul de lucru?"
       },
       "billing_and_plans": {
         "heading": "Facturare și abonamente",
@@ -170,7 +174,13 @@
             "title": "Eroare!",
             "message": "Cheia secretă API nu a putut fi ștearsă"
           }
-        }
+        },
+        "columns": {
+          "expires": "Expiră",
+          "last_used": "Ultima utilizare"
+        },
+        "expired": "Expirat",
+        "not_used_yet": "Încă neutilizat"
       },
       "integrations": {
         "title": "Integrări",

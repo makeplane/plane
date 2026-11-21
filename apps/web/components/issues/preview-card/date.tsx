@@ -7,7 +7,7 @@
 import { CalendarOutline, DueDateOutline, StartDateOutline } from "@makeplane/propel/icons";
 // plane imports
 import type { TStateGroups } from "@plane/types";
-import { cn, renderFormattedDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { cn, getIssueDueDateClassName, renderFormattedDate } from "@plane/utils";
 
 type Props = {
   startDate: string | null;
@@ -19,18 +19,14 @@ export function WorkItemPreviewCardDate(props: Props) {
   const { startDate, stateGroup, targetDate } = props;
   // derived values
   const isDateRangeEnabled = Boolean(startDate && targetDate);
-  const shouldHighlightDate = shouldHighlightIssueDueDate(targetDate, stateGroup);
+  const dueDateClassName = getIssueDueDateClassName(targetDate, stateGroup);
 
   if (!startDate && !targetDate) return null;
 
   return (
-    <div className="h-full rounded-sm px-1 text-11 text-secondary">
+    <div className="h-full rounded-sm px-1 text-caption-sm-regular text-secondary">
       {isDateRangeEnabled ? (
-        <div
-          className={cn("flex h-full items-center gap-1", {
-            "text-danger-primary": shouldHighlightDate,
-          })}
-        >
+        <div className={cn("flex h-full items-center gap-1", dueDateClassName)}>
           <CalendarOutline className="size-3 shrink-0" />
           <span>
             {renderFormattedDate(startDate)} - {renderFormattedDate(targetDate)}
@@ -42,11 +38,7 @@ export function WorkItemPreviewCardDate(props: Props) {
           <span>{renderFormattedDate(startDate)}</span>
         </div>
       ) : (
-        <div
-          className={cn("flex h-full items-center gap-1", {
-            "text-danger-primary": shouldHighlightDate,
-          })}
-        >
+        <div className={cn("flex h-full items-center gap-1", dueDateClassName)}>
           <DueDateOutline className="size-3 shrink-0" />
           <span>{renderFormattedDate(targetDate)}</span>
         </div>

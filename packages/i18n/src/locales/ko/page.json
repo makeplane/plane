@@ -26,6 +26,16 @@
           "highlight_changes": "변경 사항 강조 표시"
         }
       },
+      "version_history": {
+        "view_only": "보기 전용",
+        "loading_details": "버전 세부 정보를 불러오는 중",
+        "load_error_description": "버전을 불러올 수 없습니다. 다시 시도해주세요.",
+        "list_error_description": "버전 기록을 불러올 수 없습니다.",
+        "try_again": "다시 시도",
+        "restoring": "복원 중",
+        "restore_success": "페이지 버전이 복원되었습니다.",
+        "restore_failed": "페이지 버전을 복원하지 못했습니다."
+      },
       "assets": {
         "label": "자산",
         "download_button": "다운로드",

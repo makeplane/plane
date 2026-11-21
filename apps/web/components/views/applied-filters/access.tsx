@@ -7,11 +7,11 @@
 import { observer } from "mobx-react";
 // icons
 import { useTranslation } from "@plane/i18n";
-import { CloseOutline } from "@makeplane/propel/icons";
 // constants
 // helpers
 import type { EViewAccess } from "@plane/types";
 import { VIEW_ACCESS_SPECIFIERS } from "@/helpers/views.helper";
+import { RemovableChip } from "@/components/common/removable-chip";
 
 type Props = {
   editable: boolean | undefined;
@@ -35,19 +35,16 @@ export const AppliedAccessFilters = observer(function AppliedAccessFilters(props
 
         if (!label) return null;
 
+        const accessLabel = t(label);
+
         return (
-          <div key={access} className="flex items-center gap-1 rounded-sm bg-layer-1 px-1.5 py-1 text-11">
-            <span className="normal-case">{t(label)}</span>
-            {editable && (
-              <button
-                type="button"
-                className="grid place-items-center text-tertiary hover:text-secondary"
-                onClick={() => handleRemove(access)}
-              >
-                <CloseOutline height={10} width={10} />
-              </button>
-            )}
-          </div>
+          <RemovableChip
+            key={access}
+            variant="soft"
+            label={accessLabel}
+            ariaLabel={accessLabel}
+            onRemove={editable ? () => handleRemove(access) : undefined}
+          />
         );
       })}
     </>

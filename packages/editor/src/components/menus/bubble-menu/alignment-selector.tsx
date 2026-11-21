@@ -7,8 +7,9 @@
 import type { Editor } from "@tiptap/core";
 import type { ComponentType, SVGProps } from "react";
 import { AlignCenterOutline, AlignLeftOutline, AlignRightOutline } from "@makeplane/propel/icons";
-// plane utils
-import { cn } from "@plane/utils";
+// plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { ToolbarButton, ToolbarGroup } from "@makeplane/propel/elements/toolbar";
 // components
 import { TextAlignItem } from "@/components/menus";
 // types
@@ -27,6 +28,7 @@ export function TextAlignmentSelector(props: Props) {
   const textAlignmentOptions: {
     itemKey: TEditorCommands;
     renderKey: string;
+    label: string;
     icon: ComponentType<SVGProps<SVGSVGElement>>;
     command: () => void;
     isActive: () => boolean;
@@ -34,6 +36,7 @@ export function TextAlignmentSelector(props: Props) {
     {
       itemKey: "text-align",
       renderKey: "text-align-left",
+      label: "Align left",
       icon: AlignLeftOutline,
       command: () =>
         menuItem.command({
@@ -44,6 +47,7 @@ export function TextAlignmentSelector(props: Props) {
     {
       itemKey: "text-align",
       renderKey: "text-align-center",
+      label: "Align center",
       icon: AlignCenterOutline,
       command: () =>
         menuItem.command({
@@ -54,6 +58,7 @@ export function TextAlignmentSelector(props: Props) {
     {
       itemKey: "text-align",
       renderKey: "text-align-right",
+      label: "Align right",
       icon: AlignRightOutline,
       command: () =>
         menuItem.command({
@@ -65,25 +70,24 @@ export function TextAlignmentSelector(props: Props) {
   if (editorState.code) return null;
 
   return (
-    <div className="flex gap-0.5 px-2">
+    <ToolbarGroup role="group" aria-label="Text alignment">
       {textAlignmentOptions.map((item) => (
-        <button
+        <ToolbarButton
           key={item.renderKey}
           type="button"
+          size="sm"
+          labeled={false}
+          aria-label={item.label}
+          aria-pressed={item.isActive()}
+          data-pressed={item.isActive() ? "" : undefined}
           onClick={(e) => {
             e.stopPropagation();
             item.command();
           }}
-          className={cn(
-            "grid size-7 place-items-center rounded-sm text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
-            {
-              "bg-layer-1 text-primary": item.isActive(),
-            }
-          )}
         >
-          <item.icon className="size-4" />
-        </button>
+          <Icon icon={item.icon} />
+        </ToolbarButton>
       ))}
-    </div>
+    </ToolbarGroup>
   );
 }

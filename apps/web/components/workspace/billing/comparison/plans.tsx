@@ -58,7 +58,7 @@ export function ComingSoonBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "w-fit rounded-sm bg-accent-primary px-1.5 py-0.5 text-9 font-semibold whitespace-nowrap text-on-color",
+        "w-fit rounded-sm bg-accent-primary px-1.5 py-0.5 text-caption-2xs-semibold whitespace-nowrap text-on-color",
         className
       )}
     >
@@ -630,7 +630,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //     one: "Basic text search",
       //     pro: (
       //       <span className="flex flex-col items-end lg:items-center gap-1">
-      //         <span className="bg-[#3f76ff] text-on-color font-semibold text-9 p-0.5 w-fit whitespace-nowrap rounded-xs">
+      //         <span className="bg-[#3f76ff] text-on-color text-caption-2xs-semibold p-0.5 w-fit whitespace-nowrap rounded-xs">
       //           COMING SOON
       //         </span>
       //         Operator capsules from text or PQL
@@ -638,7 +638,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //     ),
       //     business: (
       //       <span className="flex flex-col items-end lg:items-center gap-1">
-      //         <span className="bg-[#3f76ff] text-on-color font-semibold text-9 p-0.5 w-fit whitespace-nowrap rounded-xs">
+      //         <span className="bg-[#3f76ff] text-on-color text-caption-2xs-semibold p-0.5 w-fit whitespace-nowrap rounded-xs">
       //           COMING SOON
       //         </span>
       //         Operator capsules from text or PQL
@@ -646,7 +646,7 @@ export const PLANS_COMPARISON_LIST: TPlansComparisonDetails[] = [
       //     ),
       //     enterprise: (
       //       <span className="flex flex-col items-end lg:items-center gap-1">
-      //         <span className="bg-[#3f76ff] text-on-color font-semibold text-9 p-0.5 w-fit whitespace-nowrap rounded-xs">
+      //         <span className="bg-[#3f76ff] text-on-color text-caption-2xs-semibold p-0.5 w-fit whitespace-nowrap rounded-xs">
       //           COMING SOON
       //         </span>
       //         Operator capsules from text or PQL

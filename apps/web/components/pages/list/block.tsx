@@ -42,15 +42,16 @@ export const PageListBlock = observer(function PageListBlock(props: TPageListBlo
   return (
     <ListItem
       prependTitleElement={
-        <>
+        <span className="grid size-6 shrink-0 place-items-center">
           {logo_props?.in_use ? (
             <Logo logo={logo_props} size={16} type="lucide" />
           ) : (
-            <PagesOutline className="h-4 w-4 text-tertiary" />
+            <PagesOutline className="size-4 text-tertiary" />
           )}
-        </>
+        </span>
       }
       title={getPageName(name)}
+      leftElementClassName="gap-2"
       itemLink={getRedirectionLink()}
       actionableItems={<BlockItemAction page={page} parentRef={parentRef} storeType={storeType} />}
       isMobile={isMobile}

@@ -6,8 +6,10 @@
 
 import { observer } from "mobx-react";
 // plane imports
-import type { E_SORT_ORDER, TActivityFilters, EActivityFilterType } from "@plane/constants";
-import { BASE_ACTIVITY_FILTER_TYPES, filterActivityOnSelectedFilters } from "@plane/constants";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
+import type { E_SORT_ORDER, TActivityFilters } from "@plane/constants";
+import { BASE_ACTIVITY_FILTER_TYPES, EActivityFilterType, filterActivityOnSelectedFilters } from "@plane/constants";
+import { useTranslation } from "@plane/i18n";
 import type { TCommentsOperations } from "@plane/types";
 // components
 import { CommentCard } from "@/components/comments/card/root";
@@ -41,6 +43,8 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
     disabled,
     sortOrder,
   } = props;
+  // translation
+  const { t } = useTranslation();
   // store hooks
   const {
     activity: { getActivityAndCommentsByIssueId },
@@ -51,9 +55,23 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
 
   if (!activityAndComments) return <IssueActivityLoader />;
 
-  if (activityAndComments.length <= 0) return null;
-
   const filteredActivityAndComments = filterActivityOnSelectedFilters(activityAndComments, selectedFilters);
+
+  if (filteredActivityAndComments.length <= 0) {
+    const isCommentsOnly = selectedFilters.every((filter) => filter === EActivityFilterType.COMMENT);
+    return (
+      <div className="py-6">
+        <EmptyStateCompact
+          assetKey={isCommentsOnly ? "comment" : "activity"}
+          title={t(isCommentsOnly ? "activity_empty_state.no_comments" : "activity_empty_state.no_activity")}
+        />
+      </div>
+    );
+  }
+
+  // the last entry ends the timeline rail
+  const getEnds = (index: number) =>
+    index === filteredActivityAndComments.length - 1 ? "bottom" : index === 0 ? "top" : undefined;
 
   return (
     <div>
@@ -66,7 +84,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             entityId={issueId}
             comment={comment}
             activityOperations={activityOperations}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
+            ends={getEnds(index)}
             showAccessSpecifier={!!showAccessSpecifier}
             showCopyLinkOption={!isIntakeIssue}
             disabled={disabled}
@@ -74,11 +92,7 @@ export const IssueActivityCommentRoot = observer(function IssueActivityCommentRo
             enableReplies
           />
         ) : BASE_ACTIVITY_FILTER_TYPES.includes(activityComment.activity_type as EActivityFilterType) ? (
-          <IssueActivityItem
-            key={activityComment.id}
-            activityId={activityComment.id}
-            ends={index === 0 ? "top" : index === filteredActivityAndComments.length - 1 ? "bottom" : undefined}
-          />
+          <IssueActivityItem key={activityComment.id} activityId={activityComment.id} ends={getEnds(index)} />
         ) : null;
       })}
     </div>

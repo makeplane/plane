@@ -89,10 +89,10 @@ export const PageOptionsDropdown = observer(function PageOptionsDropdown(props: 
         {
           key: "version-history",
           action: () => {
-            // update query param to show info tab in navigation pane
+            // update query param to show the version history in navigation pane
             const updatedRoute = updateQueryParams({
               paramsToAdd: {
-                [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: "info" satisfies TPageNavigationPaneTab,
+                [PAGE_NAVIGATION_PANE_TABS_QUERY_PARAM]: "version_history" satisfies TPageNavigationPaneTab,
               },
             });
             router.push(updatedRoute);

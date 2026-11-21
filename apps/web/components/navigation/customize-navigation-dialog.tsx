@@ -4,7 +4,8 @@
  * See the LICENSE file for details.
  */
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useId, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 import { CloseOutline, DragDropOutline } from "@makeplane/propel/icons";
@@ -12,6 +13,17 @@ import { CloseOutline, DragDropOutline } from "@makeplane/propel/icons";
 import { WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import { Checkbox } from "@makeplane/propel/components/checkbox";
+import { CheckboxField } from "@makeplane/propel/components/checkbox-field";
+import { Field, FieldItem, FieldItemContent } from "@makeplane/propel/components/field";
+import {
+  Field as InputField,
+  FieldError as InputFieldError,
+  FieldLabel as InputFieldLabel,
+} from "@makeplane/propel/elements/field";
+import { RadioGroup } from "@makeplane/propel/components/radio";
+import { RadioGroupFieldOption } from "@makeplane/propel/components/radio-group-field";
+import { Separator } from "@makeplane/propel/components/separator";
+import { Input, InputGroup } from "@makeplane/propel/elements/input";
 import {
   Dialog,
   DialogBody,
@@ -27,7 +39,6 @@ import {
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Sortable } from "@plane/blocks/common";
-import { cn } from "@plane/utils";
 // hooks
 import { useUserPermissions } from "@/hooks/store/user";
 import {
@@ -35,8 +46,6 @@ import {
   useProjectNavigationPreferences,
   useWorkspaceNavigationPreferences,
 } from "@/hooks/use-navigation-preferences";
-// helpers
-import { getSidebarNavigationItemIcon } from "@/components/workspace/sidebar/helper";
 // types
 import type { TPersonalNavigationItemKey } from "@plane/types";
 
@@ -58,11 +67,49 @@ const PERSONAL_ITEMS: Array<{ key: TPersonalNavigationItemKey; labelTranslationK
   { key: "drafts", labelTranslationKey: "drafts" },
 ];
 
+function NavigationSection(props: { title: string; children: ReactNode }) {
+  const { title, children } = props;
+  return (
+    <section className="flex flex-col gap-2">
+      <h3 className="text-body-sm-medium text-primary">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+function SortableCheckboxRow(props: {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+  children: ReactNode;
+}) {
+  const { checked, onCheckedChange, children } = props;
+  return (
+    // bg keeps the drag preview (portaled outside the list box) opaque.
+    <div className="flex items-center rounded-sm bg-layer-1">
+      <span className="flex cursor-grab active:cursor-grabbing">
+        <Icon icon={DragDropOutline} size="xs" tint="muted" />
+      </span>
+      {/* The drag handle stays outside the field, so grabbing it does not toggle the item. */}
+      <div className="min-w-0 flex-1">
+        <Field>
+          <FieldItem>
+            <span className="flex h-5 shrink-0 items-center">
+              <Checkbox checked={checked} onCheckedChange={onCheckedChange} />
+            </span>
+            <FieldItemContent size="md">{children}</FieldItemContent>
+          </FieldItem>
+        </Field>
+      </div>
+    </div>
+  );
+}
+
 export const CustomizeNavigationDialog = observer(function CustomizeNavigationDialog(
   props: TCustomizeNavigationDialogProps
 ) {
   const { isOpen, onClose } = props;
   const { t } = useTranslation();
+  const projectCountId = useId();
 
   // router
   const { workspaceSlug } = useParams();
@@ -203,7 +250,7 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
         if (!open) onClose();
       }}
     >
-      <DialogContent size="md">
+      <DialogContent size="sm">
         <DialogCloseGroup>
           <IconButton
             variant="ghost"
@@ -227,155 +274,129 @@ export const CustomizeNavigationDialog = observer(function CustomizeNavigationDi
 
           {/* Content */}
           <DialogBody tabIndex={0}>
-            <div className="space-y-4">
+            <div className="flex flex-col gap-5">
               {/* Personal Section */}
-              <div className="flex flex-col gap-2">
-                <h3 className="text-13 font-semibold text-placeholder">{t("personal")}</h3>
-                <div className="rounded-md border border-subtle bg-surface-2 py-2">
+              <NavigationSection title={t("personal")}>
+                <div className="flex flex-col gap-1 rounded-lg border border-subtle bg-layer-1 px-3 py-2">
                   <Sortable
                     data={personalItems}
                     onChange={handlePersonalReorder}
                     keyExtractor={(item) => item.key}
                     id="personal-enabled-items"
                     render={(item) => (
-                      <div className="flex items-center gap-2 rounded-md px-2 py-1.5 transition-all duration-200 hover:bg-surface-2">
-                        <DragDropOutline className="size-4 cursor-grab text-placeholder transition-colors active:cursor-grabbing" />
-                        <Checkbox
-                          checked={!!personalPreferences.items[item.key]?.enabled}
-                          onCheckedChange={(checked) => togglePersonalItem(item.key, checked)}
-                          aria-label={t(item.labelTranslationKey)}
-                        />
-                        <div className="flex flex-1 items-center gap-2">
-                          {getSidebarNavigationItemIcon(item.key)}
-                          <label className="flex-1 cursor-pointer text-13 text-primary">
-                            {t(item.labelTranslationKey)}
-                          </label>
-                        </div>
-                      </div>
+                      <SortableCheckboxRow
+                        checked={!!personalPreferences.items[item.key]?.enabled}
+                        onCheckedChange={(checked) => togglePersonalItem(item.key, checked)}
+                      >
+                        {t(item.labelTranslationKey)}
+                      </SortableCheckboxRow>
                     )}
                   />
                 </div>
-              </div>
+              </NavigationSection>
 
               {/* Workspace Section */}
-              <div className="flex flex-col gap-2">
-                <h3 className="text-13 font-semibold text-placeholder">{t("common.workspace")}</h3>
-                <div className="rounded-md border border-subtle bg-surface-2 py-2">
+              <NavigationSection title={t("common.workspace")}>
+                <div className="flex flex-col gap-1 rounded-lg border border-subtle bg-layer-1 px-3 py-2">
                   {/* Pinned Items - Draggable */}
                   <Sortable
                     data={workspaceItems}
                     onChange={handleReorder}
                     keyExtractor={(item) => item.key}
                     id="workspace-pinned-items"
-                    render={(item) => {
-                      const icon = getSidebarNavigationItemIcon(item.key);
-                      return (
-                        <div className="group flex items-center gap-2 rounded-md px-2 py-1.5 transition-all duration-200 hover:bg-surface-2">
-                          <DragDropOutline className="size-4 cursor-grab text-placeholder transition-colors active:cursor-grabbing" />
-                          <Checkbox
-                            checked={!!workspacePreferences.items[item.key]?.is_pinned}
-                            onCheckedChange={(checked) => handleWorkspaceItemToggle(item.key, checked)}
-                            aria-label={t(item.labelTranslationKey)}
-                          />
-                          <div className="flex flex-1 items-center gap-2">
-                            {icon}
-                            <span className="text-13 text-primary">{t(item.labelTranslationKey)}</span>
-                          </div>
-                        </div>
-                      );
-                    }}
+                    render={(item) => (
+                      <SortableCheckboxRow
+                        checked={!!workspacePreferences.items[item.key]?.is_pinned}
+                        onCheckedChange={(checked) => handleWorkspaceItemToggle(item.key, checked)}
+                      >
+                        {t(item.labelTranslationKey)}
+                      </SortableCheckboxRow>
+                    )}
                   />
                 </div>
-              </div>
+              </NavigationSection>
 
               {/* Projects Section */}
-              <div className="flex flex-col gap-2">
-                <h3 className="text-13 font-semibold text-placeholder">{t("projects")}</h3>
+              <NavigationSection title={t("projects")}>
+                <div className="flex flex-col gap-2 rounded-lg border border-subtle bg-layer-1 px-1 py-2">
+                  {/* Navigation Mode Radio Buttons */}
+                  {/* RadioGroupFieldOption is a Base UI Field.Item, which throws outside a Field root. */}
+                  <Field>
+                    <RadioGroup
+                      density="comfortable"
+                      aria-label={t("projects")}
+                      value={projectPreferences.navigationMode}
+                      onValueChange={(value) =>
+                        void updateNavigationMode(value === "ACCORDION" ? "ACCORDION" : "TABBED")
+                      }
+                    >
+                      <RadioGroupFieldOption
+                        size="md"
+                        value="ACCORDION"
+                        label={t("accordion_navigation_control")}
+                        description="Feature tabs will appear as nested items under project and acts as accordion."
+                      />
+                      <RadioGroupFieldOption
+                        size="md"
+                        value="TABBED"
+                        label={t("horizontal_navigation_bar")}
+                        description="Feature tabs will appear as horizontal tabs inside a project."
+                      />
+                    </RadioGroup>
+                  </Field>
 
-                <div className="rounded-md border border-subtle bg-surface-2 px-2 py-2">
-                  <div className="space-y-3">
-                    {/* Navigation Mode Radio Buttons */}
-                    <div className="space-y-2">
-                      {/* oxlint-disable-next-line jsx_a11y/label-has-associated-control */}
-                      <label className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
-                        <input
-                          type="radio"
-                          name="navigation-mode"
-                          value="ACCORDION"
-                          checked={projectPreferences.navigationMode === "ACCORDION"}
-                          onChange={() => updateNavigationMode("ACCORDION")}
-                          className="mt-1 size-4 text-accent-primary focus:ring-accent-strong"
-                        />
-                        <div className="flex-1">
-                          <div className="text-13 text-primary">{t("accordion_navigation_control")}</div>
-                          <div className="text-11 text-secondary">
-                            Feature tabs will appear as nested items under project and acts as accordion.
-                          </div>
-                        </div>
-                      </label>
+                  <div className="px-2">
+                    <Separator orientation="horizontal" decorative />
+                  </div>
 
-                      {/* oxlint-disable-next-line jsx_a11y/label-has-associated-control */}
-                      <label className="flex cursor-pointer gap-2 rounded-md px-2 py-1.5 hover:bg-surface-2">
-                        <input
-                          type="radio"
-                          name="navigation-mode"
-                          value="TABBED"
-                          checked={projectPreferences.navigationMode === "TABBED"}
-                          onChange={() => updateNavigationMode("TABBED")}
-                          className="mt-1 size-4 text-accent-primary focus:ring-accent-strong"
-                        />
-                        <div className="flex-1">
-                          <div className="text-13 text-primary">{t("horizontal_navigation_bar")}</div>
-                          <div className="text-11 text-secondary">
-                            Feature tabs will appear as horizontal tabs inside a project.
-                          </div>
-                        </div>
-                      </label>
-                    </div>
+                  {/* Limited Projects Checkbox */}
+                  <div className="flex flex-col">
+                    <CheckboxField
+                      size="md"
+                      label={t("show_limited_projects_on_sidebar")}
+                      checked={projectPreferences.showLimitedProjects}
+                      onCheckedChange={(checked) => void updateShowLimitedProjects(checked)}
+                    />
 
-                    {/* Limited Projects Checkbox */}
-                    <div className="space-y-1">
-                      <div className="rounded-md px-2 py-1.5 hover:bg-surface-2">
-                        <Checkbox
-                          label={t("show_limited_projects_on_sidebar")}
-                          stretch="full"
-                          checked={projectPreferences.showLimitedProjects}
-                          onCheckedChange={updateShowLimitedProjects}
-                        />
+                    {projectPreferences.showLimitedProjects && (
+                      // Indented to line up with the "Show limited projects" label above it.
+                      <div className="flex flex-col gap-2 pr-2 pb-1 pl-8">
+                        <InputField size="md">
+                          <InputFieldLabel htmlFor={projectCountId} size="md" inset={false}>
+                            {t("enter_number_of_projects")}
+                          </InputFieldLabel>
+                          <InputGroup size="lg">
+                            <Input
+                              id={projectCountId}
+                              size="lg"
+                              type="number"
+                              min="1"
+                              step="1"
+                              value={projectCountInput}
+                              onKeyDown={handleKeyDown}
+                              onChange={(e) => handleProjectCountChange(e.target.value)}
+                              aria-invalid={
+                                parseInt(projectCountInput) < 1 && projectCountInput !== "" ? true : undefined
+                              }
+                              aria-describedby={
+                                parseInt(projectCountInput) < 1 && projectCountInput !== ""
+                                  ? `${projectCountId}-error`
+                                  : undefined
+                              }
+                              data-invalid={parseInt(projectCountInput) >= 1 ? undefined : ""}
+                            />
+                          </InputGroup>
+                          {parseInt(projectCountInput) < 1 && projectCountInput !== "" && (
+                            <InputFieldError id={`${projectCountId}-error`} size="md">
+                              Minimum value is 1
+                            </InputFieldError>
+                          )}
+                        </InputField>
                       </div>
-
-                      {projectPreferences.showLimitedProjects && (
-                        <div className="pl-8">
-                          <div className="flex w-full flex-col gap-1">
-                            <div className="flex w-full flex-col gap-2 pb-1.5">
-                              <label className="w-full text-11 text-secondary">{t("enter_number_of_projects")}</label>
-                              <input
-                                type="number"
-                                min="1"
-                                step="1"
-                                value={projectCountInput}
-                                onKeyDown={handleKeyDown}
-                                onChange={(e) => handleProjectCountChange(e.target.value)}
-                                className={cn(
-                                  "w-full rounded-md px-2 py-1 text-13",
-                                  "border bg-surface-2",
-                                  "text-secondary",
-                                  parseInt(projectCountInput) >= 1
-                                    ? "border-strong focus:border-accent-strong focus:ring-1 focus:ring-accent-strong"
-                                    : "border-danger-strong focus:border-danger-strong focus:ring-1 focus:ring-danger-strong"
-                                )}
-                              />
-                            </div>
-                            {parseInt(projectCountInput) < 1 && projectCountInput !== "" && (
-                              <span className="pl-0.5 text-11 text-danger-primary">Minimum value is 1</span>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
-              </div>
+              </NavigationSection>
             </div>
           </DialogBody>
         </DialogMain>

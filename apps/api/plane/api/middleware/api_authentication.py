@@ -49,4 +49,7 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
 
         # Validate the API token
         user, token = self.validate_api_token(token)
+
+        # Mark the underlying Django request, which is the one APITokenLogMiddleware sees
+        getattr(request, "_request", request).api_key_authenticated = True
         return user, token

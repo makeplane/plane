@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { AddOutline } from "@makeplane/propel/icons";
+import { Button } from "@makeplane/propel/components/button";
 // hooks
 import { useSticky } from "@/hooks/use-stickies";
 // local imports
@@ -30,33 +31,30 @@ export const StickiesWidget = observer(function StickiesWidget() {
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <div className="text-14 font-semibold text-tertiary">{t("stickies.title")}</div>
+      <div className="mb-3 flex items-center justify-between">
+        <div className="text-body-sm-semibold text-tertiary">{t("stickies.title")}</div>
         {/* actions */}
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <StickySearch />
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
+            stretch="auto"
+            icon={<AddOutline />}
+            label={t("stickies.add")}
+            loading={creatingSticky}
             onClick={() => {
               toggleShowNewSticky(true);
               stickyOperations.create();
             }}
-            className="my-auto flex gap-1 text-13 font-medium text-accent-primary"
-            disabled={creatingSticky}
-          >
-            <AddOutline className="my-auto size-4" />
-            <span>{t("stickies.add")}</span>
-            {creatingSticky && (
-              <div
-                className="size-4 animate-spin rounded-full border-2 border-accent-strong border-t-transparent"
-                role="status"
-                aria-label="loading"
-              />
-            )}
-          </button>
+          />
         </div>
       </div>
-      <div className="-mx-2">
-        <StickiesTruncated />
+      {/* clip the -mx-2 bleed so the sticky grid never adds a horizontal scrollbar */}
+      <div className="overflow-x-clip">
+        <div className="-mx-2">
+          <StickiesTruncated />
+        </div>
       </div>
     </div>
   );

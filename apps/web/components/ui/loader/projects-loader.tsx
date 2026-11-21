@@ -6,37 +6,38 @@
 
 import { range } from "lodash-es";
 
+/** Mirrors the project card: cover with logo and actions, name and identifier, lead row, footer. */
+function ProjectCardSkeleton() {
+  return (
+    <div className="flex flex-col overflow-hidden rounded-lg border border-subtle-1 bg-layer-2">
+      <div className="relative h-[108px] w-full bg-layer-1">
+        <span className="absolute top-3 left-3 size-9 rounded-md bg-layer-3" />
+        <div className="absolute top-3 right-3 flex items-center gap-2">
+          <span className="size-6 rounded-md bg-layer-3" />
+          <span className="size-6 rounded-md bg-layer-3" />
+        </div>
+      </div>
+      <div className="space-y-4 px-3 pt-1.5 pb-3">
+        <div className="space-y-1.5">
+          <span className="block h-4 w-32 rounded-sm bg-layer-1" />
+          <span className="block h-3 w-16 rounded-sm bg-layer-1" />
+        </div>
+        <span className="block h-4 w-36 rounded-sm bg-layer-1" />
+      </div>
+      <div className="flex items-center justify-between border-t border-subtle p-3">
+        <span className="h-6 w-16 rounded-sm bg-layer-1" />
+        <span className="h-5 w-12 rounded-full bg-layer-1" />
+      </div>
+    </div>
+  );
+}
+
 export function ProjectsLoader() {
   return (
-    <div className="h-full w-full animate-pulse overflow-y-auto p-8">
-      <div className="grid grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-3">
-        {range(3).map((i) => (
-          <div key={i} className="flex cursor-pointer flex-col rounded-sm border border-subtle bg-surface-1">
-            <div className="relative min-h-[118px] w-full rounded-t border-b border-subtle">
-              <div className="absolute inset-0 z-[1] bg-gradient-to-t from-black/20 to-transparent">
-                <div className="absolute bottom-4 z-10 flex h-10 w-full items-center justify-between gap-3 px-4">
-                  <div className="flex flex-grow items-center gap-2.5 truncate">
-                    <span className="min-h-9 min-w-9 rounded-sm bg-layer-1" />
-                    <div className="flex w-full flex-col justify-between gap-0.5 truncate">
-                      <span className="h-4 w-28 rounded-sm bg-layer-1" />
-                      <span className="h-4 w-16 rounded-sm bg-layer-1" />
-                    </div>
-                  </div>
-                  <div className="flex h-full flex-shrink-0 items-center gap-2">
-                    <span className="h-6 w-6 rounded-sm bg-layer-1" />
-                    <span className="h-6 w-6 rounded-sm bg-layer-1" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex h-[104px] w-full flex-col justify-between rounded-b-sm p-4">
-              <span className="h-4 w-36 rounded-sm bg-layer-1" />
-              <div className="item-center flex justify-between">
-                <span className="h-5 w-20 rounded-sm bg-layer-1" />
-                <span className="h-5 w-5 rounded-sm bg-layer-1" />
-              </div>
-            </div>
-          </div>
+    <div className="h-full w-full animate-pulse overflow-y-auto px-page-x py-page-y">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {range(6).map((i) => (
+          <ProjectCardSkeleton key={i} />
         ))}
       </div>
     </div>

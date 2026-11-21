@@ -82,6 +82,7 @@ export const IssueModuleSelect = observer(function IssueModuleSelect(props: TIss
         onChange={handleChange}
         disabled={disableSelect}
         variant="select-ghost-md"
+        className="min-h-8"
         placeholder={t("module.no_module")}
         tooltip
       />

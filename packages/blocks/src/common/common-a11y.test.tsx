@@ -27,6 +27,86 @@ describe("FavoriteStar", () => {
     render(<FavoriteStar selected={false} onClick={vi.fn()} aria-label="Star cycle" />);
     expect(screen.getByRole("button", { name: "Star cycle" })).toBeDefined();
   });
+
+  it("is keyboard focusable and activates without submitting its form", async () => {
+    const onClick = vi.fn();
+    const onSubmit = vi.fn((event: React.FormEvent<HTMLFormElement>) => event.preventDefault());
+    render(
+      <form onSubmit={onSubmit}>
+        <FavoriteStar selected={false} onClick={onClick} />
+      </form>
+    );
+    const button = screen.getByRole("button", { name: "Add to favorites" });
+    expect(button.getAttribute("type")).toBe("button");
+    expect(button.querySelector("button, a, input, select, textarea, [tabindex]")).toBeNull();
+
+    const user = userEvent.setup();
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    await user.keyboard("{Enter}");
+    expect(onClick).toHaveBeenCalledTimes(1);
+    await user.keyboard(" ");
+    expect(onClick).toHaveBeenCalledTimes(2);
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("passes the native button event through so the caller can prevent parent actions", async () => {
+    const onParentClick = vi.fn();
+    let clickedButton: HTMLButtonElement | undefined;
+    const onClick = vi.fn((event: React.MouseEvent<HTMLButtonElement>) => {
+      clickedButton = event.currentTarget;
+      event.preventDefault();
+      event.stopPropagation();
+      expect(event.defaultPrevented).toBe(true);
+      expect(event.isPropagationStopped()).toBe(true);
+    });
+    render(
+      <div role="presentation" onClick={onParentClick}>
+        <FavoriteStar selected={false} onClick={onClick} />
+      </div>
+    );
+    const button = screen.getByRole("button", { name: "Add to favorites" });
+    await userEvent.click(button);
+    expect(clickedButton).toBe(button);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(onParentClick).not.toHaveBeenCalled();
+  });
+
+  it("preserves caller button and decorative icon classes across selection changes", () => {
+    const props = {
+      buttonClassName: "h-6 w-6 bg-white/10 rounded-sm",
+      iconClassName: "h-3 w-3 text-on-color",
+      onClick: vi.fn(),
+    };
+    const { rerender } = render(<FavoriteStar {...props} selected={false} />);
+    for (const selected of [false, true]) {
+      rerender(<FavoriteStar {...props} selected={selected} />);
+      const button = screen.getByRole("button", { name: "Add to favorites" });
+      expect(button.getAttribute("aria-pressed")).toBe(String(selected));
+      for (const className of props.buttonClassName.split(" ")) {
+        expect(button.classList.contains(className)).toBe(true);
+      }
+      const icons = button.querySelectorAll("svg");
+      expect(icons).toHaveLength(2);
+      for (const icon of icons) {
+        expect(icon.getAttribute("aria-hidden")).toBe("true");
+        for (const className of props.iconClassName.split(" ")) {
+          expect(icon.classList.contains(className)).toBe(true);
+        }
+      }
+    }
+  });
+
+  it("defaults to the compact ghost button and takes caller size and variant", () => {
+    const { rerender } = render(<FavoriteStar selected={false} onClick={vi.fn()} />);
+    const ghostClasses = screen.getByRole("button", { name: "Add to favorites" }).className;
+    expect(ghostClasses).toContain("size-(--control-height-sm)");
+
+    rerender(<FavoriteStar selected={false} onClick={vi.fn()} size="md" variant="secondary" />);
+    const secondaryClasses = screen.getByRole("button", { name: "Add to favorites" }).className;
+    expect(secondaryClasses).toContain("size-(--control-height-md)");
+    expect(secondaryClasses).not.toBe(ghostClasses.replace("size-(--control-height-sm)", "size-(--control-height-md)"));
+  });
 });
 
 describe("DragHandle", () => {

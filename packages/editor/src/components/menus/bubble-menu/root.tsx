@@ -11,8 +11,9 @@ import { useEditorState } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 import type { BubbleMenuProps } from "@tiptap/react/menus";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
-// plane utils
-import { cn } from "@plane/utils";
+// plane imports
+import { Icon } from "@makeplane/propel/components/icon";
+import { Toolbar, ToolbarButton, ToolbarGroup, ToolbarSeparator } from "@makeplane/propel/elements/toolbar";
 // components
 import type { EditorMenuItem } from "@/components/menus";
 import {
@@ -222,44 +223,50 @@ export function EditorBubbleMenu(props: Props) {
       style={{ zIndex: 9, transition: "transform 0.15s ease-out" }}
     >
       {!isSelecting && (
-        <div
-          ref={menuRef}
-          className="horizontal-scrollbar flex scrollbar-xs divide-x divide-subtle-1 overflow-x-scroll rounded-lg border border-subtle bg-surface-1 py-2 shadow-raised-200"
-        >
-          <div className="px-2">
-            <BubbleMenuNodeSelector editor={editor} />
-          </div>
-          {!editorState.code && (
-            <div className="px-2">
-              <BubbleMenuLinkSelector editor={editor} />
+        <div ref={menuRef} className="horizontal-scrollbar scrollbar-xs flex overflow-x-scroll">
+          <Toolbar size="sm" elevation="raised" role="group" aria-label="Formatting toolbar">
+            <div className="h-(--control-height-sm) px-2">
+              <BubbleMenuNodeSelector editor={editor} />
             </div>
-          )}
-          {!editorState.code && (
-            <div className="px-2">
-              <BubbleMenuColorSelector editor={editor} editorState={editorState} />
-            </div>
-          )}
-          <div className="flex gap-0.5 px-2">
-            {basicFormattingOptions.map((item) => (
-              <button
-                key={item.key}
-                type="button"
-                onClick={(e) => {
-                  item.command();
-                  e.stopPropagation();
-                }}
-                className={cn(
-                  "grid size-7 place-items-center rounded-sm text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
-                  {
-                    "bg-layer-1 text-primary": editorState[item.key],
-                  }
-                )}
-              >
-                <item.icon className="size-4" />
-              </button>
-            ))}
-          </div>
-          <TextAlignmentSelector editor={editor} editorState={editorState} />
+            {!editorState.code && (
+              <>
+                <ToolbarSeparator aria-hidden="true" />
+                <div className="h-(--control-height-sm) px-2">
+                  <BubbleMenuLinkSelector editor={editor} />
+                </div>
+              </>
+            )}
+            {!editorState.code && (
+              <>
+                <ToolbarSeparator aria-hidden="true" />
+                <div className="h-(--control-height-sm) px-2">
+                  <BubbleMenuColorSelector editor={editor} editorState={editorState} />
+                </div>
+              </>
+            )}
+            <ToolbarSeparator aria-hidden="true" />
+            <ToolbarGroup role="group" aria-label="Text formatting">
+              {basicFormattingOptions.map((item) => (
+                <ToolbarButton
+                  key={item.key}
+                  type="button"
+                  size="sm"
+                  labeled={false}
+                  aria-label={item.name}
+                  aria-pressed={editorState[item.key]}
+                  data-pressed={editorState[item.key] ? "" : undefined}
+                  onClick={(e) => {
+                    item.command();
+                    e.stopPropagation();
+                  }}
+                >
+                  <Icon icon={item.icon} />
+                </ToolbarButton>
+              ))}
+            </ToolbarGroup>
+            {!editorState.code && <ToolbarSeparator aria-hidden="true" />}
+            <TextAlignmentSelector editor={editor} editorState={editorState} />
+          </Toolbar>
         </div>
       )}
     </BubbleMenu>

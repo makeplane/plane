@@ -59,7 +59,7 @@ export const ModuleGanttBlock = observer(function ModuleGanttBlock(props: Props)
       >
         <div className="absolute top-0 left-0 h-full w-full bg-surface-1/50" />
         <div
-          className="sticky w-auto truncate overflow-hidden px-2.5 py-1 text-13 text-primary"
+          className="sticky w-auto truncate overflow-hidden px-2.5 py-1 text-body-xs-regular text-primary"
           style={{ left: `${SIDEBAR_WIDTH}px` }}
         >
           {moduleDetails?.name}
@@ -84,7 +84,7 @@ export const ModuleGanttSidebarBlock = observer(function ModuleGanttSidebarBlock
       draggable={false}
     >
       <ModuleStatusIcon status={moduleDetails?.status ?? "backlog"} height="16px" width="16px" />
-      <h6 className="flex-grow truncate text-13 font-medium">{moduleDetails?.name}</h6>
+      <h6 className="flex-grow truncate text-body-xs-medium">{moduleDetails?.name}</h6>
     </Link>
   );
 });

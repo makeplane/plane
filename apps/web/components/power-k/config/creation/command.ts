@@ -4,12 +4,12 @@
  * See the LICENSE file for details.
  */
 
-import { SquarePlus } from "lucide-react";
 import {
   CreateFolderOutline,
   CyclesOutline,
   DocumentationOutline,
   ModuleOutline,
+  PlusSquareOutline,
   WorkItemsOutline,
 } from "@makeplane/propel/icons";
 // plane imports
@@ -153,7 +153,7 @@ export const usePowerKCreationCommandsRecord = (): Record<TPowerKCreationCommand
       type: "action",
       group: "create",
       i18n_title: "power_k.creation_actions.create_workspace",
-      icon: SquarePlus,
+      icon: PlusSquareOutline,
       action: (ctx) => ctx.router.push("/create-workspace"),
       isEnabled: () => Boolean(!isWorkspaceCreationDisabled),
       isVisible: () => Boolean(!isWorkspaceCreationDisabled),

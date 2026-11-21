@@ -7,8 +7,9 @@
 import type { Editor } from "@tiptap/react";
 
 import { ChevronDownOutline, TickOutline } from "@makeplane/propel/icons";
-// plane utils
-import { cn } from "@plane/utils";
+import { Icon } from "@makeplane/propel/components/icon";
+import { MenuItemContent, MenuItemIndicator, MenuItemTitle, MenuPopup } from "@makeplane/propel/elements/menu";
+import { ToolbarMenuTriggerButton, ToolbarMenuTriggerLabel } from "@makeplane/propel/elements/toolbar";
 // components
 import type { EditorMenuItem } from "@/components/menus";
 import {
@@ -28,7 +29,7 @@ import {
 // types
 import type { TEditorCommands } from "@/types";
 // local imports
-import { FloatingMenuRoot } from "../floating-menu/root";
+import { FloatingMenuItem, FloatingMenuRoot } from "../floating-menu/root";
 import { useFloatingMenu } from "../floating-menu/use-floating-menu";
 
 type Props = {
@@ -63,48 +64,44 @@ export function BubbleMenuNodeSelector(props: Props) {
     <FloatingMenuRoot
       classNames={{
         buttonContainer: "h-full",
-        button: cn(
-          "flex h-full items-center gap-1 rounded-sm px-3 text-13 font-medium whitespace-nowrap text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
-          {
-            "bg-layer-1": context.open,
-          }
-        ),
       }}
+      renderButton={(buttonProps) => (
+        <ToolbarMenuTriggerButton {...buttonProps} size="sm" data-popup-open={context.open ? "" : undefined} />
+      )}
       menuButton={
         <>
-          <span>{activeItem?.name}</span>
-          <ChevronDownOutline className="size-3 shrink-0" />
+          <ToolbarMenuTriggerLabel>{activeItem?.name}</ToolbarMenuTriggerLabel>
+          <Icon icon={ChevronDownOutline} />
         </>
       }
       options={options}
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
     >
-      <section className="mt-1 flex max-h-[90vh] w-48 flex-col overflow-y-scroll rounded-md border-[0.5px] border-strong bg-surface-1 px-2 py-2.5 shadow-raised-200">
+      <MenuPopup elevation="raised" render={<section className="mt-1 max-h-[90vh] overflow-y-scroll" />}>
         {items.map((item) => (
-          <button
+          <FloatingMenuItem
             key={item.name}
             type="button"
+            aria-pressed={activeItem.name === item.name}
             onClick={(e) => {
               item.command();
               context.onOpenChange(false);
               e.stopPropagation();
             }}
-            className={cn(
-              "flex items-center justify-between rounded-sm px-1 py-1.5 text-13 text-secondary hover:bg-layer-1",
-              {
-                "bg-layer-1": activeItem.name === item.name,
-              }
-            )}
           >
-            <div className="flex items-center space-x-2">
-              <item.icon className="size-3 flex-shrink-0" />
-              <span>{item.name}</span>
-            </div>
-            {activeItem.name === item.name && <TickOutline className="size-3 flex-shrink-0 text-tertiary" />}
-          </button>
+            <Icon icon={item.icon} />
+            <MenuItemContent>
+              <MenuItemTitle>{item.name}</MenuItemTitle>
+            </MenuItemContent>
+            {activeItem.name === item.name && (
+              <MenuItemIndicator data-selected="">
+                <TickOutline />
+              </MenuItemIndicator>
+            )}
+          </FloatingMenuItem>
         ))}
-      </section>
+      </MenuPopup>
     </FloatingMenuRoot>
   );
 }

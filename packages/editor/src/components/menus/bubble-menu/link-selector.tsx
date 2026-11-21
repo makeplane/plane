@@ -6,10 +6,14 @@
 
 import type { Editor } from "@tiptap/core";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { DeleteOutline, LinkOutline, TickOutline } from "@makeplane/propel/icons";
 // plane imports
-import { cn } from "@plane/utils";
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
+import { PopoverPopup } from "@makeplane/propel/elements/popover";
+import { ToolbarMenuTriggerButton, ToolbarMenuTriggerLabel } from "@makeplane/propel/elements/toolbar";
 // constants
 import { CORE_EXTENSIONS } from "@/constants/extension";
 // helpers
@@ -24,6 +28,7 @@ type Props = {
 
 export function BubbleMenuLinkSelector(props: Props) {
   const { editor } = props;
+  const errorId = useId();
   // states
   const [error, setError] = useState(false);
   // floating ui
@@ -51,36 +56,33 @@ export function BubbleMenuLinkSelector(props: Props) {
     <FloatingMenuRoot
       classNames={{
         buttonContainer: "h-full",
-        button: cn(
-          "flex h-full items-center gap-1 rounded-sm px-3 text-13 font-medium whitespace-nowrap text-tertiary transition-colors hover:bg-layer-1 active:bg-layer-1",
-          {
-            "bg-layer-1": context.open,
-            "text-primary": editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK),
-          }
-        ),
       }}
+      renderButton={(buttonProps) => (
+        <ToolbarMenuTriggerButton {...buttonProps} size="sm" data-popup-open={context.open ? "" : undefined} />
+      )}
       getFloatingProps={getFloatingProps}
       getReferenceProps={getReferenceProps}
       menuButton={
-        <>
-          Link
-          <LinkOutline className="size-3 shrink-0" />
-        </>
+        <span className={editor.isActive(CORE_EXTENSIONS.CUSTOM_LINK) ? "contents text-primary" : "contents"}>
+          <ToolbarMenuTriggerLabel>Link</ToolbarMenuTriggerLabel>
+          <Icon icon={LinkOutline} />
+        </span>
       }
       options={options}
     >
-      <div className="mt-1 w-60 rounded-md bg-surface-1 shadow-raised-200">
-        <div
-          className={cn("flex rounded-sm border-[0.5px] border-strong transition-colors", {
-            "border-danger-strong": error,
-          })}
-        >
-          <input
+      <PopoverPopup variant="rich" render={<section className="mt-1" />}>
+        <InputGroup size="md">
+          <Icon icon={LinkOutline} tint="secondary" />
+          <Input
+            size="md"
             ref={inputRef}
             type="url"
+            aria-label="Link URL"
+            aria-invalid={error || undefined}
+            aria-describedby={error ? errorId : undefined}
+            data-invalid={error ? "" : undefined}
             placeholder="Enter or paste a link"
             onClick={(e) => e.stopPropagation()}
-            className="flex-1 rounded-sm border-r-[0.5px] border-strong bg-surface-1 px-1.5 py-2 text-11 outline-none placeholder:text-placeholder"
             defaultValue={editor.getAttributes("link").href || ""}
             onKeyDown={(e) => {
               setError(false);
@@ -93,36 +95,43 @@ export function BubbleMenuLinkSelector(props: Props) {
             autoFocus
           />
           {editor.getAttributes("link").href ? (
-            <button
+            <IconButton
               type="button"
-              className="grid place-items-center rounded-xs p-1 text-danger-primary transition-all hover:bg-danger-subtle-hover"
+              variant="ghost"
+              size="sm"
+              aria-label="Remove link"
+              showTooltip={false}
+              icon={<Icon icon={DeleteOutline} tint="danger" />}
               onClick={(e) => {
                 unsetLinkEditor(editor);
                 e.stopPropagation();
                 context.onOpenChange(false);
               }}
-            >
-              <DeleteOutline className="size-4" />
-            </button>
+            />
           ) : (
-            <button
+            <IconButton
               type="button"
-              className="grid aspect-square h-full place-items-center rounded-xs p-1 text-tertiary transition-all hover:bg-layer-1"
+              variant="ghost"
+              size="sm"
+              aria-label="Apply link"
+              showTooltip={false}
+              icon={<Icon icon={TickOutline} />}
               onClick={(e) => {
                 e.stopPropagation();
                 handleLinkSubmit();
               }}
-            >
-              <TickOutline className="size-4" />
-            </button>
+            />
           )}
-        </div>
+        </InputGroup>
         {error && (
-          <p className="animate-in fade-in slide-in-from-top-0 pointer-events-none my-1 px-2 text-11 text-danger-primary">
+          <p
+            id={errorId}
+            className="animate-in fade-in slide-in-from-top-0 pointer-events-none text-caption-sm-regular text-danger-primary"
+          >
             Please enter a valid URL
           </p>
         )}
-      </div>
+      </PopoverPopup>
     </FloatingMenuRoot>
   );
 }

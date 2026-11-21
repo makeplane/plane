@@ -7,10 +7,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 // icons
-import { RocketOutline } from "@makeplane/propel/icons";
+import { NewTabArrowOutline } from "@makeplane/propel/icons";
 // propel
-import { Combobox, ComboboxItem, ComboboxList, ComboboxSearch } from "@makeplane/propel/components/combobox";
-import { Dialog, DialogContent, DialogMain, DialogTitle } from "@makeplane/propel/components/dialog";
+import { Combobox, ComboboxItem, ComboboxList } from "@makeplane/propel/components/combobox";
+import { Dialog, DialogContent, DialogTitle } from "@makeplane/propel/components/dialog";
 // i18n
 import { useTranslation } from "@plane/i18n";
 // types
@@ -19,6 +19,7 @@ import type { ISearchIssueResponse } from "@plane/types";
 import { Loader } from "@plane/blocks/skeleton";
 import { generateWorkItemLink, getTabIndex } from "@plane/utils";
 // components
+import { SelectionDialogList, SelectionDialogSearch } from "@/components/common/selection-dialog-layout";
 import { IssueSearchModalEmptyState } from "@/components/core/modals/issue-search-modal-empty-state";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
@@ -123,89 +124,92 @@ export function ParentIssuesListModal({
             handleClose();
           }}
         >
-          <ComboboxSearch placeholder={t("common.search.placeholder")} tabIndex={baseTabIndex} />
-          <DialogMain>
-            <div className="vertical-scrollbar scrollbar-md max-h-80 scroll-py-2 overflow-x-hidden overflow-y-auto overscroll-contain">
-              {searchTerm !== "" && (
-                <h5 className="mx-2 text-13 text-secondary">
-                  Search results for{" "}
-                  <span className="text-primary">
-                    {'"'}
-                    {searchTerm}
-                    {'"'}
-                  </span>{" "}
-                  in project:
-                </h5>
-              )}
+          <SelectionDialogSearch
+            placeholder={t("common.search.placeholder")}
+            ariaLabel={t("issue.add.parent")}
+            tabIndex={baseTabIndex}
+          />
+          {/* No footer here, so the list absorbs its height to keep the dialog as tall as the other pickers. */}
+          <SelectionDialogList className="h-92 border-b-0">
+            {searchTerm !== "" && (
+              <h5 className="px-3 py-1 text-body-xs-regular text-secondary">
+                Search results for{" "}
+                <span className="text-primary">
+                  {'"'}
+                  {searchTerm}
+                  {'"'}
+                </span>{" "}
+                in project:
+              </h5>
+            )}
 
-              {isSearching || isLoading ? (
-                <Loader className="space-y-3 p-3">
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                  <Loader.Item height="40px" />
-                </Loader>
-              ) : (
-                <>
-                  {issues.length === 0 ? (
-                    <IssueSearchModalEmptyState
-                      debouncedSearchTerm={debouncedSearchTerm}
-                      isSearching={isSearching}
-                      issues={issues}
-                      searchTerm={searchTerm}
-                    />
-                  ) : (
-                    <ComboboxList aria-label={t("common.search.placeholder")}>
-                      {(issue: ISearchIssueResponse, index: number) => (
-                        <ComboboxItem
-                          key={issue.id}
-                          value={issue.id}
-                          index={index}
-                          label={issue.name}
-                          icon={
-                            <span className="flex shrink-0 items-center gap-2">
-                              <span
-                                className="block h-1.5 w-1.5 shrink-0 rounded-full"
-                                style={{
-                                  backgroundColor: issue.state__color,
-                                }}
-                              />
-                              <IssueIdentifier
-                                projectId={issue.project_id}
-                                issueTypeId={issue.type_id}
-                                projectIdentifier={issue.project__identifier}
-                                issueSequenceId={issue.sequence_id}
-                                size="xs"
-                                variant="secondary"
-                              />
-                            </span>
-                          }
-                          trailing={
-                            <a
-                              href={generateWorkItemLink({
-                                workspaceSlug: workspaceSlug?.toString() ?? "",
-                                projectId: issue?.project_id,
-                                issueId: issue?.id,
-                                projectIdentifier: issue.project__identifier,
-                                sequenceId: issue?.sequence_id,
-                              })}
-                              target="_blank"
-                              className="relative z-1 hidden shrink-0 text-secondary group-hover/item:block hover:text-primary"
-                              rel="noopener noreferrer"
-                              aria-label={t("common.actions.open_in_new_tab")}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <RocketOutline className="h-4 w-4" aria-hidden="true" />
-                            </a>
-                          }
-                        />
-                      )}
-                    </ComboboxList>
-                  )}
-                </>
-              )}
-            </div>
-          </DialogMain>
+            {isSearching || isLoading ? (
+              <Loader className="space-y-3 p-3">
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+                <Loader.Item height="40px" />
+              </Loader>
+            ) : (
+              <>
+                {issues.length === 0 ? (
+                  <IssueSearchModalEmptyState
+                    debouncedSearchTerm={debouncedSearchTerm}
+                    isSearching={isSearching}
+                    issues={issues}
+                    searchTerm={searchTerm}
+                  />
+                ) : (
+                  <ComboboxList aria-label={t("common.search.placeholder")}>
+                    {(issue: ISearchIssueResponse, index: number) => (
+                      <ComboboxItem
+                        key={issue.id}
+                        value={issue.id}
+                        index={index}
+                        label={issue.name}
+                        icon={
+                          <span className="flex shrink-0 items-center gap-2">
+                            <span
+                              className="block h-1.5 w-1.5 shrink-0 rounded-full"
+                              style={{
+                                backgroundColor: issue.state__color,
+                              }}
+                            />
+                            <IssueIdentifier
+                              projectId={issue.project_id}
+                              issueTypeId={issue.type_id}
+                              projectIdentifier={issue.project__identifier}
+                              issueSequenceId={issue.sequence_id}
+                              size="xs"
+                              variant="secondary"
+                            />
+                          </span>
+                        }
+                        trailing={
+                          <a
+                            href={generateWorkItemLink({
+                              workspaceSlug: workspaceSlug?.toString() ?? "",
+                              projectId: issue?.project_id,
+                              issueId: issue?.id,
+                              projectIdentifier: issue.project__identifier,
+                              sequenceId: issue?.sequence_id,
+                            })}
+                            target="_blank"
+                            className="relative z-1 hidden shrink-0 text-tertiary group-hover/item:block hover:text-primary"
+                            rel="noopener noreferrer"
+                            aria-label={t("common.actions.open_in_new_tab")}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <NewTabArrowOutline className="size-4" aria-hidden="true" />
+                          </a>
+                        }
+                      />
+                    )}
+                  </ComboboxList>
+                )}
+              </>
+            )}
+          </SelectionDialogList>
         </Combobox>
       </DialogContent>
     </Dialog>

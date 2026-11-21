@@ -13,13 +13,15 @@ import { DueDateOutline, StartDateOutline } from "@makeplane/propel/icons";
 import type { DateRangeValue } from "@plane/blocks/property-select";
 import { DateRangeSelect, DateSelect } from "@plane/blocks/property-select";
 import type { IIssueDisplayProperties, TIssue } from "@plane/types";
-import { cn, getDate, renderFormattedPayloadDate, shouldHighlightIssueDueDate } from "@plane/utils";
+import { getDate, getIssueDueDateClassName, renderFormattedPayloadDate } from "@plane/utils";
 // components
+import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
 import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
 import { StateSelect } from "@/components/dropdowns/state/state-select";
 // hooks
 import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/properties/with-display-properties-HOC";
+import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useUserProfile } from "@/hooks/store/user";
 
@@ -44,6 +46,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
   const { workspaceSlug, parentIssueId, issueId, canEdit, updateSubIssue, displayProperties, issue } = props;
   const { t } = useTranslation();
   const { getStateById } = useProjectState();
+  const { areEstimateEnabledByProjectId } = useProjectEstimates();
   const { data: userProfile } = useUserProfile();
 
   const handleEventPropagation = (e: SyntheticEvent<HTMLDivElement>) => {
@@ -78,8 +81,8 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
 
   //derived values
   const stateDetails = useMemo(() => getStateById(issue.state_id), [getStateById, issue.state_id]);
-  const shouldHighlight = useMemo(
-    () => shouldHighlightIssueDueDate(issue.target_date, stateDetails?.group),
+  const dueDateClassName = useMemo(
+    () => getIssueDueDateClassName(issue.target_date, stateDetails?.group),
     [issue.target_date, stateDetails?.group]
   );
   // date range is enabled only when both dates are available and both dates are enabled
@@ -147,7 +150,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
             onChange={handleDateRangeUpdate}
             icon={<StartDateOutline />}
             clearable
-            className={cn({ "text-danger-primary": shouldHighlight })}
+            className={dueDateClassName}
             disabled={!canEdit}
             showTooltip
             tooltipHeading={t("project_cycles.date_range")}
@@ -195,7 +198,7 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
           minDate={minDate}
           placeholder={t("common.order_by.due_date")}
           icon={<DueDateOutline />}
-          className={cn({ "text-danger-primary": shouldHighlight })}
+          className={dueDateClassName}
           clearable
           disabled={!canEdit}
           showTooltip
@@ -223,6 +226,24 @@ export const SubIssuesListItemProperties = observer(function SubIssuesListItemPr
           tooltip={{ heading: t("common.assignees") }}
         />
       </WithDisplayPropertiesHOC>
+
+      {issue.project_id && areEstimateEnabledByProjectId(issue.project_id) && (
+        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
+          <EstimateSelect
+            value={issue.estimate_point ?? undefined}
+            onChange={(val) =>
+              issue.project_id &&
+              updateSubIssue(workspaceSlug, issue.project_id, parentIssueId, issueId, {
+                estimate_point: val,
+              })
+            }
+            projectId={issue.project_id}
+            disabled={!canEdit}
+            variant="pill-sm"
+            tooltip
+          />
+        </WithDisplayPropertiesHOC>
+      )}
     </div>
   );
 });

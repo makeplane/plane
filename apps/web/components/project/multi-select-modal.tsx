@@ -134,7 +134,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                       }}
                     >
                       <Logo logo={projectDetails.logo_props} size={14} />
-                      <p className="truncate text-11 text-tertiary transition-colors group-hover:text-secondary">
+                      <p className="truncate text-caption-sm-regular text-tertiary transition-colors group-hover:text-secondary">
                         {projectDetails.identifier}
                       </p>
                       <CloseOutline className="size-3 flex-shrink-0 text-placeholder transition-colors group-hover:text-secondary" />
@@ -167,7 +167,7 @@ export const ProjectMultiSelectModal = observer(function ProjectMultiSelectModal
                         icon={
                           <span className="flex shrink-0 items-center gap-2.5">
                             <Logo logo={projectDetails.logo_props} size={16} />
-                            <span className="shrink-0 text-10">{projectDetails.identifier}</span>
+                            <span className="shrink-0 text-caption-xs-regular">{projectDetails.identifier}</span>
                           </span>
                         }
                       />

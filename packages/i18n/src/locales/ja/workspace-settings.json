@@ -26,7 +26,8 @@
           "success_title": "ワークスペースが削除されました。",
           "success_message": "まもなくプロフィールページに移動します。",
           "error_title": "操作に失敗しました。",
-          "error_message": "もう一度お試しください。"
+          "error_message": "もう一度お試しください。",
+          "confirm_description": "ワークスペース {workspaceName} を削除しようとしています。このワークスペースのすべての作業データにアクセスできなくなり、復元することはできません。"
         },
         "errors": {
           "name": {
@@ -63,7 +64,10 @@
             "required": "招待するにはメールアドレスが必要です。",
             "invalid": "メールアドレスが無効です"
           }
-        }
+        },
+        "leave_input_label": "続行するには、このワークスペースの名前を入力してください。",
+        "description": "このワークスペースへのアクセスを管理します。",
+        "leave_title": "ワークスペースから退出しますか？"
       },
       "billing_and_plans": {
         "heading": "請求とプラン",
@@ -170,7 +174,13 @@
             "title": "エラー！",
             "message": "APIトークンを削除できませんでした"
           }
-        }
+        },
+        "columns": {
+          "expires": "有効期限",
+          "last_used": "最終使用"
+        },
+        "expired": "期限切れ",
+        "not_used_yet": "未使用"
       },
       "integrations": {
         "title": "インテグレーション",

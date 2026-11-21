@@ -7,7 +7,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateDetailed } from "@plane/blocks/empty-state";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import type { TInboxIssueCurrentTab } from "@plane/types";
 import { EInboxIssueCurrentTab } from "@plane/types";
 // plane imports
@@ -109,9 +109,7 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                       icon={
                         option.key === EInboxIssueCurrentTab.OPEN && currentTab === option.key ? (
                           // Propel has no trailing slot; keep the active-only count after the label.
-                          <span className="order-1 rounded-full bg-accent-primary/20 px-1.5 py-0.5 text-11 font-semibold text-accent-primary">
-                            {inboxIssuePaginationInfo?.total_results || 0}
-                          </span>
+                          <span className="order-1">{inboxIssuePaginationInfo?.total_results || 0}</span>
                         ) : undefined
                       }
                     />
@@ -144,16 +142,16 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 {getAppliedFiltersCount > 0 ? (
-                  <EmptyStateDetailed
-                    assetKey="search"
+                  <EmptyStateCompact
+                    assetKey="search-compact"
                     title={t("common_empty_state.search.title")}
                     description={t("common_empty_state.search.description")}
                     assetClassName="size-20"
                     rootClassName="px-page-x"
                   />
                 ) : currentTab === EInboxIssueCurrentTab.OPEN ? (
-                  <EmptyStateDetailed
-                    assetKey="inbox"
+                  <EmptyStateCompact
+                    assetKey="intake"
                     title={t("project_empty_state.intake_sidebar.title")}
                     description={t("project_empty_state.intake_sidebar.description")}
                     assetClassName="size-20"
@@ -168,8 +166,8 @@ export const InboxSidebar = observer(function InboxSidebar(props: IInboxSidebarP
                   />
                 ) : (
                   // TODO: Add translation
-                  <EmptyStateDetailed
-                    assetKey="inbox"
+                  <EmptyStateCompact
+                    assetKey="intake"
                     title="No request closed yet"
                     description="All the work items whether accepted or declined can be found here."
                     assetClassName="size-20"

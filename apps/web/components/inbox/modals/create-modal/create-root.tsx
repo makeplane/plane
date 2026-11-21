@@ -236,7 +236,7 @@ export const InboxIssueCreateRoot = observer(function InboxIssueCreateRoot(props
                   tabIndex={getIndex("create_more")}
                   aria-label={t("create_more")}
                 />
-                <span className="text-11">{t("create_more")}</span>
+                <span className="text-caption-sm-regular">{t("create_more")}</span>
               </label>
             </DialogInfo>
             <Button
