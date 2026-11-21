@@ -64,8 +64,10 @@ jobs:
     runs-on: ubuntu-22.04
     needs: [branch_build_setup]
     env:
-      BUILD_TYPE: full
-      AIO_BASE_TAG: ${{ needs.branch_build_setup.outputs.aio_base_tag }}
+      # Application layers come from images built from this checkout. The tag is
+      # unique to this run so a second dispatch cannot overwrite one layer mid-build.
+      # The final all-in-one image keeps the branch name.
+      BRANCH_IMAGE_TAG: run-${{ github.run_id }}-${{ github.run_attempt }}
       AIO_IMAGE_TAGS: makeplane/plane-aio-feature:${{ needs.branch_build_setup.outputs.flat_branch_name }}
       BUILDX_DRIVER: ${{ needs.branch_build_setup.outputs.gh_buildx_driver }}
       BUILDX_VERSION: ${{ needs.branch_build_setup.outputs.gh_buildx_version }}
@@ -88,17 +90,40 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v6
 
+      # The community image copies application files from makeplane/plane-*:PLANE_VERSION.
+      # Publish those images from this checkout first, or the branch-named preview
+      # would run a published base release instead of the branch.
+      - name: Build and push the branch application images
+        run: |
+          set -euo pipefail
+          build_and_push() {
+            docker build -f "$1" -t "makeplane/${3}:${BRANCH_IMAGE_TAG}" "$2"
+            docker push "makeplane/${3}:${BRANCH_IMAGE_TAG}"
+          }
+          build_and_push apps/web/Dockerfile.web . plane-frontend
+          build_and_push apps/admin/Dockerfile.admin . plane-admin
+          build_and_push apps/space/Dockerfile.space . plane-space
+          build_and_push apps/live/Dockerfile.live . plane-live
+          build_and_push apps/api/Dockerfile.api apps/api plane-backend
+          build_and_push apps/proxy/Dockerfile.ce apps/proxy plane-proxy
+
+      # The community Dockerfile COPYs dist/Caddyfile and dist/plane.env, which
+      # build.sh generates. The release name is the branch image tag, read from
+      # the job env rather than interpolated into the script.
+      - name: Prepare AIO Assets
+        working-directory: ./deployments/aio/community
+        run: bash ./build.sh --release "$BRANCH_IMAGE_TAG"
+
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294 # v7.0.0
         with:
-          context: .
-          file: ./aio/Dockerfile-app
+          context: ./deployments/aio/community
+          file: ./deployments/aio/community/Dockerfile
           platforms: ${{ env.BUILDX_PLATFORMS }}
           tags: ${{ env.AIO_IMAGE_TAGS }}
           push: true
-          build-args: 
-            BUILD_TAG=${{ env.AIO_BASE_TAG }}
-            BUILD_TYPE=${{env.BUILD_TYPE}}
+          build-args: |
+            PLANE_VERSION=${{ env.BRANCH_IMAGE_TAG }}
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
         env:
