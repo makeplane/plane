@@ -89,6 +89,38 @@ class TestApiTokenEndpoint:
         assert token.expired_at is not None
 
     @pytest.mark.django_db
+    def test_create_api_token_defaults_to_all_scopes(self, session_client, create_user):
+        """A token created without scopes gets every scope, as before scopes existed"""
+        response = session_client.post(reverse("api-tokens"), {"label": "Full"}, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["scopes"] == ["read", "write", "delete"]
+        assert APIToken.objects.get(pk=response.data["id"]).scopes == ["read", "write", "delete"]
+
+    @pytest.mark.django_db
+    def test_create_api_token_with_scopes(self, session_client, create_user):
+        """Requested scopes are stored deduplicated, in a fixed order"""
+        data = {"label": "Bot", "scopes": ["write", "read", "read"]}
+
+        response = session_client.post(reverse("api-tokens"), data, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert response.data["scopes"] == ["read", "write"]
+        assert APIToken.objects.get(pk=response.data["id"]).scopes == ["read", "write"]
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize("scopes", [[], ["admin"], ["read", "everything"], "read", None])
+    def test_create_api_token_rejects_invalid_scopes(self, session_client, create_user, scopes):
+        """Scopes must be a non-empty list of read, write and delete"""
+        data = {"label": "Bad", "scopes": scopes}
+
+        response = session_client.post(reverse("api-tokens"), data, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert "scopes" in response.data
+        assert not APIToken.objects.filter(label="Bad").exists()
+
+    @pytest.mark.django_db
     def test_create_api_token_unauthenticated(self, api_client, api_token_data):
         """Test API token creation without authentication"""
         # Arrange
@@ -361,6 +393,18 @@ class TestApiTokenEndpoint:
         assert response.status_code == status.HTTP_200_OK
         create_api_token_for_user.refresh_from_db()
         assert create_api_token_for_user.user_type == 0
+
+    @pytest.mark.django_db
+    def test_patch_cannot_modify_scopes(self, session_client, create_user):
+        """Scopes are fixed at creation, so an issued read-only token cannot be widened"""
+        token = APIToken.objects.create(user=create_user, label="Read only", scopes=["read"])
+        url = reverse("api-tokens-details", kwargs={"pk": token.pk})
+
+        response = session_client.patch(url, {"scopes": ["read", "write", "delete"]}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        token.refresh_from_db()
+        assert token.scopes == ["read"]
 
     # Authentication tests
     @pytest.mark.django_db
