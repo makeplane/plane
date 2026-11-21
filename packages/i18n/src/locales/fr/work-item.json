@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "Afficher les sous-éléments",
-        "show_empty_groups": "Afficher les groupes vides"
+        "show_empty_groups": "Afficher les groupes vides",
+        "collapse_filters_on_open": "Replier les filtres à l'ouverture"
       }
     },
     "layouts": {

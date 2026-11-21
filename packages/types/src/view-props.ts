@@ -157,6 +157,8 @@ export interface IIssueDisplayFilterOptions {
   order_by?: TIssueOrderByOptions;
   show_empty_groups?: boolean;
   sub_issue?: boolean;
+  // Open the saved view with the filter bar collapsed.
+  filters_collapsed_by_default?: boolean;
 }
 export interface IIssueDisplayProperties {
   assignee?: boolean;

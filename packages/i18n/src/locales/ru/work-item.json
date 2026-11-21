@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "Показывать подэлементы",
-        "show_empty_groups": "Показывать пустые группы"
+        "show_empty_groups": "Показывать пустые группы",
+        "collapse_filters_on_open": "Свернуть фильтры при открытии"
       }
     },
     "layouts": {

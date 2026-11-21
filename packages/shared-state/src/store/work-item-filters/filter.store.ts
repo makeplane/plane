@@ -90,10 +90,10 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
       if (params.onExpressionChange) {
         existingFilter.onExpressionChange = params.onExpressionChange;
       }
-      // Update visibility if provided
-      if (params.showOnMount !== undefined) {
-        existingFilter.toggleVisibility(params.showOnMount);
-      }
+      // Do not re-apply `showOnMount` to an existing filter. It describes the
+      // state the bar should open in, so it only applies when the instance is
+      // created. Re-applying it on every render would override the visibility
+      // the user chose in the bar.
       return existingFilter;
     }
 
@@ -218,9 +218,14 @@ export class WorkItemFilterStore implements IWorkItemFilterStore {
       onExpressionChange: params.onExpressionChange,
       options: {
         expression: params.expressionOptions,
-        visibility: params.showOnMount
-          ? { autoSetVisibility: false, isVisibleOnMount: true }
-          : { autoSetVisibility: true },
+        // An explicit `showOnMount` wins over the automatic behaviour, so the
+        // filter bar opens exactly in the state the caller asked for. This
+        // keeps the create path consistent with the existing-instance path
+        // above, which applies `showOnMount` through `toggleVisibility`.
+        visibility:
+          params.showOnMount !== undefined
+            ? { autoSetVisibility: false, isVisibleOnMount: params.showOnMount }
+            : { autoSetVisibility: true },
       },
     });
 }

@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "显示子工作项",
-        "show_empty_groups": "显示空组"
+        "show_empty_groups": "显示空组",
+        "collapse_filters_on_open": "打开时折叠筛选器"
       }
     },
     "layouts": {
