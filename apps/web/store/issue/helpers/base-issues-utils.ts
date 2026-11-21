@@ -214,7 +214,7 @@ export const checkIssueDateFilter = (
       console.warn(`[filters] Ignoring unparsable date filter "${filterValue}"`);
       return true;
     }
-    return checkDateCriteria(new Date(issueDate), parsed.date, parsed.type);
+    return checkDateCriteria(issueDate, parsed.date, parsed.type);
   });
 };
 
