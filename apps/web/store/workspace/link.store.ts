@@ -109,13 +109,12 @@ export class WorkspaceLinkStore implements IWorkspaceLinkStore {
   };
 
   updateLink = async (workspaceSlug: string, linkId: string, data: Partial<TLink>) => {
-    runInAction(() => {
-      Object.keys(data).forEach((key) => {
-        set(this.linkMap, [linkId, key], data[key as keyof TLink]);
-      });
-    });
-
+    // publish the link only after the server accepts it, so a failed update keeps the last saved details
     const response = await this.workspaceService.updateWorkspaceLink(workspaceSlug, linkId, data);
+
+    runInAction(() => {
+      set(this.linkMap, linkId, { ...this.linkMap[linkId], ...response });
+    });
     return response;
   };
 
