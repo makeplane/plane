@@ -384,6 +384,7 @@ def create_issue_parent(workspace, project, user_id, issue_count):
     bulk_sub_issues = []
     for sub_issue in sub_issues:
         sub_issue.parent_id = parent_issues[random.randint(0, int(parent_count - 1))]
+        bulk_sub_issues.append(sub_issue)
 
     Issue.objects.bulk_update(bulk_sub_issues, ["parent"], batch_size=1000)
 
