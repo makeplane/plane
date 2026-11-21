@@ -1558,13 +1558,14 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
 
-        # Validation check if the issue already exists
+        # Validation check if the comment already exists on this work item
         if (
             request.data.get("external_id")
             and request.data.get("external_source")
             and IssueComment.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
+                issue_id=issue_id,
                 external_source=request.data.get("external_source"),
                 external_id=request.data.get("external_id"),
             ).exists()
@@ -1572,6 +1573,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             issue_comment = IssueComment.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
+                issue_id=issue_id,
                 external_id=request.data.get("external_id"),
                 external_source=request.data.get("external_source"),
             ).first()
@@ -1728,24 +1730,33 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         requested_data = json.dumps(self.request.data, cls=DjangoJSONEncoder)
         current_instance = json.dumps(IssueCommentSerializer(issue_comment).data, cls=DjangoJSONEncoder)
 
-        # Validation check if the issue already exists
-        if (
-            request.data.get("external_id")
-            and (issue_comment.external_id != str(request.data.get("external_id")))
-            and IssueComment.objects.filter(
-                project_id=project_id,
-                workspace__slug=slug,
-                external_source=request.data.get("external_source", issue_comment.external_source),
-                external_id=request.data.get("external_id"),
-            ).exists()
-        ):
-            return Response(
-                {
-                    "error": "Work item comment with the same external id and external source already exists",
-                    "id": str(issue_comment.id),
-                },
-                status=status.HTTP_409_CONFLICT,
+        # Validation check if another comment on this work item already has the
+        # resulting external source/id pair (either field may change on its own).
+        # Like create, only a complete pair is checked.
+        if "external_id" in request.data or "external_source" in request.data:
+            external_id = request.data.get("external_id", issue_comment.external_id)
+            external_source = request.data.get("external_source", issue_comment.external_source)
+            existing_comment = (
+                IssueComment.objects.filter(
+                    project_id=project_id,
+                    workspace__slug=slug,
+                    issue_id=issue_id,
+                    external_source=external_source,
+                    external_id=external_id,
+                )
+                .exclude(pk=issue_comment.pk)
+                .first()
+                if external_id and external_source
+                else None
             )
+            if existing_comment:
+                return Response(
+                    {
+                        "error": "Work item comment with the same external id and external source already exists",
+                        "id": str(existing_comment.id),
+                    },
+                    status=status.HTTP_409_CONFLICT,
+                )
 
         serializer = IssueCommentCreateSerializer(issue_comment, data=request.data, partial=True)
         if serializer.is_valid():
