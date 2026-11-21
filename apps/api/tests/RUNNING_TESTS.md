@@ -1,6 +1,6 @@
 # Running the API Test Suite
 
-This guide covers running the Django/pytest suite for `apps/api` inside Docker via `docker-compose-test.yml` at the repo root. The compose file boots an isolated stack — Postgres, Valkey (Redis), RabbitMQ, MinIO — with tmpfs-backed data dirs, so every run begins from a clean slate and a single teardown command removes everything.
+This guide covers running the Django/pytest suite for `apps/api` inside Docker via `compose-test.yaml` at the repo root. The compose file boots an isolated stack — Postgres, Valkey (Redis), RabbitMQ, MinIO — with tmpfs-backed data dirs, so every run begins from a clean slate and a single teardown command removes everything.
 
 For background on the test layout, markers, and fixtures, see [`TESTING_GUIDE.md`](../plane/tests/TESTING_GUIDE.md) and [`README.md`](../plane/tests/README.md).
 
@@ -22,7 +22,7 @@ All commands are run from the repo root.
 ### Full suite
 
 ```bash
-docker compose -f docker-compose-test.yml up \
+docker compose -f compose-test.yaml up \
   --build \
   --abort-on-container-exit \
   --exit-code-from api-tests
@@ -38,14 +38,14 @@ Use `docker compose run` to override the default `pytest` command. Anything you 
 
 ```bash
 # Only unit tests (marker defined in pytest.ini)
-docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit
+docker compose -f compose-test.yaml run --rm --build api-tests pytest -m unit
 
 # A single directory, filtered by name
-docker compose -f docker-compose-test.yml run --rm --build api-tests \
+docker compose -f compose-test.yaml run --rm --build api-tests \
   pytest plane/tests/unit -k "test_workspace"
 
 # Single file with verbose output
-docker compose -f docker-compose-test.yml run --rm --build api-tests \
+docker compose -f compose-test.yaml run --rm --build api-tests \
   pytest plane/tests/unit/models/test_workspace_model.py -vv
 ```
 
@@ -54,7 +54,7 @@ The available markers (`unit`, `contract`, `smoke`, `slow`) are declared in `app
 ### Teardown
 
 ```bash
-docker compose -f docker-compose-test.yml down -v
+docker compose -f compose-test.yaml down -v
 ```
 
 `down` removes the containers and the `test_env` network; `-v` also removes the anonymous volumes the service images create. Because the data directories are tmpfs, no host state survives a teardown — every run starts clean. Run this between unrelated test sessions to free Docker resources.
@@ -76,7 +76,7 @@ Test-time env overrides live in the compose file itself (`DJANGO_SETTINGS_MODULE
 ## Troubleshooting
 
 - **`./apps/api/.env: no such file or directory`** — run `./setup.sh` from the repo root.
-- **Port already in use** — none of the test services publish host ports; if you see this it's coming from a different compose stack. Stop the local stack (`docker compose -f docker-compose-local.yml down`).
-- **Stale image after `Dockerfile.dev` changes** — rebuild explicitly: `docker compose -f docker-compose-test.yml build --no-cache api-tests`.
+- **Port already in use** — none of the test services publish host ports; if you see this it's coming from a different compose stack. Stop the local stack (`docker compose -f compose-local.yaml down`).
+- **Stale image after `Dockerfile.dev` changes** — rebuild explicitly: `docker compose -f compose-test.yaml build --no-cache api-tests`.
 - **MinIO bucket missing** — the `test-minio` entrypoint creates the bucket named by `AWS_S3_BUCKET_NAME` (default `uploads`). Change the value in `apps/api/.env` and re-run.
 - **Database state leaking between runs** — confirm you ran `down -v` (not just `down`). The tmpfs mounts are torn down with the container; `-v` also clears the anonymous volumes the images create.

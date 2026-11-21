@@ -2,7 +2,7 @@
 
 ## Commands
 
-- `pnpm dev` - Start all dev servers (web:3000, admin:3001, space:3002, live:3100); the API runs in Docker via `docker-compose-local.yml` on :8000
+- `pnpm dev` - Start all dev servers (web:3000, admin:3001, space:3002, live:3100); the API runs in Docker via `compose-local.yaml` on :8000
 - `pnpm build` - Build all packages and apps
 - `pnpm check` - Run all checks (format, lint, types)
 - `pnpm check:lint` - OxLint across all packages
@@ -40,13 +40,13 @@
 
 ## Backend tests (Docker)
 
-The Django/pytest suite for `apps/api` runs in an isolated stack defined by `docker-compose-test.yml` at the repo root.
+The Django/pytest suite for `apps/api` runs in an isolated stack defined by `compose-test.yaml` at the repo root.
 
 Prereq (once): `./setup.sh` — generates `apps/api/.env` from `.env.example`.
 
-- Full suite: `docker compose -f docker-compose-test.yml up --build --abort-on-container-exit --exit-code-from api-tests`
-- Subset: `docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit`
-- Teardown: `docker compose -f docker-compose-test.yml down -v`
+- Full suite: `docker compose -f compose-test.yaml up --build --abort-on-container-exit --exit-code-from api-tests`
+- Subset: `docker compose -f compose-test.yaml run --rm --build api-tests pytest -m unit`
+- Teardown: `docker compose -f compose-test.yaml down -v`
 
 See `apps/api/tests/RUNNING_TESTS.md` for the full walkthrough and troubleshooting; see `apps/api/plane/tests/TESTING_GUIDE.md` for test conventions and fixtures.
 
