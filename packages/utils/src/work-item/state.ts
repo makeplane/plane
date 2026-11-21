@@ -34,19 +34,19 @@ export const getCurrentStateSequence = (
   if (!edge) return defaultSequence;
 
   const currentStateIndex = groupSates.findIndex((state) => state.id === destinationData.id);
-  const currentStateSequence = groupSates[currentStateIndex]?.sequence || undefined;
+  const currentStateSequence = groupSates[currentStateIndex]?.sequence ?? undefined;
 
-  if (!currentStateSequence) return defaultSequence;
+  if (currentStateSequence === undefined) return defaultSequence;
 
   if (edge === "top") {
-    const prevStateSequence = groupSates[currentStateIndex - 1]?.sequence || undefined;
+    const prevStateSequence = groupSates[currentStateIndex - 1]?.sequence ?? undefined;
 
     if (prevStateSequence === undefined) {
       return currentStateSequence - defaultSequence;
     }
     return (currentStateSequence + prevStateSequence) / 2;
   } else if (edge === "bottom") {
-    const nextStateSequence = groupSates[currentStateIndex + 1]?.sequence || undefined;
+    const nextStateSequence = groupSates[currentStateIndex + 1]?.sequence ?? undefined;
 
     if (nextStateSequence === undefined) {
       return currentStateSequence + defaultSequence;
