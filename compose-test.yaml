@@ -5,14 +5,14 @@
 #
 # Usage:
 #   # Run the full suite (defaults to `pytest`):
-#   docker compose -f docker-compose-test.yml up --build --abort-on-container-exit --exit-code-from api-tests
+#   docker compose -f compose-test.yaml up --build --abort-on-container-exit --exit-code-from api-tests
 #
 #   # Run a subset by overriding the command:
-#   docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit
-#   docker compose -f docker-compose-test.yml run --rm api-tests pytest plane/tests/unit -k "test_workspace"
+#   docker compose -f compose-test.yaml run --rm --build api-tests pytest -m unit
+#   docker compose -f compose-test.yaml run --rm api-tests pytest plane/tests/unit -k "test_workspace"
 #
 #   # Tear down (removes ephemeral volumes and the test network):
-#   docker compose -f docker-compose-test.yml down -v
+#   docker compose -f compose-test.yaml down -v
 #
 # Notes:
 # - Postgres / Valkey / RabbitMQ / MinIO start with health checks; the test
@@ -140,7 +140,7 @@ services:
       - |
         set -e
         if ! command -v uv >/dev/null 2>&1; then
-          echo "api-tests image predates the uv migration; rebuild it: docker compose -f docker-compose-test.yml build api-tests" >&2
+          echo "api-tests image predates the uv migration; rebuild it: docker compose -f compose-test.yaml build api-tests" >&2
           exit 1
         fi
         uv sync --locked --inexact

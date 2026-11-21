@@ -32,7 +32,7 @@ Plane has two types of API endpoints:
 
 ## Running Tests
 
-The easiest way is the isolated Docker stack; see [`apps/api/tests/RUNNING_TESTS.md`](../../tests/RUNNING_TESTS.md). The commands below run pytest directly and need a local env: from `apps/api`, run `uv sync`, then start Postgres, Redis, RabbitMQ and MinIO (for example with `docker-compose-local.yml`).
+The easiest way is the isolated Docker stack; see [`apps/api/tests/RUNNING_TESTS.md`](../../tests/RUNNING_TESTS.md). The commands below run pytest directly and need a local env: from `apps/api`, run `uv sync`, then start Postgres, Redis, RabbitMQ and MinIO (for example with `compose-local.yaml`).
 
 To run all tests:
 
