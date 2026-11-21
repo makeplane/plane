@@ -11,6 +11,7 @@ import pytz
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
+    FilteredRelation,
     Case,
     CharField,
     Count,
@@ -853,40 +854,39 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                     workspace__slug=slug,
                     project_id=project_id,
                 )
-                .annotate(display_name=F("assignees__display_name"))
-                .annotate(assignee_id=F("assignees__id"))
+                .annotate(
+                    active_assignee=FilteredRelation(
+                        "issue_assignee", condition=Q(issue_assignee__deleted_at__isnull=True)
+                    )
+                )
+                .annotate(display_name=F("active_assignee__assignee__display_name"))
+                .annotate(assignee_id=F("active_assignee__assignee__id"))
                 .annotate(
                     avatar_url=Case(
                         # If `avatar_asset` exists, use it to generate the asset URL
                         When(
-                            assignees__avatar_asset__isnull=False,
+                            active_assignee__assignee__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                Cast("assignees__avatar_asset", models.CharField()),
+                                Cast("active_assignee__assignee__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),
                         # If `avatar_asset` is None, fall back to using `avatar` field directly
                         When(
-                            assignees__avatar_asset__isnull=True,
-                            then="assignees__avatar",
+                            active_assignee__assignee__avatar_asset__isnull=True,
+                            then="active_assignee__assignee__avatar",
                         ),
                         default=Value(None),
                         output_field=models.CharField(),
                     )
                 )
                 .values("display_name", "assignee_id", "avatar_url")
-                .annotate(
-                    total_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
-                        filter=Q(issue_assignee__deleted_at__isnull=True),
-                    )
-                )
+                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
                 .annotate(
                     completed_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
                         filter=Q(
-                            issue_assignee__deleted_at__isnull=True,
                             completed_at__isnull=False,
                             archived_at__isnull=True,
                             is_draft=False,
@@ -897,7 +897,6 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                     pending_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
                         filter=Q(
-                            issue_assignee__deleted_at__isnull=True,
                             completed_at__isnull=True,
                             archived_at__isnull=True,
                             is_draft=False,
@@ -957,23 +956,28 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                     project_id=project_id,
                     workspace__slug=slug,
                 )
-                .annotate(display_name=F("assignees__display_name"))
-                .annotate(assignee_id=F("assignees__id"))
+                .annotate(
+                    active_assignee=FilteredRelation(
+                        "issue_assignee", condition=Q(issue_assignee__deleted_at__isnull=True)
+                    )
+                )
+                .annotate(display_name=F("active_assignee__assignee__display_name"))
+                .annotate(assignee_id=F("active_assignee__assignee__id"))
                 .annotate(
                     avatar_url=Case(
                         # If `avatar_asset` exists, use it to generate the asset URL
                         When(
-                            assignees__avatar_asset__isnull=False,
+                            active_assignee__assignee__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                Cast("assignees__avatar_asset", models.CharField()),
+                                Cast("active_assignee__assignee__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),
                         # If `avatar_asset` is None, fall back to using `avatar` field directly
                         When(
-                            assignees__avatar_asset__isnull=True,
-                            then="assignees__avatar",
+                            active_assignee__assignee__avatar_asset__isnull=True,
+                            then="active_assignee__assignee__avatar",
                         ),
                         default=Value(None),
                         output_field=models.CharField(),
@@ -982,23 +986,14 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 .values("display_name", "assignee_id", "avatar_url")
                 .annotate(
                     total_issues=Count(
-                        "id",
-                        distinct=True,
-                        filter=Q(
-                            issue_assignee__deleted_at__isnull=True,
-                            assignee_id__isnull=False,
-                            archived_at__isnull=True,
-                            is_draft=False,
-                        ),
+                        "assignee_id",
+                        filter=Q(archived_at__isnull=True, is_draft=False),
                     )
                 )
                 .annotate(
                     completed_issues=Count(
-                        "id",
-                        distinct=True,
+                        "assignee_id",
                         filter=Q(
-                            issue_assignee__deleted_at__isnull=True,
-                            assignee_id__isnull=False,
                             completed_at__isnull=False,
                             archived_at__isnull=True,
                             is_draft=False,
@@ -1007,11 +1002,8 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_issues=Count(
-                        "id",
-                        distinct=True,
+                        "assignee_id",
                         filter=Q(
-                            issue_assignee__deleted_at__isnull=True,
-                            assignee_id__isnull=False,
                             completed_at__isnull=True,
                             archived_at__isnull=True,
                             is_draft=False,
