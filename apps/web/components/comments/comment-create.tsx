@@ -60,9 +60,12 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
   });
 
   const onSubmit = async (formData: Partial<TIssueComment>) => {
+    let isCommentCreated = false;
     try {
       const comment = await activityOperations.createComment(formData);
-      if (comment?.id) onSubmitCallback?.(comment.id);
+      if (!comment?.id) return;
+      isCommentCreated = true;
+      onSubmitCallback?.(comment.id);
       if (uploadedAssetIds.length > 0) {
         if (projectId) {
           await fileService.updateBulkProjectAssetsUploadStatus(workspaceSlug, projectId.toString(), entityId, {
@@ -78,10 +81,12 @@ export const CommentCreate = observer(function CommentCreate(props: TCommentCrea
     } catch (error) {
       console.error(error);
     } finally {
-      reset({
-        comment_html: "<p></p>",
-      });
-      editorRef.current?.clearEditor();
+      if (isCommentCreated) {
+        reset({
+          comment_html: "<p></p>",
+        });
+        editorRef.current?.clearEditor();
+      }
     }
   };
 

@@ -46,6 +46,7 @@ export const CommentsWrapper = observer(function CommentsWrapper(props: TComment
     () =>
       isEditingAllowed && (
         <CommentCreate
+          key={JSON.stringify([workspaceSlug, projectId, entityId])}
           workspaceSlug={workspaceSlug}
           entityId={entityId}
           activityOperations={activityOperations}
