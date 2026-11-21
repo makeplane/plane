@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plane Hebrew Translation Review</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #242424;
+    --border: #333;
+    --text: #e0e0e0;
+    --text-dim: #888;
+    --accent: #6366f1;
+    --accent-hover: #818cf8;
+    --green: #22c55e;
+    --green-bg: #052e16;
+    --red: #ef4444;
+    --red-bg: #2a0a0a;
+    --yellow: #eab308;
+    --yellow-bg: #1a1500;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 12px 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .header h1 { font-size: 18px; font-weight: 600; white-space: nowrap; }
+  .header .stats { font-size: 13px; color: var(--text-dim); }
+  .header .stats span { margin: 0 6px; }
+  .stat-accepted { color: var(--green); }
+  .stat-rejected { color: var(--red); }
+  .stat-corrected { color: var(--yellow); }
+  .stat-pending { color: var(--text-dim); }
+  .tabs { display: flex; gap: 2px; margin-left: auto; }
+  .tab {
+    padding: 6px 14px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; cursor: pointer; font-size: 13px; color: var(--text-dim); transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .filter-bar {
+    display: flex; gap: 8px; padding: 10px 24px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    align-items: center; flex-wrap: wrap;
+  }
+  .filter-bar input {
+    flex: 1; min-width: 200px; padding: 6px 12px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 6px; color: var(--text);
+    font-size: 13px; outline: none;
+  }
+  .filter-bar input:focus { border-color: var(--accent); }
+  .filter-btn {
+    padding: 6px 12px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--text-dim); transition: all 0.15s;
+  }
+  .filter-btn:hover { color: var(--text); }
+  .filter-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+  .bulk-bar {
+    display: flex; gap: 8px; padding: 8px 24px;
+    background: var(--surface2); border-bottom: 1px solid var(--border); align-items: center;
+  }
+  .bulk-btn {
+    padding: 5px 12px; border-radius: 6px; border: 1px solid var(--border);
+    cursor: pointer; font-size: 12px; background: var(--surface); color: var(--text-dim); transition: all 0.15s;
+  }
+  .bulk-btn:hover { color: var(--text); }
+  .bulk-btn.accept { border-color: var(--green); color: var(--green); }
+  .bulk-btn.accept:hover { background: var(--green-bg); }
+  .bulk-btn.save { background: var(--accent); color: white; border-color: var(--accent); font-weight: 600; }
+  .bulk-btn.save:hover { background: var(--accent-hover); }
+  .entries { padding: 8px 24px 80px; }
+  .entry {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 6px; overflow: hidden; transition: border-color 0.15s;
+  }
+  .entry.status-accepted { border-left: 3px solid var(--green); }
+  .entry.status-rejected { border-left: 3px solid var(--red); }
+  .entry.status-corrected { border-left: 3px solid var(--yellow); }
+  .entry-header {
+    display: flex; align-items: center; padding: 8px 12px; gap: 12px;
+    cursor: pointer; user-select: none;
+  }
+  .entry-header:hover { background: var(--surface2); }
+  .entry-path {
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: var(--text-dim);
+    flex-shrink: 0; max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .entry-en { font-size: 13px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .entry-he-preview {
+    font-size: 13px; color: var(--text-dim); direction: rtl; flex: 1;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: right;
+  }
+  .entry-status-badge {
+    font-size: 10px; padding: 2px 8px; border-radius: 10px;
+    text-transform: uppercase; font-weight: 600; flex-shrink: 0;
+  }
+  .badge-pending { background: var(--surface2); color: var(--text-dim); }
+  .badge-accepted { background: var(--green-bg); color: var(--green); }
+  .badge-rejected { background: var(--red-bg); color: var(--red); }
+  .badge-corrected { background: var(--yellow-bg); color: var(--yellow); }
+  .entry-detail { display: none; padding: 12px 16px; border-top: 1px solid var(--border); background: var(--surface2); }
+  .entry.expanded .entry-detail { display: block; }
+  .detail-row { margin-bottom: 10px; }
+  .detail-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .detail-value { font-size: 14px; padding: 8px 12px; background: var(--surface); border-radius: 6px; border: 1px solid var(--border); white-space: pre-wrap; word-break: break-word; }
+  .detail-value.rtl { direction: rtl; text-align: right; }
+  .he-input {
+    width: 100%; padding: 8px 12px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; color: var(--text); font-size: 14px; direction: rtl; text-align: right;
+    font-family: inherit; resize: vertical; min-height: 38px; outline: none;
+  }
+  .he-input:focus { border-color: var(--accent); }
+  .entry-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .action-btn {
+    padding: 6px 16px; border-radius: 6px; border: 1px solid var(--border);
+    cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.15s;
+  }
+  .action-btn.accept { background: var(--green-bg); color: var(--green); border-color: var(--green); }
+  .action-btn.accept:hover { background: #0a3d1a; }
+  .action-btn.reject { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+  .action-btn.reject:hover { background: #3a0a0a; }
+  .action-btn.correct { background: var(--yellow-bg); color: var(--yellow); border-color: var(--yellow); }
+  .action-btn.correct:hover { background: #2a1f00; }
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; background: var(--green); color: white;
+    padding: 12px 20px; border-radius: 8px; font-weight: 500;
+    opacity: 0; transform: translateY(10px); transition: all 0.3s; z-index: 200;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .progress-bar { height: 3px; background: var(--surface2); width: 100%; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s; }
+  .kbd {
+    display: inline-block; padding: 1px 6px; background: var(--surface2);
+    border: 1px solid var(--border); border-radius: 3px; font-family: monospace;
+    font-size: 11px; color: var(--text-dim);
+  }
+  .shortcuts {
+    font-size: 12px; color: var(--text-dim); padding: 4px 24px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+  .shortcuts span { margin-right: 16px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Plane Hebrew Translation Review</h1>
+  <div class="stats" id="stats"></div>
+  <div class="tabs" id="fileTabs"></div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+<div class="shortcuts">
+  <span><span class="kbd">A</span> Accept</span>
+  <span><span class="kbd">R</span> Reject (keep English)</span>
+  <span><span class="kbd">E</span> Edit</span>
+  <span><span class="kbd">J</span>/<span class="kbd">K</span> Navigate</span>
+  <span><span class="kbd">Enter</span> Save edit</span>
+</div>
+<div class="filter-bar">
+  <input type="text" id="searchInput" placeholder="Search keys or values...">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="pending">Pending</button>
+  <button class="filter-btn" data-filter="accepted">Accepted</button>
+  <button class="filter-btn" data-filter="rejected">Rejected</button>
+  <button class="filter-btn" data-filter="corrected">Corrected</button>
+</div>
+<div class="bulk-bar">
+  <button class="bulk-btn accept" id="bulkAcceptBtn">Accept all visible</button>
+  <button class="bulk-btn save" id="saveBtn">Save to file</button>
+  <span style="font-size:12px;color:var(--text-dim);margin-left:8px" id="entryCount"></span>
+</div>
+<div class="entries" id="entries"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+let data = {};
+let currentFile = '';
+let currentFilter = 'all';
+let expandedIdx = -1;
+let editingIdx = -1;
+
+function escText(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function truncate(s, n) {
+  return s.length > n ? s.slice(0, n) + '...' : s;
+}
+
+function loadState() {
+  try { const s = localStorage.getItem('plane-he-review'); return s ? JSON.parse(s) : {}; }
+  catch { return {}; }
+}
+
+function saveState() {
+  const state = {};
+  for (const [file, entries] of Object.entries(data)) {
+    state[file] = entries.map(e => ({ path: e.path, status: e.status, he: e.he }));
+  }
+  localStorage.setItem('plane-he-review', JSON.stringify(state));
+}
+
+function applyState(saved) {
+  for (const [file, savedEntries] of Object.entries(saved)) {
+    if (!data[file]) continue;
+    const lookup = {};
+    for (const s of savedEntries) lookup[s.path] = s;
+    for (const entry of data[file]) {
+      const s = lookup[entry.path];
+      if (s) { entry.status = s.status; entry.he = s.he; }
+    }
+  }
+}
+
+function getFilteredEntries() {
+  const entries = data[currentFile] || [];
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  return entries
+    .map((e, i) => ({ ...e, origIdx: i }))
+    .filter(e => {
+      if (currentFilter !== 'all' && e.status !== currentFilter) return false;
+      if (search && !e.path.toLowerCase().includes(search) &&
+          !e.en.toLowerCase().includes(search) &&
+          !e.he.toLowerCase().includes(search)) return false;
+      return true;
+    });
+}
+
+function createEntryEl(e) {
+  const entry = document.createElement('div');
+  entry.className = `entry status-${e.status}${expandedIdx === e.origIdx ? ' expanded' : ''}`;
+  entry.dataset.idx = e.origIdx;
+
+  // Header row
+  const header = document.createElement('div');
+  header.className = 'entry-header';
+  header.addEventListener('click', () => toggleExpand(e.origIdx));
+
+  const pathSpan = document.createElement('span');
+  pathSpan.className = 'entry-path';
+  pathSpan.title = e.path;
+  pathSpan.textContent = e.path;
+
+  const enSpan = document.createElement('span');
+  enSpan.className = 'entry-en';
+  enSpan.textContent = truncate(e.en, 60);
+
+  const heSpan = document.createElement('span');
+  heSpan.className = 'entry-he-preview';
+  heSpan.textContent = truncate(e.he, 60);
+
+  const badge = document.createElement('span');
+  badge.className = `entry-status-badge badge-${e.status}`;
+  badge.textContent = e.status;
+
+  header.append(pathSpan, enSpan, heSpan, badge);
+  entry.appendChild(header);
+
+  // Detail panel
+  const detail = document.createElement('div');
+  detail.className = 'entry-detail';
+
+  // Context row
+  const ctxRow = document.createElement('div');
+  ctxRow.className = 'detail-row';
+  const ctxLabel = document.createElement('div');
+  ctxLabel.className = 'detail-label';
+  ctxLabel.textContent = 'Context (key path)';
+  const ctxVal = document.createElement('div');
+  ctxVal.className = 'detail-value';
+  ctxVal.style.fontFamily = 'monospace';
+  ctxVal.style.fontSize = '12px';
+  ctxVal.textContent = e.path;
+  ctxRow.append(ctxLabel, ctxVal);
+  detail.appendChild(ctxRow);
+
+  // English row
+  const enRow = document.createElement('div');
+  enRow.className = 'detail-row';
+  const enLabel = document.createElement('div');
+  enLabel.className = 'detail-label';
+  enLabel.textContent = 'English';
+  const enVal = document.createElement('div');
+  enVal.className = 'detail-value';
+  enVal.textContent = e.en;
+  enRow.append(enLabel, enVal);
+  detail.appendChild(enRow);
+
+  // Hebrew row
+  const heRow = document.createElement('div');
+  heRow.className = 'detail-row';
+  const heLabel = document.createElement('div');
+  heLabel.className = 'detail-label';
+  heLabel.textContent = 'Hebrew';
+
+  if (editingIdx === e.origIdx) {
+    const textarea = document.createElement('textarea');
+    textarea.className = 'he-input';
+    textarea.id = 'heInput';
+    textarea.rows = Math.max(1, e.he.split('\n').length);
+    textarea.value = e.he;
+    heRow.append(heLabel, textarea);
+  } else {
+    const heVal = document.createElement('div');
+    heVal.className = 'detail-value rtl';
+    heVal.textContent = e.he;
+    heRow.append(heLabel, heVal);
+  }
+  detail.appendChild(heRow);
+
+  // Actions
+  const actions = document.createElement('div');
+  actions.className = 'entry-actions';
+
+  const acceptBtn = document.createElement('button');
+  acceptBtn.className = 'action-btn accept';
+  acceptBtn.textContent = 'Accept';
+  acceptBtn.addEventListener('click', (ev) => { ev.stopPropagation(); setStatus(e.origIdx, 'accepted'); });
+
+  const rejectBtn = document.createElement('button');
+  rejectBtn.className = 'action-btn reject';
+  rejectBtn.textContent = 'Reject (use English)';
+  rejectBtn.addEventListener('click', (ev) => { ev.stopPropagation(); setStatus(e.origIdx, 'rejected'); });
+
+  if (editingIdx === e.origIdx) {
+    const saveEditBtn = document.createElement('button');
+    saveEditBtn.className = 'action-btn correct';
+    saveEditBtn.textContent = 'Save correction';
+    saveEditBtn.addEventListener('click', (ev) => { ev.stopPropagation(); saveEdit(e.origIdx); });
+    actions.append(acceptBtn, rejectBtn, saveEditBtn);
+  } else {
+    const editBtn = document.createElement('button');
+    editBtn.className = 'action-btn correct';
+    editBtn.textContent = 'Edit Hebrew';
+    editBtn.addEventListener('click', (ev) => { ev.stopPropagation(); startEdit(e.origIdx); });
+    actions.append(acceptBtn, rejectBtn, editBtn);
+  }
+  detail.appendChild(actions);
+  entry.appendChild(detail);
+
+  return entry;
+}
+
+function render() {
+  const filtered = getFilteredEntries();
+  const container = document.getElementById('entries');
+  container.replaceChildren();
+  for (const e of filtered) {
+    container.appendChild(createEntryEl(e));
+  }
+  updateStats();
+  document.getElementById('entryCount').textContent =
+    `Showing ${filtered.length} of ${(data[currentFile] || []).length} entries`;
+}
+
+function updateStats() {
+  const entries = data[currentFile] || [];
+  const counts = { pending: 0, accepted: 0, rejected: 0, corrected: 0 };
+  entries.forEach(e => counts[e.status]++);
+  const total = entries.length;
+  const reviewed = total - counts.pending;
+  const pct = total ? Math.round(reviewed / total * 100) : 0;
+
+  const statsEl = document.getElementById('stats');
+  statsEl.textContent = '';
+  const parts = [
+    ['accepted', counts.accepted], ['corrected', counts.corrected],
+    ['rejected', counts.rejected], ['pending', counts.pending],
+  ];
+  for (const [cls, cnt] of parts) {
+    const s = document.createElement('span');
+    s.className = `stat-${cls}`;
+    s.textContent = `${cnt} ${cls}`;
+    statsEl.appendChild(s);
+  }
+  const pctSpan = document.createElement('span');
+  pctSpan.textContent = `(${pct}% reviewed)`;
+  statsEl.appendChild(pctSpan);
+  document.getElementById('progressFill').style.width = `${pct}%`;
+}
+
+function toggleExpand(idx) {
+  expandedIdx = expandedIdx === idx ? -1 : idx;
+  editingIdx = -1;
+  render();
+}
+
+function setStatus(idx, status) {
+  const entry = data[currentFile][idx];
+  if (status === 'rejected') entry.he = entry.en;
+  entry.status = status;
+  saveState();
+  const filtered = getFilteredEntries();
+  const vi = filtered.findIndex(e => e.origIdx === idx);
+  expandedIdx = (vi >= 0 && vi < filtered.length - 1) ? filtered[vi + 1].origIdx : -1;
+  editingIdx = -1;
+  render();
+  scrollToExpanded();
+}
+
+function startEdit(idx) {
+  editingIdx = idx;
+  expandedIdx = idx;
+  render();
+  setTimeout(() => { const inp = document.getElementById('heInput'); if (inp) inp.focus(); }, 50);
+}
+
+function saveEdit(idx) {
+  const inp = document.getElementById('heInput');
+  if (inp) {
+    data[currentFile][idx].he = inp.value;
+    data[currentFile][idx].status = 'corrected';
+    saveState();
+  }
+  editingIdx = -1;
+  const filtered = getFilteredEntries();
+  const vi = filtered.findIndex(e => e.origIdx === idx);
+  expandedIdx = (vi >= 0 && vi < filtered.length - 1) ? filtered[vi + 1].origIdx : -1;
+  render();
+  scrollToExpanded();
+}
+
+function scrollToExpanded() {
+  setTimeout(() => {
+    const el = document.querySelector('.entry.expanded');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 50);
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Init
+async function init() {
+  const resp = await fetch('/api/data');
+  data = await resp.json();
+  applyState(loadState());
+
+  const tabs = document.getElementById('fileTabs');
+  for (const f of Object.keys(data)) {
+    const btn = document.createElement('button');
+    btn.className = 'tab';
+    btn.textContent = f;
+    btn.dataset.file = f;
+    btn.addEventListener('click', () => switchFile(f));
+    tabs.appendChild(btn);
+  }
+  if (Object.keys(data).length > 0) switchFile(Object.keys(data)[0]);
+}
+
+function switchFile(file) {
+  currentFile = file;
+  expandedIdx = -1;
+  editingIdx = -1;
+  document.querySelectorAll('.tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.file === file));
+  render();
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentFilter = btn.dataset.filter;
+    expandedIdx = -1;
+    document.querySelectorAll('.filter-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.filter === currentFilter));
+    render();
+  });
+});
+
+// Bulk accept
+document.getElementById('bulkAcceptBtn').addEventListener('click', () => {
+  const filtered = getFilteredEntries();
+  filtered.forEach(e => {
+    if (data[currentFile][e.origIdx].status === 'pending')
+      data[currentFile][e.origIdx].status = 'accepted';
+  });
+  saveState();
+  render();
+});
+
+// Save
+document.getElementById('saveBtn').addEventListener('click', async () => {
+  const entries = (data[currentFile] || []).map(e => ({
+    path: e.path, he: e.status === 'rejected' ? e.en : e.he,
+  }));
+  try {
+    const resp = await fetch('/api/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ file: currentFile, entries }),
+    });
+    showToast(resp.ok ? `Saved ${currentFile}.ts` : 'Save failed!');
+  } catch (err) { showToast('Save failed: ' + err.message); }
+});
+
+// Search
+document.getElementById('searchInput').addEventListener('input', (() => {
+  let timer;
+  return () => { clearTimeout(timer); timer = setTimeout(() => { expandedIdx = -1; render(); }, 200); };
+})());
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (editingIdx >= 0 && e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); saveEdit(editingIdx); }
+    if (e.key === 'Escape') { editingIdx = -1; render(); }
+    return;
+  }
+  if (e.target.tagName === 'INPUT') return;
+  const filtered = getFilteredEntries();
+  const vi = filtered.findIndex(x => x.origIdx === expandedIdx);
+  switch (e.key) {
+    case 'j': case 'ArrowDown':
+      e.preventDefault();
+      if (vi < filtered.length - 1) { expandedIdx = filtered[vi + 1].origIdx; editingIdx = -1; render(); scrollToExpanded(); }
+      else if (vi === -1 && filtered.length) { expandedIdx = filtered[0].origIdx; render(); scrollToExpanded(); }
+      break;
+    case 'k': case 'ArrowUp':
+      e.preventDefault();
+      if (vi > 0) { expandedIdx = filtered[vi - 1].origIdx; editingIdx = -1; render(); scrollToExpanded(); }
+      else if (vi === -1 && filtered.length) { expandedIdx = filtered[0].origIdx; render(); scrollToExpanded(); }
+      break;
+    case 'a': if (expandedIdx >= 0) setStatus(expandedIdx, 'accepted'); break;
+    case 'r': if (expandedIdx >= 0) setStatus(expandedIdx, 'rejected'); break;
+    case 'e': if (expandedIdx >= 0) startEdit(expandedIdx); break;
+  }
+});
+
+init();
+</script>
+</body>
+</html>
