@@ -153,11 +153,21 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
             )
             .values("display_name", "assignee_id", "avatar_url")
             .annotate(
-                cancelled_work_items=Count("id", filter=Q(state__group="cancelled"), distinct=True),
-                completed_work_items=Count("id", filter=Q(state__group="completed"), distinct=True),
-                backlog_work_items=Count("id", filter=Q(state__group="backlog"), distinct=True),
-                un_started_work_items=Count("id", filter=Q(state__group="unstarted"), distinct=True),
-                started_work_items=Count("id", filter=Q(state__group="started"), distinct=True),
+                cancelled_work_items=Count(
+                    "id", filter=Q(issue_assignee__deleted_at__isnull=True, state__group="cancelled"), distinct=True
+                ),
+                completed_work_items=Count(
+                    "id", filter=Q(issue_assignee__deleted_at__isnull=True, state__group="completed"), distinct=True
+                ),
+                backlog_work_items=Count(
+                    "id", filter=Q(issue_assignee__deleted_at__isnull=True, state__group="backlog"), distinct=True
+                ),
+                un_started_work_items=Count(
+                    "id", filter=Q(issue_assignee__deleted_at__isnull=True, state__group="unstarted"), distinct=True
+                ),
+                started_work_items=Count(
+                    "id", filter=Q(issue_assignee__deleted_at__isnull=True, state__group="started"), distinct=True
+                ),
             )
             .order_by("display_name")
         )

@@ -466,11 +466,16 @@ class ModuleViewSet(BaseViewSet):
                     "avatar_url",
                     "display_name",
                 )
-                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+                .annotate(
+                    total_estimates=Sum(
+                        Cast("estimate_point__value", FloatField()), filter=Q(issue_assignee__deleted_at__isnull=True)
+                    )
+                )
                 .annotate(
                     completed_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
                         filter=Q(
+                            issue_assignee__deleted_at__isnull=True,
                             completed_at__isnull=False,
                             archived_at__isnull=True,
                             is_draft=False,
@@ -481,6 +486,7 @@ class ModuleViewSet(BaseViewSet):
                     pending_estimates=Sum(
                         Cast("estimate_point__value", FloatField()),
                         filter=Q(
+                            issue_assignee__deleted_at__isnull=True,
                             completed_at__isnull=True,
                             archived_at__isnull=True,
                             is_draft=False,
@@ -565,11 +571,19 @@ class ModuleViewSet(BaseViewSet):
                 )
             )
             .values("first_name", "last_name", "assignee_id", "avatar_url", "display_name")
-            .annotate(total_issues=Count("id", filter=Q(archived_at__isnull=True, is_draft=False)))
+            .annotate(
+                total_issues=Count(
+                    "id",
+                    distinct=True,
+                    filter=Q(issue_assignee__deleted_at__isnull=True, archived_at__isnull=True, is_draft=False),
+                )
+            )
             .annotate(
                 completed_issues=Count(
                     "id",
+                    distinct=True,
                     filter=Q(
+                        issue_assignee__deleted_at__isnull=True,
                         completed_at__isnull=False,
                         archived_at__isnull=True,
                         is_draft=False,
@@ -579,7 +593,9 @@ class ModuleViewSet(BaseViewSet):
             .annotate(
                 pending_issues=Count(
                     "id",
+                    distinct=True,
                     filter=Q(
+                        issue_assignee__deleted_at__isnull=True,
                         completed_at__isnull=True,
                         archived_at__isnull=True,
                         is_draft=False,
