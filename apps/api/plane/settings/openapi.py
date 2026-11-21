@@ -141,6 +141,22 @@ SPECTACULAR_SETTINGS = {
                 "*Use Cases:* Feature planning, release organization, progress tracking, team coordination."
             ),
         },
+        # Project Organization
+        {
+            "name": "Pages",
+            "description": (
+                "**Project Pages & Documentation**\n\n"
+                "Create and manage rich-text pages to document projects, capture knowledge, "
+                "and collaborate on written content. Pages carry sanitized HTML bodies and "
+                "support archiving, locking, and public/private visibility.\n\n"
+                "*Key Features:*\n"
+                "- Create, read, update, and delete project pages\n"
+                "- Exchange page bodies as sanitized description_html\n"
+                "- Archive/unarchive and lock/unlock pages\n"
+                "- Control page visibility (public vs private)\n\n"
+                "*Use Cases:* Documentation, meeting notes, specs, knowledge bases, third-party sync."
+            ),
+        },
         # Core Project Management
         {
             "name": "Projects",
