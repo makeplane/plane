@@ -14,7 +14,7 @@
       },
       "default": {
         "title": "Error al subir.",
-        "description": "Algo salió mal. Por favor, inténtelo de nuevo."
+        "description": "Algo salió mal. Por favor, inténtalo de nuevo."
       }
     },
     "upgrade": {
@@ -39,7 +39,7 @@
       "works_with_links": "Funciona con YouTube, Figma, Google Docs y más"
     },
     "error": {
-      "not_valid_link": "Por favor, ingrese una URL válida."
+      "not_valid_link": "Por favor, ingresa una URL válida."
     }
   },
   "ai_block": {

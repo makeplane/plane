@@ -305,7 +305,7 @@
   "labels": "Etiquetas",
   "create_new_label": "Crear nueva etiqueta",
   "label_name": "Nombre de etiqueta",
-  "failed_to_create_label": "No se pudo crear la etiqueta. Por favor, inténtelo de nuevo.",
+  "failed_to_create_label": "No se pudo crear la etiqueta. Por favor, inténtalo de nuevo.",
   "no_matching_labels": "No hay etiquetas coincidentes",
   "adding_label": "Agregando \"{name}\"",
   "add_label_to_labels": "Agregar \"{name}\" a etiquetas",

@@ -114,7 +114,7 @@
       },
       "copy_link": {
         "success": "Enlace del comentario copiado al portapapeles",
-        "error": "Error al copiar el enlace del comentario. Inténtelo de nuevo más tarde."
+        "error": "Error al copiar el enlace del comentario. Inténtalo de nuevo más tarde."
       },
       "replies": {
         "create": {
@@ -181,7 +181,7 @@
       "failed": {
         "message": "No se pudo archivar el elemento de trabajo. Por favor, inténtalo de nuevo."
       },
-      "banner_message": "Este elemento de trabajo ha sido archivado. Visite la sección Archivos para restaurarlo.",
+      "banner_message": "Este elemento de trabajo ha sido archivado. Visita la sección Archivos para restaurarlo.",
       "go_to_archives": "Ir a archivos"
     },
     "restore": {
@@ -251,7 +251,7 @@
       "show_wiki_pages": "Mostrar páginas de wiki",
       "link_pages_to": "Enlazar páginas a",
       "linked_pages": "Páginas enlazadas",
-      "no_description": "Esta página está vacía. Escribe algo aquí y véalo como este marcador de posición",
+      "no_description": "Esta página está vacía. Escribe algo aquí y velo como este marcador de posición",
       "toasts": {
         "link": {
           "success": {
