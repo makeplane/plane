@@ -191,6 +191,7 @@ def _assert_only_active_assignment(assignees, create_user, removed_user, unassig
 
 
 @pytest.mark.contract
+@pytest.mark.usefixtures("mock_celery")
 class TestAssigneeDistributionIgnoresSoftDeleted:
     @pytest.mark.django_db
     def test_cycle_analytics(self, session_client, workspace, project, cycle, create_user, removed_user):
