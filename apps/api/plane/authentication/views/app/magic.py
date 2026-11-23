@@ -28,7 +28,7 @@ from plane.authentication.adapter.error import (
 )
 from plane.authentication.rate_limit import (
     AuthenticationThrottle,
-    authentication_throttle_allows,
+    throttle_auth_redirect,
 )
 from plane.utils.path_validator import get_safe_redirect_url
 
@@ -62,23 +62,12 @@ class MagicGenerateEndpoint(APIView):
 
 
 class MagicSignInEndpoint(View):
+    @throttle_auth_redirect(is_app=True)
     def post(self, request):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
         next_path = request.POST.get("next_path")
-
-        if not authentication_throttle_allows(request):
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
-                error_message="RATE_LIMIT_EXCEEDED",
-            )
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True),
-                next_path=next_path,
-                params=exc.get_error_dict(),
-            )
-            return HttpResponseRedirect(url)
 
         if code == "" or email == "":
             exc = AuthenticationException(
@@ -120,12 +109,15 @@ class MagicSignInEndpoint(View):
             profile, _ = Profile.objects.get_or_create(user=user)
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
-            if user.is_password_autoset and profile.is_onboarded:
+            if next_path:
+                # Back to the page that asked for the sign-in, e.g. an invite link
+                path = str(next_path)
+            elif user.is_password_autoset and profile.is_onboarded:
                 # Redirect to the home page
                 path = "/"
             else:
                 # Get the redirection path
-                path = str(next_path) if next_path else str(get_redirection_path(user=user))
+                path = str(get_redirection_path(user=user))
             # redirect to referer path
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
@@ -145,23 +137,12 @@ class MagicSignInEndpoint(View):
 
 
 class MagicSignUpEndpoint(View):
+    @throttle_auth_redirect(is_app=True)
     def post(self, request):
         # set the referer as session to redirect after login
         code = request.POST.get("code", "").strip()
         email = request.POST.get("email", "").strip().lower()
         next_path = request.POST.get("next_path")
-
-        if not authentication_throttle_allows(request):
-            exc = AuthenticationException(
-                error_code=AUTHENTICATION_ERROR_CODES["RATE_LIMIT_EXCEEDED"],
-                error_message="RATE_LIMIT_EXCEEDED",
-            )
-            url = get_safe_redirect_url(
-                base_url=base_host(request=request, is_app=True),
-                next_path=next_path,
-                params=exc.get_error_dict(),
-            )
-            return HttpResponseRedirect(url)
 
         if code == "" or email == "":
             exc = AuthenticationException(

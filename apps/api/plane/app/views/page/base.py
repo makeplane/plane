@@ -36,6 +36,7 @@ from plane.app.serializers import (
     PageDetailSerializer,
     PageBinaryUpdateSerializer,
 )
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.db.models import (
     Page,
     PageLog,
@@ -46,6 +47,7 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.error_codes import ERROR_CODES
+from plane.utils.order_queryset import PAGE_ORDER_BY_ALLOWLIST, sanitize_order_by
 
 # Local imports
 from ..base import BaseAPIView, BaseViewSet
@@ -100,9 +102,23 @@ class PageViewSet(BaseViewSet):
             .select_related("workspace")
             .select_related("owned_by")
             .annotate(is_favorite=Exists(subquery))
-            .order_by(self.request.GET.get("order_by", "-created_at"))
             .prefetch_related("labels")
-            .order_by("-is_favorite", "-created_at")
+            # Sanitize the user-supplied order_by against an allowlist: Django
+            # resolves the field at call time, so an unknown field raises
+            # FieldError (500 DoS) and a relation path (e.g. owned_by__password)
+            # enables ORM relational traversal. Favourites stay
+            # pinned first; the sanitized user ordering is the secondary sort
+            # (a single .order_by() so it is not overridden), with id as a
+            # stable tiebreak for pagination.
+            .order_by(
+                "-is_favorite",
+                sanitize_order_by(
+                    self.request.GET.get("order_by", "-created_at"),
+                    PAGE_ORDER_BY_ALLOWLIST,
+                    default="-created_at",
+                ),
+                "id",
+            )
             .annotate(
                 project=Exists(
                     ProjectPage.objects.filter(page_id=OuterRef("id"), project_id=self.kwargs.get("project_id"))
@@ -201,30 +217,9 @@ class PageViewSet(BaseViewSet):
 
     def retrieve(self, request, slug, project_id, page_id=None):
         page = self.get_queryset().filter(pk=page_id).first()
-        project = Project.objects.get(pk=project_id)
         track_visit = request.query_params.get("track_visit", "true").lower() == "true"
 
-        """
-        if the role is guest and guest_view_all_features is false and owned by is not
-        the requesting user then dont show the page
-        """
-
-        if (
-            ProjectMember.objects.filter(
-                workspace__slug=slug,
-                project_id=project_id,
-                member=request.user,
-                role=5,
-                is_active=True,
-            ).exists()
-            and not project.guest_view_all_features
-            and not page.owned_by == request.user
-        ):
-            return Response(
-                {"error": "You are not allowed to view this page"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
+        # Guest access (guest_view_all_features) is enforced by ProjectPagePermission.
         if page is None:
             return Response({"error": "Page not found"}, status=status.HTTP_404_NOT_FOUND)
         else:
@@ -474,6 +469,8 @@ class PageFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id, page_id):
+        # 404 unless the page is in this project and visible to the user
+        get_favorite_entities("page", request.user.id, project_id).get(pk=page_id, workspace__slug=slug)
         _ = UserFavorite.objects.create(
             project_id=project_id,
             entity_identifier=page_id,

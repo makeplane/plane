@@ -61,5 +61,8 @@
       "use_this": "Použiť toto",
       "refine": "Upraviť"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Formátovanie"
   }
 }

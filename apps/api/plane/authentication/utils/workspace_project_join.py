@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Django imports
-from django.utils import timezone
-
 # Module imports
 from plane.db.models import (
     ProjectMember,
@@ -13,12 +10,14 @@ from plane.db.models import (
     WorkspaceMemberInvite,
 )
 from plane.utils.cache import invalidate_cache_directly
-from plane.bgtasks.event_tracking_task import track_event
-from plane.utils.analytics_events import USER_JOINED_WORKSPACE
 
 
 def process_workspace_project_invitations(user):
     """This function takes in User and adds him to all workspace and projects that the user has accepted invited of"""
+
+    # Applied on sign-in without the emailed invite token, so only for a verified email
+    if not user.is_email_verified:
+        return
 
     # Check if user has any accepted invites for workspace and add them to workspace
     workspace_member_invites = WorkspaceMemberInvite.objects.filter(email=user.email, accepted=True)
@@ -41,18 +40,6 @@ def process_workspace_project_invitations(user):
             url_params=False,
             user=False,
             multiple=True,
-        )
-        track_event.delay(
-            user_id=user.id,
-            event_name=USER_JOINED_WORKSPACE,
-            slug=workspace_member_invite.workspace.slug,
-            event_properties={
-                "user_id": user.id,
-                "workspace_id": workspace_member_invite.workspace.id,
-                "workspace_slug": workspace_member_invite.workspace.slug,
-                "role": workspace_member_invite.role,
-                "joined_at": str(timezone.now().isoformat()),
-            },
         )
 
     # Check if user has any project invites

@@ -171,10 +171,16 @@
     "search_menu": {
       "no_results": "Keine Ergebnisse gefunden",
       "clear_search": "Suche löschen",
-      "go_to_advanced_search": "Zur erweiterten Suche"
+      "go_to_advanced_search": "Zur erweiterten Suche",
+      "search_commands": "Befehle suchen..."
     },
     "footer": {
       "workspace_level": "Arbeitsbereich-Ebene"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Tastaturkürzel suchen",
+      "no_results": "Keine Tastaturkürzel für „{query}“ gefunden",
+      "sequence_separator": "dann"
     },
     "group_titles": {
       "actions": "Aktionen",
@@ -185,7 +191,7 @@
       "settings": "Einstellungen",
       "account": "Konto",
       "miscellaneous": "Sonstiges",
-      "preferences": "Einstellungen",
+      "preferences": "Präferenzen",
       "help": "Hilfe"
     }
   }

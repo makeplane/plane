@@ -23,6 +23,7 @@ from plane.app.serializers import (
     EstimateReadSerializer,
 )
 from plane.utils.cache import invalidate_cache
+from plane.utils.estimate import NON_NUMERIC_ESTIMATE_ERROR, is_numeric_estimate
 from plane.bgtasks.issue_activities_task import issue_activity
 
 
@@ -66,6 +67,14 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         estimate_name = estimate.get("name", generate_random_name())
         estimate_type = estimate.get("type", "categories")
         last_used = estimate.get("last_used", False)
+
+        # Validate the points first so a rejected request leaves no estimate behind
+        serializer = EstimatePointSerializer(
+            data=request.data.get("estimate_points"), many=True, context={"estimate_type": estimate_type}
+        )
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         estimate = Estimate.objects.create(
             name=estimate_name,
             project_id=project_id,
@@ -73,13 +82,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
             type=estimate_type,
         )
 
-        estimate_points = request.data.get("estimate_points", [])
-
-        serializer = EstimatePointSerializer(data=request.data.get("estimate_points"), many=True)
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        estimate_points = EstimatePoint.objects.bulk_create(
+        EstimatePoint.objects.bulk_create(
             [
                 EstimatePoint(
                     estimate=estimate,
@@ -91,7 +94,7 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                     created_by=request.user,
                     updated_by=request.user,
                 )
-                for estimate_point in estimate_points
+                for estimate_point in serializer.validated_data
             ],
             batch_size=10,
             ignore_conflicts=True,
@@ -118,15 +121,16 @@ class BulkEstimatePointEndpoint(BaseViewSet):
         if request.data.get("estimate"):
             estimate.name = request.data.get("estimate").get("name", estimate.name)
             estimate.type = request.data.get("estimate").get("type", estimate.type)
-            estimate.save()
 
         estimate_points_data = request.data.get("estimate_points", [])
 
-        estimate_points = EstimatePoint.objects.filter(
-            pk__in=[estimate_point.get("id") for estimate_point in estimate_points_data],
-            workspace__slug=slug,
-            project_id=project_id,
-            estimate_id=estimate_id,
+        # Every point of the estimate, not just the ones in the payload: a points estimate must end up all numeric
+        estimate_points = list(
+            EstimatePoint.objects.filter(
+                workspace__slug=slug,
+                project_id=project_id,
+                estimate_id=estimate_id,
+            )
         )
 
         updated_estimate_points = []
@@ -138,6 +142,12 @@ class BulkEstimatePointEndpoint(BaseViewSet):
                 estimate_point.key = estimate_point_data[0].get("key", estimate_point.key)
                 updated_estimate_points.append(estimate_point)
 
+        # Nothing is saved before this check
+        if estimate.type == "points" and not all(is_numeric_estimate(point.value) for point in estimate_points):
+            return Response({"error": NON_NUMERIC_ESTIMATE_ERROR}, status=status.HTTP_400_BAD_REQUEST)
+
+        if request.data.get("estimate"):
+            estimate.save()
         EstimatePoint.objects.bulk_update(updated_estimate_points, ["key", "value"], batch_size=10)
 
         estimate_serializer = EstimateReadSerializer(estimate)
@@ -172,6 +182,8 @@ class EstimatePointEndpoint(BaseViewSet):
             )
         key = request.data.get("key", 0)
         value = request.data.get("value", "")
+        if estimate.type == "points" and not is_numeric_estimate(value):
+            return Response({"error": NON_NUMERIC_ESTIMATE_ERROR}, status=status.HTTP_400_BAD_REQUEST)
         estimate_point = EstimatePoint.objects.create(
             estimate_id=estimate_id, project_id=project_id, key=key, value=value
         )

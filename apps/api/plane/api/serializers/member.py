@@ -28,7 +28,7 @@ class ProjectMemberSerializer(BaseSerializer):
             raise serializers.ValidationError("Slug is required", code="INVALID_SLUG")
         if not value:
             raise serializers.ValidationError("Member is required", code="INVALID_MEMBER")
-        if not WorkspaceMember.objects.filter(workspace__slug=slug, member=value).exists():
+        if not WorkspaceMember.objects.filter(workspace__slug=slug, member=value, is_active=True).exists():
             raise serializers.ValidationError("Member not found in workspace", code="INVALID_MEMBER")
         return value
 
@@ -37,7 +37,72 @@ class ProjectMemberSerializer(BaseSerializer):
             raise serializers.ValidationError("Invalid role", code="INVALID_ROLE")
         return value
 
+    def validate(self, attrs):
+        # Mirrors ProjectMemberViewSet.partial_update: a project role cannot
+        # exceed the target's workspace role (workspace guests stay guests).
+        role = attrs.get("role")
+        if role is None and self.instance is not None:
+            role = self.instance.role
+        member = attrs.get("member") or (self.instance.member if self.instance else None)
+        slug = self.context.get("slug")
+        if role is not None and member is not None and slug:
+            workspace_role = (
+                WorkspaceMember.objects.filter(workspace__slug=slug, member=member, is_active=True)
+                .values_list("role", flat=True)
+                .first()
+            )
+            if workspace_role is None:
+                raise serializers.ValidationError({"member": "Member not found in workspace"}, code="INVALID_MEMBER")
+            if workspace_role == ROLE.GUEST.value and role in [ROLE.ADMIN.value, ROLE.MEMBER.value]:
+                raise serializers.ValidationError(
+                    "You cannot assign a role higher than the member's workspace role",
+                    code="INVALID_ROLE",
+                )
+        return attrs
+
     class Meta:
         model = ProjectMember
         fields = ["id", "member", "role"]
         read_only_fields = ["id"]
+
+
+class BaseMemberLiteAPISerializer(BaseSerializer):
+    """Common flattened member representation for paginated member pickers/directories."""
+
+    id = serializers.UUIDField(source="member.id", read_only=True)
+    first_name = serializers.CharField(source="member.first_name", read_only=True)
+    last_name = serializers.CharField(source="member.last_name", read_only=True)
+    email = serializers.EmailField(source="member.email", read_only=True)
+    avatar = serializers.CharField(source="member.avatar", read_only=True, allow_null=True)
+    avatar_url = serializers.CharField(source="member.avatar_url", read_only=True, allow_null=True)
+    display_name = serializers.CharField(source="member.display_name", read_only=True)
+    is_bot = serializers.BooleanField(source="member.is_bot", read_only=True)
+
+    class Meta:
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "avatar",
+            "avatar_url",
+            "display_name",
+            "role",
+            "is_active",
+            "is_bot",
+        ]
+        read_only_fields = fields
+
+
+class WorkspaceMemberLiteAPISerializer(BaseMemberLiteAPISerializer):
+    """Minimal WorkspaceMember representation for paginated member pickers/directories."""
+
+    class Meta(BaseMemberLiteAPISerializer.Meta):
+        model = WorkspaceMember
+
+
+class ProjectMemberLiteAPISerializer(BaseMemberLiteAPISerializer):
+    """Minimal ProjectMember representation for paginated member pickers/directories."""
+
+    class Meta(BaseMemberLiteAPISerializer.Meta):
+        model = ProjectMember

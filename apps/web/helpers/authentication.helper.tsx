@@ -109,6 +109,17 @@ export type TAuthErrorInfo = {
   message: ReactNode;
 };
 
+/**
+ * Carries the current page's next_path over to another auth screen, so moving
+ * between sign-in and sign-up keeps the page to return to once signed in
+ * (an invite link, with its token, for one).
+ */
+export const withNextPath = (href: string): string => {
+  const nextPath = new URLSearchParams(window.location.search).get("next_path");
+  if (!nextPath) return href;
+  return `${href}${href.includes("?") ? "&" : "?"}next_path=${encodeURIComponent(nextPath)}`;
+};
+
 // TODO: move all error messages to translation files
 const errorCodeMessages: {
   [key in EAuthenticationErrorCodes]: { title: string; message: (email?: string) => ReactNode };
@@ -167,7 +178,7 @@ const errorCodeMessages: {
         Your account is already registered.&nbsp;
         <Link
           className="font-medium underline underline-offset-4 transition-all hover:font-bold"
-          href={`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`}
+          href={withNextPath(`/sign-in${email ? `?email=${encodeURIComponent(email)}` : ``}`)}
         >
           Sign In
         </Link>
@@ -203,7 +214,7 @@ const errorCodeMessages: {
         No account found.&nbsp;
         <Link
           className="font-medium underline underline-offset-4 transition-all hover:font-bold"
-          href={`/${email ? `?email=${encodeURIComponent(email)}` : ``}`}
+          href={withNextPath(`/${email ? `?email=${encodeURIComponent(email)}` : ``}`)}
         >
           Create one
         </Link>

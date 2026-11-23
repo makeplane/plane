@@ -9,8 +9,8 @@ import { observer } from "mobx-react";
 import { PageHead } from "@/components/core/page-title";
 // hooks
 import { useWorkspace } from "@/hooks/store/use-workspace";
-// plane web components
-import { WorkspaceActiveCyclesRoot } from "@/plane-web/components/active-cycles";
+// local imports
+import { WorkspaceActiveCyclesUpgrade } from "@/components/active-cycles/workspace-active-cycles-upgrade";
 
 function WorkspaceActiveCyclesPage() {
   const { currentWorkspace } = useWorkspace();
@@ -20,7 +20,7 @@ function WorkspaceActiveCyclesPage() {
   return (
     <>
       <PageHead title={pageTitle} />
-      <WorkspaceActiveCyclesRoot />
+      <WorkspaceActiveCyclesUpgrade />
     </>
   );
 }

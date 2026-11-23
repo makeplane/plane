@@ -16,24 +16,53 @@ FROM makeplane/plane-proxy:${PLANE_VERSION} AS proxy-img
 # **************************************************
 #  STAGE 1: Runner
 # **************************************************
-FROM python:3.12.10-alpine AS runner
+FROM python:3.12.12-alpine AS runner
 
 WORKDIR /app
 
+# grpcio ships its own roots.pem, which still trusts emSign ECC Root CA - G3 (eMudhra incident);
+# point it at the system bundle, which the OS update below keeps current.
+ENV GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=/etc/ssl/certs/ca-certificates.crt
+
+# OS security updates. --available forces reinstall from the current repos;
+# bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
+# string), otherwise a rebuild silently re-ships the old packages.
+ARG APK_SECURITY_PATCH=2026-10-26
+RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available
+
+# The node binary only links libstdc++ and libgcc_s from /usr/lib, so install
+# them from apk instead of copying node:22-alpine's whole /usr/lib. That copy
+# overwrote the libraries upgraded above (libcrypto, libssl, libz, libapk) with
+# node's copies from a different Alpine release, shipping unpatched versions
+# and breaking /sbin/apk.
 RUN apk add --no-cache \
+    "libstdc++" \
+    "libgcc" \
     "libpq" \
     "libxslt" \
-    "xmlsec"
+    "xmlsec" \
+    "nss-tools" \
+    "bash" \
+    "curl" \
+    "uuidgen" \
+    "ncdu" \
+    "vim"
 
-
-COPY --from=node /usr/lib /usr/lib
 COPY --from=node /usr/local/lib /usr/local/lib
 COPY --from=node /usr/local/include /usr/local/include
 COPY --from=node /usr/local/bin /usr/local/bin
 
-COPY --from=web-img /usr/share/nginx/html /app/web
+# The copy above re-introduces node:22-alpine's npm, whose bundled dependencies
+# carry known vulnerabilities (pacote, ip-address, brace-expansion, tar,
+# sigstore) -- the per-service images strip npm, so without this the AIO is the
+# only place they come back. npm is not needed at runtime: the space program in
+# supervisor.conf execs its react-router-serve bin shim directly rather than
+# going through npx.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+
+COPY --from=web-img /usr/share/caddy/html /app/web
 COPY --from=space-img /app /app/space
-COPY --from=admin-img /usr/share/nginx/html/god-mode /app/admin
+COPY --from=admin-img /usr/share/caddy/html/god-mode /app/admin
 COPY --from=live-img /app /app/live
 
 RUN rm -rf /app/space/apps/space/.next/cache
@@ -45,9 +74,14 @@ COPY --from=backend-img /code /app/backend
 COPY --from=backend-img /usr/local/lib/python3.12/site-packages/ /usr/local/lib/python3.12/site-packages/
 COPY --from=backend-img /usr/local/bin/ /usr/local/bin/
 
-RUN apk add --no-cache nss-tools bash curl uuidgen ncdu vim
-
 RUN pip install supervisor
+
+# pip is only needed for the install above. The runner base's own pip (25.0.1)
+# vendors a certifi that still trusts the compromised emSign G3 root
+# (GHSA-6q48-6c7w-9gw2), so drop it before the image ships.
+RUN rm -rf /usr/local/lib/python3.12/site-packages/pip \
+           /usr/local/lib/python3.12/site-packages/pip-*.dist-info \
+           /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.12
 RUN mkdir -p /etc/supervisor/conf.d
 
 COPY start.sh /app/start.sh

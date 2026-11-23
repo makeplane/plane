@@ -1,0 +1,156 @@
+{
+  "account_settings": {
+    "profile": {
+      "change_email_modal": {
+        "title": "E-mail wijzigen",
+        "description": "Voer een nieuw e-mailadres in om een verificatielink te ontvangen.",
+        "toasts": {
+          "success_title": "Gelukt!",
+          "success_message": "E-mail succesvol bijgewerkt. Log opnieuw in."
+        },
+        "form": {
+          "email": {
+            "label": "Nieuwe e-mail",
+            "placeholder": "Voer je e-mailadres in",
+            "errors": {
+              "required": "E-mail is verplicht",
+              "invalid": "E-mail is ongeldig",
+              "exists": "E-mail bestaat al. Gebruik een ander adres.",
+              "validation_failed": "E-mailverificatie mislukt. Probeer het opnieuw."
+            }
+          },
+          "code": {
+            "label": "Unieke code",
+            "placeholder": "123456",
+            "helper_text": "Verificatiecode verzonden naar je nieuwe e-mailadres.",
+            "errors": {
+              "required": "Unieke code is verplicht",
+              "invalid": "Ongeldige verificatiecode. Probeer het opnieuw."
+            }
+          }
+        },
+        "actions": {
+          "continue": "Doorgaan",
+          "confirm": "Bevestigen",
+          "cancel": "Annuleren"
+        },
+        "states": {
+          "sending": "Verzenden"
+        }
+      }
+    },
+    "preferences": {
+      "heading": "Voorkeuren",
+      "description": "Pas je app-ervaring aan zoals jij werkt"
+    },
+    "notifications": {
+      "heading": "E-mailmeldingen",
+      "description": "Blijf op de hoogte van werkitems waarop je bent geabonneerd. Schakel dit in om meldingen te ontvangen.",
+      "select_default_view": "Selecteer standaardweergave",
+      "compact": "Compact",
+      "full": "Volledig scherm"
+    },
+    "security": {
+      "heading": "Beveiliging"
+    },
+    "api_tokens": {
+      "title": "Persoonlijke toegangstokens",
+      "description": "Genereer veilige API-tokens om je gegevens te integreren met externe systemen en applicaties."
+    },
+    "activity": {
+      "heading": "Activiteit",
+      "description": "Volg je recente acties en wijzigingen in alle projecten en werkitems."
+    },
+    "connections": {
+      "title": "Verbindingen",
+      "heading": "Verbindingen",
+      "description": "Beheer de verbindingsinstellingen van je werkruimte."
+    }
+  },
+  "profile": {
+    "label": "Profiel",
+    "page_label": "Jouw werk",
+    "work": "Werk",
+    "details": {
+      "joined_on": "Lid geworden op",
+      "time_zone": "Tijdzone"
+    },
+    "stats": {
+      "workload": "Werklast",
+      "overview": "Overzicht",
+      "created": "Aangemaakte werkitems",
+      "assigned": "Toegewezen werkitems",
+      "subscribed": "Geabonneerde werkitems",
+      "state_distribution": {
+        "title": "Werkitems per status",
+        "empty": "Maak werkitems aan om ze per status in de grafiek te bekijken voor een betere analyse."
+      },
+      "priority_distribution": {
+        "title": "Werkitems per prioriteit",
+        "empty": "Maak werkitems aan om ze per prioriteit in de grafiek te bekijken voor een betere analyse."
+      },
+      "recent_activity": {
+        "title": "Recente activiteit",
+        "empty": "We konden geen gegevens vinden. Bekijk je invoer",
+        "button": "Activiteit van vandaag downloaden",
+        "button_loading": "Downloaden"
+      }
+    },
+    "actions": {
+      "profile": "Profiel",
+      "security": "Beveiliging",
+      "activity": "Activiteit",
+      "preferences": "Voorkeuren",
+      "notifications": "Meldingen",
+      "api-tokens": "Persoonlijke toegangstokens",
+      "connections": "Verbindingen"
+    },
+    "tabs": {
+      "summary": "Samenvatting",
+      "assigned": "Toegewezen",
+      "created": "Aangemaakt",
+      "subscribed": "Geabonneerd",
+      "activity": "Activiteit"
+    },
+    "empty_state": {
+      "activity": {
+        "title": "Nog geen activiteiten",
+        "description": "Begin met het aanmaken van een nieuw werkitem! Voeg er details en eigenschappen aan toe. Ontdek meer in Plane om je activiteit te zien."
+      },
+      "assigned": {
+        "title": "Er zijn geen werkitems aan je toegewezen",
+        "description": "Werkitems die aan jou zijn toegewezen, kun je hier volgen."
+      },
+      "created": {
+        "title": "Nog geen werkitems",
+        "description": "Alle werkitems die je aanmaakt, komen hier terecht. Volg ze hier direct."
+      },
+      "subscribed": {
+        "title": "Nog geen werkitems",
+        "description": "Abonneer je op werkitems die je interesseren en volg ze hier allemaal."
+      }
+    }
+  },
+  "themes": {
+    "theme_options": {
+      "system_preference": {
+        "label": "Systeemvoorkeur"
+      },
+      "light": {
+        "label": "Licht"
+      },
+      "dark": {
+        "label": "Donker"
+      },
+      "light_contrast": {
+        "label": "Licht hoog contrast"
+      },
+      "dark_contrast": {
+        "label": "Donker hoog contrast"
+      },
+      "custom": {
+        "label": "Aangepast thema"
+      }
+    }
+  }
+}

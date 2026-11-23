@@ -33,6 +33,7 @@ from plane.app.serializers import (
     UserSerializer,
 )
 from plane.app.views.base import BaseAPIView, BaseViewSet
+from plane.app.views.workspace.user import _visible_issues_q
 from plane.db.models import (
     Account,
     IssueActivity,
@@ -50,10 +51,15 @@ from plane.authentication.utils.host import user_ip
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
 from plane.utils.host import base_host
 from plane.bgtasks.user_email_update_task import send_email_update_magic_code, send_email_update_confirmation
-from plane.authentication.rate_limit import EmailVerificationThrottle
+from plane.authentication.rate_limit import AuthenticationThrottle, EmailVerificationThrottle
+from plane.authentication.provider.credentials.magic_code import MagicCodeProvider
 
 
 logger = logging.getLogger("plane")
+
+# Email-change codes issued per target address, across all accounts, per window.
+EMAIL_UPDATE_CODES_PER_TARGET = 5
+EMAIL_UPDATE_CODES_WINDOW = 3600
 
 
 class UserEndpoint(BaseViewSet):
@@ -69,7 +75,9 @@ class UserEndpoint(BaseViewSet):
         Apply rate limiting to specific endpoints.
         """
         if self.action == "generate_email_verification_code":
-            return [EmailVerificationThrottle()]
+            return [EmailVerificationThrottle(), AuthenticationThrottle()]
+        if self.action == "update_email":
+            return [AuthenticationThrottle()]
         return super().get_throttles()
 
     @method_decorator(cache_control(private=True, max_age=12))
@@ -148,6 +156,12 @@ class UserEndpoint(BaseViewSet):
         if validation_error:
             return validation_error
 
+        # Atomically count codes issued to this address; refuse past the cap.
+        issued_key = f"email_update_issued:{new_email}"
+        cache.add(issued_key, 0, timeout=EMAIL_UPDATE_CODES_WINDOW)
+        if cache.incr(issued_key) > EMAIL_UPDATE_CODES_PER_TARGET:
+            self.throttled(request, None)
+
         try:
             # Generate magic code for email verification
             # Use a special key prefix to distinguish from regular magic signin
@@ -158,6 +172,8 @@ class UserEndpoint(BaseViewSet):
             # Store in cache with 10 minute expiration
             cache_data = json.dumps({"token": token})
             cache.set(cache_key, cache_data, timeout=600)
+            # Each newly issued code starts with a fresh verify-attempt budget.
+            cache.delete(f"{cache_key}:verify_attempts")
 
             # Send magic code to the new email
             send_email_update_magic_code.delay(new_email, token)
@@ -197,6 +213,13 @@ class UserEndpoint(BaseViewSet):
         # Verify the magic code
         try:
             cache_key = f"magic_email_update_{user.id}_{new_email}"
+
+            # Count every attempt before reading the code so concurrent requests share one
+            # budget and a code invalidated in the meantime is never compared. The code and
+            # its counter are deleted together once the cap is reached.
+            attempts_key = f"{cache_key}:verify_attempts"
+            cache.add(attempts_key, 0, timeout=600)
+            attempts = cache.incr(attempts_key)
             cached_data = cache.get(cache_key)
 
             if not cached_data:
@@ -209,7 +232,11 @@ class UserEndpoint(BaseViewSet):
             data = json.loads(cached_data)
             stored_token = data.get("token")
 
-            if str(stored_token) != str(code):
+            if attempts > MagicCodeProvider.MAX_VERIFY_ATTEMPTS or not secrets.compare_digest(
+                str(stored_token).encode(), str(code).encode()
+            ):
+                if attempts >= MagicCodeProvider.MAX_VERIFY_ATTEMPTS:
+                    cache.delete_many([cache_key, attempts_key])
                 return Response(
                     {"error": "Invalid verification code"},
                     status=status.HTTP_400_BAD_REQUEST,
@@ -230,8 +257,8 @@ class UserEndpoint(BaseViewSet):
         old_email = user.email
         # Update the email - this updates the existing user record without creating a new user
         user.email = new_email
-        # Reset email verification status when email is changed
-        user.is_email_verified = False
+        # The new address was confirmed with the code mailed to it
+        user.is_email_verified = True
         user.save()
 
         # delete the cache
@@ -380,9 +407,10 @@ class UpdateUserTourCompletedEndpoint(BaseAPIView):
 
 class UserActivityEndpoint(BaseAPIView, BasePaginator):
     def get(self, request):
-        queryset = IssueActivity.objects.filter(actor=request.user).select_related(
-            "actor", "workspace", "issue", "project"
-        )
+        # The serializer embeds the live issue, so only issues the user can still see
+        queryset = IssueActivity.objects.filter(
+            _visible_issues_q(request.user, prefix="issue__"), actor=request.user
+        ).select_related("actor", "workspace", "issue", "project")
 
         return self.paginate(
             order_by=sanitize_order_by(

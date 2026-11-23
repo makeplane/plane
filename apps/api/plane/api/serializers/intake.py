@@ -6,6 +6,7 @@
 from .base import BaseSerializer
 from .issue import IssueExpandSerializer
 from plane.db.models import IntakeIssue, Issue, State, StateGroup
+from plane.utils.timezone_converter import snooze_day_start
 from rest_framework import serializers
 
 
@@ -110,11 +111,23 @@ class IntakeIssueUpdateSerializer(BaseSerializer):
             "updated_at",
         ]
 
+    def validate_duplicate_to(self, value):
+        # A duplicate can only be a work item of the intake's own project
+        if value and value.project_id != self.instance.project_id:
+            raise serializers.ValidationError("Work item must belong to the same project")
+        return value
+
     def validate(self, attrs):
         """
         Validate that if status is being changed to accepted (1),
         the project has a default state to transition to.
         """
+
+        if attrs.get("snoozed_till"):
+            attrs["snoozed_till"] = (
+                snooze_day_start(self.initial_data.get("snoozed_till"), self.instance.project_id)
+                or attrs["snoozed_till"]
+            )
 
         # Check if status is being updated to accepted
         if attrs.get("status") == 1:

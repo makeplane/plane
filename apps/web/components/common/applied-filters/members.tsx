@@ -1,0 +1,56 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import { observer } from "mobx-react";
+// plane ui
+import { Avatar } from "@makeplane/propel/components/avatar";
+// helpers
+import { getFileURL } from "@plane/utils";
+// types
+import { useMember } from "@/hooks/store/use-member";
+import { RemovableChip } from "@/components/common/removable-chip";
+
+type Props = {
+  handleRemove: (val: string) => void;
+  values: string[];
+  editable: boolean | undefined;
+};
+
+export const AppliedMembersFilters = observer(function AppliedMembersFilters(props: Props) {
+  const { handleRemove, values, editable } = props;
+  // store hooks
+  const {
+    workspace: { getWorkspaceMemberDetails },
+  } = useMember();
+
+  return (
+    <>
+      {values.map((memberId) => {
+        const memberDetails = getWorkspaceMemberDetails(memberId)?.member;
+
+        if (!memberDetails) return null;
+
+        return (
+          <RemovableChip
+            key={memberId}
+            variant="soft"
+            icon={
+              <Avatar
+                alt={memberDetails.display_name}
+                fallback={memberDetails.display_name?.[0]?.toUpperCase()}
+                src={getFileURL(memberDetails.avatar_url)}
+                size="2xs"
+              />
+            }
+            label={memberDetails.display_name}
+            ariaLabel={memberDetails.display_name}
+            onRemove={editable ? () => handleRemove(memberId) : undefined}
+          />
+        );
+      })}
+    </>
+  );
+});

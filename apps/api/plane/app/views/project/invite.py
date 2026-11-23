@@ -28,7 +28,6 @@ from plane.db.models import (
     ProjectMember,
     Workspace,
     ProjectMemberInvite,
-    User,
     WorkspaceMember,
     Project,
     ProjectUserProperty,
@@ -52,6 +51,20 @@ class ProjectInvitationsViewset(BaseViewSet):
             .select_related("project")
             .select_related("workspace", "workspace__owner")
         )
+
+    # Every invitation action (list/retrieve/destroy, like create) is limited to
+    # project admins.
+    @allow_permission([ROLE.ADMIN])
+    def list(self, request, slug, project_id):
+        return super().list(request)
+
+    @allow_permission([ROLE.ADMIN])
+    def retrieve(self, request, slug, project_id, pk):
+        return super().retrieve(request)
+
+    @allow_permission([ROLE.ADMIN])
+    def destroy(self, request, slug, project_id, pk):
+        return super().destroy(request)
 
     @allow_permission([ROLE.ADMIN])
     def create(self, request, slug, project_id):
@@ -148,16 +161,15 @@ class UserProjectInvitationsViewset(BaseViewSet):
         workspace_role = workspace_member.role
         workspace = workspace_member.workspace
 
-        # Use the workspace-scoped, network-validated project IDs only.
-        # Raw project_ids may contain UUIDs from other workspaces; those are
-        # absent from the `projects` queryset and therefore bypass the SECRET
-        # network check above (GHSA-45hc-q4mw-jhxm).
+        # Membership writes use only the project IDs validated above: projects in
+        # this workspace that passed the network check.
         validated_project_ids = [str(p.id) for p in projects]
 
-        # If the user was already part of workspace
+        # If the user was already part of the project, reactivate them with the
+        # same role a new joiner gets; a previous project role is not restored.
         _ = ProjectMember.objects.filter(
-            workspace__slug=slug, project_id__in=validated_project_ids, member=request.user
-        ).update(is_active=True)
+            workspace__slug=slug, project_id__in=validated_project_ids, member=request.user, is_active=False
+        ).update(is_active=True, role=workspace_role, updated_by=request.user, updated_at=timezone.now())
 
         ProjectMember.objects.bulk_create(
             [
@@ -205,9 +217,7 @@ class ProjectJoinEndpoint(BaseAPIView):
             )
 
         # Require an authenticated session — the accepting user must be the
-        # person who was invited.  Without this check an attacker who knows the
-        # invitee email and obtains the token can hijack the project membership
-        # (GHSA-g36h-p63v-g9c7).
+        # person who was invited.
         if not request.user.is_authenticated:
             return Response(
                 {"error": "Authentication required to accept project invitation"},
@@ -249,9 +259,16 @@ class ProjectJoinEndpoint(BaseAPIView):
                     workspace_member.is_active = True
                     workspace_member.save()
 
-                # Check if the user was already a member of project then activate the user
+                # Check if the user was already a member of the invited project
+                # then activate the user.  The lookup must be scoped to
+                # `project_id` — a workspace-wide lookup reactivates whatever
+                # membership the user already had (typically a project they were
+                # removed from) and leaves the invited project without a member
+                # row (SECUR-234).
                 project_member = ProjectMember.objects.filter(
-                    workspace_id=project_invite.workspace_id, member=user
+                    workspace_id=project_invite.workspace_id,
+                    project_id=project_id,
+                    member=user,
                 ).first()
                 if project_member is None:
                     # Create a Project Member
@@ -261,8 +278,10 @@ class ProjectJoinEndpoint(BaseAPIView):
                         role=project_invite.role,
                     )
                 else:
+                    # The invitation's role is what the inviting admin chose; the
+                    # stale role on a deactivated row must not survive the rejoin.
                     project_member.is_active = True
-                    project_member.role = project_member.role
+                    project_member.role = project_invite.role
                     project_member.save()
 
                 return Response(

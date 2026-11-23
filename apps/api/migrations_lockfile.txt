@@ -1,0 +1,9 @@
+# Latest migration of every Plane app. `python manage.py makemigrations` rewrites
+# this file; never edit it by hand.
+#
+# A merge conflict here means another PR added a migration to the same app first:
+# merge preview, delete your migration, and run makemigrations again.
+
+db: 0125_reset_project_deploy_board_identity
+
+license: 0006_instance_is_current_version_deprecated

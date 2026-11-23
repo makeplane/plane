@@ -11,11 +11,17 @@
       "delete_project": {
         "title": "Delete project",
         "description": "When deleting a project, all of the data and resources within that project will be permanently removed and cannot be recovered.",
-        "button": "Delete my project"
+        "button": "Delete my project",
+        "confirm_description": "Are you sure you want to delete the project {projectName}? All data in this project will be permanently removed. This action cannot be undone.",
+        "success_message": "Project deleted successfully."
       },
       "toast": {
         "success": "Project updated successfully",
         "error": "Project could not be updated. Please try again."
+      },
+      "confirm_project_name_label": "Type the project name to continue.",
+      "leave_project": {
+        "confirm_description": "Are you sure you want to leave the project {projectName}? Work items associated with you will become inaccessible."
       }
     },
     "members": {

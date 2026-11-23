@@ -8,7 +8,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
+import { setToast } from "@plane/blocks/toast";
 import type { IProject } from "@plane/types";
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { AutoArchiveAutomation, AutoCloseAutomation } from "@/components/automation";
@@ -18,8 +18,6 @@ import { SettingsHeading } from "@/components/settings/heading";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-// plane web imports
-import { CustomAutomationsRoot } from "@/plane-web/components/automations/root";
 // local imports
 import type { Route } from "./+types/page";
 import { AutomationsProjectSettingsHeader } from "./header";
@@ -43,7 +41,7 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
       await updateProject(workspaceSlug, projectId, formData);
     } catch {
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "Something went wrong. Please try again.",
       });
@@ -65,12 +63,11 @@ function AutomationSettingsPage({ params }: Route.ComponentProps) {
           title={t("project_settings.automations.heading")}
           description={t("project_settings.automations.description")}
         />
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col gap-4">
           <AutoArchiveAutomation handleChange={handleChange} />
           <AutoCloseAutomation handleChange={handleChange} />
         </div>
       </section>
-      <CustomAutomationsRoot projectId={projectId} workspaceSlug={workspaceSlug} />
     </SettingsContentWrapper>
   );
 }

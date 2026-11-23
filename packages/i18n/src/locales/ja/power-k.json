@@ -171,15 +171,21 @@
     "search_menu": {
       "no_results": "結果が見つかりません",
       "clear_search": "検索をクリア",
-      "go_to_advanced_search": "詳細検索に移動"
+      "go_to_advanced_search": "詳細検索に移動",
+      "search_commands": "コマンドを検索…"
     },
     "footer": {
       "workspace_level": "ワークスペースレベル"
     },
+    "shortcuts_modal": {
+      "search_placeholder": "キーボードショートカットを検索",
+      "no_results": "「{query}」のキーボードショートカットが見つかりません",
+      "sequence_separator": "次に"
+    },
     "group_titles": {
       "actions": "アクション",
       "contextual": "コンテキスト",
-      "navigation": "ナビゲート",
+      "navigation": "ナビゲーション",
       "create": "作成",
       "general": "一般",
       "settings": "設定",

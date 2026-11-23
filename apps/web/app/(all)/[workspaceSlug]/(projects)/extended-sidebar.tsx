@@ -14,8 +14,8 @@ import type { EUserWorkspaceRoles } from "@plane/types";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useWorkspaceNavigationPreferences } from "@/hooks/use-navigation-preferences";
-// plane-web imports
-import { ExtendedSidebarItem } from "@/plane-web/components/workspace/sidebar/extended-sidebar-item";
+// components
+import { ExtendedSidebarItem } from "@/components/workspace/sidebar/extended-sidebar-item";
 import { ExtendedSidebarWrapper } from "./extended-sidebar-wrapper";
 
 export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
@@ -34,32 +34,37 @@ export const ExtendedAppSidebar = observer(function ExtendedAppSidebar() {
   const sortedNavigationItems = useMemo(() => {
     const slug = workspaceSlug.toString();
 
-    return WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
-      // Permission check
-      const hasPermission = allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug);
+    return (
+      WORKSPACE_SIDEBAR_DYNAMIC_NAVIGATION_ITEMS_LINKS.filter((item) => {
+        // Permission check
+        const hasPermission = allowPermissions(item.access, EUserPermissionsLevel.WORKSPACE, slug);
 
-      return hasPermission;
-    })
-      .map((item) => {
-        const preference = currentWorkspaceNavigationPreferences?.[item.key];
-        return {
-          ...item,
-          sort_order: preference?.sort_order ?? 0,
-          is_pinned: preference?.is_pinned ?? false,
-        };
+        return hasPermission;
       })
-      .sort((a, b) => {
-        // First sort by pinned status (pinned items first)
-        if (a.is_pinned !== b.is_pinned) {
-          return b.is_pinned ? 1 : -1;
-        }
-        // Then sort by sort_order within each group
-        return a.sort_order - b.sort_order;
-      });
+        // oxlint-disable-next-line oxc/no-map-spread
+        .map((item) => {
+          const preference = currentWorkspaceNavigationPreferences?.[item.key];
+          return {
+            ...item,
+            sort_order: preference?.sort_order ?? 0,
+            is_pinned: preference?.is_pinned ?? false,
+          };
+        })
+        // oxlint-disable-next-line unicorn/no-array-sort
+        .sort((a, b) => {
+          // First sort by pinned status (pinned items first)
+          if (a.is_pinned !== b.is_pinned) {
+            return b.is_pinned ? 1 : -1;
+          }
+          // Then sort by sort_order within each group
+          return a.sort_order - b.sort_order;
+        })
+    );
   }, [workspaceSlug, currentWorkspaceNavigationPreferences, allowPermissions]);
 
   const sortedNavigationItemsKeys = sortedNavigationItems.map((item) => item.key);
 
+  // oxlint-disable-next-line unicorn/consistent-function-scoping
   const orderNavigationItem = (
     sourceIndex: number,
     destinationIndex: number,

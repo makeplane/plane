@@ -5,7 +5,7 @@
  */
 
 import { observer } from "mobx-react";
-import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel, SETTINGS_DOCS_URLS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
@@ -47,6 +47,7 @@ function StatesSettingsPage({ params }: Route.ComponentProps) {
         <SettingsHeading
           title={t("project_settings.states.heading")}
           description={t("project_settings.states.description")}
+          docHref={SETTINGS_DOCS_URLS.states}
         />
         <div className="mt-6">
           <ProjectStateRoot workspaceSlug={workspaceSlug} projectId={projectId} />

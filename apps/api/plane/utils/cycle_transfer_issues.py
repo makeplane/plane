@@ -12,7 +12,6 @@ from django.db.models import (
     F,
     Q,
     Sum,
-    FloatField,
     Value,
     When,
 )
@@ -28,6 +27,7 @@ from plane.db.models import (
     Project,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.utils.estimate import estimate_value_as_float
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
 
@@ -177,7 +177,7 @@ def transfer_cycle_issues(
                         assignees__avatar_asset__isnull=False,
                         then=Concat(
                             Value("/api/assets/v2/static/"),
-                            "assignees__avatar_asset",
+                            Cast("assignees__avatar_asset", models.CharField()),
                             Value("/"),
                         ),
                     ),
@@ -191,10 +191,10 @@ def transfer_cycle_issues(
                 )
             )
             .values("display_name", "assignee_id", "avatar_url")
-            .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+            .annotate(total_estimates=Sum(estimate_value_as_float()))
             .annotate(
                 completed_estimates=Sum(
-                    Cast("estimate_point__value", FloatField()),
+                    estimate_value_as_float(),
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -204,7 +204,7 @@ def transfer_cycle_issues(
             )
             .annotate(
                 pending_estimates=Sum(
-                    Cast("estimate_point__value", FloatField()),
+                    estimate_value_as_float(),
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
@@ -238,10 +238,10 @@ def transfer_cycle_issues(
             .annotate(color=F("labels__color"))
             .annotate(label_id=F("labels__id"))
             .values("label_name", "color", "label_id")
-            .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+            .annotate(total_estimates=Sum(estimate_value_as_float()))
             .annotate(
                 completed_estimates=Sum(
-                    Cast("estimate_point__value", FloatField()),
+                    estimate_value_as_float(),
                     filter=Q(
                         completed_at__isnull=False,
                         archived_at__isnull=True,
@@ -251,7 +251,7 @@ def transfer_cycle_issues(
             )
             .annotate(
                 pending_estimates=Sum(
-                    Cast("estimate_point__value", FloatField()),
+                    estimate_value_as_float(),
                     filter=Q(
                         completed_at__isnull=True,
                         archived_at__isnull=True,
@@ -299,7 +299,7 @@ def transfer_cycle_issues(
                     assignees__avatar_asset__isnull=False,
                     then=Concat(
                         Value("/api/assets/v2/static/"),
-                        "assignees__avatar_asset",
+                        Cast("assignees__avatar_asset", models.CharField()),
                         Value("/"),
                     ),
                 ),

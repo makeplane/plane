@@ -171,10 +171,16 @@
     "search_menu": {
       "no_results": "Nie znaleziono wyników",
       "clear_search": "Wyczyść wyszukiwanie",
-      "go_to_advanced_search": "Przejdź do wyszukiwania zaawansowanego"
+      "go_to_advanced_search": "Przejdź do wyszukiwania zaawansowanego",
+      "search_commands": "Wyszukiwanie poleceń..."
     },
     "footer": {
       "workspace_level": "Poziom przestrzeni roboczej"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Szukaj skrótów klawiaturowych",
+      "no_results": "Nie znaleziono skrótów klawiaturowych dla „{query}”",
+      "sequence_separator": "potem"
     },
     "group_titles": {
       "actions": "Akcje",

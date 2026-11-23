@@ -23,3 +23,20 @@ export const CORE_DATE_OPERATOR_LABELS_MAP: Record<TCoreSupportedDateFilterOpera
   [CORE_EQUALITY_OPERATOR.EXACT]: "is",
   [CORE_COMPARISON_OPERATOR.RANGE]: "between",
 } as const;
+
+/**
+ * Translation keys for the core operator labels
+ */
+export const CORE_OPERATOR_LABEL_I18N_KEYS_MAP: Record<TCoreSupportedOperators, string> = {
+  [CORE_EQUALITY_OPERATOR.EXACT]: "rich_filters.operators.is",
+  [CORE_COLLECTION_OPERATOR.IN]: "rich_filters.operators.is_any_of",
+  [CORE_COMPARISON_OPERATOR.RANGE]: "rich_filters.operators.between",
+} as const;
+
+/**
+ * Translation keys for the core date-specific operator labels
+ */
+export const CORE_DATE_OPERATOR_LABEL_I18N_KEYS_MAP: Record<TCoreSupportedDateFilterOperators, string> = {
+  [CORE_EQUALITY_OPERATOR.EXACT]: "rich_filters.operators.is",
+  [CORE_COMPARISON_OPERATOR.RANGE]: "rich_filters.operators.between",
+} as const;

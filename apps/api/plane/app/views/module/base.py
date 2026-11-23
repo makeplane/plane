@@ -49,6 +49,7 @@ from plane.app.serializers import (
     ModuleUserPropertiesSerializer,
     ModuleWriteSerializer,
 )
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Issue,
@@ -61,6 +62,7 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.utils.estimate import estimate_value_as_float
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.bgtasks.webhook_task import model_activity
 from .. import BaseAPIView, BaseViewSet
@@ -150,7 +152,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(completed_estimate_points=Sum(Cast("estimate_point__value", FloatField())))
+            .annotate(completed_estimate_points=Sum(estimate_value_as_float()))
             .values("completed_estimate_points")[:1]
         )
 
@@ -161,7 +163,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(total_estimate_points=Sum(Cast("estimate_point__value", FloatField())))
+            .annotate(total_estimate_points=Sum(estimate_value_as_float()))
             .values("total_estimate_points")[:1]
         )
         backlog_estimate_point = (
@@ -172,7 +174,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(backlog_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
+            .annotate(backlog_estimate_point=Sum(estimate_value_as_float()))
             .values("backlog_estimate_point")[:1]
         )
         unstarted_estimate_point = (
@@ -183,7 +185,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(unstarted_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
+            .annotate(unstarted_estimate_point=Sum(estimate_value_as_float()))
             .values("unstarted_estimate_point")[:1]
         )
         started_estimate_point = (
@@ -194,7 +196,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(started_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
+            .annotate(started_estimate_point=Sum(estimate_value_as_float()))
             .values("started_estimate_point")[:1]
         )
         cancelled_estimate_point = (
@@ -205,7 +207,7 @@ class ModuleViewSet(BaseViewSet):
                 issue_module__deleted_at__isnull=True,
             )
             .values("issue_module__module_id")
-            .annotate(cancelled_estimate_point=Sum(Cast("estimate_point__value", FloatField())))
+            .annotate(cancelled_estimate_point=Sum(estimate_value_as_float()))
             .values("cancelled_estimate_point")[:1]
         )
         return (
@@ -445,7 +447,7 @@ class ModuleViewSet(BaseViewSet):
                             assignees__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Cast("assignees__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),
@@ -465,10 +467,10 @@ class ModuleViewSet(BaseViewSet):
                     "avatar_url",
                     "display_name",
                 )
-                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+                .annotate(total_estimates=Sum(estimate_value_as_float()))
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -478,7 +480,7 @@ class ModuleViewSet(BaseViewSet):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -500,10 +502,10 @@ class ModuleViewSet(BaseViewSet):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+                .annotate(total_estimates=Sum(estimate_value_as_float()))
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -513,7 +515,7 @@ class ModuleViewSet(BaseViewSet):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -553,7 +555,7 @@ class ModuleViewSet(BaseViewSet):
                         assignees__avatar_asset__isnull=False,
                         then=Concat(
                             Value("/api/assets/v2/static/"),
-                            "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                            Cast("assignees__avatar_asset", models.CharField()),
                             Value("/"),
                         ),
                     ),
@@ -766,6 +768,12 @@ class ModuleLinkViewSet(BaseViewSet):
     serializer_class = ModuleLinkSerializer
 
     def perform_create(self, serializer):
+        # The URL module must belong to the URL workspace + project (404 otherwise).
+        Module.objects.get(
+            pk=self.kwargs.get("module_id"),
+            project_id=self.kwargs.get("project_id"),
+            workspace__slug=self.kwargs.get("slug"),
+        )
         serializer.save(
             project_id=self.kwargs.get("project_id"),
             module_id=self.kwargs.get("module_id"),
@@ -802,6 +810,10 @@ class ModuleFavoriteViewSet(BaseViewSet):
         )
 
     def create(self, request, slug, project_id):
+        # 404 unless the module is in this project and visible to the user
+        get_favorite_entities("module", request.user.id, project_id).get(
+            pk=request.data.get("module"), workspace__slug=slug
+        )
         _ = UserFavorite.objects.create(
             project_id=project_id,
             user=request.user,

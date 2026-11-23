@@ -171,10 +171,16 @@
     "search_menu": {
       "no_results": "Aucun résultat trouvé",
       "clear_search": "Effacer la recherche",
-      "go_to_advanced_search": "Aller à la recherche avancée"
+      "go_to_advanced_search": "Aller à la recherche avancée",
+      "search_commands": "Rechercher des commandes..."
     },
     "footer": {
       "workspace_level": "Niveau espace de travail"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Rechercher des raccourcis clavier",
+      "no_results": "Aucun raccourci clavier trouvé pour « {query} »",
+      "sequence_separator": "puis"
     },
     "group_titles": {
       "actions": "Actions",

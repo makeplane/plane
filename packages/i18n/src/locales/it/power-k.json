@@ -171,10 +171,16 @@
     "search_menu": {
       "no_results": "Nessun risultato trovato",
       "clear_search": "Cancella ricerca",
-      "go_to_advanced_search": "Vai alla ricerca avanzata"
+      "go_to_advanced_search": "Vai alla ricerca avanzata",
+      "search_commands": "Cerca comandi..."
     },
     "footer": {
       "workspace_level": "Livello dello spazio di lavoro"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Cerca scorciatoie da tastiera",
+      "no_results": "Nessuna scorciatoia da tastiera trovata per «{query}»",
+      "sequence_separator": "poi"
     },
     "group_titles": {
       "actions": "Azioni",

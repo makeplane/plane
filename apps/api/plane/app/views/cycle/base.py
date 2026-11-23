@@ -40,6 +40,7 @@ from plane.app.serializers import (
     CycleUserPropertiesSerializer,
     CycleWriteSerializer,
 )
+from plane.app.serializers.favorite import get_favorite_entities
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.db.models import (
     Cycle,
@@ -53,6 +54,7 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.utils.estimate import estimate_value_as_float
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
@@ -570,6 +572,10 @@ class CycleFavoriteViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def create(self, request, slug, project_id):
+        # 404 unless the cycle is in this project and visible to the user
+        get_favorite_entities("cycle", request.user.id, project_id).get(
+            pk=request.data.get("cycle"), workspace__slug=slug
+        )
         _ = UserFavorite.objects.create(
             project_id=project_id,
             user=request.user,
@@ -669,7 +675,7 @@ class CycleProgressEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
             )
-            .annotate(value_as_float=Cast("estimate_point__value", FloatField()))
+            .annotate(value_as_float=estimate_value_as_float())
             .aggregate(
                 backlog_estimate_point=Sum(
                     Case(
@@ -857,7 +863,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                             assignees__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Cast("assignees__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),
@@ -871,10 +877,10 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                     )
                 )
                 .values("display_name", "assignee_id", "avatar_url")
-                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+                .annotate(total_estimates=Sum(estimate_value_as_float()))
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -884,7 +890,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -906,10 +912,10 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+                .annotate(total_estimates=Sum(estimate_value_as_float()))
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -919,7 +925,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -954,7 +960,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                             assignees__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                "assignees__avatar_asset",  # Assuming avatar_asset has an id or relevant field
+                                Cast("assignees__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),

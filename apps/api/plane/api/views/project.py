@@ -16,7 +16,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
-from drf_spectacular.utils import OpenApiResponse, OpenApiRequest
+from drf_spectacular.utils import OpenApiResponse, OpenApiRequest, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 
 # Module imports
@@ -30,6 +31,7 @@ from plane.db.models import (
     State,
     DEFAULT_STATES,
     Workspace,
+    WorkspaceMember,
     UserFavorite,
     Label,
     Issue,
@@ -44,10 +46,16 @@ from plane.utils.host import base_host
 from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.api.serializers import (
     ProjectSerializer,
+    ProjectLiteSerializer,
     ProjectCreateSerializer,
     ProjectUpdateSerializer,
 )
-from plane.app.permissions import ProjectBasePermission, WorkSpaceAdminPermission
+from plane.app.permissions import (
+    ROLE,
+    ProjectArchiveUnarchivePermission,
+    ProjectBasePermission,
+    WorkSpaceAdminPermission,
+)
 from plane.utils.openapi import (
     project_docs,
     PROJECT_ID_PARAMETER,
@@ -72,6 +80,13 @@ from plane.utils.openapi import (
 )
 
 
+def has_workspace_role(user, **role):
+    """Exists(): the user is an active member of the project's workspace with a role matching the lookup."""
+    return Exists(
+        WorkspaceMember.objects.filter(workspace_id=OuterRef("workspace_id"), member=user, is_active=True, **role)
+    )
+
+
 class ProjectListCreateAPIEndpoint(BaseAPIView):
     """Project List and Create Endpoint"""
 
@@ -89,7 +104,8 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                     project_projectmember__member=self.request.user,
                     project_projectmember__is_active=True,
                 )
-                | Q(network=2)
+                # Workspace guests only see the projects they belong to, as in the web app
+                | (Q(network=2) & has_workspace_role(self.request.user, role__gt=ROLE.GUEST.value))
             )
             .select_related("project_lead")
             .annotate(
@@ -337,6 +353,94 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             )
 
 
+class ProjectListLiteAPIEndpoint(BaseAPIView):
+    """Project Lite List Endpoint"""
+
+    serializer_class = ProjectLiteSerializer
+    model = Project
+    permission_classes = [ProjectBasePermission]
+    use_read_replica = True
+
+    def get_queryset(self):
+        # Projects the user can access: those they are an active member of, plus
+        # public (network=2) ones unless they are a workspace guest.
+        return (
+            Project.objects.filter(workspace__slug=self.kwargs.get("slug"))
+            .filter(
+                Q(
+                    project_projectmember__member=self.request.user,
+                    project_projectmember__is_active=True,
+                )
+                | (Q(network=2) & has_workspace_role(self.request.user, role__gt=ROLE.GUEST.value))
+            )
+            .distinct()
+        )
+
+    @project_docs(
+        operation_id="list_projects_lite",
+        summary="List projects (lite)",
+        description="Retrieve a paginated, lightweight list of projects for pickers and references.",
+        parameters=[
+            CURSOR_PARAMETER,
+            PER_PAGE_PARAMETER,
+            ORDER_BY_PARAMETER,
+            OpenApiParameter(
+                name="include_archived",
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description=(
+                    "Include archived projects in the response. Defaults to false. "
+                    "Each project carries an archived_at timestamp (null when not archived)."
+                ),
+            ),
+        ],
+        responses={
+            200: create_paginated_response(
+                ProjectLiteSerializer,
+                "PaginatedProjectLiteResponse",
+                "Paginated list of projects with minimal fields",
+                "Paginated Projects (Lite)",
+            ),
+            404: WORKSPACE_NOT_FOUND_RESPONSE,
+        },
+    )
+    def get(self, request, slug):
+        """List projects (lite)
+
+        Retrieve a paginated, lightweight list of projects the user can access in
+        the workspace (projects they are an active member of, plus public projects),
+        optimized for pickers and references.
+        """
+        if not Workspace.objects.filter(slug=slug).exists():
+            return Response(
+                {"error": "Provided workspace does not exist"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        projects = self.get_queryset()
+
+        # Archived projects are excluded by default; pass ?include_archived=true
+        # (or 1) to include them. Each project's archived_at timestamp marks the
+        # archived ones.
+        include_archived = request.GET.get("include_archived", "false").lower() in ("true", "1")
+        if not include_archived:
+            projects = projects.filter(archived_at__isnull=True)
+
+        projects = projects.order_by(
+            sanitize_order_by(
+                request.GET.get("order_by", "-created_at"),
+                PROJECT_ORDER_BY_ALLOWLIST,
+                default="-created_at",
+            )
+        )
+        return self.paginate(
+            request=request,
+            queryset=projects,
+            on_results=lambda projects: ProjectLiteSerializer(projects, many=True).data,
+        )
+
+
 class ProjectDetailAPIEndpoint(BaseAPIView):
     """Project Endpoints to  update, retrieve and delete endpoint"""
 
@@ -355,7 +459,8 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
                     project_projectmember__member=self.request.user,
                     project_projectmember__is_active=True,
                 )
-                | Q(network=2)
+                # Workspace guests only see the projects they belong to, as in the web app
+                | (Q(network=2) & has_workspace_role(self.request.user, role__gt=ROLE.GUEST.value))
             )
             .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
             .annotate(
@@ -559,7 +664,9 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
 class ProjectArchiveUnarchiveAPIEndpoint(BaseAPIView):
     """Project Archive and Unarchive Endpoint"""
 
-    permission_classes = [ProjectBasePermission]
+    # Archive/unarchive act on the URL project; ProjectBasePermission's POST
+    # branch is for project creation.
+    permission_classes = [ProjectArchiveUnarchivePermission]
 
     @project_docs(
         operation_id="archive_project",
@@ -630,7 +737,15 @@ class ProjectSummaryAPIEndpoint(BaseAPIView):
 
         Get the summary of a project
         """
-        project = Project.objects.filter(pk=project_id, workspace__slug=slug).first()
+        # Only the project's active members and workspace admins get its summary
+        project = (
+            Project.objects.filter(pk=project_id, workspace__slug=slug)
+            .filter(
+                Q(project_projectmember__member=request.user, project_projectmember__is_active=True)
+                | has_workspace_role(request.user, role=ROLE.ADMIN.value)
+            )
+            .first()
+        )
         if not project:
             return Response({"error": "Project not found"}, status=status.HTTP_404_NOT_FOUND)
         fields = request.GET.get("fields", "").split(",")

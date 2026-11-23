@@ -5,18 +5,15 @@
  */
 
 import { observer } from "mobx-react";
-import { Paperclip } from "lucide-react";
-import { LinkIcon, ViewsIcon } from "@plane/propel/icons";
+import { AttachOutline, LinkOutline, SubWorkItemsOutline } from "@makeplane/propel/icons";
 // plane imports
-import { Tooltip } from "@plane/propel/tooltip";
+import { WorkItemPropertiesList, WorkItemPropertyCountChip } from "@plane/blocks/work-item-properties";
+import type { WorkItemPropertiesListProps } from "@plane/blocks/work-item-properties";
+import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayProperties } from "@plane/types";
-import { cn } from "@plane/utils";
-// components
-import { WithDisplayPropertiesHOC } from "@/components/issues/issue-layouts/with-display-properties-HOC";
-// helpers
-import { getDate } from "@/helpers/date-time.helper";
-//// hooks
+// types
 import type { IIssue } from "@/types/issue";
+// local imports
 import { IssueBlockCycle } from "./cycle";
 import { IssueBlockDate } from "./due-date";
 import { IssueBlockLabels } from "./labels";
@@ -31,155 +28,70 @@ export interface IIssueProperties {
   className: string;
 }
 
+/**
+ * A public work item's property chips, read-only, in row order. Builds the same entry list the
+ * web app hands to `@plane/blocks`, and renders it with the shared wrapping list.
+ */
 export const IssueProperties = observer(function IssueProperties(props: IIssueProperties) {
   const { issue, displayProperties, className } = props;
+  // i18n
+  const { t } = useTranslation();
 
   if (!displayProperties || !issue.project_id) return null;
 
-  const minDate = getDate(issue.start_date);
-  minDate?.setDate(minDate.getDate());
+  const isShown = (key: keyof IIssueDisplayProperties) => !!displayProperties[key];
+  const entries: WorkItemPropertiesListProps["entries"] = [];
 
-  const maxDate = getDate(issue.target_date);
-  maxDate?.setDate(maxDate.getDate());
+  // basic properties
+  if (isShown("state") && issue.state_id)
+    entries.push({ key: "state", chip: <IssueBlockState stateId={issue.state_id} /> });
+  if (isShown("priority")) entries.push({ key: "priority", chip: <IssueBlockPriority priority={issue.priority} /> });
+  if (isShown("labels")) entries.push({ key: "labels", chip: <IssueBlockLabels labelIds={issue.label_ids} /> });
+  if (isShown("start_date") && issue.start_date)
+    entries.push({
+      key: "start_date",
+      chip: <IssueBlockDate date={issue.start_date} stateId={issue.state_id ?? undefined} type="start" />,
+    });
+  if (isShown("due_date") && issue.target_date)
+    entries.push({
+      key: "due_date",
+      chip: <IssueBlockDate date={issue.target_date} stateId={issue.state_id ?? undefined} />,
+    });
+  if (isShown("assignee"))
+    entries.push({ key: "assignee", chip: <IssueBlockMembers memberIds={issue.assignee_ids} /> });
+  if (isShown("modules") && issue.module_ids && issue.module_ids.length > 0)
+    entries.push({ key: "modules", chip: <IssueBlockModules moduleIds={issue.module_ids} /> });
+  if (isShown("cycle") && issue.cycle_id)
+    entries.push({ key: "cycle", chip: <IssueBlockCycle cycleId={issue.cycle_id} /> });
 
-  return (
-    <div className={className}>
-      {/* basic properties */}
-      {/* state */}
-      {issue.state_id && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="state">
-          <div className="h-5">
-            <IssueBlockState stateId={issue.state_id} />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
+  // counts
+  if (isShown("sub_issue_count") && !!issue.sub_issues_count)
+    entries.push({
+      key: "sub_issue_count",
+      chip: (
+        <WorkItemPropertyCountChip
+          icon={<SubWorkItemsOutline />}
+          count={issue.sub_issues_count}
+          label={t("common.sub_work_items")}
+        />
+      ),
+    });
+  if (isShown("attachment_count") && !!issue.attachment_count)
+    entries.push({
+      key: "attachment_count",
+      chip: (
+        <WorkItemPropertyCountChip
+          icon={<AttachOutline />}
+          count={issue.attachment_count}
+          label={t("common.attachments")}
+        />
+      ),
+    });
+  if (isShown("link") && !!issue.link_count)
+    entries.push({
+      key: "link",
+      chip: <WorkItemPropertyCountChip icon={<LinkOutline />} count={issue.link_count} label={t("common.links")} />,
+    });
 
-      {/* priority */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="priority">
-        <div className="h-5">
-          <IssueBlockPriority priority={issue.priority} />
-        </div>
-      </WithDisplayPropertiesHOC>
-
-      {/* label */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="labels">
-        <div className="h-5">
-          <IssueBlockLabels labelIds={issue.label_ids} />
-        </div>
-      </WithDisplayPropertiesHOC>
-
-      {/* start date */}
-      {issue?.start_date && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="start_date">
-          <div className="h-5">
-            <IssueBlockDate
-              due_date={issue?.start_date}
-              stateId={issue?.state_id ?? undefined}
-              shouldHighLight={false}
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
-
-      {/* target/due date */}
-      {issue?.target_date && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="due_date">
-          <div className="h-5">
-            <IssueBlockDate due_date={issue?.target_date} stateId={issue?.state_id ?? undefined} />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
-
-      {/* assignee */}
-      <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="assignee">
-        <div className="h-5">
-          <IssueBlockMembers memberIds={issue.assignee_ids} />
-        </div>
-      </WithDisplayPropertiesHOC>
-
-      {/* modules */}
-      {issue.module_ids && issue.module_ids.length > 0 && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="modules">
-          <div className="h-5">
-            <IssueBlockModules moduleIds={issue.module_ids} />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
-
-      {/* cycles */}
-      {issue.cycle_id && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="cycle">
-          <div className="h-5">
-            <IssueBlockCycle cycleId={issue.cycle_id} />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )}
-
-      {/* estimates */}
-      {/* {projectId && areEstimateEnabledByProjectId(projectId?.toString()) && (
-        <WithDisplayPropertiesHOC displayProperties={displayProperties} displayPropertyKey="estimate">
-          <div className="h-5">
-            <EstimateDropdown
-              value={issue.estimate_point ?? undefined}
-              onChange={handleEstimate}
-              projectId={issue.project_id}
-              disabled={isReadOnly}
-              buttonVariant="border-with-text"
-              showTooltip
-            />
-          </div>
-        </WithDisplayPropertiesHOC>
-      )} */}
-
-      {/* extra render properties */}
-      {/* sub-issues */}
-      <WithDisplayPropertiesHOC
-        displayProperties={displayProperties}
-        displayPropertyKey="sub_issue_count"
-        shouldRenderProperty={(properties) => !!properties.sub_issue_count && !!issue.sub_issues_count}
-      >
-        <Tooltip tooltipHeading="Sub-work items" tooltipContent={`${issue.sub_issues_count}`}>
-          <div
-            className={cn(
-              "flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1",
-              {
-                "cursor-pointer hover:bg-layer-1": issue.sub_issues_count,
-              }
-            )}
-          >
-            <ViewsIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-11">{issue.sub_issues_count}</div>
-          </div>
-        </Tooltip>
-      </WithDisplayPropertiesHOC>
-
-      {/* attachments */}
-      <WithDisplayPropertiesHOC
-        displayProperties={displayProperties}
-        displayPropertyKey="attachment_count"
-        shouldRenderProperty={(properties) => !!properties.attachment_count && !!issue.attachment_count}
-      >
-        <Tooltip tooltipHeading="Attachments" tooltipContent={`${issue.attachment_count}`}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
-            <Paperclip className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-11">{issue.attachment_count}</div>
-          </div>
-        </Tooltip>
-      </WithDisplayPropertiesHOC>
-
-      {/* link */}
-      <WithDisplayPropertiesHOC
-        displayProperties={displayProperties}
-        displayPropertyKey="link"
-        shouldRenderProperty={(properties) => !!properties.link && !!issue.link_count}
-      >
-        <Tooltip tooltipHeading="Links" tooltipContent={`${issue.link_count}`}>
-          <div className="flex h-5 flex-shrink-0 items-center justify-center gap-2 overflow-hidden rounded-sm border-[0.5px] border-strong px-2.5 py-1">
-            <LinkIcon className="h-3 w-3 flex-shrink-0" strokeWidth={2} />
-            <div className="text-11">{issue.link_count}</div>
-          </div>
-        </Tooltip>
-      </WithDisplayPropertiesHOC>
-    </div>
-  );
+  return <WorkItemPropertiesList className={className} entries={entries} />;
 });

@@ -16,9 +16,6 @@ from plane.utils.url_security import pinned_fetch_following_redirects
 # Django imports
 from django.utils import timezone
 
-# Third party imports
-from zxcvbn import zxcvbn
-
 from plane.bgtasks.user_activation_email_task import user_activation_email
 
 # Module imports
@@ -28,6 +25,7 @@ from plane.settings.storage import S3Storage
 from plane.utils.exception_logger import log_exception
 from plane.utils.host import base_host
 from plane.utils.ip_address import get_client_ip
+from plane.authentication.utils.password import is_password_strong
 
 from .error import AUTHENTICATION_ERROR_CODES, AuthenticationException
 
@@ -78,7 +76,7 @@ class Adapter:
         try:
             validate_email(email)
         except ValidationError:
-            self.logger.warning(f"Email is not valid: {email}")
+            self.logger.warning("Email is not valid")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["INVALID_EMAIL"],
                 error_message="INVALID_EMAIL",
@@ -89,8 +87,7 @@ class Adapter:
 
     def validate_password(self, email):
         """Validate password strength"""
-        results = zxcvbn(self.code)
-        if results["score"] < 3:
+        if not is_password_strong(self.code):
             self.logger.warning("Password is not strong enough")
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["PASSWORD_TOO_WEAK"],
@@ -257,7 +254,7 @@ class Adapter:
         """Delete the old avatar if it exists"""
         try:
             if user.avatar_asset:
-                asset = FileAsset.objects.get(pk=user.avatar_asset_id)
+                asset = FileAsset.objects.get(pk=user.avatar_asset_id, user_id=user.id)
                 storage = S3Storage(request=self.request)
                 storage.delete_files(object_names=[asset.asset.name])
 
@@ -268,7 +265,8 @@ class Adapter:
                 user.save()
             return
         except FileAsset.DoesNotExist:
-            pass
+            # Not the user's own asset: drop the link without touching the asset
+            user.avatar_asset = None
         except Exception as e:
             log_exception(e)
             return
@@ -388,6 +386,10 @@ class Adapter:
 
             # Create profile
             Profile.objects.create(user=user)
+
+        elif self.user_data.get("user").get("is_password_autoset"):
+            # A magic code or OAuth sign-in proves control of the mailbox
+            user.is_email_verified = True
 
         # Check if IDP sync is enabled and user is not signing up
         if self.check_sync_enabled() and not is_signup:

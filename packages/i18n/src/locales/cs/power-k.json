@@ -171,10 +171,16 @@
     "search_menu": {
       "no_results": "Nenalezeny žádné výsledky",
       "clear_search": "Vymazat hledání",
-      "go_to_advanced_search": "Přejít na pokročilé hledání"
+      "go_to_advanced_search": "Přejít na pokročilé hledání",
+      "search_commands": "Hledat příkazy..."
     },
     "footer": {
       "workspace_level": "Úroveň pracovního prostoru"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Hledat klávesové zkratky",
+      "no_results": "Nenalezeny žádné klávesové zkratky pro „{query}“",
+      "sequence_separator": "pak"
     },
     "group_titles": {
       "actions": "Akce",

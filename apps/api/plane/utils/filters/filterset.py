@@ -19,6 +19,17 @@ class CharInFilter(filters.BaseInFilter, filters.CharFilter):
     pass
 
 
+class DateCSVRangeFilter(filters.BaseCSVFilter, filters.DateFilter):
+    """Comma-separated date range ("YYYY-MM-DD,YYYY-MM-DD") for DateTimeField columns.
+
+    Parses the CSV value the UI sends into a list of dates so it can be paired with a
+    ``date__range`` lookup — comparing the date component, which makes both bounds
+    inclusive whole days.
+    """
+
+    pass
+
+
 class BaseFilterSet(FilterSet):
     @classmethod
     def get_filters(cls):
@@ -156,6 +167,26 @@ class IssueFilterSet(BaseFilterSet):
 
     subscriber_id = filters.UUIDFilter(method="filter_subscriber_id")
     subscriber_id__in = UUIDInFilter(method="filter_subscriber_id_in", lookup_expr="in")
+
+    # created_at / updated_at are DateTimeFields, but the UI sends a bare calendar
+    # date (yyyy-MM-dd, e.g. {"created_at__exact": "2026-07-30"}). An `exact` lookup
+    # coerces that to midnight, so the filter only matched rows stamped exactly
+    # 00:00:00 and silently returned an empty list. Compare the date component
+    # instead so "created on <date>" means the whole day.
+    # NOTE: `__date` is evaluated in the active timezone, which TimezoneMixin sets
+    # from the user's profile (user_timezone) — not the browser's timezone. A user
+    # whose profile timezone differs from their browser can still see off-by-one-day
+    # results; that mismatch is tracked separately.
+    # The same applies to ranges: the UI sends "YYYY-MM-DD,YYYY-MM-DD", and a plain
+    # `range` on a DateTimeField turns the upper bound into that day's midnight, which
+    # silently dropped every row created during the final day of the range.
+    created_at = filters.DateFilter(field_name="created_at", lookup_expr="date")
+    created_at__exact = filters.DateFilter(field_name="created_at", lookup_expr="date")
+    created_at__range = DateCSVRangeFilter(field_name="created_at", lookup_expr="date__range")
+
+    updated_at = filters.DateFilter(field_name="updated_at", lookup_expr="date")
+    updated_at__exact = filters.DateFilter(field_name="updated_at", lookup_expr="date")
+    updated_at__range = DateCSVRangeFilter(field_name="updated_at", lookup_expr="date__range")
 
     class Meta:
         model = Issue

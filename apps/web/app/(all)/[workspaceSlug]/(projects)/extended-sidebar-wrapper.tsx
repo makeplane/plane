@@ -18,7 +18,7 @@ import useExtendedSidebarOutsideClickDetector from "@/hooks/use-extended-sidebar
 type Props = {
   className?: string;
   children: React.ReactNode;
-  extendedSidebarRef: React.RefObject<HTMLDivElement>;
+  extendedSidebarRef: React.RefObject<HTMLDivElement | null>;
   isExtendedSidebarOpened: boolean;
   handleClose: () => void;
   excludedElementId: string;
@@ -44,7 +44,7 @@ export const ExtendedSidebarWrapper = observer(function ExtendedSidebarWrapper(p
       id={excludedElementId}
       ref={extendedSidebarRef}
       className={cn(
-        "shadow-sm absolute z-[21] flex h-full transform flex-col border-r border-subtle bg-surface-1 p-4 py-2 transition-all duration-300 ease-in-out",
+        "absolute z-[21] flex h-full transform flex-col border-r border-subtle bg-surface-1 p-4 py-2 shadow-direction-right transition-all duration-300 ease-in-out",
         {
           "opacity-100": isExtendedSidebarOpened,
           "hidden opacity-0": !isExtendedSidebarOpened,

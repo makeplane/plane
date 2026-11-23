@@ -7,10 +7,10 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // ui
-import { PROJECT_VIEW_TRACKER_ELEMENTS } from "@plane/constants";
-import { Button } from "@plane/propel/button";
-import { ViewsIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { ViewsOutline } from "@makeplane/propel/icons";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ViewListHeader } from "@/components/views/view-list-header";
@@ -18,10 +18,12 @@ import { ViewListHeader } from "@/components/views/view-list-header";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const { toggleCreateViewModal } = useCommandPalette();
   const { loader } = useProject();
@@ -31,13 +33,17 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
       <Header>
         <Header.LeftItem>
           <Breadcrumbs isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Views"
                   href={`/${workspaceSlug}/projects/${projectId}/views/`}
-                  icon={<ViewsIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<ViewsOutline className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -49,13 +55,12 @@ export const ProjectViewsHeader = observer(function ProjectViewsHeader() {
           <ViewListHeader />
           <div>
             <Button
-              data-ph-element={PROJECT_VIEW_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
               variant="primary"
-              size="lg"
+              size="md"
+              stretch="auto"
+              label="Add view"
               onClick={() => toggleCreateViewModal(true)}
-            >
-              Add view
-            </Button>
+            />
           </div>
         </Header.RightItem>
       </Header>

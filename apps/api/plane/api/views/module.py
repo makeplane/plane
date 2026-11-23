@@ -21,6 +21,7 @@ from plane.api.serializers import (
     IssueSerializer,
     ModuleIssueSerializer,
     ModuleSerializer,
+    ModuleLiteSerializer,
     ModuleIssueRequestSerializer,
     ModuleCreateSerializer,
     ModuleUpdateSerializer,
@@ -40,9 +41,10 @@ from plane.db.models import (
 )
 
 from .base import BaseAPIView
+from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
-from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, MODULE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.openapi import (
     module_docs,
     module_issue_docs,
@@ -110,7 +112,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 completed_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
@@ -122,7 +124,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 cancelled_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
@@ -134,7 +136,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 started_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
@@ -146,7 +148,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 unstarted_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
@@ -158,7 +160,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 backlog_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
@@ -277,6 +279,54 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
         )
 
 
+class ModuleListLiteAPIEndpoint(BaseAPIView):
+    """Module Lite List Endpoint"""
+
+    serializer_class = ModuleLiteSerializer
+    model = Module
+    permission_classes = [ProjectEntityPermission]
+    use_read_replica = True
+
+    @module_docs(
+        operation_id="list_modules_lite",
+        summary="List modules (lite)",
+        description="Retrieve a paginated, lightweight list of modules in a project for pickers and references.",
+        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER, ORDER_BY_PARAMETER],
+        responses={
+            200: create_paginated_response(
+                ModuleLiteSerializer,
+                "PaginatedModuleLiteResponse",
+                "Paginated list of modules with minimal fields",
+                "Paginated Modules (Lite)",
+            ),
+        },
+    )
+    def get(self, request, slug, project_id):
+        """List modules (lite)
+
+        Retrieve a paginated, lightweight list of non-archived modules in a project,
+        optimized for pickers and references.
+        """
+        modules = (
+            Module.objects.filter(project_id=project_id, workspace__slug=slug)
+            .filter(archived_at__isnull=True)
+            .select_related("project", "workspace", "lead")
+            .prefetch_related("members")
+            .order_by(
+                sanitize_order_by(
+                    request.GET.get("order_by", "-created_at"),
+                    MODULE_ORDER_BY_ALLOWLIST,
+                    default="-created_at",
+                )
+            )
+        )
+        return self.paginate(
+            request=request,
+            queryset=modules,
+            on_results=lambda modules: ModuleLiteSerializer(modules, many=True).data,
+        )
+
+
 class ModuleDetailAPIEndpoint(BaseAPIView):
     """Module Detail Endpoint"""
 
@@ -313,7 +363,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 completed_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
@@ -325,7 +375,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 cancelled_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
@@ -337,7 +387,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 started_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
@@ -349,7 +399,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 unstarted_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
@@ -361,7 +411,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 backlog_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,
@@ -633,6 +683,12 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
                 .values("count")
             )
         )
+
+        # Restricted guests (GUEST role, guest_view_all_features disabled) may
+        # only see work items they created -- mirrors IssueDetailEndpoint.get.
+        if is_restricted_guest(request.user.id, project_id, slug):
+            issues = issues.filter(created_by=request.user)
+
         return self.paginate(
             request=request,
             queryset=(issues),
@@ -804,6 +860,10 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         Retrieve all work items assigned to a module with detailed information.
         Returns paginated results including assignees, labels, and attachments.
         """
+        issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=issue_id)
+        if guest_cannot_view_issue(request.user.id, issue, slug):
+            raise Issue.DoesNotExist()
+
         order_by = sanitize_order_by(request.GET.get("order_by", "created_at"), ISSUE_ORDER_BY_ALLOWLIST, "created_at")
         issues = (
             Issue.issue_objects.filter(
@@ -921,7 +981,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 completed_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="completed",
                         issue_module__issue__archived_at__isnull=True,
@@ -933,7 +993,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 cancelled_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="cancelled",
                         issue_module__issue__archived_at__isnull=True,
@@ -945,7 +1005,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 started_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="started",
                         issue_module__issue__archived_at__isnull=True,
@@ -957,7 +1017,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 unstarted_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="unstarted",
                         issue_module__issue__archived_at__isnull=True,
@@ -969,7 +1029,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             )
             .annotate(
                 backlog_issues=Count(
-                    "issue_module__issue__state__group",
+                    "issue_module",
                     filter=Q(
                         issue_module__issue__state__group="backlog",
                         issue_module__issue__archived_at__isnull=True,

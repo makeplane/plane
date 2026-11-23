@@ -4,22 +4,22 @@
  * See the LICENSE file for details.
  */
 
-import type { LucideIcon } from "lucide-react";
+import type { IconGlyph } from "@makeplane/propel/components/icon";
 import { VIEW_ACCESS_SPECIFIERS as VIEW_ACCESS_SPECIFIERS_CONSTANTS } from "@plane/constants";
-import { GlobeIcon, LockIcon } from "@plane/propel/icons";
+import { GlobeOutline, LockOutline } from "@makeplane/propel/icons";
 
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 import { EViewAccess } from "@plane/types";
 
 const VIEW_ACCESS_ICONS = {
-  [EViewAccess.PUBLIC]: GlobeIcon,
-  [EViewAccess.PRIVATE]: LockIcon,
+  [EViewAccess.PUBLIC]: GlobeOutline,
+  [EViewAccess.PRIVATE]: LockOutline,
 };
 
 export const VIEW_ACCESS_SPECIFIERS: {
   key: EViewAccess;
   i18n_label: string;
-  icon: LucideIcon | React.FC<ISvgIcons>;
+  icon: IconGlyph | React.FC<ISvgIcons>;
 }[] = VIEW_ACCESS_SPECIFIERS_CONSTANTS.map((option) => ({
   ...option,
   icon: VIEW_ACCESS_ICONS[option.key as keyof typeof VIEW_ACCESS_ICONS],

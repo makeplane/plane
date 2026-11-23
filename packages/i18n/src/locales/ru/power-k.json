@@ -171,10 +171,16 @@
     "search_menu": {
       "no_results": "Ничего не найдено",
       "clear_search": "Очистить поиск",
-      "go_to_advanced_search": "Перейти к расширенному поиску"
+      "go_to_advanced_search": "Перейти к расширенному поиску",
+      "search_commands": "Поиск команд..."
     },
     "footer": {
       "workspace_level": "Уровень рабочего пространства"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "Найти горячие клавиши",
+      "no_results": "Не найдено горячих клавиш для «{query}»",
+      "sequence_separator": "затем"
     },
     "group_titles": {
       "actions": "Действия",

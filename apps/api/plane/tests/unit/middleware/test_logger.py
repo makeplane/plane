@@ -47,6 +47,7 @@ class TestAPITokenLogMiddleware:
             HTTP_COOKIE=self.COOKIE,
         )
         request.user = AnonymousUser()
+        request.api_key_authenticated = True
         response = HttpResponse(b"{}")
         with patch("plane.middleware.logger.process_logs") as process_logs:
             middleware.process_request(request, response, request_body=b"")

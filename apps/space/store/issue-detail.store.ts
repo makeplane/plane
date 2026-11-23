@@ -246,7 +246,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       return res;
     } catch (error) {
       console.log("Error in uploading comment asset:", error);
-      throw new Error("Asset upload failed. Please try again later.");
+      throw new Error("Asset upload failed. Please try again later.", { cause: error });
     }
   };
 
@@ -263,7 +263,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       return res;
     } catch (error) {
       console.log("Error in uploading comment asset:", error);
-      throw new Error("Asset upload failed. Please try again later.");
+      throw new Error("Asset upload failed. Please try again later.", { cause: error });
     }
   };
 
@@ -402,7 +402,7 @@ export class IssueDetailStore implements IIssueDetailStore {
       vote: data.vote,
     };
 
-    const filteredVotes = this.details[issueID].vote_items.filter(
+    const filteredVotes = (this.details[issueID].vote_items ?? []).filter(
       (v) => v.actor_details?.id !== this.rootStore.user.data?.id
     );
 
@@ -425,7 +425,7 @@ export class IssueDetailStore implements IIssueDetailStore {
   };
 
   removeIssueVote = async (anchor: string, issueID: string) => {
-    const newVotes = this.details[issueID].vote_items.filter(
+    const newVotes = (this.details[issueID].vote_items ?? []).filter(
       (v) => v.actor_details?.id !== this.rootStore.user.data?.id
     );
 

@@ -7,12 +7,13 @@
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
 // plane imports
-import { EUserPermissions, EUserPermissionsLevel, MODULE_TRACKER_ELEMENTS } from "@plane/constants";
+import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // ui
-import { Button } from "@plane/propel/button";
-import { ModuleIcon } from "@plane/propel/icons";
-import { Breadcrumbs, Header } from "@plane/ui";
+import { Button } from "@makeplane/propel/components/button";
+import { ModuleOutline } from "@makeplane/propel/icons";
+import { Breadcrumbs } from "@plane/blocks/breadcrumb";
+import { Header } from "@plane/blocks/layout";
 // components
 import { BreadcrumbLink } from "@/components/common/breadcrumb-link";
 import { ModuleViewHeader } from "@/components/modules";
@@ -20,14 +21,14 @@ import { ModuleViewHeader } from "@/components/modules";
 import { useCommandPalette } from "@/hooks/store/use-command-palette";
 import { useProject } from "@/hooks/store/use-project";
 import { useUserPermissions } from "@/hooks/store/user";
-import { useAppRouter } from "@/hooks/use-app-router";
 // plane web imports
-import { CommonProjectBreadcrumbs } from "@/plane-web/components/breadcrumbs/common";
+import { CommonProjectBreadcrumbs } from "@/components/breadcrumbs/common";
+import { useProjectCrumbProps } from "@/components/breadcrumbs/use-project-crumb-props";
 
 export const ModulesListHeader = observer(function ModulesListHeader() {
   // router
-  const router = useAppRouter();
   const { workspaceSlug, projectId } = useParams();
+  const projectCrumb = useProjectCrumbProps(workspaceSlug?.toString(), projectId?.toString());
   // store hooks
   const { toggleCreateModuleModal } = useCommandPalette();
   const { allowPermissions } = useUserPermissions();
@@ -46,14 +47,18 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
     <Header>
       <Header.LeftItem>
         <div>
-          <Breadcrumbs onBack={router.back} isLoading={loader === "init-loader"}>
-            <CommonProjectBreadcrumbs workspaceSlug={workspaceSlug?.toString()} projectId={projectId?.toString()} />
+          <Breadcrumbs isLoading={loader === "init-loader"}>
+            <CommonProjectBreadcrumbs
+              workspaceSlug={workspaceSlug?.toString()}
+              projectId={projectId?.toString()}
+              {...projectCrumb}
+            />
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink
                   label="Modules"
                   href={`/${workspaceSlug}/projects/${projectId}/modules/`}
-                  icon={<ModuleIcon className="h-4 w-4 text-tertiary" />}
+                  icon={<ModuleOutline className="h-4 w-4 text-tertiary" />}
                   isLast
                 />
               }
@@ -65,17 +70,30 @@ export const ModulesListHeader = observer(function ModulesListHeader() {
       <Header.RightItem>
         <ModuleViewHeader />
         {canUserCreateModule ? (
-          <Button
-            variant="primary"
-            data-ph-element={MODULE_TRACKER_ELEMENTS.RIGHT_HEADER_ADD_BUTTON}
-            onClick={() => {
-              toggleCreateModuleModal(true);
-            }}
-            size="lg"
-          >
-            <div className="block sm:hidden">{t("add")}</div>
-            <div className="hidden sm:block">{t("project_module.add_module")}</div>
-          </Button>
+          <div className="flex">
+            <div className="block sm:hidden">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("add")}
+                onClick={() => {
+                  toggleCreateModuleModal(true);
+                }}
+              />
+            </div>
+            <div className="hidden sm:block">
+              <Button
+                variant="primary"
+                size="md"
+                stretch="auto"
+                label={t("project_module.add_module")}
+                onClick={() => {
+                  toggleCreateModuleModal(true);
+                }}
+              />
+            </div>
+          </div>
         ) : (
           <></>
         )}

@@ -1,36 +1,18 @@
 @import "@plane/tailwind-config/index.css";
 @import "@plane/editor/styles";
-@import "@plane/propel/styles/react-day-picker.css";
 @import "./power-k.css";
 @import "./emoji.css";
 @plugin "@tailwindcss/typography";
 
-/* stickies and editor colors */
-:root {
-  /* text colors */
-  --editor-colors-gray-text: #5c5e63;
-  --editor-colors-peach-text: #ff5b59;
-  --editor-colors-pink-text: #f65385;
-  --editor-colors-orange-text: #fd9038;
-  --editor-colors-green-text: #0fc27b;
-  --editor-colors-light-blue-text: #17bee9;
-  --editor-colors-dark-blue-text: #266df0;
-  --editor-colors-purple-text: #9162f9;
-  /* end text colors */
-
-  /* background colors */
-  --editor-colors-gray-background: #d6d6d8;
-  --editor-colors-peach-background: #ffd5d7;
-  --editor-colors-pink-background: #fdd4e3;
-  --editor-colors-orange-background: #ffe3cd;
-  --editor-colors-green-background: #c3f0de;
-  --editor-colors-light-blue-background: #c5eff9;
-  --editor-colors-dark-blue-background: #c9dafb;
-  --editor-colors-purple-background: #e3d8fd;
-  /* end background colors */
-}
-/* background colors */
-[data-theme*="light"] {
+/* stickies and editor colors
+ * Text colors and the themed light/dark background ramps come from
+ * @plane/editor/styles (imported above), which is their single source of truth.
+ * Only the un-themed fallback below is kept: the editor package declares
+ * background colors solely under [data-theme*="light"] / [data-theme*="dark"],
+ * so without this they are undefined until a theme lands on the element.
+ * :where() keeps it at zero specificity; a plain :root ties with the theme
+ * selectors on <html> and, coming later, would pin the light ramp in dark mode. */
+:where(:root) {
   --editor-colors-gray-background: #d6d6d8;
   --editor-colors-peach-background: #ffd5d7;
   --editor-colors-pink-background: #fdd4e3;
@@ -40,17 +22,6 @@
   --editor-colors-dark-blue-background: #c9dafb;
   --editor-colors-purple-background: #e3d8fd;
 }
-[data-theme*="dark"] {
-  --editor-colors-gray-background: #404144;
-  --editor-colors-peach-background: #593032;
-  --editor-colors-pink-background: #562e3d;
-  --editor-colors-orange-background: #583e2a;
-  --editor-colors-green-background: #1d4a3b;
-  --editor-colors-light-blue-background: #1f495c;
-  --editor-colors-dark-blue-background: #223558;
-  --editor-colors-purple-background: #3d325a;
-}
-/* end background colors */
 
 .shadow-custom {
   box-shadow: 2px 2px 8px 2px rgba(234, 231, 250, 0.3); /* Convert #EAE7FA4D to rgba */
@@ -73,65 +44,6 @@
   @apply text-placeholder!;
 }
 
-/* Lock icon animations */
-@keyframes textSlideIn {
-  0% {
-    opacity: 0;
-    transform: translateX(-8px);
-    max-width: 0px;
-  }
-  40% {
-    opacity: 0.7;
-    max-width: 60px;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-    max-width: 60px;
-  }
-}
-
-@keyframes textFadeOut {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(8px);
-  }
-}
-
-@keyframes lockIconAnimation {
-  0% {
-    transform: rotate(-5deg) scale(1);
-  }
-  25% {
-    transform: rotate(0deg) scale(1.15);
-  }
-  50% {
-    transform: rotate(5deg) scale(1.08);
-  }
-  100% {
-    transform: rotate(0deg) scale(1);
-  }
-}
-
-@keyframes unlockIconAnimation {
-  0% {
-    transform: rotate(0deg) scale(1);
-  }
-  40% {
-    transform: rotate(-8deg) scale(1.15);
-  }
-  80% {
-    transform: rotate(3deg) scale(1.05);
-  }
-  100% {
-    transform: rotate(0deg) scale(1);
-  }
-}
-
 @keyframes fadeOut {
   0% {
     opacity: 1;
@@ -139,22 +51,6 @@
   100% {
     opacity: 0;
   }
-}
-
-.animate-text-slide-in {
-  animation: textSlideIn 400ms ease-out forwards;
-}
-
-.animate-text-fade-out {
-  animation: textFadeOut 600ms ease-in 300ms forwards;
-}
-
-.animate-lock-icon {
-  animation: lockIconAnimation 600ms ease-out forwards;
-}
-
-.animate-unlock-icon {
-  animation: unlockIconAnimation 600ms ease-out forwards;
 }
 
 .animate-fade-out {
@@ -197,4 +93,12 @@
     0 0 8px --alpha(var(--background-color-accent-primary) / 60%),
     0 0 4px --alpha(var(--background-color-accent-primary) / 40%) !important;
   will-change: transform, opacity;
+}
+
+/* Keep the action rows fixed while the workspace ScrollArea shrinks and scrolls. */
+[data-workspace-switcher-menu] {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(min(var(--available-height), 24rem) - 2px);
+  overflow: hidden;
 }

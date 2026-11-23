@@ -13,6 +13,7 @@ from rest_framework import serializers
 
 # Module imports
 from .base import BaseSerializer, DynamicBaseSerializer
+from .asset import validate_uploaded_file
 from .user import UserLiteSerializer
 from .state import StateLiteSerializer
 from .project import ProjectLiteSerializer
@@ -111,7 +112,17 @@ class IssueCreateSerializer(BaseSerializer):
             "created_at",
             "updated_at",
             "completed_at",
+            "deleted_at",
+            "archived_at",
+            "sequence_id",
         ]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        # is_draft is set when a work item is created, not changed afterwards.
+        if self.instance is not None:
+            fields["is_draft"].read_only = True
+        return fields
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -628,6 +639,9 @@ class IssueAttachmentSerializer(BaseSerializer):
             "project",
             "issue",
         ]
+
+    def validate_asset(self, value):
+        return validate_uploaded_file(value)
 
 
 class IssueAttachmentLiteSerializer(DynamicBaseSerializer):

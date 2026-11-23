@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "თქვენი სწრაფი დაწყების სახელმძღვანელო",
+      "not_right_now": "ახლა არა",
+      "create_project": {
+        "title": "პროექტის შექმნა",
+        "description": "ყველაფერი იწყება პროექტით Plane-ში.",
+        "cta": "დაწყება"
+      },
+      "invite_team": {
+        "title": "მოწვიეთ თქვენი გუნდი",
+        "description": "ააშენეთ, გაგზავნეთ და მართეთ თანამშრომლებთან ერთად.",
+        "cta": "ჩართეთ ისინი"
+      },
+      "configure_workspace": {
+        "title": "დააყენეთ თქვენი სამუშაო სივრცე.",
+        "description": "ჩართეთ ან გამორთეთ ფუნქციები და მეტიც.",
+        "cta": "ამ სამუშაო სივრცის კონფიგურაცია"
+      },
+      "personalize_account": {
+        "title": "გახადეთ Plane თქვენი.",
+        "description": "აირჩიეთ თქვენი სურათი, ფერები და სხვა.",
+        "cta": "ახლავე მოარგეთ"
+      },
+      "widgets": {
+        "title": "ჩუმადაა ვიჯეტების გარეშე, ჩართეთ ისინი",
+        "description": "როგორც ჩანს, ყველა თქვენი ვიჯეტი გამორთულია. ჩართეთ ისინი\nახლა თქვენი გამოცდილების გასაუმჯობესებლად!",
+        "primary_button": {
+          "text": "ვიჯეტების მართვა"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "შეინახეთ ბმულები სამუშაო საკითხებზე, რომლებიც გსურთ ხელთ გქონდეთ.",
+      "add": "სწრაფი ბმულის დამატება",
+      "title": "სწრაფი ბმული",
+      "title_plural": "სწრაფი ბმულები"
+    },
+    "recents": {
+      "title": "ბოლო",
+      "empty": {
+        "project": "თქვენი ბოლო პროექტები აქ გამოჩნდება, როგორც კი ერთს მოინახულებთ.",
+        "page": "თქვენი ბოლო გვერდები აქ გამოჩნდება, როგორც კი ერთს მოინახულებთ.",
+        "issue": "თქვენი ბოლო სამუშაო ელემენტები აქ გამოჩნდება, როგორც კი ერთს მოინახულებთ.",
+        "default": "ჯერ არ გაქვთ ბოლო აქტივობები."
+      },
+      "filters": {
+        "all": "ყველა",
+        "projects": "პროექტები",
+        "pages": "გვერდები",
+        "issues": "სამუშაო ელემენტები"
+      }
+    },
+    "new_at_plane": {
+      "title": "ახალი Plane-ში"
+    },
+    "quick_tutorial": {
+      "title": "სწრაფი გაკვეთილი"
+    },
+    "widget": {
+      "reordered_successfully": "ვიჯეტი წარმატებით გადაილაგა.",
+      "reordering_failed": "ვიჯეტის გადალაგებისას მოხდა შეცდომა."
+    },
+    "manage_widgets": "ვიჯეტების მართვა",
+    "title": "მთავარი",
+    "star_us_on_github": "დაგვიფასეთ GitHub-ზე",
+    "business_trial_banner": {
+      "title": "Your 14-day Business plan trial is live!",
+      "description": "Explore all Business features. When you're ready, choose to subscribe. You'll not be billed automatically.",
+      "trial_ends_today": "Trial ends today",
+      "trial_ends_in_days": "Trial ends in {days, plural, one {# day} other {# days}}",
+      "start_subscription": "Start subscription",
+      "explore_business_features": "Explore Business features"
+    }
+  }
+}

@@ -6,7 +6,7 @@
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import Q, UUIDField, Value, F, Case, When, JSONField, CharField
-from django.db.models.functions import Coalesce, JSONObject, Concat
+from django.db.models.functions import Cast, Coalesce, JSONObject, Concat
 from django.db.models import QuerySet
 
 from typing import List, Optional, Dict, Any, Union
@@ -125,7 +125,7 @@ def issue_on_results(
                                     votes__actor__avatar_asset__isnull=False,
                                     then=Concat(
                                         Value("/api/assets/v2/static/"),
-                                        F("votes__actor__avatar_asset"),
+                                        Cast("votes__actor__avatar_asset", CharField()),
                                         Value("/"),
                                     ),
                                 ),
@@ -159,7 +159,7 @@ def issue_on_results(
                                     issue_reactions__actor__avatar_asset__isnull=False,
                                     then=Concat(
                                         Value("/api/assets/v2/static/"),
-                                        F("issue_reactions__actor__avatar_asset"),
+                                        Cast("issue_reactions__actor__avatar_asset", CharField()),
                                         Value("/"),
                                     ),
                                 ),
@@ -188,18 +188,13 @@ def issue_group_values(
     filters: Dict[str, Any] = {},
     queryset: Optional[QuerySet] = None,
 ) -> List[Union[str, Any]]:
+    # Project-scoped keys only ever come from the board's project.
     if field == "state_id":
-        queryset = State.objects.filter(is_triage=False, workspace__slug=slug).values_list("id", flat=True)
-        if project_id:
-            return list(queryset.filter(project_id=project_id))
-        else:
-            return list(queryset)
+        queryset = State.objects.filter(is_triage=False, workspace__slug=slug, project_id=project_id)
+        return list(queryset.values_list("id", flat=True))
     if field == "labels__id":
-        queryset = Label.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        if project_id:
-            return list(queryset.filter(project_id=project_id)) + ["None"]
-        else:
-            return list(queryset) + ["None"]
+        queryset = Label.objects.filter(workspace__slug=slug, project_id=project_id).values_list("id", flat=True)
+        return list(queryset) + ["None"]
     if field == "assignees__id":
         if project_id:
             return ProjectMember.objects.filter(
@@ -210,20 +205,13 @@ def issue_group_values(
                 WorkspaceMember.objects.filter(workspace__slug=slug, is_active=True).values_list("member_id", flat=True)
             )
     if field == "issue_module__module_id":
-        queryset = Module.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        if project_id:
-            return list(queryset.filter(project_id=project_id)) + ["None"]
-        else:
-            return list(queryset) + ["None"]
+        queryset = Module.objects.filter(workspace__slug=slug, project_id=project_id).values_list("id", flat=True)
+        return list(queryset) + ["None"]
     if field == "cycle_id":
-        queryset = Cycle.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        if project_id:
-            return list(queryset.filter(project_id=project_id)) + ["None"]
-        else:
-            return list(queryset) + ["None"]
+        queryset = Cycle.objects.filter(workspace__slug=slug, project_id=project_id).values_list("id", flat=True)
+        return list(queryset) + ["None"]
     if field == "project_id":
-        queryset = Project.objects.filter(workspace__slug=slug).values_list("id", flat=True)
-        return list(queryset)
+        return list(Project.objects.filter(workspace__slug=slug, id=project_id).values_list("id", flat=True))
     if field == "priority":
         return ["low", "medium", "high", "urgent", "none"]
     if field == "state__group":
