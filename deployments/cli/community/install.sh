@@ -113,7 +113,8 @@ function getEnvValue() {
         grep -q "^$key=" "$file"
         if [ $? -eq 0 ]; then
             local value
-            value=$(grep "^$key=" "$file" | cut -d'=' -f2)
+            # -f2-: split at the first `=` only, so values containing `=` survive
+            value=$(grep "^$key=" "$file" | cut -d'=' -f2-)
             echo "$value"
         else
             echo ""

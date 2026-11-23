@@ -2,79 +2,32 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-"""Tests for the Celery pool detection that gates OTel provider deferral.
+"""Tests for the worker_init hook that creates providers for non-forking pools.
 
-Only the prefork pool forks task children after plane/celery.py is imported, and
-only it dispatches worker_process_init. Getting this wrong in either direction
-loses telemetry: deferring for a non-forking pool leaves the providers
-uninitialized, and not deferring for prefork hands children an inherited gRPC
-channel that is not fork-safe.
+Celery worker processes defer provider creation at import. Only the prefork pool
+forks children and dispatches worker_process_init, so every other pool must get
+its providers from worker_init, using the pool Celery actually resolved.
 """
+
+from types import SimpleNamespace
 
 import pytest
 
-from plane.celery import _effective_pool, _is_prefork_worker
+from plane.celery import init_otel_for_non_forking_pool
 
 
 @pytest.mark.unit
 @pytest.mark.parametrize(
-    "argv,expected",
+    "pool,creates_providers",
     [
-        (["celery", "-A", "plane", "worker", "-l", "info"], True),
-        (["celery", "-A", "plane", "worker", "-P", "prefork"], True),
-        (["celery", "-A", "plane", "worker", "--pool=prefork"], True),
-        (["celery", "-A", "plane", "worker", "-P", "solo"], False),
-        (["celery", "-A", "plane", "worker", "--pool=gevent"], False),
-        (["celery", "-A", "plane", "worker", "--pool=threads"], False),
-        (["celery", "-A", "plane", "worker", "-Pthreads"], False),
-        (["celery", "-A", "plane", "worker", "-Pprefork"], True),
-        (["celery", "-A", "plane", "worker", "--pool=processes"], True),
-        (["celery", "-A", "plane", "beat", "-l", "info"], False),
-        (["manage.py", "migrate"], False),
-        (["gunicorn", "plane.asgi:application"], False),
+        ("prefork", False),
+        ("processes", False),  # Celery's compat alias for prefork
+        ("threads", True),
+        ("solo", True),
     ],
 )
-def test_is_prefork_worker_from_argv(argv, expected, monkeypatch):
-    monkeypatch.setattr("sys.argv", argv)
-    assert _is_prefork_worker() is expected
-
-
-@pytest.mark.unit
-def test_settings_configured_pool_is_honored(monkeypatch, settings):
-    # A pool selected through CELERY_WORKER_POOL rather than the CLI must still
-    # be detected: `threads` runs tasks in the main process and never dispatches
-    # worker_process_init, so deferring the providers would export nothing.
-    monkeypatch.setattr("sys.argv", ["celery", "-A", "plane", "worker", "-l", "info"])
-    settings.CELERY_WORKER_POOL = "threads"
-    assert _effective_pool() == "threads"
-    assert _is_prefork_worker() is False
-
-
-@pytest.mark.unit
-def test_cli_prefork_yields_to_settings_pool(monkeypatch, settings):
-    # Celery treats a CLI `prefork` as the default and uses the configured pool.
-    monkeypatch.setattr("sys.argv", ["celery", "-A", "plane", "worker", "--pool=prefork"])
-    settings.CELERY_WORKER_POOL = "threads"
-    assert _effective_pool() == "threads"
-    assert _is_prefork_worker() is False
-
-
-@pytest.mark.unit
-def test_non_prefork_cli_pool_wins_over_settings(monkeypatch, settings):
-    monkeypatch.setattr("sys.argv", ["celery", "-A", "plane", "worker", "-P", "solo"])
-    settings.CELERY_WORKER_POOL = "threads"
-    assert _effective_pool() == "solo"
-    assert _is_prefork_worker() is False
-
-
-@pytest.mark.unit
-def test_settings_processes_alias_is_prefork(monkeypatch, settings):
-    monkeypatch.setattr("sys.argv", ["celery", "-A", "plane", "worker"])
-    settings.CELERY_WORKER_POOL = "processes"
-    assert _is_prefork_worker() is True
-
-
-@pytest.mark.unit
-def test_defaults_to_prefork_when_nothing_is_configured(monkeypatch):
-    monkeypatch.setattr("sys.argv", ["celery", "-A", "plane", "worker"])
-    assert _effective_pool() == "prefork"
+def test_worker_init_creates_providers_only_for_non_forking_pools(pool, creates_providers, monkeypatch):
+    calls = []
+    monkeypatch.setattr("plane.celery.init_process_providers", lambda: calls.append(pool))
+    init_otel_for_non_forking_pool(sender=SimpleNamespace(pool_cls=pool))
+    assert bool(calls) is creates_providers

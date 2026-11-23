@@ -10,24 +10,30 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
+  # Logs are off until you scope this receiver to Plane's own containers.
+  # Replace each placeholder with the full container id
+  # (`docker inspect --format '{{.Id}}' <container-name>`), then uncomment the
+  # `logs` pipeline under `service` below.
   filelog:
     include:
-      - /var/lib/docker/containers/*/*-json.log
+      - /var/lib/docker/containers/<plane-api-container-id>/*-json.log
+      - /var/lib/docker/containers/<plane-worker-container-id>/*-json.log
+      - /var/lib/docker/containers/<plane-beat-worker-container-id>/*-json.log
     operators:
       # 1. Unwrap Docker's json-file envelope:
       #    {"log": "<the app's JSON line>\n", "stream": "stdout", "time": "..."}
       #    This leaves the app's own JSON as a string in attributes.log.
       - type: json_parser
-      # 2. Parse the app's JSON out of that string, so trace_id / span_id /
-      #    service_name become real attributes. Guarded: `include` above matches
-      #    every container on the host, and plaintext lines (postgres, redis,
-      #    rabbitmq, ...) would otherwise log a parse error each. Narrowing
-      #    `include` to just the api/worker/beat containers is the tidier option
-      #    if you know their container ids.
+      # 2. Keep only Plane's JSON log lines. The api container also prints
+      #    plaintext access-log lines carrying raw request URLs (OAuth code and
+      #    state, password-reset tokens); Plane redacts those only in its JSON logs.
+      - type: filter
+        expr: 'attributes.log == nil or not (attributes.log matches "^\\s*[{]")'
+      # 3. Parse the app's JSON out of that string, so trace_id / span_id /
+      #    service_name become real attributes.
       - type: json_parser
         parse_from: attributes.log
-        if: 'attributes.log != nil and attributes.log matches "^\\s*[{]"'
-      # 3. Promote them to the log record's top-level trace context. A `move`
+      # 4. Promote them to the log record's top-level trace context. A `move`
       #    to a non-prefixed field would target body.trace_id and never set the
       #    real trace context — trace_parser is the operator that does.
       - type: trace_parser
@@ -71,7 +77,8 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [debug]
-    logs:
-      receivers: [filelog]
-      processors: [batch]
-      exporters: [debug]
+    # Uncomment once the filelog receiver above is scoped to Plane's containers.
+    # logs:
+    #   receivers: [filelog]
+    #   processors: [batch]
+    #   exporters: [debug]

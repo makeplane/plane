@@ -7,36 +7,32 @@ import os
 import sys
 
 
-def _apply_settings_argument(argv: list[str]) -> None:
-    """Honor `--settings=...` before anything imports the `plane` package.
+def _apply_django_default_options(argv: list[str]) -> None:
+    """Apply `--settings` / `--pythonpath` before anything imports the `plane` package.
 
     Importing `plane.observability.setup` below runs `plane/__init__.py`, which
     imports `plane.celery`, which touches `django.conf.settings` at module
-    scope. That materializes Django's LazySettings from DJANGO_SETTINGS_MODULE
-    long before `execute_from_command_line` gets a chance to apply `--settings`,
-    so the flag would be silently ignored (e.g. bin/docker-entrypoint-api-local.sh
-    runs `runserver --settings=plane.settings.local`). Django itself does the
-    same assignment, just later, so applying it here is equivalent.
+    scope. That loads the settings module long before `execute_from_command_line`
+    would apply these options, so `--settings` would be ignored and a settings
+    module on `--pythonpath` would fail to import. This is the same pre-parse
+    Django's ManagementUtility.execute does (same parser, last occurrence wins);
+    running it twice is what Django itself does.
     """
-    for index, arg in enumerate(argv):
-        if arg.startswith("--settings="):
-            os.environ["DJANGO_SETTINGS_MODULE"] = arg.split("=", 1)[1]
-            return
-        if arg == "--settings" and index + 1 < len(argv):
-            os.environ["DJANGO_SETTINGS_MODULE"] = argv[index + 1]
-            return
+    from django.core.management.base import CommandError, CommandParser, handle_default_options
+
+    parser = CommandParser(add_help=False, allow_abbrev=False)
+    parser.add_argument("--settings")
+    parser.add_argument("--pythonpath")
+    parser.add_argument("args", nargs="*")
+    try:
+        options, _ = parser.parse_known_args(argv[2:])
+        handle_default_options(options)
+    except CommandError:
+        pass  # Django ignores option errors at this point too.
 
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
-    _apply_settings_argument(sys.argv[1:])
-
-    # Bootstrap OpenTelemetry before Django imports so runserver and
-    # management commands are instrumented too. No-op unless OTel is active.
-    from plane.observability.setup import configure_otel
-
-    configure_otel()
-
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -45,4 +41,11 @@ if __name__ == "__main__":
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    _apply_django_default_options(sys.argv)
+
+    # Bootstrap OpenTelemetry before Django sets up so runserver and
+    # management commands are instrumented too. No-op unless OTel is active.
+    from plane.observability.setup import configure_otel
+
+    configure_otel()
     execute_from_command_line(sys.argv)

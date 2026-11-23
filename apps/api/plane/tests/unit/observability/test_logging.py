@@ -176,6 +176,21 @@ def test_extend_logging_config_keeps_observability_loggers_alive(monkeypatch):
 
 
 @pytest.mark.unit
+def test_metrics_only_keeps_loggers_alive_without_trace_fields(monkeypatch):
+    # No TracerProvider means no trace ids, but export warnings must still surface.
+    monkeypatch.setenv("OTEL_ENABLED", "1")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_METRICS_ENDPOINT", "http://localhost:4317")
+    config = _sample_logging_config()
+    fmt_before = config["formatters"]["json"]["fmt"]
+
+    extend_logging_config(config)
+
+    assert "plane.observability" in config["loggers"]
+    assert config["formatters"]["json"]["fmt"] == fmt_before
+    assert "filters" not in config["handlers"]["console"]
+
+
+@pytest.mark.unit
 @pytest.mark.parametrize(
     "enabled,endpoint,expected",
     [

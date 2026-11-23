@@ -4,9 +4,8 @@
 
 """OpenTelemetry bootstrap for the Plane API.
 
-Single entry point: configure_otel(). Idempotent. No-op unless OTel is active
-(OTEL_ENABLED truthy *and* an OTLP endpoint configured — see
-plane.observability.logging.is_otel_active).
+Single entry point: configure_otel(). Idempotent. No-op unless OTEL_ENABLED is
+truthy *and* an OTLP endpoint is configured.
 
 SDK and instrumentor imports are deliberately deferred into the functions that
 need them. This module is imported by manage.py, wsgi.py, asgi.py and celery.py
@@ -20,12 +19,14 @@ import atexit
 import logging
 import os
 import sys
+import threading
+import time
 import uuid
 from importlib import import_module
 
 from opentelemetry import metrics, trace
 
-from plane.observability.logging import has_otel_endpoint, is_otel_enabled
+from plane.observability.logging import has_otel_endpoint, has_signal_endpoint, is_otel_enabled
 
 logger = logging.getLogger(__name__)
 
@@ -51,10 +52,47 @@ _NOISY_OTEL_LOGGERS = (
 
 _HTTP_PROTOCOLS = ("http/protobuf", "http")
 
+# Masked outright if redaction itself fails, so a hook error never ships a raw URL.
+_URL_ATTRIBUTES = ("http.url", "url.full", "http.target", "url.path", "url.query")
+
+
+def _redact_request_span(span, request) -> None:
+    """DjangoInstrumentor request_hook: mask URL credentials before they are exported.
+
+    A request_hook rather than a response_hook: it runs once every URL attribute
+    is set on the span and in the http.server.duration attributes, while the
+    instrumentor pops the latter out of request.META before calling the
+    response_hook. The duration attributes matter when the view never runs
+    (e.g. an APPEND_SLASH redirect), since only then is http.target left raw.
+    """
+    duration_attrs = {}
+    try:
+        from opentelemetry.instrumentation.django.middleware.otel_middleware import _DjangoMiddleware
+
+        from plane.utils.url_redaction import redact, request_secrets
+
+        duration_attrs = request.META.get(_DjangoMiddleware._environ_duration_attr_key) or {}
+        secrets = request_secrets(request)
+        if not secrets:
+            return
+        if span.is_recording():
+            span.set_attributes({k: redact(v, secrets) for k, v in span.attributes.items() if isinstance(v, str)})
+        for key, value in duration_attrs.items():
+            if isinstance(value, str):
+                duration_attrs[key] = redact(value, secrets)
+    except Exception as exc:
+        logger.warning("URL redaction failed, masking URL attributes: %s", exc)
+        if span.is_recording():
+            span.set_attributes({k: "REDACTED" for k in _URL_ATTRIBUTES if k in span.attributes})
+        for key in _URL_ATTRIBUTES:
+            if key in duration_attrs:
+                duration_attrs[key] = "REDACTED"
+
+
 # (module path, class name, instrument() kwargs). Resolved lazily so an import
 # failure is isolated to the one instrumentor that failed.
 _INSTRUMENTORS = (
-    ("opentelemetry.instrumentation.django", "DjangoInstrumentor", {}),
+    ("opentelemetry.instrumentation.django", "DjangoInstrumentor", {"request_hook": _redact_request_span}),
     ("opentelemetry.instrumentation.celery", "CeleryInstrumentor", {}),
     ("opentelemetry.instrumentation.psycopg", "PsycopgInstrumentor", {"enable_commenter": False}),
     ("opentelemetry.instrumentation.redis", "RedisInstrumentor", {}),
@@ -176,13 +214,19 @@ def _setup_metrics(resource) -> None:
 
 
 def _init_providers() -> None:
-    """Create the exporters + providers for the *current* process. Idempotent."""
+    """Create the exporters + providers for the *current* process. Idempotent.
+
+    A signal gets an exporter only when its shared or signal-specific endpoint
+    is set; otherwise the SDK would export it to its localhost default.
+    """
     global _PROVIDERS_READY
     if _PROVIDERS_READY:
         return
     resource = _build_resource()
-    _setup_tracing(resource)
-    _setup_metrics(resource)
+    if has_signal_endpoint("TRACES"):
+        _setup_tracing(resource)
+    if has_signal_endpoint("METRICS"):
+        _setup_metrics(resource)
     atexit.register(flush_otel)
     _PROVIDERS_READY = True
 
@@ -300,7 +344,7 @@ def configure_otel(*, defer_providers: bool = False) -> None:
 
 
 def flush_otel(timeout_millis: int = 3000) -> None:
-    """Best-effort bounded flush of buffered spans + metrics.
+    """Best-effort flush of buffered spans + metrics, bounded by one deadline.
 
     Used in two places, both of which must not stall:
 
@@ -311,16 +355,25 @@ def flush_otel(timeout_millis: int = 3000) -> None:
     - Registered as this process's atexit hook in place of the SDK's own
       unbounded provider shutdown (see _setup_tracing).
 
-    Never raises and is bounded by the timeout, so it cannot stall interpreter
-    exit or child replacement even when the collector is unreachable.
+    The pinned SDK's span force_flush ignores its timeout and exports
+    synchronously, so both flushes run on a daemon thread that is abandoned
+    once the deadline passes. Never raises.
     """
-    if _TRACER_PROVIDER is not None:
-        try:
-            _TRACER_PROVIDER.force_flush(timeout_millis=timeout_millis)
-        except Exception as exc:
-            logger.warning("OTel trace flush failed: %s", exc)
-    if _METER_PROVIDER is not None:
-        try:
-            _METER_PROVIDER.force_flush(timeout_millis=timeout_millis)
-        except Exception as exc:
-            logger.warning("OTel metric flush failed: %s", exc)
+    providers = [p for p in (_TRACER_PROVIDER, _METER_PROVIDER) if p is not None]
+    if not providers:
+        return
+    deadline = time.monotonic() + timeout_millis / 1000
+
+    def _flush() -> None:
+        for provider in providers:
+            remaining_millis = max(0, int((deadline - time.monotonic()) * 1000))
+            try:
+                provider.force_flush(timeout_millis=remaining_millis)
+            except Exception as exc:
+                logger.warning("OTel %s flush failed: %s", type(provider).__name__, exc)
+
+    flusher = threading.Thread(target=_flush, name="otel-flush", daemon=True)
+    flusher.start()
+    flusher.join(timeout_millis / 1000)
+    if flusher.is_alive():
+        logger.warning("OTel flush exceeded %sms; abandoning the remaining export", timeout_millis)

@@ -14,14 +14,14 @@ from pythonjsonlogger.json import JsonFormatter
 from celery.signals import (
     after_setup_logger,
     after_setup_task_logger,
+    worker_init,
     worker_process_init,
     worker_process_shutdown,
 )
+from celery.concurrency import get_implementation
 from celery.schedules import crontab, schedule
 
 # Module imports
-from django.conf import settings
-
 from plane.settings.redis import redis_instance
 
 # Set the default Django settings module for the 'celery' program.
@@ -37,71 +37,36 @@ from plane.observability.setup import (  # noqa: E402
 from plane.observability.logging import TraceContextFilter, is_otel_active  # noqa: E402
 
 
-def _effective_pool() -> str:
-    """Resolve the pool `celery worker` will actually use.
+# Celery worker processes defer exporter creation until the pool is known; every
+# other process (wsgi/asgi/manage.py/beat) builds its providers right here.
+# The OTLP gRPC exporter opens its channel eagerly and registers no
+# os.register_at_fork handler, so a channel made in the prefork MainProcess and
+# inherited by a forked child is not safe to export on.
+configure_otel(defer_providers="worker" in sys.argv)
 
-    Same precedence Celery applies: a non-prefork `-P` / `--pool` CLI flag wins;
-    otherwise `worker_pool` from the config object (`CELERY_WORKER_POOL` in
-    Django settings, via the namespaced config_from_object below), then the
-    `prefork` default. Reading argv alone would misclassify a settings-configured pool.
-    """
-    argv = sys.argv
-    pool = "prefork"
-    for index, arg in enumerate(argv):
-        if arg.startswith("--pool="):
-            pool = arg.split("=", 1)[1]
-            break
-        if arg in ("-P", "--pool") and index + 1 < len(argv):
-            pool = argv[index + 1]
-            break
-        # Click also accepts the value attached to the short flag: `-Pthreads`.
-        if arg.startswith("-P") and len(arg) > 2:
-            pool = arg[2:]
-            break
-    pool = pool.strip().lower()
-    # Celery's WorkersPool.convert treats a CLI `prefork` as the default and
-    # lets a configured worker_pool replace it; any other CLI pool wins.
-    if pool == "prefork":
-        pool = str(getattr(settings, "CELERY_WORKER_POOL", "") or "prefork").strip().lower()
-    # `processes` is Celery's compat alias for the prefork pool.
-    return "prefork" if pool == "processes" else pool
-
-
-def _is_prefork_worker() -> bool:
-    """True when this process is `celery ... worker` on the prefork pool.
-
-    The prefork pool forks its task children *after* this module is imported.
-    The OTLP gRPC exporter opens its channel eagerly in __init__ and registers
-    no os.register_at_fork handler, so a channel created here in the MainProcess
-    and inherited by a forked child is not safe to export on — child exports can
-    hang or fail nondeterministically. For that pool we defer exporter creation
-    to worker_process_init, which fires inside each child.
-
-    Everything else keeps the import-time bootstrap: `celery beat`, and the
-    non-forking pools. That distinction matters for `threads`/`gevent`/`eventlet`,
-    which run tasks in the main process and never dispatch worker_process_init —
-    deferring there would leave the providers uninitialized and export nothing.
-    """
-    # Only worker processes fork, and only they need `settings` resolved this
-    # early — keep wsgi/asgi/manage.py off that path.
-    return "worker" in sys.argv and _effective_pool() == "prefork"
-
-
-_DEFER_OTEL_PROVIDERS = _is_prefork_worker()
-
-configure_otel(defer_providers=_DEFER_OTEL_PROVIDERS)
-
-# Whether to trace-correlate worker logs. Uses the same shared is_otel_active()
-# gate as the bootstrap (setup.configure_otel) and the Django LOGGING gate, so
-# the log schema never changes in a process that exports no telemetry.
+# Whether to trace-correlate worker logs. Same is_otel_active() gate as the
+# Django LOGGING config, so the log schema only changes when traces are exported.
 _OTEL_LOG_ENABLED = is_otel_active()
+
+
+@worker_init.connect
+def init_otel_for_non_forking_pool(sender=None, **kwargs):
+    """Create the exporters in this process unless the pool is prefork.
+
+    Fires in the worker MainProcess once Celery has resolved the pool from
+    -P/--pool, the CELERY_WORKER_POOL env var or the worker_pool setting, and
+    before any child is forked. threads/solo/gevent/eventlet run tasks here and
+    never dispatch worker_process_init, so they need their providers now.
+    """
+    if get_implementation(sender.pool_cls) is not get_implementation("prefork"):
+        init_process_providers()
 
 
 @worker_process_init.connect
 def init_otel_in_worker_child(*args, **kwargs):
     """Create this child's OTLP exporters after the prefork fork.
 
-    No-op unless configure_otel() deferred them (see _is_prefork_worker).
+    No-op unless configure_otel() deferred them (Celery worker processes).
     """
     init_process_providers()
 

@@ -52,16 +52,24 @@ def has_otel_endpoint() -> bool:
     return any(os.environ.get(name, "").strip() for name in _ENDPOINT_VARS)
 
 
-def is_otel_active() -> bool:
-    """Return True when OTel will actually be bootstrapped in this process.
+def has_signal_endpoint(signal: str) -> bool:
+    """Return True when the shared or the `signal`-specific (TRACES/METRICS) endpoint is set.
 
-    The single predicate shared by setup.configure_otel(), both Django settings
-    modules and plane/celery.py. Gating the log schema on OTEL_ENABLED alone
-    would diverge from the bootstrap gate: `OTEL_ENABLED=1` with no endpoint
-    installs no TracerProvider, so every log line would gain permanently empty
-    trace_id / span_id fields for zero telemetry.
+    Blank counts as unset: compose injects `${VAR:-}` as an empty string.
     """
-    return is_otel_enabled() and has_otel_endpoint()
+    names = ("OTEL_EXPORTER_OTLP_ENDPOINT", f"OTEL_EXPORTER_OTLP_{signal}_ENDPOINT")
+    return any(os.environ.get(name, "").strip() for name in names)
+
+
+def is_otel_active() -> bool:
+    """Return True when this process will export traces, so logs can carry trace ids.
+
+    The log-correlation gate shared by both Django settings modules and
+    plane/celery.py. Gating on OTEL_ENABLED alone, or on any endpoint, would
+    give every log line permanently empty trace_id / span_id fields whenever no
+    TracerProvider is installed (no endpoint at all, or a metrics-only setup).
+    """
+    return is_otel_enabled() and has_signal_endpoint("TRACES")
 
 
 class TraceContextFilter(logging.Filter):
@@ -82,23 +90,37 @@ class TraceContextFilter(logging.Filter):
 
 
 def extend_logging_config(logging_config: dict) -> None:
-    """Trace-correlate a Django LOGGING dict in place. No-op unless OTel is active.
+    """Adapt a Django LOGGING dict in place for OTel. No-op unless OTel bootstraps.
 
-    When active, extends the JSON formatter's fmt with the trace-context fields
-    and attaches TraceContextFilter to every handler. Attaching at the handler
-    level (rather than the root logger) is required because most plane.* loggers
-    set propagate=False; runtime mutation also wouldn't survive Django's
-    dictConfig. The off path leaves the log schema byte-for-byte unchanged.
+    Names the observability loggers explicitly whenever OTel bootstraps. Both
+    settings modules apply LOGGING with disable_existing_loggers=True, and by
+    then the bootstrap has already created `plane.observability.*` and
+    `opentelemetry.*` loggers — any logger not named here would be disabled,
+    silencing export errors, instrumentor failures and flush warnings.
 
-    Also names the observability loggers explicitly. Both settings modules apply
-    LOGGING with disable_existing_loggers=True, and by then the bootstrap has
-    already created `plane.observability.*` and `opentelemetry.*` loggers — any
-    logger not named here would be disabled, silencing export errors,
-    instrumentor failures and flush warnings for the rest of the process.
+    Only when traces are exported (is_otel_active), also extends the JSON
+    formatter's fmt with the trace-context fields and attaches
+    TraceContextFilter to every handler. Attaching at the handler level (rather
+    than the root logger) is required because most plane.* loggers set
+    propagate=False; runtime mutation also wouldn't survive Django's dictConfig.
+    The off path leaves the log schema byte-for-byte unchanged.
 
     Shared by settings/local.py and settings/production.py so the two stay in
     lockstep.
     """
+    if not (is_otel_enabled() and has_otel_endpoint()):
+        return
+    logging_config["loggers"]["plane.observability"] = {
+        "level": "INFO",
+        "handlers": ["console"],
+        "propagate": False,
+    }
+    logging_config["loggers"]["opentelemetry"] = {
+        "level": "WARNING",
+        "handlers": ["console"],
+        "propagate": False,
+    }
+
     if not is_otel_active():
         return
     logging_config["formatters"]["json"]["fmt"] = (
@@ -112,14 +134,3 @@ def extend_logging_config(logging_config: dict) -> None:
         if "trace_context" not in existing:
             existing.append("trace_context")
         handler["filters"] = existing
-
-    logging_config["loggers"]["plane.observability"] = {
-        "level": "INFO",
-        "handlers": ["console"],
-        "propagate": False,
-    }
-    logging_config["loggers"]["opentelemetry"] = {
-        "level": "WARNING",
-        "handlers": ["console"],
-        "propagate": False,
-    }

@@ -27,6 +27,7 @@ from plane.observability.setup import (
     _create_span_exporter,
     _protocol,
     configure_otel,
+    flush_otel,
     init_process_providers,
 )
 
@@ -364,3 +365,57 @@ def test_init_process_providers_is_a_noop_when_otel_is_disabled():
     with patch("plane.observability.setup._create_span_exporter") as create_exporter:
         init_process_providers()
     create_exporter.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Per-signal exporters and the bounded flush
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "endpoint_var,span_exporter,metric_exporter",
+    [
+        ("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT", True, False),
+        ("OTEL_EXPORTER_OTLP_METRICS_ENDPOINT", False, True),
+    ],
+)
+def test_only_signals_with_an_endpoint_get_an_exporter(endpoint_var, span_exporter, metric_exporter, monkeypatch):
+    # A signal without an endpoint would otherwise export to the SDK's localhost default.
+    monkeypatch.setenv("OTEL_ENABLED", "1")
+    monkeypatch.setenv(endpoint_var, "http://collector:4318/v1/x")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "  ")  # compose injects blanks
+    mocks = _patched_configure_otel()
+    assert mocks["plane.observability.setup._create_span_exporter"].called is span_exporter
+    assert mocks["plane.observability.setup._create_metric_exporter"].called is metric_exporter
+
+
+@pytest.mark.unit
+def test_metrics_only_setup_leaves_the_log_schema_alone(monkeypatch):
+    from plane.observability.logging import is_otel_active
+
+    monkeypatch.setenv("OTEL_ENABLED", "1")
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_METRICS_ENDPOINT", "http://collector:4317")
+    assert is_otel_active() is False
+
+
+@pytest.mark.unit
+def test_flush_otel_returns_by_its_deadline_when_the_export_stalls(monkeypatch, caplog):
+    import time
+
+    from plane.observability import setup as otel_setup
+
+    class StalledProvider:
+        def force_flush(self, timeout_millis):
+            time.sleep(0.5)  # the pinned SDK's span flush ignores timeout_millis
+
+        def shutdown(self):
+            pass
+
+    monkeypatch.setattr(otel_setup, "_TRACER_PROVIDER", StalledProvider())
+    monkeypatch.setattr(otel_setup, "_METER_PROVIDER", StalledProvider())
+    started = time.monotonic()
+    with caplog.at_level(logging.WARNING, logger="plane.observability.setup"):
+        flush_otel(timeout_millis=50)
+    assert time.monotonic() - started < 0.3
+    assert any("exceeded 50ms" in r.message for r in caplog.records)
