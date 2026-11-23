@@ -145,16 +145,24 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   };
   walk(issueIds, 0);
 
-  // Expansion lives in the view now (not per-row), so it outlives a row that is
-  // filtered or paged out and back in; drop any expanded id no longer rendered at
-  // the top level so a re-added issue starts collapsed, as the old row state did.
+  // Expansion lives in the view now (not per-row), so it outlives rows that leave
+  // the list. Prune against the rendered tree, not just the top level: an expanded
+  // id is dropped only once it is no longer rendered anywhere - a top-level that
+  // was filtered/paged out (and its descendants) - so a re-added issue starts
+  // collapsed as the old row state did, while expanded descendants of a parent
+  // that is still visible (e.g. after loading more top-level rows or refiltering)
+  // keep their expanded state.
+  const renderedIds = new Set(visibleEntities.map((entity) => entity.entityID));
   React.useEffect(() => {
     setExpandedIssueIds((previous) => {
       if (previous.size === 0) return previous;
-      const stillPresent = new Set(issueIds ?? []);
-      const next = new Set([...previous].filter((id) => stillPresent.has(id)));
+      const next = new Set([...previous].filter((id) => renderedIds.has(id)));
       return next.size === previous.size ? previous : next;
     });
+    // renderedIds is a fresh Set each render (derived from issueIds + expansion),
+    // so it is intentionally not a dependency; the prune is keyed on the input that
+    // actually changes the rendered top-level set.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [issueIds]);
 
   // keyboard navigation for the rendered rows (shared single-key commands drive the cursor)
@@ -208,7 +216,9 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
       <MultipleSelectGroup
         containerRef={containerRef}
         entities={{
-          [SPREADSHEET_SELECT_GROUP]: visibleEntities.map((entity) => entity.entityID),
+          // unique: an issue that renders both at the top level and as a child of an
+          // expanded parent would otherwise appear twice and inflate the selection
+          [SPREADSHEET_SELECT_GROUP]: [...renderedIds],
         }}
         disabled={!isBulkOperationsEnabled || isEpic}
       >
