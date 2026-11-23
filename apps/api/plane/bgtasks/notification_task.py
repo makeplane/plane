@@ -9,6 +9,7 @@ from uuid import UUID
 
 
 # Module imports
+from plane.utils.exception_logger import log_exception
 from plane.db.models import (
     IssueMention,
     IssueSubscriber,
@@ -670,5 +671,5 @@ def notifications(
             EmailNotificationLog.objects.bulk_create(bulk_email_logs, batch_size=100, ignore_conflicts=True)
         return
     except Exception as e:
-        print(e)
+        log_exception(e)
         return
