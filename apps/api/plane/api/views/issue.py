@@ -165,10 +165,8 @@ from plane.utils.openapi import (
 from plane.bgtasks.work_item_link_task import crawl_work_item_link_title
 
 
-def user_has_issue_permission(user_id, project_id, issue=None, allowed_roles=None, allow_creator=True):
-    if allow_creator and issue is not None and user_id == issue.created_by_id:
-        return True
-
+def user_has_issue_permission(user_id, project_id, allowed_roles=None):
+    # No creator shortcut: a work item's creator loses access once removed from the project.
     qs = ProjectMember.objects.filter(
         project_id=project_id,
         member_id=user_id,
@@ -2029,13 +2027,11 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
         Validates file type and size before creating the attachment record.
         """
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the user is creator or admin,member then allow the upload
+        # uploading requires active project membership, even for the work item's creator
         if not user_has_issue_permission(
             request.user.id,
             project_id=project_id,
-            issue=issue,
             allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
         ):
             return Response(
                 {"error": "You are not allowed to upload this attachment"},
@@ -2157,7 +2153,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
         List all attachments for an issue.
         """
         # Reading attachments requires active project membership
-        if not user_has_issue_permission(request.user.id, project_id=project_id, allow_creator=False):
+        if not user_has_issue_permission(request.user.id, project_id=project_id):
             return Response(
                 {"error": "You are not allowed to view these attachments"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -2293,13 +2289,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         Retrieve details of a specific attachment.
         """
         # if the user is part of the project then allow the download
-        if not user_has_issue_permission(
-            request.user.id,
-            project_id=project_id,
-            issue=None,
-            allowed_roles=None,
-            allow_creator=False,
-        ):
+        if not user_has_issue_permission(request.user.id, project_id=project_id):
             return Response(
                 {"error": "You are not allowed to download this attachment"},
                 status=status.HTTP_403_FORBIDDEN,
@@ -2367,13 +2357,11 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         """
 
         issue = Issue.objects.get(pk=issue_id, workspace__slug=slug, project_id=project_id)
-        # if the user is creator or admin then allow the upload
+        # confirming an upload requires active project membership, even for the work item's creator
         if not user_has_issue_permission(
             request.user.id,
             project_id=project_id,
-            issue=issue,
             allowed_roles=[ROLE.ADMIN.value, ROLE.MEMBER.value, ROLE.GUEST.value],
-            allow_creator=True,
         ):
             return Response(
                 {"error": "You are not allowed to upload this attachment"},
