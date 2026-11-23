@@ -188,15 +188,7 @@ export const EstimatePointUpdate = observer(function EstimatePointUpdate(props: 
         />
         {estimatePointError?.message && (
           <>
-            <Tooltip
-              label={
-                (estimateInputValue || "")?.length >= 1
-                  ? t("project_settings.estimates.validation.unsaved_changes")
-                  : estimatePointError?.message
-              }
-              layout="stacked"
-              side="bottom"
-            >
+            <Tooltip label={estimatePointError.message} layout="stacked" side="bottom">
               <div className="relative mr-3 flex size-3.5 shrink-0 items-center justify-center overflow-hidden text-danger-primary">
                 <InfoOutline width={14} height={14} />
               </div>
