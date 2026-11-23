@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import { AddOutline } from "@makeplane/propel/icons";
-import { setPromiseToast } from "@plane/blocks/toast";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 import type { IProject, TIssue, EIssueLayoutTypes } from "@plane/types";
 import { cn, createIssuePayload } from "@plane/utils";
 // local imports
@@ -76,6 +76,7 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
     reset,
     handleSubmit,
     setFocus,
+    setError,
     register,
     formState: { errors, isSubmitting },
   } = useForm<TIssue>({ defaultValues });
@@ -101,6 +102,14 @@ export const QuickAddIssueRoot = observer(function QuickAddIssueRoot(props: TQui
 
   const onSubmitHandler = async (formData: TIssue) => {
     if (isSubmitting || !workspaceSlug || !projectId) return;
+
+    // the API rejects names over 255 characters; keep the typed title instead of sending it
+    if (formData.name.length > 255) {
+      const message = t("title_should_be_less_than_255_characters");
+      setError("name", { type: "maxLength", message });
+      setToast({ type: "error", title: t("common.error.label"), message });
+      return;
+    }
 
     reset({ ...defaultValues });
 
