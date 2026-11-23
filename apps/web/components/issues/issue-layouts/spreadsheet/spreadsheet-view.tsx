@@ -146,24 +146,26 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   walk(issueIds, 0);
 
   // Expansion lives in the view now (not per-row), so it outlives rows that leave
-  // the list. Prune against the rendered tree, not just the top level: an expanded
-  // id is dropped only once it is no longer rendered anywhere - a top-level that
-  // was filtered/paged out (and its descendants) - so a re-added issue starts
-  // collapsed as the old row state did, while expanded descendants of a parent
-  // that is still visible (e.g. after loading more top-level rows or refiltering)
-  // keep their expanded state.
+  // the list AND descendants of a parent that is collapsed. Prune against the
+  // rendered tree: an expanded id is dropped once it is no longer rendered
+  // anywhere. Keying the effect on a stable fingerprint of that tree (not issueIds)
+  // means it also runs when collapsing a parent removes its whole subtree, so
+  // re-expanding starts every descendant collapsed, as the old row-local state did.
+  // Sorting by membership (not render order) means load-more / reordering that
+  // doesn't change the id set does not re-prune.
   const renderedIds = new Set(visibleEntities.map((entity) => entity.entityID));
+  const renderedTreeKey = [...renderedIds].sort().join("|");
   React.useEffect(() => {
     setExpandedIssueIds((previous) => {
       if (previous.size === 0) return previous;
       const next = new Set([...previous].filter((id) => renderedIds.has(id)));
       return next.size === previous.size ? previous : next;
     });
-    // renderedIds is a fresh Set each render (derived from issueIds + expansion),
-    // so it is intentionally not a dependency; the prune is keyed on the input that
-    // actually changes the rendered top-level set.
+    // renderedIds is rebuilt each render; renderedTreeKey is its stable identity
+    // (equal when the rendered id set is equal), so this effect runs exactly when
+    // the rendered membership changes and never loops.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [issueIds]);
+  }, [renderedTreeKey]);
 
   // keyboard navigation for the rendered rows (shared single-key commands drive the cursor)
   const buildPeekIssue = (issueId: string) => {
