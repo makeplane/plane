@@ -137,14 +137,17 @@ function updateEnvFile() {
         if [ $? -ne 0 ]; then
             echo "$key=$value" >> "$file"
             return
-        else 
-            if [ "$OS_NAME" == "Darwin" ]; then
-                value=$(echo "$value" | sed 's/|/\\|/g')
-                sed -i '' "s|^$key=.*|$key=$value|g" "$file"
-            else
-                value=$(echo "$value" | sed 's/\//\\\//g')
-                sed -i "s/^$key=.*/$key=$value/g" "$file"
-            fi
+        else
+            # awk, not sed: a sed replacement expands & and \ in the value. ENVIRON
+            # (unlike awk -v) passes it through literally. Replace the file with mv,
+            # as sed -i does: syncEnvFile is still reading the old one line by line.
+            local tmp
+            tmp=$(mktemp "$file.XXXXXX") || exit 1
+            cp -p "$file" "$tmp" # keep the file's mode
+            ENV_VALUE="$value" awk -v key="$key" \
+                'index($0, key "=") == 1 { print key "=" ENVIRON["ENV_VALUE"]; next } { print }' \
+                "$file" > "$tmp" && mv "$tmp" "$file"
+            rm -f "$tmp" # only left behind if awk failed
         fi
     else
         echo "File not found: $file"

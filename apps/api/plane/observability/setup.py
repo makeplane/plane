@@ -23,6 +23,7 @@ import threading
 import time
 import uuid
 from importlib import import_module
+from urllib.parse import urlsplit, urlunsplit
 
 from opentelemetry import metrics, trace
 
@@ -64,22 +65,33 @@ def _redact_request_span(span, request) -> None:
     instrumentor pops the latter out of request.META before calling the
     response_hook. The duration attributes matter when the view never runs
     (e.g. an APPEND_SLASH redirect), since only then is http.target left raw.
+
+    Each URL attribute is rebuilt from the masked request path and query, not
+    searched for secret values: WSGI, gunicorn's RAW_URI and ASGI each encode the
+    URL differently, and only URL attributes are touched.
     """
     duration_attrs = {}
     try:
         from opentelemetry.instrumentation.django.middleware.otel_middleware import _DjangoMiddleware
 
-        from plane.utils.url_redaction import redact, request_secrets
+        from plane.utils.url_redaction import redacted_url
 
         duration_attrs = request.META.get(_DjangoMiddleware._environ_duration_attr_key) or {}
-        secrets = request_secrets(request)
-        if not secrets:
+        redacted = redacted_url(request)
+        if redacted is None:
             return
+        path, query = redacted
+        rebuilt = {"http.target": f"{path}?{query}" if query else path, "url.path": path, "url.query": query}
+
+        def masked(key, value):
+            if key in rebuilt:
+                return rebuilt[key]
+            return urlunsplit(urlsplit(value)[:2] + (path, query, ""))  # http.url / url.full: keep scheme + host
+
         if span.is_recording():
-            span.set_attributes({k: redact(v, secrets) for k, v in span.attributes.items() if isinstance(v, str)})
-        for key, value in duration_attrs.items():
-            if isinstance(value, str):
-                duration_attrs[key] = redact(value, secrets)
+            span.set_attributes({k: masked(k, v) for k, v in span.attributes.items() if k in _URL_ATTRIBUTES})
+        for key in duration_attrs.keys() & _URL_ATTRIBUTES:
+            duration_attrs[key] = masked(key, duration_attrs[key])
     except Exception as exc:
         logger.warning("URL redaction failed, masking URL attributes: %s", exc)
         if span.is_recording():
