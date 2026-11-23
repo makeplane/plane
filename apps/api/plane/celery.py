@@ -51,6 +51,9 @@ def _effective_pool() -> str:
             return arg.split("=", 1)[1].strip().lower()
         if arg in ("-P", "--pool") and index + 1 < len(argv):
             return argv[index + 1].strip().lower()
+        # Click also accepts the value attached to the short flag: `-Pthreads`.
+        if arg.startswith("-P") and len(arg) > 2:
+            return arg[2:].strip().lower()
     return str(getattr(settings, "CELERY_WORKER_POOL", "") or "prefork").strip().lower()
 
 

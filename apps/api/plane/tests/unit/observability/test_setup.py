@@ -77,9 +77,10 @@ def _patched_configure_otel():
 @pytest.mark.unit
 def test_disabled_by_default_does_nothing():
     # No env set (fixture clears OTEL_* automatically).
-    with patch("opentelemetry.trace.set_tracer_provider") as set_tp, patch(
-        "opentelemetry.metrics.set_meter_provider"
-    ) as set_mp:
+    with (
+        patch("opentelemetry.trace.set_tracer_provider") as set_tp,
+        patch("opentelemetry.metrics.set_meter_provider") as set_mp,
+    ):
         configure_otel()
     set_tp.assert_not_called()
     set_mp.assert_not_called()
@@ -101,10 +102,7 @@ def test_enabled_without_endpoint_warns_and_returns(monkeypatch, caplog):
         with caplog.at_level(logging.WARNING, logger="plane.observability.setup"):
             configure_otel()
     set_tp.assert_not_called()
-    assert any(
-        "OTEL_EXPORTER_OTLP_ENDPOINT is not set" in r.message
-        for r in caplog.records
-    )
+    assert any("OTEL_EXPORTER_OTLP_ENDPOINT is not set" in r.message for r in caplog.records)
 
 
 @pytest.mark.unit
@@ -140,9 +138,9 @@ def test_enabled_with_endpoint_sets_providers_and_instruments(monkeypatch):
 def test_psycopg_instrumentor_called_with_enable_commenter_false(monkeypatch):
     _full_enabled_env(monkeypatch)
     mocks = _patched_configure_otel()
-    mocks[
-        "opentelemetry.instrumentation.psycopg.PsycopgInstrumentor"
-    ].return_value.instrument.assert_called_once_with(enable_commenter=False)
+    mocks["opentelemetry.instrumentation.psycopg.PsycopgInstrumentor"].return_value.instrument.assert_called_once_with(
+        enable_commenter=False
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -209,11 +207,7 @@ def test_idempotent_when_called_twice(monkeypatch):
 
     assert mocks["plane.observability.setup._create_span_exporter"].call_count == 1
     assert mocks["opentelemetry.trace.set_tracer_provider"].call_count == 1
-    assert (
-        mocks["opentelemetry.instrumentation.django.DjangoInstrumentor"]
-        .return_value.instrument.call_count
-        == 1
-    )
+    assert mocks["opentelemetry.instrumentation.django.DjangoInstrumentor"].return_value.instrument.call_count == 1
 
 
 @pytest.mark.unit
@@ -234,11 +228,10 @@ def test_idempotent_when_disabled():
 
 @pytest.mark.unit
 def test_create_span_exporter_uses_grpc_by_default():
-    with patch(
-        "opentelemetry.exporter.otlp.proto.grpc.trace_exporter.OTLPSpanExporter"
-    ) as Grpc, patch(
-        "opentelemetry.exporter.otlp.proto.http.trace_exporter.OTLPSpanExporter"
-    ) as Http:
+    with (
+        patch("opentelemetry.exporter.otlp.proto.grpc.trace_exporter.OTLPSpanExporter") as Grpc,
+        patch("opentelemetry.exporter.otlp.proto.http.trace_exporter.OTLPSpanExporter") as Http,
+    ):
         _create_span_exporter()
     Grpc.assert_called_once()
     Http.assert_not_called()
@@ -248,11 +241,10 @@ def test_create_span_exporter_uses_grpc_by_default():
 @pytest.mark.parametrize("protocol", ["http/protobuf", "http", "HTTP", "Http/Protobuf"])
 def test_create_span_exporter_uses_http_when_protocol_is_http(protocol, monkeypatch):
     monkeypatch.setenv("OTEL_EXPORTER_OTLP_PROTOCOL", protocol)
-    with patch(
-        "opentelemetry.exporter.otlp.proto.grpc.trace_exporter.OTLPSpanExporter"
-    ) as Grpc, patch(
-        "opentelemetry.exporter.otlp.proto.http.trace_exporter.OTLPSpanExporter"
-    ) as Http:
+    with (
+        patch("opentelemetry.exporter.otlp.proto.grpc.trace_exporter.OTLPSpanExporter") as Grpc,
+        patch("opentelemetry.exporter.otlp.proto.http.trace_exporter.OTLPSpanExporter") as Http,
+    ):
         _create_span_exporter()
     Http.assert_called_once()
     Grpc.assert_not_called()
@@ -260,11 +252,10 @@ def test_create_span_exporter_uses_http_when_protocol_is_http(protocol, monkeypa
 
 @pytest.mark.unit
 def test_create_metric_exporter_uses_grpc_by_default():
-    with patch(
-        "opentelemetry.exporter.otlp.proto.grpc.metric_exporter.OTLPMetricExporter"
-    ) as Grpc, patch(
-        "opentelemetry.exporter.otlp.proto.http.metric_exporter.OTLPMetricExporter"
-    ) as Http:
+    with (
+        patch("opentelemetry.exporter.otlp.proto.grpc.metric_exporter.OTLPMetricExporter") as Grpc,
+        patch("opentelemetry.exporter.otlp.proto.http.metric_exporter.OTLPMetricExporter") as Http,
+    ):
         _create_metric_exporter()
     Grpc.assert_called_once()
     Http.assert_not_called()
@@ -274,11 +265,10 @@ def test_create_metric_exporter_uses_grpc_by_default():
 @pytest.mark.parametrize("protocol", ["http/protobuf", "http"])
 def test_create_metric_exporter_uses_http_when_protocol_is_http(protocol, monkeypatch):
     monkeypatch.setenv("OTEL_EXPORTER_OTLP_PROTOCOL", protocol)
-    with patch(
-        "opentelemetry.exporter.otlp.proto.grpc.metric_exporter.OTLPMetricExporter"
-    ) as Grpc, patch(
-        "opentelemetry.exporter.otlp.proto.http.metric_exporter.OTLPMetricExporter"
-    ) as Http:
+    with (
+        patch("opentelemetry.exporter.otlp.proto.grpc.metric_exporter.OTLPMetricExporter") as Grpc,
+        patch("opentelemetry.exporter.otlp.proto.http.metric_exporter.OTLPMetricExporter") as Http,
+    ):
         _create_metric_exporter()
     Http.assert_called_once()
     Grpc.assert_not_called()

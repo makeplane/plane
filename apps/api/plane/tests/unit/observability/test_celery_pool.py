@@ -26,6 +26,8 @@ from plane.celery import _effective_pool, _is_prefork_worker
         (["celery", "-A", "plane", "worker", "-P", "solo"], False),
         (["celery", "-A", "plane", "worker", "--pool=gevent"], False),
         (["celery", "-A", "plane", "worker", "--pool=threads"], False),
+        (["celery", "-A", "plane", "worker", "-Pthreads"], False),
+        (["celery", "-A", "plane", "worker", "-Pprefork"], True),
         (["celery", "-A", "plane", "beat", "-l", "info"], False),
         (["manage.py", "migrate"], False),
         (["gunicorn", "plane.asgi:application"], False),
