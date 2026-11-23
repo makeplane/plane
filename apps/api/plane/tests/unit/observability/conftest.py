@@ -39,6 +39,12 @@ def isolate_otel_state(monkeypatch):
 
     yield
 
+    # Stop the batch-processor / metric-reader threads the providers started;
+    # resetting the references alone would leave them running until exit.
+    for provider in (otel_setup._TRACER_PROVIDER, otel_setup._METER_PROVIDER):
+        if provider is not None:
+            provider.shutdown()
+
     # Drop whatever `_apply_defaults()` wrote directly into os.environ during
     # the test — monkeypatch knows nothing about those keys and would leave
     # them behind. This is a delete-only teardown: the developer's original

@@ -28,6 +28,7 @@ from plane.celery import _effective_pool, _is_prefork_worker
         (["celery", "-A", "plane", "worker", "--pool=threads"], False),
         (["celery", "-A", "plane", "worker", "-Pthreads"], False),
         (["celery", "-A", "plane", "worker", "-Pprefork"], True),
+        (["celery", "-A", "plane", "worker", "--pool=processes"], True),
         (["celery", "-A", "plane", "beat", "-l", "info"], False),
         (["manage.py", "migrate"], False),
         (["gunicorn", "plane.asgi:application"], False),
@@ -50,10 +51,26 @@ def test_settings_configured_pool_is_honored(monkeypatch, settings):
 
 
 @pytest.mark.unit
-def test_cli_pool_wins_over_settings(monkeypatch, settings):
+def test_cli_prefork_yields_to_settings_pool(monkeypatch, settings):
+    # Celery treats a CLI `prefork` as the default and uses the configured pool.
     monkeypatch.setattr("sys.argv", ["celery", "-A", "plane", "worker", "--pool=prefork"])
     settings.CELERY_WORKER_POOL = "threads"
-    assert _effective_pool() == "prefork"
+    assert _effective_pool() == "threads"
+    assert _is_prefork_worker() is False
+
+
+@pytest.mark.unit
+def test_non_prefork_cli_pool_wins_over_settings(monkeypatch, settings):
+    monkeypatch.setattr("sys.argv", ["celery", "-A", "plane", "worker", "-P", "solo"])
+    settings.CELERY_WORKER_POOL = "threads"
+    assert _effective_pool() == "solo"
+    assert _is_prefork_worker() is False
+
+
+@pytest.mark.unit
+def test_settings_processes_alias_is_prefork(monkeypatch, settings):
+    monkeypatch.setattr("sys.argv", ["celery", "-A", "plane", "worker"])
+    settings.CELERY_WORKER_POOL = "processes"
     assert _is_prefork_worker() is True
 
 

@@ -40,21 +40,31 @@ from plane.observability.logging import TraceContextFilter, is_otel_active  # no
 def _effective_pool() -> str:
     """Resolve the pool `celery worker` will actually use.
 
-    Same precedence Celery applies: the `-P` / `--pool` CLI flag wins, then
-    `worker_pool` from the config object (`CELERY_WORKER_POOL` in Django
-    settings, via the namespaced config_from_object below), then the `prefork`
-    default. Reading argv alone would misclassify a settings-configured pool.
+    Same precedence Celery applies: a non-prefork `-P` / `--pool` CLI flag wins;
+    otherwise `worker_pool` from the config object (`CELERY_WORKER_POOL` in
+    Django settings, via the namespaced config_from_object below), then the
+    `prefork` default. Reading argv alone would misclassify a settings-configured pool.
     """
     argv = sys.argv
+    pool = "prefork"
     for index, arg in enumerate(argv):
         if arg.startswith("--pool="):
-            return arg.split("=", 1)[1].strip().lower()
+            pool = arg.split("=", 1)[1]
+            break
         if arg in ("-P", "--pool") and index + 1 < len(argv):
-            return argv[index + 1].strip().lower()
+            pool = argv[index + 1]
+            break
         # Click also accepts the value attached to the short flag: `-Pthreads`.
         if arg.startswith("-P") and len(arg) > 2:
-            return arg[2:].strip().lower()
-    return str(getattr(settings, "CELERY_WORKER_POOL", "") or "prefork").strip().lower()
+            pool = arg[2:]
+            break
+    pool = pool.strip().lower()
+    # Celery's WorkersPool.convert treats a CLI `prefork` as the default and
+    # lets a configured worker_pool replace it; any other CLI pool wins.
+    if pool == "prefork":
+        pool = str(getattr(settings, "CELERY_WORKER_POOL", "") or "prefork").strip().lower()
+    # `processes` is Celery's compat alias for the prefork pool.
+    return "prefork" if pool == "processes" else pool
 
 
 def _is_prefork_worker() -> bool:
