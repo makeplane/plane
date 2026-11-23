@@ -19,7 +19,7 @@ from rest_framework.test import APIClient
 
 from plane.authentication.utils.workspace_project_join import process_workspace_project_invitations
 from plane.authentication.views.app.password_management import generate_password_token
-from plane.db.models import WorkspaceMember, WorkspaceMemberInvite
+from plane.db.models import Project, ProjectMember, ProjectMemberInvite, WorkspaceMember, WorkspaceMemberInvite
 from plane.tests.factories import UserFactory
 
 INVITEE_EMAIL = "invitee@plane.so"
@@ -133,6 +133,19 @@ class TestWorkspaceInvitationVerifiedEmail:
         process_workspace_project_invitations(user=user)
 
         assert _is_member(workspace, user)
+
+    def test_accepted_project_invite_is_applied_on_sign_in(self, workspace):
+        # ProjectJoinEndpoint keeps the invite row after it is accepted, so the next sign-in meets it
+        project = Project.objects.create(name="Invited", identifier="INV", workspace=workspace)
+        ProjectMemberInvite.objects.create(
+            project=project, email=INVITEE_EMAIL, token="project-token", role=15, accepted=True
+        )
+        user, _ = _invitee(is_email_verified=True)
+
+        process_workspace_project_invitations(user=user)
+
+        assert ProjectMember.objects.filter(project=project, member=user, role=15).exists()
+        assert not ProjectMemberInvite.objects.filter(email=INVITEE_EMAIL).exists()
 
     @pytest.mark.parametrize("url_name", ["forgot-password", "space-forgot-password"])
     def test_completed_password_reset_marks_email_verified(self, url_name):

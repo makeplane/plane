@@ -81,6 +81,7 @@ def process_workspace_project_invitations(user):
         [
             ProjectMember(
                 workspace_id=project_member_invite.workspace_id,
+                project_id=project_member_invite.project_id,
                 role=(project_member_invite.role if project_member_invite.role in [5, 15] else 15),
                 member=user,
                 created_by_id=project_member_invite.created_by_id,
