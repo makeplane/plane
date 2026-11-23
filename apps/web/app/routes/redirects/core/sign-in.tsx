@@ -5,9 +5,11 @@
  */
 
 import { redirect } from "react-router";
+import type { Route } from "./+types/sign-in";
 
-export const clientLoader = () => {
-  throw redirect("/");
+export const clientLoader = ({ request }: Route.ClientLoaderArgs) => {
+  // keep the query string (next_path, email) that links to /sign-in carry
+  throw redirect(`/${new URL(request.url).search}`);
 };
 
 export default function SignIn() {

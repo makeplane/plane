@@ -257,8 +257,8 @@ class UserEndpoint(BaseViewSet):
         old_email = user.email
         # Update the email - this updates the existing user record without creating a new user
         user.email = new_email
-        # Reset email verification status when email is changed
-        user.is_email_verified = False
+        # The new address was confirmed with the code mailed to it
+        user.is_email_verified = True
         user.save()
 
         # delete the cache
