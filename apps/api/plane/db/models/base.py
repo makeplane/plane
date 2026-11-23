@@ -8,7 +8,7 @@ import uuid
 from django.db import models
 
 # Third party imports
-from crum import get_current_user
+from crum import get_current_request, get_current_user
 
 # Module imports
 from ..mixins import AuditModel
@@ -22,8 +22,16 @@ class BaseModel(AuditModel):
 
     def save(self, *args, created_by_id=None, disable_auto_set_user=False, **kwargs):
         if not disable_auto_set_user:
+            request = get_current_request()
+            api_token_actor = getattr(request, "api_token_actor", None)
+            if api_token_actor:
+                if self._state.adding:
+                    self.created_by = api_token_actor
+                    self.updated_by = None
+                else:
+                    self.updated_by = api_token_actor
             # Check if created_by_id is provided
-            if created_by_id:
+            elif created_by_id:
                 self.created_by_id = created_by_id
             else:
                 user = get_current_user()

@@ -22,6 +22,7 @@ class APITokenSerializer(BaseSerializer):
             "is_active",
             "last_used",
             "user_type",
+            "actor",
         ]
 
 

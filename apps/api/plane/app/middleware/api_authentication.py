@@ -40,6 +40,7 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
         # save api token last used
         api_token.last_used = timezone.now()
         api_token.save(update_fields=["last_used"])
+        self.api_token_actor = api_token.ensure_actor()
         return (api_token.user, api_token.token)
 
     def authenticate(self, request):
@@ -49,4 +50,5 @@ class APIKeyAuthentication(authentication.BaseAuthentication):
 
         # Validate the API token
         user, token = self.validate_api_token(token)
+        getattr(request, "_request", request).api_token_actor = self.api_token_actor
         return user, token

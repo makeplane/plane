@@ -128,7 +128,9 @@ class TestIssueCreateAuditFields:
         assert response.status_code == status.HTTP_201_CREATED, f"got {response.status_code}: {response.data!r}"
 
         created = Issue.objects.get(pk=response.data["id"])
-        assert created.created_by_id == member_user.id
+        token = APIToken.objects.get(user=member_user, label="Member Token")
+        assert created.created_by_id == token.actor_id
+        assert token.actor.display_name == token.label
         _assert_created_at_is_now(created.created_at)
 
     # IssueDetailAPIEndpoint.put has no mounted route (IssueListCreateAPIEndpoint is
@@ -200,7 +202,8 @@ class TestCommentCreateAuditFields:
         assert response.status_code == status.HTTP_201_CREATED, f"got {response.status_code}: {response.data!r}"
 
         comment = IssueComment.objects.get(pk=response.data["id"])
-        assert comment.created_by_id == member_user.id
+        token = APIToken.objects.get(user=member_user, label="Member Token")
+        assert comment.created_by_id == token.actor_id
         assert comment.actor_id == member_user.id
         _assert_created_at_is_now(comment.created_at)
 
@@ -219,4 +222,5 @@ class TestIssueLinkCreateAuditFields:
         assert response.status_code == status.HTTP_201_CREATED, f"got {response.status_code}: {response.data!r}"
 
         link = IssueLink.objects.get(pk=response.data["id"])
-        assert link.created_by_id == member_user.id
+        token = APIToken.objects.get(user=member_user, label="Member Token")
+        assert link.created_by_id == token.actor_id

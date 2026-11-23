@@ -33,6 +33,7 @@ class ApiTokenEndpoint(BaseAPIView):
             user_type=user_type,
             expired_at=expired_at,
         )
+        api_token.ensure_actor()
 
         serializer = APITokenSerializer(api_token)
         # Token will be only visible while creating
@@ -58,5 +59,9 @@ class ApiTokenEndpoint(BaseAPIView):
         serializer = APITokenSerializer(api_token, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            if api_token.actor_id:
+                api_token.actor.display_name = api_token.label
+                api_token.actor.first_name = api_token.label
+                api_token.actor.save(update_fields=["display_name", "first_name"])
             return Response(APITokenReadSerializer(api_token).data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
