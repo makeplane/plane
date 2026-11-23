@@ -478,7 +478,7 @@
           "projects": "Acceso a proyectos y todas las entidades relacionadas con proyectos",
           "wiki": "Acceso al wiki y todas las entidades relacionadas con el wiki",
           "workspaces": "Acceso a espacios de trabajo y todas las entidades relacionadas",
-          "stickies": "Acceso a notas adhesivas y todas las entidades relacionadas",
+          "stickies": "Acceso a stickies y a todas las entidades relacionadas",
           "profile": "Acceso a la información del perfil de usuario",
           "agents": "Acceso a agentes y todas las entidades relacionadas con agentes",
           "assets": "Acceso a activos y todas las entidades relacionadas con activos"

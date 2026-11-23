@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Link către politică de confidențialitate",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "URL-ul este invalid",
               "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Link către termenii de utilizare",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "URL-ul este invalid",
               "maxLength": "URL-ul trebuie să fie mai mic de 800 de caractere"

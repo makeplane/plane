@@ -6,6 +6,8 @@
 
 * Comment PATCH/DELETE require the comment's creator or an admin.
 * Attachment DELETE requires the attachment's creator or an admin.
+* Attachment upload and upload confirm require an active project membership,
+  even for the work item's creator.
 * An admin is a project admin, or a workspace admin who is an active project member.
   Admins skip the guest visibility gate on these paths.
 * Project-member role assignment requires an active workspace membership and
@@ -320,6 +322,43 @@ class TestAttachmentDelete:
         assert resp.status_code == status.HTTP_403_FORBIDDEN
         asset.refresh_from_db()
         assert asset.is_deleted is False
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestAttachmentUploadCreatorMembership:
+    """Upload (POST) and upload confirm (PATCH) let a work item's creator in only
+    while they are still an active project member."""
+
+    @pytest.fixture
+    def own_issue(self, workspace, project, state, member_user):
+        issue = Issue(name="Own", workspace=workspace, project=project, state=state)
+        issue.save(created_by_id=member_user.id)
+        return issue
+
+    @pytest.mark.parametrize("is_active, expected", [(True, status.HTTP_200_OK), (False, status.HTTP_403_FORBIDDEN)])
+    @mock.patch("plane.api.views.issue.S3Storage")
+    def test_upload(self, s3, client_for, workspace, project, own_issue, member_user, is_active, expected):
+        s3.return_value.generate_presigned_post.return_value = {}
+        client = client_for(member_user)
+        ProjectMember.objects.filter(project=project, member=member_user).update(is_active=is_active)
+        url = f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/work-items/{own_issue.id}/attachments/"
+        resp = client.post(url, {"name": "a.png", "type": "image/png", "size": 10}, format="json")
+        assert resp.status_code == expected
+        assert FileAsset.objects.filter(issue=own_issue).exists() is is_active
+
+    def test_upload_confirm_denied_after_removal(self, client_for, workspace, project, own_issue, member_user):
+        asset = _attachment(workspace, project, own_issue, member_user, is_uploaded=False)
+        client = client_for(member_user)
+        ProjectMember.objects.filter(project=project, member=member_user).update(is_active=False)
+        with mock.patch("plane.api.views.issue.issue_activity") as activity:
+            resp = client.patch(
+                _attachment_url(workspace, project, own_issue, asset), {"is_uploaded": True}, format="json"
+            )
+        assert resp.status_code == status.HTTP_403_FORBIDDEN
+        activity.delay.assert_not_called()
+        asset.refresh_from_db()
+        assert asset.is_uploaded is False
 
 
 def _members_url(ws, project):

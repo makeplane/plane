@@ -169,12 +169,12 @@
       "title": "Configura la entrada para gestionar las solicitudes entrantes y rastrear cómo se aceptan y rechazan"
     },
     "home_widget_stickies": {
-      "title": "Anota una idea, captura un descubrimiento o registra una lluvia de ideas. Agrega una nota adhesiva para comenzar."
+      "title": "Anota una idea, captura un descubrimiento o registra una lluvia de ideas. Agrega un sticky para comenzar."
     },
     "stickies": {
       "title": "Captura ideas al instante",
-      "description": "Crea notas adhesivas para notas rápidas y tareas pendientes, y mantenlas contigo dondequiera que vayas.",
-      "cta_primary": "Crear primera nota adhesiva",
+      "description": "Crea stickies para notas rápidas y tareas pendientes, y mantenlos contigo dondequiera que vayas.",
+      "cta_primary": "Crear primer sticky",
       "cta_secondary": "Documentación"
     },
     "active_cycles": {

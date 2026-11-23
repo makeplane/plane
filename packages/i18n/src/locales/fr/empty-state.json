@@ -169,12 +169,12 @@
       "title": "Configurez l’intake pour gérer les demandes entrantes et suivre comment elles sont acceptées et rejetées"
     },
     "home_widget_stickies": {
-      "title": "Notez une idée, capturez un aha, ou enregistrez une idée géniale. Ajoutez un pense-bête pour commencer."
+      "title": "Notez une idée, capturez un aha, ou enregistrez une idée géniale. Ajoutez un sticky pour commencer."
     },
     "stickies": {
       "title": "Capturez les idées instantanément",
-      "description": "Créez des pense-bêtes pour des notes rapides et des tâches à faire, et gardez-les avec vous où que vous alliez.",
-      "cta_primary": "Créer le premier pense-bête",
+      "description": "Créez des stickies pour des notes rapides et des tâches à faire, et gardez-les avec vous où que vous alliez.",
+      "cta_primary": "Créer le premier sticky",
       "cta_secondary": "Documentation"
     },
     "active_cycles": {

@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Lien vers votre politique de confidentialité",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "URL invalide",
               "maxLength": "L'URL doit comporter moins de 800 caractères"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Lien vers vos conditions d'utilisation",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "URL invalide",
               "maxLength": "L'URL doit comporter moins de 800 caractères"

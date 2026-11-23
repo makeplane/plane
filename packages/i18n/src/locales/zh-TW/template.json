@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "隱私政策連結",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "無效的URL",
               "maxLength": "URL應少於800個字符"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "使用條款連結",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "無效的URL",
               "maxLength": "URL應少於800個字符"

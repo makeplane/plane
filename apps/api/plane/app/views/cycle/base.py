@@ -54,6 +54,7 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.analytics_plot import burndown_plot
+from plane.utils.estimate import estimate_value_as_float
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.utils.host import base_host
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
@@ -674,7 +675,7 @@ class CycleProgressEndpoint(BaseAPIView):
                 workspace__slug=slug,
                 project_id=project_id,
             )
-            .annotate(value_as_float=Cast("estimate_point__value", FloatField()))
+            .annotate(value_as_float=estimate_value_as_float())
             .aggregate(
                 backlog_estimate_point=Sum(
                     Case(
@@ -876,10 +877,10 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                     )
                 )
                 .values("display_name", "assignee_id", "avatar_url")
-                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+                .annotate(total_estimates=Sum(estimate_value_as_float()))
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -889,7 +890,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
@@ -911,10 +912,10 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 .annotate(color=F("labels__color"))
                 .annotate(label_id=F("labels__id"))
                 .values("label_name", "color", "label_id")
-                .annotate(total_estimates=Sum(Cast("estimate_point__value", FloatField())))
+                .annotate(total_estimates=Sum(estimate_value_as_float()))
                 .annotate(
                     completed_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=False,
                             archived_at__isnull=True,
@@ -924,7 +925,7 @@ class CycleAnalyticsEndpoint(BaseAPIView):
                 )
                 .annotate(
                     pending_estimates=Sum(
-                        Cast("estimate_point__value", FloatField()),
+                        estimate_value_as_float(),
                         filter=Q(
                             completed_at__isnull=True,
                             archived_at__isnull=True,
