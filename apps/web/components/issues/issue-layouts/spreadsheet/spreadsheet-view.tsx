@@ -6,21 +6,30 @@
 
 import React, { useRef } from "react";
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 // plane constants
 import { SPREADSHEET_SELECT_GROUP, SPREADSHEET_PROPERTY_LIST } from "@plane/constants";
 // types
 import type { TIssue, IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
-import { EIssueLayoutTypes } from "@plane/types";
+import { EIssueLayoutTypes, EIssueServiceType } from "@plane/types";
+import { generateWorkItemLink } from "@plane/utils";
 // components
 import { MultipleSelectGroup } from "@/components/core/multiple-select";
 import { IssueBulkOperationsRoot } from "@/components/issues/bulk-operations";
 // hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import { useProject } from "@/hooks/store/use-project";
 import { useBulkOperationStatus } from "@/hooks/use-bulk-operation-status";
+import { useIssueLayoutKeyboardNav } from "@/hooks/use-issue-layout-keyboard-nav";
+import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 // local imports
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { QuickAddIssueRoot, SpreadsheetAddIssueButton } from "../quick-add";
 import { SpreadsheetTable } from "./spreadsheet-table";
+
+/** A sub-issue is keyboard/selection-addressable up to this render depth */
+const MAX_SUB_ISSUE_DEPTH = 3;
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -40,6 +49,36 @@ type Props = {
   isWorkspaceLevel?: boolean;
   isEpic?: boolean;
 };
+
+type TSpreadsheetKeyboardNavBridgeProps = {
+  entities: { entityID: string; groupID: string }[];
+  containerRef: React.MutableRefObject<HTMLTableElement | null>;
+  openEntity: (entity: { entityID: string }) => void;
+  openInNewTab: (entity: { entityID: string }) => void;
+  selectionHelpers: TSelectionHelper;
+};
+
+/**
+ * @description Registers the spreadsheet layout with the keyboard-nav store.
+ * A component rather than an inline call because the select-group hands its
+ * selection helpers to a render prop, where hooks cannot run. The navigation
+ * order is computed by the parent (the visible row tree, expanded children
+ * included) and shared with the selection group, so the cursor walks exactly
+ * the entities `x`/Enter select.
+ */
+const SpreadsheetKeyboardNavBridge = observer(function SpreadsheetKeyboardNavBridge(
+  props: TSpreadsheetKeyboardNavBridgeProps
+) {
+  const { entities, containerRef, openEntity, openInNewTab, selectionHelpers } = props;
+  useIssueLayoutKeyboardNav({
+    entities,
+    containerRef: containerRef as React.MutableRefObject<HTMLElement | null>,
+    openEntity,
+    openInNewTab,
+    selectionHelpers,
+  });
+  return null;
+});
 
 export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   const {
@@ -61,11 +100,106 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
+  // expanded sub-issue rows are shared state so the keyboard-nav order can follow
+  // the visible row tree (rows receive the set; toggling replaces the old per-row state)
+  const [expandedIssueIds, setExpandedIssueIds] = React.useState<Set<string>>(() => new Set());
+  const handleToggleExpand = React.useCallback((issueId: string) => {
+    setExpandedIssueIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(issueId)) next.delete(issueId);
+      else next.add(issueId);
+      return next;
+    });
+  }, []);
+
   const portalRef = useRef<HTMLDivElement | null>(null);
   // store hooks
-  const { currentProjectDetails } = useProject();
+  const { currentProjectDetails, getProjectIdentifierById } = useProject();
+  // the peek builder reads issue records, so it must use the same store as the
+  // layout (project/team/workspace/epic) - the default store is a different map
+  const { issueMap } = useIssuesStore();
+  const { subIssues: subIssuesStore, setPeekIssue } = useIssueDetail(
+    isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES
+  );
+  // router
+  const { workspaceSlug } = useParams();
   // plane web hooks
   const isBulkOperationsEnabled = useBulkOperationStatus();
+
+  // The visible row tree - top-level issues plus each expanded parent's children,
+  // in render order - is the single source for BOTH the selection group and the
+  // keyboard-nav order. The two must match: selection prunes any id missing from
+  // its entity list (use-multiple-select), so feeding nav a wider set than
+  // selection would silently drop child `x`-selection. Read inline (not memoized)
+  // so newly fetched sub-issues widen both lists; the observer re-renders on that
+  // MobX change and on expansion toggles.
+  const visibleEntities: { entityID: string; groupID: string }[] = [];
+  const walk = (ids: string[] | undefined, depth: number) => {
+    (ids ?? []).forEach((id) => {
+      visibleEntities.push({ entityID: id, groupID: SPREADSHEET_SELECT_GROUP });
+      if (depth < MAX_SUB_ISSUE_DEPTH && expandedIssueIds.has(id)) {
+        const childIds = subIssuesStore.subIssuesByIssueId(id);
+        if (childIds?.length) walk(childIds, depth + 1);
+      }
+    });
+  };
+  walk(issueIds, 0);
+
+  // Expansion lives in the view now (not per-row), so it outlives rows that leave
+  // the list AND descendants of a parent that is collapsed. Prune against the
+  // rendered tree: an expanded id is dropped once it is no longer rendered
+  // anywhere. Keying the effect on a stable fingerprint of that tree (not issueIds)
+  // means it also runs when collapsing a parent removes its whole subtree, so
+  // re-expanding starts every descendant collapsed, as the old row-local state did.
+  // Sorting by membership (not render order) means load-more / reordering that
+  // doesn't change the id set does not re-prune.
+  const renderedIds = new Set(visibleEntities.map((entity) => entity.entityID));
+  const renderedTreeKey = [...renderedIds].sort().join("|");
+  React.useEffect(() => {
+    setExpandedIssueIds((previous) => {
+      if (previous.size === 0) return previous;
+      const next = new Set([...previous].filter((id) => renderedIds.has(id)));
+      return next.size === previous.size ? previous : next;
+    });
+    // renderedIds is rebuilt each render; renderedTreeKey is its stable identity
+    // (equal when the rendered id set is equal), so this effect runs exactly when
+    // the rendered membership changes and never loops.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renderedTreeKey]);
+
+  // keyboard navigation for the rendered rows (shared single-key commands drive the cursor)
+  const buildPeekIssue = (issueId: string) => {
+    const issue = issueMap[issueId];
+    if (!workspaceSlug || !issue?.project_id) return;
+    setPeekIssue({
+      workspaceSlug: workspaceSlug.toString(),
+      projectId: issue.project_id,
+      issueId: issue.id,
+      nestingLevel: 0,
+      isArchived: !!issue.archived_at,
+    });
+  };
+
+  // `ctrl/cmd + enter`: the work item's own URL in a browser tab
+  const openIssueInNewTab = (issueId: string) => {
+    const issue = issueMap[issueId];
+    const projectIdentifier = issue?.project_id ? getProjectIdentifierById(issue.project_id) : undefined;
+    if (!workspaceSlug || !issue?.project_id || !projectIdentifier) return;
+    window.open(
+      window.location.origin +
+        generateWorkItemLink({
+          workspaceSlug: workspaceSlug.toString(),
+          projectId: issue.project_id,
+          issueId: issue.id,
+          projectIdentifier,
+          sequenceId: issue.sequence_id,
+          isArchived: !!issue.archived_at,
+          isEpic,
+        }),
+      "_blank",
+      "noopener,noreferrer"
+    );
+  };
 
   const isEstimateEnabled: boolean = currentProjectDetails?.estimate !== null;
 
@@ -84,47 +218,60 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
       <MultipleSelectGroup
         containerRef={containerRef}
         entities={{
-          [SPREADSHEET_SELECT_GROUP]: issueIds,
+          // unique: an issue that renders both at the top level and as a child of an
+          // expanded parent would otherwise appear twice and inflate the selection
+          [SPREADSHEET_SELECT_GROUP]: [...renderedIds],
         }}
         disabled={!isBulkOperationsEnabled || isEpic}
       >
-        {(helpers) => (
-          <>
-            <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
-              <SpreadsheetTable
-                displayProperties={displayProperties}
-                displayFilters={displayFilters}
-                handleDisplayFilterUpdate={handleDisplayFilterUpdate}
-                handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
-                issueIds={issueIds}
-                isEstimateEnabled={isEstimateEnabled}
-                portalElement={portalRef}
-                quickActions={quickActions}
-                updateIssue={updateIssue}
-                canEditProperties={canEditProperties}
+        {(helpers) => {
+          return (
+            <>
+              <SpreadsheetKeyboardNavBridge
+                entities={visibleEntities}
                 containerRef={containerRef}
-                canLoadMoreIssues={canLoadMoreIssues}
-                loadMoreIssues={loadMoreIssues}
-                spreadsheetColumnsList={spreadsheetColumnsList}
+                openEntity={(entity) => buildPeekIssue(entity.entityID)}
+                openInNewTab={(entity) => openIssueInNewTab(entity.entityID)}
                 selectionHelpers={helpers}
-                isEpic={isEpic}
               />
-            </div>
-            <div className="border-t border-subtle">
-              <div className="sticky bottom-0 left-0 z-5">
-                {enableQuickCreateIssue && !disableIssueCreation && (
-                  <QuickAddIssueRoot
-                    layout={EIssueLayoutTypes.SPREADSHEET}
-                    QuickAddButton={SpreadsheetAddIssueButton}
-                    quickAddCallback={quickAddCallback}
-                    isEpic={isEpic}
-                  />
-                )}
+              <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
+                <SpreadsheetTable
+                  displayProperties={displayProperties}
+                  displayFilters={displayFilters}
+                  handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+                  handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
+                  expandedIssueIds={expandedIssueIds}
+                  onToggleExpanded={handleToggleExpand}
+                  issueIds={issueIds}
+                  isEstimateEnabled={isEstimateEnabled}
+                  portalElement={portalRef}
+                  quickActions={quickActions}
+                  updateIssue={updateIssue}
+                  canEditProperties={canEditProperties}
+                  containerRef={containerRef}
+                  canLoadMoreIssues={canLoadMoreIssues}
+                  loadMoreIssues={loadMoreIssues}
+                  spreadsheetColumnsList={spreadsheetColumnsList}
+                  selectionHelpers={helpers}
+                  isEpic={isEpic}
+                />
               </div>
-            </div>
-            <IssueBulkOperationsRoot selectionHelpers={helpers} />
-          </>
-        )}
+              <div className="border-t border-subtle">
+                <div className="sticky bottom-0 left-0 z-5">
+                  {enableQuickCreateIssue && !disableIssueCreation && (
+                    <QuickAddIssueRoot
+                      layout={EIssueLayoutTypes.SPREADSHEET}
+                      QuickAddButton={SpreadsheetAddIssueButton}
+                      quickAddCallback={quickAddCallback}
+                      isEpic={isEpic}
+                    />
+                  )}
+                </div>
+              </div>
+              <IssueBulkOperationsRoot selectionHelpers={helpers} />
+            </>
+          );
+        }}
       </MultipleSelectGroup>
     </div>
   );

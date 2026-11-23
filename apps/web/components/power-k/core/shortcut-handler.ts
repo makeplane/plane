@@ -148,6 +148,27 @@ const hasSequencePrefix = (sequenceMap: ReadonlyMap<string, string>, prefix: str
   return false;
 };
 
+/** ARIA roles whose Enter/Space activation belongs to the control itself */
+const INTERACTIVE_ROLES = new Set(["button", "link", "menuitem", "tab", "option"]);
+
+/**
+ * Whether the focused element itself is an interactive control (button, link, disclosure
+ * summary, or an ARIA widget) that owns Enter/Space activation. A plain-Enter global shortcut
+ * must not fire from these, otherwise Enter on a toolbar button would also trigger the
+ * focused-work-item command. This checks the target only, never its ancestors: a list row is
+ * a plain element nested inside the link that wraps it, and Enter must still open the peek there.
+ */
+export function isKeyboardInteractiveTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false;
+
+  if (target instanceof HTMLButtonElement) return true;
+  if (target instanceof HTMLAnchorElement && target.hasAttribute("href")) return true;
+  if (target.tagName === "SUMMARY") return true;
+
+  const role = target.getAttribute("role");
+  return !!role && INTERACTIVE_ROLES.has(role);
+}
+
 /**
  * Global shortcut handler
  * Handles all keyboard shortcuts: single keys, sequences, and modifiers
@@ -223,6 +244,21 @@ export class ShortcutHandler {
       return;
     }
 
+    // "?" is Shift+/ on most layouts, and the layout-aware normalization resolves it
+    // back to the unshifted "/", so it would never match the help command registered
+    // against the literal "?". Dispatch it from the raw e.key before the modifier
+    // branch so Shift+/ opens the shortcuts modal again.
+    if (e.key === "?" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      this.resetSequence();
+      const helpCommandId = this.registry.getShortcutMap(this.getContext()).get("?");
+      const helpCommand = helpCommandId ? this.registry.getCommand(helpCommandId) : undefined;
+      if (helpCommand && this.canExecuteCommand(helpCommand)) {
+        e.preventDefault();
+        this.executeCommand(helpCommand);
+      }
+      return;
+    }
+
     // Any modified key cancels a pending sequence, whether or not it matches a shortcut
     if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) {
       this.resetSequence();
@@ -253,6 +289,17 @@ export class ShortcutHandler {
   private handleKeyOrSequence(e: KeyboardEvent): void {
     // Non-printable keys (Escape, Tab, Enter, arrows, ...) cancel a pending sequence
     if (e.key.length !== 1) {
+      const namedKey = resolveShortcutKey(e, this.layoutMap);
+      // Enter carries its own binding (open the focused work item) but must never
+      // hijack activation of a focused button or link, so skip interactive targets.
+      if (namedKey === "enter" && !isKeyboardInteractiveTarget(e.target)) {
+        const commandId = this.registry.getShortcutMap(this.getContext()).get(namedKey);
+        const command = commandId ? this.registry.getCommand(commandId) : undefined;
+        if (command && this.canExecuteCommand(command)) {
+          e.preventDefault();
+          this.executeCommand(command);
+        }
+      }
       this.resetSequence();
       return;
     }

@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { Dispatch, MouseEvent, MutableRefObject, SetStateAction } from "react";
+import type { MouseEvent, MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -25,6 +25,7 @@ import RenderIfVisible from "@/components/core/render-if-visible-HOC";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
+import { useKeyboardNavStore } from "@/hooks/store/use-keyboard-nav-store";
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import useIssuePeekOverviewRedirection from "@/hooks/use-issue-peek-overview-redirection";
@@ -51,6 +52,8 @@ interface Props {
   selectionHelpers: TSelectionHelper;
   shouldRenderByDefault?: boolean;
   isEpic?: boolean;
+  expandedIssueIds: Set<string>;
+  onToggleExpanded: (issueId: string) => void;
 }
 
 export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: Props) {
@@ -70,18 +73,24 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
     selectionHelpers,
     shouldRenderByDefault,
     isEpic = false,
+    expandedIssueIds,
+    onToggleExpanded,
   } = props;
-  // states
-  const [isExpanded, setExpanded] = useState<boolean>(false);
+  // expansion state is lifted to the view so the keyboard-nav order can follow
+  // the visible row tree; a row is expanded iff its id is in the shared set
+  const isExpanded = expandedIssueIds.has(issueId);
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const { issueMap } = useIssues();
+  const { getIsEntityFocused } = useKeyboardNavStore();
 
   // derived values
   const issue = issueMap[issueId];
   const subIssues = subIssuesStore.subIssuesByIssueId(issueId);
   const isIssueSelected = selectionHelpers.getIsEntitySelected(issueId);
   const isIssueActive = selectionHelpers.getIsEntityActive(issueId);
+  // keyboard cursor highlight lives on the row element, so resolve it here
+  const isKeyboardFocused = getIsEntityFocused(issueId);
 
   if (!issue) return null;
 
@@ -93,6 +102,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         root={containerRef}
         placeholderChildren={
           <td
+            data-keyboard-nav-id={issueId}
             colSpan={100}
             className="border-[0.5px] border-transparent border-b-subtle-1"
             style={{ height: "calc(2.75rem - 1px)" }}
@@ -101,6 +111,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         classNames={cn("group/spreadsheet-row bg-surface-1 transition-[background-color]", {
           "group selected-issue-row": isIssueSelected,
           "border-[0.5px] border-strong-1": isIssueActive,
+          "border-l-2 border-accent-strong bg-accent-primary/10": isKeyboardFocused,
         })}
         verticalOffset={100}
         shouldRecordHeights={false}
@@ -118,7 +129,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
           portalElement={portalElement}
           isScrolled={isScrolled}
           isExpanded={isExpanded}
-          setExpanded={setExpanded}
+          onToggleExpanded={() => onToggleExpanded(issueId)}
           spreadsheetColumnsList={spreadsheetColumnsList}
           selectionHelpers={selectionHelpers}
           isEpic={isEpic}
@@ -143,6 +154,8 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
             containerRef={containerRef}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
+            expandedIssueIds={expandedIssueIds}
+            onToggleExpanded={onToggleExpanded}
             shouldRenderByDefault={isExpanded}
           />
         ))}
@@ -161,7 +174,7 @@ interface IssueRowDetailsProps {
   issueId: string;
   isScrolled: MutableRefObject<boolean>;
   isExpanded: boolean;
-  setExpanded: Dispatch<SetStateAction<boolean>>;
+  onToggleExpanded: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
@@ -180,7 +193,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     canEditProperties,
     isScrolled,
     isExpanded,
-    setExpanded,
+    onToggleExpanded,
     spreadsheetColumnsList,
     spacingLeft = 6,
     selectionHelpers,
@@ -233,13 +246,12 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     e.preventDefault();
     if (nestingLevel >= 3) {
       handleIssuePeekOverview(issueDetail);
-    } else {
-      setExpanded((prevState) => {
-        if (!prevState && workspaceSlug && issueDetail && issueDetail.project_id)
-          subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
-        return !prevState;
-      });
+      return;
     }
+    if (!isExpanded && workspaceSlug && issueDetail?.project_id) {
+      subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
+    }
+    onToggleExpanded();
   };
 
   const disableUserActions = !canEditProperties(issueDetail.project_id ?? undefined);
@@ -263,6 +275,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
       {/* Single sticky column containing both identifier and workitem */}
       <td
         id={`issue-${issueId}`}
+        data-keyboard-nav-id={issueId}
         ref={cellRef}
         tabIndex={0}
         className="group/list-block relative left-0 z-10 max-w-lg overflow-y-clip bg-surface-1 md:sticky nth-last-2:[&_.clickable]:border-r-0"

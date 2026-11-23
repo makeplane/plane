@@ -38,6 +38,8 @@ type Props = {
   loadMoreIssues: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   selectionHelpers: TSelectionHelper;
+  expandedIssueIds: Set<string>;
+  onToggleExpanded: (issueId: string) => void;
   isEpic?: boolean;
 };
 
@@ -58,6 +60,8 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
     loadMoreIssues,
     spreadsheetColumnsList,
     selectionHelpers,
+    expandedIssueIds,
+    onToggleExpanded,
     isEpic = false,
   } = props;
 
@@ -144,6 +148,8 @@ export const SpreadsheetTable = observer(function SpreadsheetTable(props: Props)
             isScrolled={isScrolled}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
+            expandedIssueIds={expandedIssueIds}
+            onToggleExpanded={onToggleExpanded}
             isEpic={isEpic}
           />
         ))}
