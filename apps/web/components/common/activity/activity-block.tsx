@@ -54,7 +54,7 @@ export function ActivityBlockComponent(props: TActivityBlockComponent) {
         </div>
         <div className="mt-1">
           <Tooltip
-            label={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+            label={`${renderFormattedDate(new Date(activity.created_at))}, ${renderFormattedTime(activity.created_at)}`}
             disabled={isMobile}
           >
             <span className="cursor-help font-medium whitespace-nowrap text-tertiary">

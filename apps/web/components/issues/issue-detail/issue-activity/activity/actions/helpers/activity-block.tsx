@@ -46,7 +46,7 @@ export function IssueActivityBlockComponent(props: TIssueActivityBlockComponent)
       }
       timestamp={
         <ActivityTimelineTimestamp
-          tooltip={`${renderFormattedDate(activity.created_at)}, ${renderFormattedTime(activity.created_at)}`}
+          tooltip={`${renderFormattedDate(new Date(activity.created_at))}, ${renderFormattedTime(activity.created_at)}`}
           disableTooltip={isMobile}
         >
           {calculateTimeAgo(activity.created_at)}

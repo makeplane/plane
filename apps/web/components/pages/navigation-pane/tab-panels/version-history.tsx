@@ -74,7 +74,7 @@ const VersionRow = observer(function VersionRow(props: VersionRowProps) {
       >
         <p className="text-body-sm-medium text-primary">
           {version
-            ? `${renderFormattedDate(version.last_saved_at)}, ${renderFormattedTime(version.last_saved_at)}`
+            ? `${renderFormattedDate(new Date(version.last_saved_at))}, ${renderFormattedTime(version.last_saved_at)}`
             : t("page_navigation_pane.tabs.info.version_history.current_version")}
         </p>
         {version && (
