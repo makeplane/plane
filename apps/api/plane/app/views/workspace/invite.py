@@ -26,6 +26,7 @@ from plane.app.serializers import (
     WorkSpaceMemberSerializer,
 )
 from plane.app.views.base import BaseAPIView
+from plane.authentication.utils.workspace_project_join import can_claim_invites_by_email
 from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
@@ -270,15 +271,16 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
         # apply. Authorization is the `email=request.user.email` filter in
         # get_queryset() above, as for create() below: callers see only
         # invitations addressed to their own email. Neither action asks for
-        # the emailed invite token, so both require a verified email.
-        if not request.user.is_email_verified:
+        # the emailed invite token, so both require a verified email (or an
+        # instance without SMTP, see can_claim_invites_by_email).
+        if not can_claim_invites_by_email(request.user):
             return Response([], status=status.HTTP_200_OK)
         return super().list(request)
 
     @invalidate_cache(path="/api/workspaces/", user=False)
     @invalidate_cache(path="/api/users/me/workspaces/", multiple=True)
     def create(self, request):
-        if not request.user.is_email_verified:
+        if not can_claim_invites_by_email(request.user):
             return Response(
                 {"error": "Verify your email to accept workspace invitations"},
                 status=status.HTTP_403_FORBIDDEN,
