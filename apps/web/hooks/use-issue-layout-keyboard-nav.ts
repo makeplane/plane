@@ -78,14 +78,6 @@ export const useIssueLayoutKeyboardNav = (props: Props) => {
     [containerRef]
   );
 
-  // register the layout callbacks for the lifetime of the layout
-  useEffect(() => {
-    keyboardNav.setManagers(managers);
-    return () => {
-      keyboardNav.clear();
-    };
-  }, [keyboardNav, managers]);
-
   // fingerprint the rendered order so the store is fed on real changes only.
   // A regrouping or refilter can move the focused entity without removing it,
   // and the click-triggered scroll runs after `setOrderedEntities`, so the
@@ -95,6 +87,20 @@ export const useIssueLayoutKeyboardNav = (props: Props) => {
   const entityKeyRef = useRef<string | undefined>(undefined);
   const entitiesRef = useRef(entities);
   entitiesRef.current = entities;
+
+  // register the layout callbacks for the lifetime of the layout
+  useEffect(() => {
+    keyboardNav.setManagers(managers);
+    return () => {
+      keyboardNav.clear();
+      // StrictMode double-invokes effects: this cleanup empties the store, so the
+      // entity effect below must re-register the order on the next setup. Drop its
+      // guard here; otherwise the same entityKey makes it return early and the list
+      // stays empty until something changes the rendered order.
+      entityKeyRef.current = undefined;
+    };
+  }, [keyboardNav, managers]);
+
   useEffect(() => {
     if (entityKeyRef.current === entityKey) return;
     entityKeyRef.current = entityKey;

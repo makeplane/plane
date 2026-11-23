@@ -148,6 +148,26 @@ const hasSequencePrefix = (sequenceMap: ReadonlyMap<string, string>, prefix: str
   return false;
 };
 
+/** ARIA roles whose Enter/Space activation belongs to the control itself */
+const INTERACTIVE_ROLES = new Set(["button", "link", "menuitem", "tab", "option"]);
+
+/**
+ * Whether the focused element is an interactive control (button, link, disclosure summary, or
+ * an ARIA widget) that owns Enter/Space activation. A plain-Enter global shortcut must not fire
+ * from these, otherwise Enter on a toolbar button would also trigger the focused-work-item command.
+ */
+export function isKeyboardInteractiveTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false;
+
+  if (target instanceof HTMLButtonElement) return true;
+  if (target instanceof HTMLAnchorElement && target.hasAttribute("href")) return true;
+
+  const role = target.getAttribute("role");
+  if (role && INTERACTIVE_ROLES.has(role)) return true;
+
+  return target.closest("button, a[href], summary, [role='button'], [role='link'], [role='tab']") !== null;
+}
+
 /**
  * Global shortcut handler
  * Handles all keyboard shortcuts: single keys, sequences, and modifiers
@@ -253,6 +273,17 @@ export class ShortcutHandler {
   private handleKeyOrSequence(e: KeyboardEvent): void {
     // Non-printable keys (Escape, Tab, Enter, arrows, ...) cancel a pending sequence
     if (e.key.length !== 1) {
+      const namedKey = resolveShortcutKey(e, this.layoutMap);
+      // Enter carries its own binding (open the focused work item) but must never
+      // hijack activation of a focused button or link, so skip interactive targets.
+      if (namedKey === "enter" && !isKeyboardInteractiveTarget(e.target)) {
+        const commandId = this.registry.getShortcutMap(this.getContext()).get(namedKey);
+        const command = commandId ? this.registry.getCommand(commandId) : undefined;
+        if (command && this.canExecuteCommand(command)) {
+          e.preventDefault();
+          this.executeCommand(command);
+        }
+      }
       this.resetSequence();
       return;
     }
