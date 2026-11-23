@@ -211,7 +211,9 @@ class EstimatePointListCreateAPIEndpoint(BaseAPIView):
                 data={"error": "Estimate points are required"},
             )
 
-        serializer = self.serializer_class(data=estimate_points_data, many=True)
+        serializer = self.serializer_class(
+            data=estimate_points_data, many=True, context={"estimate_type": estimate.type}
+        )
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

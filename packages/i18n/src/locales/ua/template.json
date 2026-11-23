@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Посилання на вашу політику конфіденційності",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "Некоректне посилання",
               "maxLength": "Посилання має бути менше 800 символів"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Посилання на ваші умови використання",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "Некоректне посилання",
               "maxLength": "Посилання має бути менше 800 символів"

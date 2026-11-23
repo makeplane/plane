@@ -109,12 +109,15 @@ class MagicSignInEndpoint(View):
             profile, _ = Profile.objects.get_or_create(user=user)
             # Login the user and record his device info
             user_login(request=request, user=user, is_app=True)
-            if user.is_password_autoset and profile.is_onboarded:
+            if next_path:
+                # Back to the page that asked for the sign-in, e.g. an invite link
+                path = str(next_path)
+            elif user.is_password_autoset and profile.is_onboarded:
                 # Redirect to the home page
                 path = "/"
             else:
                 # Get the redirection path
-                path = str(next_path) if next_path else str(get_redirection_path(user=user))
+                path = str(get_redirection_path(user=user))
             # redirect to referer path
             url = get_safe_redirect_url(
                 base_url=base_host(request=request, is_app=True),
