@@ -34,15 +34,28 @@ export const usePowerKListNavigationCommands = (): TPowerKCommandConfig[] => {
   const { getFilter } = useWorkItemFilters();
   const storeType = useIssueStoreType();
   // router
-  const { projectId, cycleId, moduleId } = useParams();
+  const { projectId, cycleId, moduleId, viewId, globalViewId, userId } = useParams();
 
   // the filter panel is stateful per entity, so the command drives the same
   // instance the header button uses instead of keeping its own open state.
   // With no conditions yet the header renders an "add filter" control whose
   // dropdown state is private to it, so the command opens the filter row - the
   // surface that holds that control - rather than faking a second picker.
+  // each store type keys its filter instance by the route id its header uses:
+  // cycles/modules by their id, project & team views by viewId, the all-work-items
+  // page by globalViewId, profile by userId, and everything else by projectId.
   const filterEntityId =
-    storeType === EIssuesStoreType.CYCLE ? cycleId : storeType === EIssuesStoreType.MODULE ? moduleId : projectId;
+    storeType === EIssuesStoreType.CYCLE
+      ? cycleId
+      : storeType === EIssuesStoreType.MODULE
+        ? moduleId
+        : storeType === EIssuesStoreType.PROJECT_VIEW || storeType === EIssuesStoreType.TEAM_VIEW
+          ? viewId
+          : storeType === EIssuesStoreType.GLOBAL
+            ? globalViewId
+            : storeType === EIssuesStoreType.PROFILE
+              ? userId
+              : projectId;
   const filterInstance = filterEntityId ? getFilter(storeType, filterEntityId) : undefined;
   const toggleFilters = () => filterInstance?.toggleVisibility();
 
