@@ -30,6 +30,8 @@ class TestWorkspaceInvitationCreatePayload:
             "invitee@plane.so",
             {"email": "invitee@plane.so", "role": 5},
             [{"email": "invitee@plane.so", "role": "admin"}],
+            # isdigit() accepts a superscript digit that int() cannot parse
+            [{"email": "invitee@plane.so", "role": "²"}],
             [{"email": 5, "role": 5}],
             [{"role": 5}],
         ],

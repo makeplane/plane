@@ -58,7 +58,7 @@ class WorkspaceInvitationsViewset(BaseViewSet):
 
         # Each entry is an object with an email and, optionally, an integer role
         if not isinstance(emails, list) or not all(
-            isinstance(email, dict) and isinstance(email.get("email"), str) and str(email.get("role", 5)).isdigit()
+            isinstance(email, dict) and isinstance(email.get("email"), str) and str(email.get("role", 5)).isdecimal()
             for email in emails
         ):
             return Response(
