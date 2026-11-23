@@ -17,11 +17,11 @@ RUN XCADDY_SKIP_CLEANUP=1 xcaddy build \
 
 # Caddy's own go.mod pins x/crypto, x/net and x/text at versions with open CVEs;
 # xcaddy preserved its build dir above, so upgrade them there and rebuild.
-# x/net v0.60.0 requires x/crypto v0.57.0 and x/text v0.42.0, hence those floors.
+# x/net v0.62.0 requires x/crypto v0.58.0 and x/text v0.43.0, hence those floors.
 RUN cd "$(find /tmp -maxdepth 1 -name 'buildenv_*' -type d | head -1)" && \
-    go get golang.org/x/crypto@v0.57.0 && \
-    go get golang.org/x/net@v0.60.0 && \
-    go get golang.org/x/text@v0.42.0 && \
+    go get golang.org/x/crypto@v0.58.0 && \
+    go get golang.org/x/net@v0.62.0 && \
+    go get golang.org/x/text@v0.43.0 && \
     go mod tidy && \
     go build -o /usr/bin/caddy -ldflags "-w -s" -trimpath -tags nobadger,nomysql,nopgx .
 
@@ -37,7 +37,7 @@ FROM caddy:2.11.4-alpine
 # OS security updates. --available forces reinstall from the current repos;
 # bump APK_SECURITY_PATCH to bust buildx's cached layer (keyed on this command
 # string), otherwise a rebuild silently re-ships the old packages.
-ARG APK_SECURITY_PATCH=2026-10-26
+ARG APK_SECURITY_PATCH=2026-11-23
 RUN echo "apk-security-patch ${APK_SECURITY_PATCH}" && apk update && apk upgrade --no-cache --available && apk add --no-cache nss-tools bash curl
 
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
