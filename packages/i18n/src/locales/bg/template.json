@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Връзка към политиката ви за поверителност",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "Невалиден URL",
               "maxLength": "URL адресът трябва да е под 800 знака"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Връзка към условията ви за ползване",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "Невалиден URL",
               "maxLength": "URL адресът трябва да е под 800 знака"
