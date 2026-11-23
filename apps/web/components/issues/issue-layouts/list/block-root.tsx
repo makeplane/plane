@@ -10,7 +10,6 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
 // plane helpers
 import { useOutsideClickDetector } from "@plane/hooks";
 // types
@@ -27,7 +26,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { IssueBlock } from "./block";
-import { isIssueExpanded } from "./expanded-issues-storage";
+import { isIssueBlockExpanded } from "./expanded-issues-storage";
 import type { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
@@ -71,27 +70,21 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
     isEpic = false,
   } = props;
   // states
-  const [isExpanded, setExpanded] = useState<boolean>(false);
+  // rows that were left expanded are restored from local storage; their sub-work items are fetched by `IssueBlock`
+  // once the row is rendered (visible) so a refresh does not request the children of every expanded row at once
+  const [isExpanded, setExpanded] = useState<boolean>(
+    () => !isEpic && nestingLevel < 3 && isIssueBlockExpanded(getIssueBlockId(issueId, groupId))
+  );
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
   // ref
   const issueBlockRef = useRef<HTMLDivElement | null>(null);
   // hooks
-  const { workspaceSlug } = useParams();
   const { isMobile } = usePlatformOS();
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
 
   const isSubIssue = nestingLevel !== 0;
-
-  // restore the expanded state that was persisted before the page was refreshed
-  useEffect(() => {
-    if (nestingLevel >= 3 || !isIssueExpanded(issueId)) return;
-    setExpanded(true);
-    const projectId = issuesMap[issueId]?.project_id;
-    if (workspaceSlug && projectId) subIssuesStore.fetchSubIssues(workspaceSlug.toString(), projectId, issueId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [issueId]);
 
   useEffect(() => {
     const blockElement = issueBlockRef.current;
