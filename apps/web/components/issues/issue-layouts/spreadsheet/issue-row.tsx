@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import type { Dispatch, MouseEvent, MutableRefObject, SetStateAction } from "react";
+import type { MouseEvent, MutableRefObject } from "react";
 import { useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useParams } from "next/navigation";
@@ -52,6 +52,8 @@ interface Props {
   selectionHelpers: TSelectionHelper;
   shouldRenderByDefault?: boolean;
   isEpic?: boolean;
+  expandedIssueIds: Set<string>;
+  onToggleExpanded: (issueId: string) => void;
 }
 
 export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: Props) {
@@ -71,9 +73,12 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
     selectionHelpers,
     shouldRenderByDefault,
     isEpic = false,
+    expandedIssueIds,
+    onToggleExpanded,
   } = props;
-  // states
-  const [isExpanded, setExpanded] = useState<boolean>(false);
+  // expansion state is lifted to the view so the keyboard-nav order can follow
+  // the visible row tree; a row is expanded iff its id is in the shared set
+  const isExpanded = expandedIssueIds.has(issueId);
   // store hooks
   const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
   const { issueMap } = useIssues();
@@ -97,6 +102,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
         root={containerRef}
         placeholderChildren={
           <td
+            data-keyboard-nav-id={issueId}
             colSpan={100}
             className="border-[0.5px] border-transparent border-b-subtle-1"
             style={{ height: "calc(2.75rem - 1px)" }}
@@ -123,7 +129,7 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
           portalElement={portalElement}
           isScrolled={isScrolled}
           isExpanded={isExpanded}
-          setExpanded={setExpanded}
+          onToggleExpanded={() => onToggleExpanded(issueId)}
           spreadsheetColumnsList={spreadsheetColumnsList}
           selectionHelpers={selectionHelpers}
           isEpic={isEpic}
@@ -148,6 +154,8 @@ export const SpreadsheetIssueRow = observer(function SpreadsheetIssueRow(props: 
             containerRef={containerRef}
             spreadsheetColumnsList={spreadsheetColumnsList}
             selectionHelpers={selectionHelpers}
+            expandedIssueIds={expandedIssueIds}
+            onToggleExpanded={onToggleExpanded}
             shouldRenderByDefault={isExpanded}
           />
         ))}
@@ -166,7 +174,7 @@ interface IssueRowDetailsProps {
   issueId: string;
   isScrolled: MutableRefObject<boolean>;
   isExpanded: boolean;
-  setExpanded: Dispatch<SetStateAction<boolean>>;
+  onToggleExpanded: () => void;
   spreadsheetColumnsList: (keyof IIssueDisplayProperties)[];
   spacingLeft?: number;
   selectionHelpers: TSelectionHelper;
@@ -185,7 +193,7 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     canEditProperties,
     isScrolled,
     isExpanded,
-    setExpanded,
+    onToggleExpanded,
     spreadsheetColumnsList,
     spacingLeft = 6,
     selectionHelpers,
@@ -238,13 +246,12 @@ const IssueRowDetails = observer(function IssueRowDetails(props: IssueRowDetails
     e.preventDefault();
     if (nestingLevel >= 3) {
       handleIssuePeekOverview(issueDetail);
-    } else {
-      setExpanded((prevState) => {
-        if (!prevState && workspaceSlug && issueDetail && issueDetail.project_id)
-          subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
-        return !prevState;
-      });
+      return;
     }
+    if (!isExpanded && workspaceSlug && issueDetail?.project_id) {
+      subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issueDetail.project_id, issueDetail.id);
+    }
+    onToggleExpanded();
   };
 
   const disableUserActions = !canEditProperties(issueDetail.project_id ?? undefined);

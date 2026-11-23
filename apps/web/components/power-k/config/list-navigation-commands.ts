@@ -14,6 +14,7 @@ import {
 } from "@makeplane/propel/icons";
 // components
 import { useParams } from "next/navigation";
+import { EIssuesStoreType } from "@plane/types";
 import type { TPowerKCommandConfig } from "@/components/power-k/core/types";
 // hooks
 import { useKeyboardNavStore } from "@/hooks/store/use-keyboard-nav-store";
@@ -33,14 +34,16 @@ export const usePowerKListNavigationCommands = (): TPowerKCommandConfig[] => {
   const { getFilter } = useWorkItemFilters();
   const storeType = useIssueStoreType();
   // router
-  const { projectId } = useParams();
+  const { projectId, cycleId, moduleId } = useParams();
 
   // the filter panel is stateful per entity, so the command drives the same
   // instance the header button uses instead of keeping its own open state.
   // With no conditions yet the header renders an "add filter" control whose
   // dropdown state is private to it, so the command opens the filter row - the
   // surface that holds that control - rather than faking a second picker.
-  const filterInstance = projectId ? getFilter(storeType, projectId) : undefined;
+  const filterEntityId =
+    storeType === EIssuesStoreType.CYCLE ? cycleId : storeType === EIssuesStoreType.MODULE ? moduleId : projectId;
+  const filterInstance = filterEntityId ? getFilter(storeType, filterEntityId) : undefined;
   const toggleFilters = () => filterInstance?.toggleVisibility();
 
   const move = (direction: "up" | "down") => {

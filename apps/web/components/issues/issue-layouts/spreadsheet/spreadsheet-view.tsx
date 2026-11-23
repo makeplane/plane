@@ -53,19 +53,39 @@ type TSpreadsheetKeyboardNavBridgeProps = {
   openEntity: (entity: { entityID: string }) => void;
   openInNewTab: (entity: { entityID: string }) => void;
   selectionHelpers: TSelectionHelper;
+  expandedIssueIds: Set<string>;
+  isEpic?: boolean;
 };
 
 /**
  * @description Registers the spreadsheet layout with the keyboard-nav store.
  * A component rather than an inline call because the select-group hands its
- * selection helpers to a render prop, where hooks cannot run.
+ * selection helpers to a render prop, where hooks cannot run. The nav order
+ * follows the visible row tree: each expanded parent is immediately followed by
+ * its children in render position, so `j`/`k` land on sub-issues too.
  */
+const MAX_SUB_ISSUE_DEPTH = 3;
 const SpreadsheetKeyboardNavBridge = observer(function SpreadsheetKeyboardNavBridge(
   props: TSpreadsheetKeyboardNavBridgeProps
 ) {
-  const { issueIds, containerRef, openEntity, openInNewTab, selectionHelpers } = props;
+  const { issueIds, containerRef, openEntity, openInNewTab, selectionHelpers, expandedIssueIds, isEpic = false } =
+    props;
+  const { subIssues: subIssuesStore } = useIssueDetail(isEpic ? EIssueServiceType.EPICS : EIssueServiceType.ISSUES);
+  // read inline (not memoized) so newly fetched children re-register once the
+  // expansion fetch resolves; the observer re-renders on that observable change.
+  const entities: { entityID: string; groupID: string }[] = [];
+  const walk = (ids: string[], depth: number) => {
+    ids.forEach((id) => {
+      entities.push({ entityID: id, groupID: SPREADSHEET_SELECT_GROUP });
+      if (depth < MAX_SUB_ISSUE_DEPTH && expandedIssueIds.has(id)) {
+        const childIds = subIssuesStore.subIssuesByIssueId(id);
+        if (childIds?.length) walk(childIds, depth + 1);
+      }
+    });
+  };
+  walk(issueIds, 0);
   useIssueLayoutKeyboardNav({
-    entities: issueIds.map((id) => ({ entityID: id, groupID: SPREADSHEET_SELECT_GROUP })),
+    entities,
     containerRef: containerRef as React.MutableRefObject<HTMLElement | null>,
     openEntity,
     openInNewTab,
@@ -94,6 +114,18 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
   } = props;
   // refs
   const containerRef = useRef<HTMLTableElement | null>(null);
+  // expanded sub-issue rows are shared state so the keyboard-nav order can follow
+  // the visible row tree (rows receive the set; toggling replaces the old per-row state)
+  const [expandedIssueIds, setExpandedIssueIds] = React.useState<Set<string>>(() => new Set());
+  const handleToggleExpand = React.useCallback((issueId: string) => {
+    setExpandedIssueIds((previous) => {
+      const next = new Set(previous);
+      if (next.has(issueId)) next.delete(issueId);
+      else next.add(issueId);
+      return next;
+    });
+  }, []);
+
   const portalRef = useRef<HTMLDivElement | null>(null);
   // store hooks
   const { currentProjectDetails, getProjectIdentifierById } = useProject();
@@ -170,12 +202,17 @@ export const SpreadsheetView = observer(function SpreadsheetView(props: Props) {
                 openEntity={(entity) => buildPeekIssue(entity.entityID)}
                 openInNewTab={(entity) => openIssueInNewTab(entity.entityID)}
                 selectionHelpers={helpers}
+                expandedIssueIds={expandedIssueIds}
+                isEpic={isEpic}
               />
               <div ref={containerRef} className="vertical-scrollbar horizontal-scrollbar scrollbar-lg h-full w-full">
                 <SpreadsheetTable
                   displayProperties={displayProperties}
                   displayFilters={displayFilters}
                   handleDisplayFilterUpdate={handleDisplayFilterUpdate}
+                  handleDisplayPropertiesUpdate={handleDisplayPropertiesUpdate}
+                  expandedIssueIds={expandedIssueIds}
+                  onToggleExpanded={handleToggleExpand}
                   issueIds={issueIds}
                   isEstimateEnabled={isEstimateEnabled}
                   portalElement={portalRef}
