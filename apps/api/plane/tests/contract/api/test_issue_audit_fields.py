@@ -109,6 +109,10 @@ def _comments_url(slug, project_id, issue_id):
     return f"/api/v1/workspaces/{slug}/projects/{project_id}/issues/{issue_id}/comments/"
 
 
+def _comment_detail_url(slug, project_id, issue_id, comment_id):
+    return f"{_comments_url(slug, project_id, issue_id)}{comment_id}/"
+
+
 @pytest.mark.django_db
 class TestIssueCreateAuditFields:
     def test_post_sets_created_by_to_the_caller(
@@ -157,6 +161,9 @@ class TestIssuePatchAuditFields:
         assert "created_by" not in json.loads(issue_activity.delay.call_args.kwargs["requested_data"])
         assert "created_by" not in model_activity.delay.call_args.kwargs["requested_data"]
         assert model_activity.delay.call_args.kwargs["requested_data"]["name"] == "Edited by member"
+        token = APIToken.objects.get(user=member_user, label="Member Token")
+        assert issue_activity.delay.call_args.kwargs["actor_id"] == str(token.actor_id)
+        assert model_activity.delay.call_args.kwargs["actor_id"] == token.actor_id
 
 
 @pytest.mark.django_db
@@ -183,6 +190,24 @@ class TestIssueDeleteAfterPatch:
         response = member_api_client.delete(url)
         assert response.status_code == status.HTTP_204_NO_CONTENT, f"got {response.status_code}: {response.data!r}"
 
+    def test_token_owner_can_delete_issue_created_by_its_actor(
+        self, member_api_client, workspace, project, state, member_user
+    ):
+        response = member_api_client.post(
+            _issues_url(workspace.slug, project.id),
+            {"name": "Agent issue", "state": str(state.id)},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED, f"got {response.status_code}: {response.data!r}"
+
+        issue_id = response.data["id"]
+        token = APIToken.objects.get(user=member_user, label="Member Token")
+        assert Issue.objects.get(pk=issue_id).created_by_id == token.actor_id
+        delete_response = member_api_client.delete(_issue_detail_url(workspace.slug, project.id, issue_id))
+
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Issue.objects.filter(pk=issue_id).exists()
+
 
 @pytest.mark.django_db
 class TestCommentCreateAuditFields:
@@ -190,22 +215,60 @@ class TestCommentCreateAuditFields:
         self, member_api_client, workspace, project, issue, admin_user, member_user
     ):
         url = _comments_url(workspace.slug, project.id, issue.id)
-        response = member_api_client.post(
-            url,
-            {
-                "comment_html": "<p>Looks good</p>",
-                "created_by": str(admin_user.id),
-                "created_at": BODY_CREATED_AT.isoformat(),
-            },
-            format="json",
-        )
+        with (
+            mock.patch("plane.api.views.issue.issue_activity") as issue_activity,
+            mock.patch("plane.api.views.issue.model_activity") as model_activity,
+        ):
+            response = member_api_client.post(
+                url,
+                {
+                    "comment_html": "<p>Looks good</p>",
+                    "created_by": str(admin_user.id),
+                    "created_at": BODY_CREATED_AT.isoformat(),
+                },
+                format="json",
+            )
         assert response.status_code == status.HTTP_201_CREATED, f"got {response.status_code}: {response.data!r}"
 
         comment = IssueComment.objects.get(pk=response.data["id"])
         token = APIToken.objects.get(user=member_user, label="Member Token")
         assert comment.created_by_id == token.actor_id
-        assert comment.actor_id == member_user.id
+        assert comment.actor_id == token.actor_id
+        assert issue_activity.delay.call_args.kwargs["actor_id"] == str(token.actor_id)
+        assert model_activity.delay.call_args.kwargs["actor_id"] == token.actor_id
         _assert_created_at_is_now(comment.created_at)
+
+    def test_token_owner_can_edit_and_delete_comment_created_by_its_actor(
+        self, member_api_client, workspace, project, issue, member_user
+    ):
+        response = member_api_client.post(
+            _comments_url(workspace.slug, project.id, issue.id),
+            {"comment_html": "<p>Agent comment</p>"},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED, f"got {response.status_code}: {response.data!r}"
+        comment = IssueComment.objects.get(pk=response.data["id"])
+        token = APIToken.objects.get(user=member_user, label="Member Token")
+        assert comment.created_by_id == token.actor_id
+        assert comment.actor_id == token.actor_id
+
+        url = _comment_detail_url(workspace.slug, project.id, issue.id, comment.id)
+        with (
+            mock.patch("plane.api.views.issue.issue_activity") as issue_activity,
+            mock.patch("plane.api.views.issue.model_activity") as model_activity,
+        ):
+            patch_response = member_api_client.patch(
+                url, {"comment_html": "<p>Updated by agent</p>"}, format="json"
+            )
+        assert patch_response.status_code == status.HTTP_200_OK, (
+            f"got {patch_response.status_code}: {patch_response.data!r}"
+        )
+        assert issue_activity.delay.call_args.kwargs["actor_id"] == str(token.actor_id)
+        assert model_activity.delay.call_args.kwargs["actor_id"] == token.actor_id
+
+        delete_response = member_api_client.delete(url)
+        assert delete_response.status_code == status.HTTP_204_NO_CONTENT
+        assert not IssueComment.objects.filter(pk=comment.id).exists()
 
 
 @pytest.mark.django_db

@@ -22,6 +22,7 @@ from plane.app.permissions import allow_permission, issue_hidden_from_guest, ROL
 from plane.db.models import IssueComment, ProjectMember, CommentReaction, Project, Issue
 from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.host import base_host
+from plane.utils.api_token import get_api_token_actor, is_request_user_creator
 from plane.bgtasks.webhook_task import model_activity
 from .relation import issue_in_project
 
@@ -110,7 +111,7 @@ class IssueCommentViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not issue.created_by == request.user
+            and not is_request_user_creator(request, issue.created_by_id)
         ):
             return Response(
                 {"error": "You are not allowed to comment on the issue"},
@@ -119,11 +120,11 @@ class IssueCommentViewSet(BaseViewSet):
         data = {key: request.data[key] for key in COMMENT_WRITABLE_FIELDS if key in request.data}
         serializer = IssueCommentSerializer(data=data)
         if serializer.is_valid():
-            serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
+            serializer.save(project_id=project_id, issue_id=issue_id, actor=get_api_token_actor(request))
             issue_activity.delay(
                 type="comment.activity.created",
                 requested_data=json.dumps(serializer.data, cls=DjangoJSONEncoder),
-                actor_id=str(self.request.user.id),
+                actor_id=str(get_api_token_actor(request).id),
                 issue_id=str(self.kwargs.get("issue_id")),
                 project_id=str(self.kwargs.get("project_id")),
                 current_instance=None,
@@ -137,7 +138,7 @@ class IssueCommentViewSet(BaseViewSet):
                 model_id=str(serializer.data["id"]),
                 requested_data=data,
                 current_instance=None,
-                actor_id=request.user.id,
+                actor_id=get_api_token_actor(request).id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
@@ -161,7 +162,7 @@ class IssueCommentViewSet(BaseViewSet):
             issue_activity.delay(
                 type="comment.activity.updated",
                 requested_data=requested_data,
-                actor_id=str(request.user.id),
+                actor_id=str(get_api_token_actor(request).id),
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=current_instance,
@@ -175,7 +176,7 @@ class IssueCommentViewSet(BaseViewSet):
                 model_id=str(pk),
                 requested_data=data,
                 current_instance=current_instance,
-                actor_id=request.user.id,
+                actor_id=get_api_token_actor(request).id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
@@ -192,7 +193,7 @@ class IssueCommentViewSet(BaseViewSet):
         issue_activity.delay(
             type="comment.activity.deleted",
             requested_data=json.dumps({"comment_id": str(pk)}),
-            actor_id=str(request.user.id),
+            actor_id=str(get_api_token_actor(request).id),
             issue_id=str(issue_id),
             project_id=str(project_id),
             current_instance=current_instance,
@@ -257,13 +258,13 @@ class CommentReactionViewSet(BaseViewSet):
             if serializer.is_valid():
                 serializer.save(
                     project_id=project_id,
-                    actor_id=request.user.id,
+                    actor_id=get_api_token_actor(request).id,
                     comment_id=comment_id,
                 )
                 issue_activity.delay(
                     type="comment_reaction.activity.created",
                     requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
+                    actor_id=str(get_api_token_actor(request).id),
                     issue_id=None,
                     project_id=str(project_id),
                     current_instance=None,
@@ -291,12 +292,12 @@ class CommentReactionViewSet(BaseViewSet):
             project_id=project_id,
             comment_id=comment_id,
             reaction=reaction_code,
-            actor=request.user,
+            actor__in=[request.user, get_api_token_actor(request)],
         )
         issue_activity.delay(
             type="comment_reaction.activity.deleted",
             requested_data=None,
-            actor_id=str(self.request.user.id),
+            actor_id=str(get_api_token_actor(request).id),
             issue_id=None,
             project_id=str(self.kwargs.get("project_id", None)),
             current_instance=json.dumps(

@@ -92,6 +92,12 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
+from plane.utils.api_token import (
+    get_api_token_actor,
+    get_api_token_actor_ids,
+    is_api_token_actor_owned_by,
+    is_request_user_creator,
+)
 from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
@@ -214,7 +220,10 @@ def guest_cannot_view_issue(user_id, issue, slug):
     """True when `issue` exists but a restricted guest did not create it.
     Callers deny the whole request with 404, the same response as a missing
     issue."""
-    return issue is not None and issue.created_by_id != user_id and is_restricted_guest(user_id, issue.project_id, slug)
+    owns_issue = issue is not None and (
+        issue.created_by_id == user_id or is_api_token_actor_owned_by(user_id, issue.created_by_id)
+    )
+    return issue is not None and not owns_issue and is_restricted_guest(user_id, issue.project_id, slug)
 
 
 def visible_issue_q(user):
@@ -462,8 +471,9 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
         total_issue_queryset = Issue.issue_objects.filter(project_id=project_id, workspace__slug=slug)
 
         if restricted_guest:
-            issue_queryset = issue_queryset.filter(created_by=request.user)
-            total_issue_queryset = total_issue_queryset.filter(created_by=request.user)
+            creator_filter = Q(created_by=request.user) | Q(created_by_id__in=get_api_token_actor_ids(request.user.id))
+            issue_queryset = issue_queryset.filter(creator_filter)
+            total_issue_queryset = total_issue_queryset.filter(creator_filter)
 
         # Priority Ordering
         if order_by_param == "priority" or order_by_param == "-priority":
@@ -577,7 +587,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             issue_activity.delay(
                 type="issue.activity.created",
                 requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                actor_id=str(request.user.id),
+                actor_id=str(get_api_token_actor(request).id),
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),
                 current_instance=None,
@@ -592,7 +602,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
                 model_id=str(serializer.data["id"]),
                 requested_data=request.data,
                 current_instance=None,
-                actor_id=request.user.id,
+                actor_id=get_api_token_actor(request).id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
@@ -740,7 +750,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                     issue_activity.delay(
                         type="issue.activity.updated",
                         requested_data=json.dumps(accepted_data, cls=DjangoJSONEncoder),
-                        actor_id=str(request.user.id),
+                        actor_id=str(get_api_token_actor(request).id),
                         issue_id=str(issue.id),
                         project_id=str(project_id),
                         current_instance=current_instance,
@@ -754,7 +764,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         model_id=str(issue.id),
                         requested_data=accepted_data,
                         current_instance=current_instance,
-                        actor_id=request.user.id,
+                        actor_id=get_api_token_actor(request).id,
                         slug=slug,
                         origin=base_host(request=request, is_app=True),
                     )
@@ -787,7 +797,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                     issue_activity.delay(
                         type="issue.activity.created",
                         requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                        actor_id=str(request.user.id),
+                        actor_id=str(get_api_token_actor(request).id),
                         issue_id=str(serializer.data.get("id", None)),
                         project_id=str(project_id),
                         current_instance=None,
@@ -801,7 +811,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                         model_id=str(serializer.data["id"]),
                         requested_data=request.data,
                         current_instance=None,
-                        actor_id=request.user.id,
+                        actor_id=get_api_token_actor(request).id,
                         slug=slug,
                         origin=base_host(request=request, is_app=True),
                     )
@@ -875,7 +885,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             issue_activity.delay(
                 type="issue.activity.updated",
                 requested_data=json.dumps(accepted_data, cls=DjangoJSONEncoder),
-                actor_id=str(request.user.id),
+                actor_id=str(get_api_token_actor(request).id),
                 issue_id=str(pk),
                 project_id=str(project_id),
                 current_instance=current_instance,
@@ -889,7 +899,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
                 model_id=str(pk),
                 requested_data=accepted_data,
                 current_instance=current_instance,
-                actor_id=request.user.id,
+                actor_id=get_api_token_actor(request).id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
@@ -916,7 +926,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         Only admins or the item creator can perform this action.
         """
         issue = Issue.objects.get(workspace__slug=slug, project_id=project_id, pk=pk)
-        if issue.created_by_id != request.user.id and (
+        if not is_request_user_creator(request, issue.created_by_id) and (
             not ProjectMember.objects.filter(
                 workspace__slug=slug,
                 member=request.user,
@@ -934,7 +944,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),
-            actor_id=str(request.user.id),
+            actor_id=str(get_api_token_actor(request).id),
             issue_id=str(pk),
             project_id=str(project_id),
             current_instance=current_instance,
@@ -1406,7 +1416,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
             issue_activity.delay(
                 type="link.activity.updated",
                 requested_data=requested_data,
-                actor_id=str(request.user.id),
+                actor_id=str(get_api_token_actor(request).id),
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=current_instance,
@@ -1439,7 +1449,7 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         issue_activity.delay(
             type="link.activity.deleted",
             requested_data=json.dumps({"link_id": str(pk)}),
-            actor_id=str(request.user.id),
+            actor_id=str(get_api_token_actor(request).id),
             issue_id=str(issue_id),
             project_id=str(project_id),
             current_instance=current_instance,
@@ -1583,7 +1593,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
 
         serializer = IssueCommentCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(project_id=project_id, issue_id=issue_id, actor=request.user)
+            serializer.save(project_id=project_id, issue_id=issue_id, actor=get_api_token_actor(request))
             issue_comment = IssueComment.objects.get(pk=serializer.instance.id)
 
             issue_activity.delay(
@@ -1602,7 +1612,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
                 model_id=str(serializer.instance.id),
                 requested_data=request.data,
                 current_instance=None,
-                actor_id=request.user.id,
+                actor_id=get_api_token_actor(request).id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
@@ -1716,7 +1726,10 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             raise Issue.DoesNotExist()
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         if not (
-            (issue_comment.created_by_id == request.user.id and is_active_project_member(request.user.id, project_id))
+            (
+                is_request_user_creator(request, issue_comment.created_by_id)
+                and is_active_project_member(request.user.id, project_id)
+            )
             or is_admin
         ):
             return Response(
@@ -1751,7 +1764,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             issue_activity.delay(
                 type="comment.activity.updated",
                 requested_data=requested_data,
-                actor_id=str(request.user.id),
+                actor_id=str(get_api_token_actor(request).id),
                 issue_id=str(issue_id),
                 project_id=str(project_id),
                 current_instance=current_instance,
@@ -1763,7 +1776,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
                 model_id=str(pk),
                 requested_data=request.data,
                 current_instance=current_instance,
-                actor_id=request.user.id,
+                actor_id=get_api_token_actor(request).id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
@@ -1799,7 +1812,10 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             raise Issue.DoesNotExist()
         issue_comment = IssueComment.objects.get(workspace__slug=slug, project_id=project_id, issue_id=issue_id, pk=pk)
         if not (
-            (issue_comment.created_by_id == request.user.id and is_active_project_member(request.user.id, project_id))
+            (
+                is_request_user_creator(request, issue_comment.created_by_id)
+                and is_active_project_member(request.user.id, project_id)
+            )
             or is_admin
         ):
             return Response(
@@ -1811,7 +1827,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         issue_activity.delay(
             type="comment.activity.deleted",
             requested_data=json.dumps({"comment_id": str(pk)}),
-            actor_id=str(request.user.id),
+            actor_id=str(get_api_token_actor(request).id),
             issue_id=str(issue_id),
             project_id=str(project_id),
             current_instance=current_instance,
@@ -2108,7 +2124,7 @@ class IssueAttachmentListCreateAPIEndpoint(BaseAPIView):
             asset=asset_key,
             size=size_limit,
             workspace_id=workspace.id,
-            created_by=request.user,
+            created_by=get_api_token_actor(request),
             issue_id=issue_id,
             project_id=project_id,
             entity_type=FileAsset.EntityTypeContext.ISSUE_ATTACHMENT,
@@ -2219,7 +2235,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         # or an admin may delete it
         if not (
             (
-                issue_attachment.created_by_id == request.user.id
+                is_request_user_creator(request, issue_attachment.created_by_id)
                 and is_active_project_member(request.user.id, project_id)
             )
             or is_admin
@@ -2236,7 +2252,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
         issue_activity.delay(
             type="attachment.activity.deleted",
             requested_data=None,
-            actor_id=str(self.request.user.id),
+            actor_id=str(get_api_token_actor(request).id),
             issue_id=str(issue_id),
             project_id=str(project_id),
             current_instance=None,
@@ -2385,7 +2401,7 @@ class IssueAttachmentDetailAPIEndpoint(BaseAPIView):
             issue_activity.delay(
                 type="attachment.activity.created",
                 requested_data=None,
-                actor_id=str(self.request.user.id),
+                actor_id=str(get_api_token_actor(request).id),
                 issue_id=str(self.kwargs.get("issue_id", None)),
                 project_id=str(self.kwargs.get("project_id", None)),
                 current_instance=json.dumps(serializer.data, cls=DjangoJSONEncoder),
@@ -2737,8 +2753,8 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
                     relation_type=actual_relation,
                     project_id=project_id,
                     workspace_id=project.workspace_id,
-                    created_by=request.user,
-                    updated_by=request.user,
+                    created_by=get_api_token_actor(request),
+                    updated_by=get_api_token_actor(request),
                 )
                 for issue in issues
             ],
@@ -2749,7 +2765,7 @@ class IssueRelationListCreateAPIEndpoint(BaseAPIView):
         issue_activity.delay(
             type="issue_relation.activity.created",
             requested_data=json.dumps({"relation_type": relation_type, "issues": issues}, cls=DjangoJSONEncoder),
-            actor_id=str(request.user.id),
+            actor_id=str(get_api_token_actor(request).id),
             issue_id=str(issue_id),
             project_id=str(project_id),
             current_instance=None,

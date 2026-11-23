@@ -62,6 +62,7 @@ from plane.db.models import (
     UserRecentVisit,
 )
 from plane.utils.filters import ComplexFilterBackend, IssueFilterSet
+from plane.utils.api_token import get_api_token_actor, get_api_token_actor_ids, is_request_user_creator
 from plane.utils.global_paginator import paginate
 from plane.utils.grouper import (
     issue_group_values,
@@ -104,7 +105,9 @@ class IssueListEndpoint(BaseAPIView):
             is_active=True,
             project__guest_view_all_features=False,
         ).exists():
-            queryset = queryset.filter(created_by=request.user)
+            queryset = queryset.filter(
+                Q(created_by=request.user) | Q(created_by_id__in=get_api_token_actor_ids(request.user.id))
+            )
 
         # Apply filtering from filterset
         queryset = self.filter_queryset(queryset)
@@ -318,8 +321,9 @@ class IssueViewSet(BaseViewSet):
             ).exists()
             and not project.guest_view_all_features
         ):
-            issue_queryset = issue_queryset.filter(created_by=request.user)
-            filtered_issue_queryset = filtered_issue_queryset.filter(created_by=request.user)
+            creator_filter = Q(created_by=request.user) | Q(created_by_id__in=get_api_token_actor_ids(request.user.id))
+            issue_queryset = issue_queryset.filter(creator_filter)
+            filtered_issue_queryset = filtered_issue_queryset.filter(creator_filter)
 
         if group_by:
             if sub_group_by:
@@ -422,7 +426,7 @@ class IssueViewSet(BaseViewSet):
             issue_activity.delay(
                 type="issue.activity.created",
                 requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
-                actor_id=str(request.user.id),
+                actor_id=str(get_api_token_actor(request).id),
                 issue_id=str(serializer.data.get("id", None)),
                 project_id=str(project_id),
                 current_instance=None,
@@ -476,7 +480,7 @@ class IssueViewSet(BaseViewSet):
                 model_id=str(serializer.data["id"]),
                 requested_data=request.data,
                 current_instance=None,
-                actor_id=request.user.id,
+                actor_id=get_api_token_actor(request).id,
                 slug=slug,
                 origin=base_host(request=request, is_app=True),
             )
@@ -484,7 +488,7 @@ class IssueViewSet(BaseViewSet):
             issue_description_version_task.delay(
                 updated_issue=json.dumps(request.data, cls=DjangoJSONEncoder),
                 issue_id=str(serializer.data["id"]),
-                user_id=request.user.id,
+                user_id=get_api_token_actor(request).id,
                 is_creating=True,
             )
             return Response(issue, status=status.HTTP_201_CREATED)
@@ -607,7 +611,7 @@ class IssueViewSet(BaseViewSet):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not issue.created_by == request.user
+            and not is_request_user_creator(request, issue.created_by_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},
@@ -689,7 +693,7 @@ class IssueViewSet(BaseViewSet):
                 issue_activity.delay(
                     type="issue.activity.updated",
                     requested_data=json.dumps(accepted_data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
+                    actor_id=str(get_api_token_actor(request).id),
                     issue_id=str(pk),
                     project_id=str(project_id),
                     current_instance=current_instance,
@@ -702,7 +706,7 @@ class IssueViewSet(BaseViewSet):
                     model_id=str(serializer.data.get("id", None)),
                     requested_data=accepted_data,
                     current_instance=current_instance,
-                    actor_id=request.user.id,
+                    actor_id=get_api_token_actor(request).id,
                     slug=slug,
                     origin=base_host(request=request, is_app=True),
                 )
@@ -710,7 +714,7 @@ class IssueViewSet(BaseViewSet):
                 issue_description_version_task.delay(
                     updated_issue=current_instance,
                     issue_id=str(serializer.data.get("id", None)),
-                    user_id=request.user.id,
+                    user_id=get_api_token_actor(request).id,
                 )
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -730,7 +734,7 @@ class IssueViewSet(BaseViewSet):
         issue_activity.delay(
             type="issue.activity.deleted",
             requested_data=json.dumps({"issue_id": str(pk)}),
-            actor_id=str(request.user.id),
+            actor_id=str(get_api_token_actor(request).id),
             issue_id=str(pk),
             project_id=str(project_id),
             current_instance={},
@@ -918,8 +922,9 @@ class IssuePaginatedViewSet(BaseViewSet):
             is_active=True,
         )
         if project_member.exists() and not project.guest_view_all_features:
-            base_queryset = base_queryset.filter(created_by=request.user)
-            queryset = queryset.filter(created_by=request.user)
+            creator_filter = Q(created_by=request.user) | Q(created_by_id__in=get_api_token_actor_ids(request.user.id))
+            base_queryset = base_queryset.filter(creator_filter)
+            queryset = queryset.filter(creator_filter)
 
         # filtering issues by greater then updated_at given by the user
         if updated_at:
@@ -1159,7 +1164,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
                     requested_data=json.dumps({"start_date": update.get("start_date")}),
                     current_instance=json.dumps({"start_date": str(issue.start_date)}),
                     issue_id=str(issue_id),
-                    actor_id=str(request.user.id),
+                    actor_id=str(get_api_token_actor(request).id),
                     project_id=str(project_id),
                     epoch=epoch,
                 )
@@ -1172,7 +1177,7 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
                     requested_data=json.dumps({"target_date": update.get("target_date")}),
                     current_instance=json.dumps({"target_date": str(issue.target_date)}),
                     issue_id=str(issue_id),
-                    actor_id=str(request.user.id),
+                    actor_id=str(get_api_token_actor(request).id),
                     project_id=str(project_id),
                     epoch=epoch,
                 )
@@ -1349,7 +1354,7 @@ class IssueDetailIdentifierEndpoint(BaseAPIView):
                 is_active=True,
             ).exists()
             and not project.guest_view_all_features
-            and not issue.created_by == request.user
+            and not is_request_user_creator(request, issue.created_by_id)
         ):
             return Response(
                 {"error": "You are not allowed to view this issue"},

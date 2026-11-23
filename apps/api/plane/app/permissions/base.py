@@ -2,12 +2,14 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from plane.db.models import WorkspaceMember, ProjectMember
 from functools import wraps
-from rest_framework.response import Response
-from rest_framework import status
-
 from enum import Enum
+
+from rest_framework import status
+from rest_framework.response import Response
+
+from plane.db.models import ProjectMember, WorkspaceMember
+from plane.utils.api_token import is_request_user_creator
 
 
 class ROLE(Enum):
@@ -48,8 +50,8 @@ def allow_permission(allowed_roles, level="PROJECT", creator=False, model=None):
                         status=status.HTTP_403_FORBIDDEN,
                     )
 
-                obj = model.objects.filter(id=kwargs["pk"], created_by=request.user).exists()
-                if obj:
+                creator_id = model.objects.filter(id=kwargs["pk"]).values_list("created_by_id", flat=True).first()
+                if creator_id and is_request_user_creator(request, creator_id):
                     return view_func(instance, request, *args, **kwargs)
 
             # Convert allowed_roles to their values if they are enum members
@@ -132,10 +134,9 @@ def issue_hidden_from_guest(request, slug, project_id, issue_id):
     if not is_restricted_guest:
         return False
 
-    owns_issue = Issue.objects.filter(
+    creator_id = Issue.objects.filter(
         pk=issue_id,
         workspace__slug=slug,
         project_id=project_id,
-        created_by=request.user,
-    ).exists()
-    return not owns_issue
+    ).values_list("created_by_id", flat=True).first()
+    return creator_id is not None and not is_request_user_creator(request, creator_id)
