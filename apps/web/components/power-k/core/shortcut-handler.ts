@@ -152,20 +152,21 @@ const hasSequencePrefix = (sequenceMap: ReadonlyMap<string, string>, prefix: str
 const INTERACTIVE_ROLES = new Set(["button", "link", "menuitem", "tab", "option"]);
 
 /**
- * Whether the focused element is an interactive control (button, link, disclosure summary, or
- * an ARIA widget) that owns Enter/Space activation. A plain-Enter global shortcut must not fire
- * from these, otherwise Enter on a toolbar button would also trigger the focused-work-item command.
+ * Whether the focused element itself is an interactive control (button, link, disclosure
+ * summary, or an ARIA widget) that owns Enter/Space activation. A plain-Enter global shortcut
+ * must not fire from these, otherwise Enter on a toolbar button would also trigger the
+ * focused-work-item command. This checks the target only, never its ancestors: a list row is
+ * a plain element nested inside the link that wraps it, and Enter must still open the peek there.
  */
 export function isKeyboardInteractiveTarget(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) return false;
 
   if (target instanceof HTMLButtonElement) return true;
   if (target instanceof HTMLAnchorElement && target.hasAttribute("href")) return true;
+  if (target.tagName === "SUMMARY") return true;
 
   const role = target.getAttribute("role");
-  if (role && INTERACTIVE_ROLES.has(role)) return true;
-
-  return target.closest("button, a[href], summary, [role='button'], [role='link'], [role='tab']") !== null;
+  return !!role && INTERACTIVE_ROLES.has(role);
 }
 
 /**
@@ -240,6 +241,21 @@ export class ShortcutHandler {
     // Keys typed into inputs and widgets never trigger shortcuts, nor continue a sequence
     if (isTypingInInput(e.target)) {
       this.resetSequence();
+      return;
+    }
+
+    // "?" is Shift+/ on most layouts, and the layout-aware normalization resolves it
+    // back to the unshifted "/", so it would never match the help command registered
+    // against the literal "?". Dispatch it from the raw e.key before the modifier
+    // branch so Shift+/ opens the shortcuts modal again.
+    if (e.key === "?" && !e.metaKey && !e.ctrlKey && !e.altKey) {
+      this.resetSequence();
+      const helpCommandId = this.registry.getShortcutMap(this.getContext()).get("?");
+      const helpCommand = helpCommandId ? this.registry.getCommand(helpCommandId) : undefined;
+      if (helpCommand && this.canExecuteCommand(helpCommand)) {
+        e.preventDefault();
+        this.executeCommand(helpCommand);
+      }
       return;
     }
 
