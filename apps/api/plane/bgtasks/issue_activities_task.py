@@ -799,8 +799,13 @@ def create_cycle_issue_activity(
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
     # Updated Records:
-    updated_records = current_instance.get("updated_cycle_issues", [])
-    created_records = json.loads(current_instance.get("created_cycle_issues", []))
+    # Callers send these keys in different shapes: a transfer sends a plain list
+    # of created records, adding work items sends them serialized as a JSON
+    # string, and converting a draft sends updated records as None.
+    updated_records = current_instance.get("updated_cycle_issues") or []
+    created_records = current_instance.get("created_cycle_issues") or []
+    if isinstance(created_records, str):
+        created_records = json.loads(created_records)
 
     for updated_record in updated_records:
         old_cycle = Cycle.objects.filter(pk=updated_record.get("old_cycle_id", None), project_id=project_id).first()
