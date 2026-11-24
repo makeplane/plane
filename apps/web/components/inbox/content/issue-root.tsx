@@ -87,7 +87,7 @@ export const InboxIssueMainContent = observer(function InboxIssueMainContent(pro
             message: "Work item deleted successfully",
           });
         } catch (error) {
-          console.log("Error in deleting work item:", error);
+          console.error("Error in deleting work item:", error);
           setToast({
             title: "Error!",
             type: "error",
