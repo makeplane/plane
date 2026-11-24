@@ -10,7 +10,7 @@
 import { getSchema } from "@tiptap/core";
 import type { Extensions } from "@tiptap/core";
 import { generateJSON } from "@tiptap/html";
-import { updateYFragment } from "y-prosemirror";
+import { updateYFragment } from "@tiptap/y-tiptap";
 import * as Y from "yjs";
 import {
   CoreEditorExtensionsWithoutProps,
