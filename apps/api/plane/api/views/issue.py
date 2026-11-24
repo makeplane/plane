@@ -93,6 +93,7 @@ from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
 from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.query_params import positive_int_param
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -2440,12 +2441,13 @@ class IssueSearchEndpoint(BaseAPIView):
         Supports workspace-wide or project-specific search with configurable result limits.
         """
         query = request.query_params.get("search", False)
-        limit = request.query_params.get("limit", 10)
         workspace_search = request.query_params.get("workspace_search", "false")
         project_id = request.query_params.get("project_id", False)
 
         if not query:
             return Response({"issues": []}, status=status.HTTP_200_OK)
+
+        limit = positive_int_param(request, "limit", 10)
 
         # Build search query
         fields = ["name", "sequence_id", "project__identifier"]
@@ -2485,7 +2487,7 @@ class IssueSearchEndpoint(BaseAPIView):
             "project__identifier",
             "project_id",
             "workspace__slug",
-        )[: int(limit)]
+        )[:limit]
 
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)
 
