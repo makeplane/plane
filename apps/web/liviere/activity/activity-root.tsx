@@ -7,7 +7,8 @@
 // Liviere/plane fork: the "Activity" page of a project. Rows are days (newest on top), columns are the
 // 96 quarters of the day; the colour says how many actions happened in that quarter. Admins and members
 // add log entries here (what they did, from when to when); agents do it through the API. The "Work log" view
-// (?view=log) lists the entries by day instead of the grid.
+// (?view=log) lists the entries by day instead of the grid. Days and quarters are in the project's time zone;
+// the period is in the URL (range.ts).
 
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -17,24 +18,26 @@ import { Icon } from "@makeplane/propel/components/icon";
 import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
 import { AddOutline } from "@makeplane/propel/icons";
 import { ConfirmDialog } from "@plane/blocks/dialog";
+import { DateRangeSelect } from "@plane/blocks/property-select";
 import { Loader } from "@plane/blocks/skeleton";
 import { setToast } from "@plane/blocks/toast";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { cn } from "@plane/utils";
+import { cn, getDate, renderFormattedPayloadDate } from "@plane/utils";
 import { MemberSelect } from "@/components/dropdowns/member/member-select";
-import { useUser, useUserPermissions } from "@/hooks/store/user";
+import { useProject } from "@/hooks/store/use-project";
+import { useUser, useUserPermissions, useUserProfile } from "@/hooks/store/user";
 import { useQueryParams } from "@/hooks/use-query-params";
 import { projectActivityService } from "./activity.service";
 import { ActivityEventList } from "./activity-events";
 import { ActivityGrid } from "./activity-grid";
 import { ActivityLogList } from "./activity-log-list";
 import { ActivityLogModal } from "./activity-log-modal";
-import { shiftDate } from "./grid";
+import { MAX_RANGE_DAYS, RANGE_PRESETS, parseRange, rangeQueryChange, resolveRange, validCustomRange } from "./range";
+import type { TRangeSelection } from "./range";
 import type { TActivityEvent } from "./types";
 import { refreshProjectActivity, useActivityHeatmap, useCurrentQuarter } from "./use-activity";
 
-const RANGES = [7, 30, 90];
 const VIEW_PARAM = "view";
 const LOG_VIEW = "log";
 
@@ -48,9 +51,12 @@ export type TSelectedBucket = { date: string; slot: number };
 export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: Props) {
   const { workspaceSlug, projectId } = props;
   const { t, currentLocale } = useTranslation();
-  // The viewer's clock: quarters are shown in the time zone of the browser
-  const timeZone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC", []);
-  const [days, setDays] = useState(30);
+  const { getProjectById } = useProject();
+  const { data: userProfile } = useUserProfile();
+  // Days and quarters in the project's time zone, as the API, reports and plane-log count them; the browser's
+  // only until the project is loaded
+  const browserTimeZone = useMemo(() => Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC", []);
+  const timeZone = getProjectById(projectId)?.timezone || browserTimeZone;
   const [actor, setActor] = useState<string | null>(null);
   const [selected, setSelected] = useState<TSelectedBucket | null>(null);
   // Log entry dialog: null closed, {} new entry, {entry} change
@@ -71,6 +77,11 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
         ? updateQueryParams({ paramsToAdd: { [VIEW_PARAM]: LOG_VIEW } })
         : updateQueryParams({ paramsToRemove: [VIEW_PARAM] })
     );
+  };
+  const rangeSelection = parseRange(searchParams);
+  const setRange = (selection: TRangeSelection) => {
+    setSelected(null);
+    router.replace(updateQueryParams(rangeQueryChange(selection)));
   };
   const entriesChanged = () => setLogVersion((current) => current + 1);
   const { data: currentUser } = useUser();
@@ -95,8 +106,8 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
 
   // Moves on every quarter, so the grid marks the current one and a new day appears after midnight
   const now = useCurrentQuarter(timeZone);
-  const to = now.date;
-  const query = { from: shiftDate(to, -(days - 1)), to, tz: timeZone, actor };
+  const range = resolveRange(rangeSelection, now.date);
+  const query = { from: range.from, to: range.to, tz: timeZone, actor };
   const { data: heatmap, error, isLoading } = useActivityHeatmap(workspaceSlug, projectId, query);
 
   return (
@@ -112,22 +123,45 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
           </Tabs>
         </div>
         <div className="flex overflow-hidden rounded-md border border-subtle">
-          {RANGES.map((range) => (
+          {RANGE_PRESETS.map((preset) => (
             <button
-              key={range}
+              key={preset}
               type="button"
-              onClick={() => {
-                setDays(range);
-                setSelected(null);
-              }}
+              onClick={() => setRange({ preset })}
               className={cn(
                 "px-3 py-1 text-13 text-secondary hover:bg-layer-transparent-hover",
-                days === range && "bg-layer-transparent-selected font-medium text-primary"
+                rangeSelection.preset === preset && "bg-layer-transparent-selected font-medium text-primary"
               )}
             >
-              {t("liviere.activity.range_days", { days: range })}
+              {t(`liviere.activity.ranges.${preset}`)}
             </button>
           ))}
+        </div>
+        <div className="w-fit">
+          {/* Shows the dates of the chosen period; picking two days makes a custom range */}
+          <DateRangeSelect
+            variant="select-md"
+            value={{ from: getDate(range.from) ?? null, to: getDate(range.to) ?? null }}
+            onChange={(value) => {
+              const custom = validCustomRange(
+                renderFormattedPayloadDate(value.from) ?? null,
+                renderFormattedPayloadDate(value.to) ?? null
+              );
+              if (custom) setRange({ preset: null, ...custom });
+              else if (value.from && value.to)
+                setToast({
+                  type: "error",
+                  title: t("error"),
+                  message: t("liviere.activity.range_too_long", { days: MAX_RANGE_DAYS }),
+                });
+            }}
+            maxDate={getDate(now.date)}
+            mergeDates
+            weekStartsOn={userProfile?.start_of_the_week}
+            isActive={!rangeSelection.preset || undefined}
+            tooltipHeading={t("liviere.activity.range_custom")}
+            showTooltip
+          />
         </div>
         <div className="w-56">
           <MemberSelect
@@ -235,6 +269,7 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
           projectId={projectId}
           entry={logDialog.entry}
           bucket={view === LOG_VIEW ? null : selected}
+          timeZone={timeZone}
           onSaved={entriesChanged}
           onClose={() => setLogDialog(null)}
         />

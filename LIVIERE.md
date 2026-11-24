@@ -97,6 +97,13 @@ A per-project heatmap of when work happens, like GitHub contributions but finer:
 time (quarters with any activity × 15 min) – not logged working time. The current quarter has an amber outline
 and the rest of today is dimmed; the page moves both on every quarter, without a reload.
 
+**Period and time zone.** The page shows days and quarters in the project time zone (Project settings →
+General; the browser's only until the project is loaded), like the API and `plane-log`; the log entry
+dialog reads its times in the same zone. The period is in the URL, for the grid and the *Work log* tab alike:
+`?range=7d|30d|90d` (default 30 days) or a custom `?from=YYYY-MM-DD&to=YYYY-MM-DD` (at most 366 days, picked in
+the date field of the toolbar). The page sends `from`, `to` and `tz` to the same `heatmap`/`events`/`logs`
+endpoints as before.
+
 Code: `apps/api/plane/liviere/activity/` (catalog, recording, queries), `liviere/models.py`
 (`ActivityEvent`, `ProjectActivitySettings`), `liviere/app/activity.py` and `liviere/api/activity.py`
 (endpoints), `apps/web/liviere/activity/` (page, settings, sidebar item), i18n namespace `liviere`

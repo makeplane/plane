@@ -4,7 +4,13 @@
       "title": "Activity",
       "view_grid": "Grid",
       "view_log": "Work log",
-      "range_days": "{days} days",
+      "ranges": {
+        "7d": "7 days",
+        "30d": "30 days",
+        "90d": "90 days"
+      },
+      "range_custom": "Period: pick the first and the last day",
+      "range_too_long": "A period can be at most {days} days long.",
       "all_members": "All members",
       "summary": "{active} active quarters ≈ {hours} h · {events} actions",
       "footnote": "One square is 15 minutes ({timezone}). The approximate time counts quarters with any activity; it is not logged working time.",

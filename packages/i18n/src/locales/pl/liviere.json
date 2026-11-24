@@ -4,7 +4,13 @@
       "title": "Aktywność",
       "view_grid": "Siatka",
       "view_log": "Dziennik",
-      "range_days": "{days} dni",
+      "ranges": {
+        "7d": "7 dni",
+        "30d": "30 dni",
+        "90d": "90 dni"
+      },
+      "range_custom": "Okres: wybierz pierwszy i ostatni dzień",
+      "range_too_long": "Okres może mieć najwyżej {days} dni.",
       "all_members": "Wszyscy członkowie",
       "summary": "Aktywne kwadranse: {active} ≈ {hours} h · akcje: {events}",
       "footnote": "Jeden kwadracik to 15 minut ({timezone}). Przybliżony czas liczy kwadranse z jakąkolwiek aktywnością; to nie jest zalogowany czas pracy.",
