@@ -93,7 +93,7 @@ export const CommentCard = observer(function CommentCard(props: Props) {
           action="commented"
           timestamp={
             <ActivityTimelineTimestamp
-              tooltip={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
+              tooltip={`${renderFormattedDate(new Date(comment.created_at))} at ${renderFormattedTime(comment.created_at)}`}
             >
               {calculateTimeAgo(comment.created_at)}
             </ActivityTimelineTimestamp>

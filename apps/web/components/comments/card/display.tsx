@@ -136,7 +136,7 @@ export const CommentCardDisplay = observer(function CommentCardDisplay(props: TC
           }
           timestamp={
             <ActivityTimelineTimestamp
-              tooltip={`${renderFormattedDate(comment.created_at)} at ${renderFormattedTime(comment.created_at)}`}
+              tooltip={`${renderFormattedDate(new Date(comment.created_at))} at ${renderFormattedTime(comment.created_at)}`}
             >
               {calculateTimeAgo(comment.created_at)}
               {comment.edited_at && " (edited)"}
