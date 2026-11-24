@@ -60,6 +60,7 @@ def _assign(issue, user):
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("mock_celery")
 def test_export_leaves_out_removed_assignees(workspace, project, create_user, member):
     removed = Issue.objects.create(name="removed", project=project, workspace=workspace)
     _assign(removed, member).delete()
