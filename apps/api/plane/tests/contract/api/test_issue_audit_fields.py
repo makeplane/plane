@@ -14,6 +14,7 @@ from unittest import mock
 from uuid import uuid4
 
 import pytest
+from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
