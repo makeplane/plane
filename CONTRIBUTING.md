@@ -33,7 +33,7 @@ This helps us triage and manage issues more efficiently.
 
 ### Requirements
 
-- Docker Engine installed and running. `docker-compose-local.yml` runs the API, its workers and the backing services: Postgres 15, Valkey 7.2 (Redis-compatible), RabbitMQ 3.13 and S3-compatible object storage
+- Docker Engine installed and running. `compose-local.yaml` runs the API, its workers and the backing services: Postgres 15, Valkey 7.2 (Redis-compatible), RabbitMQ 3.13 and S3-compatible object storage
 - Node.js 22.22.0 or newer (pinned in `.node-version` and `.mise.toml`)
 - pnpm, activated through Corepack (`corepack enable pnpm`); the version is pinned in `package.json`
 - Python 3.12 and [uv](https://docs.astral.sh/uv/) (only needed to run the API outside Docker)
@@ -85,7 +85,7 @@ Local app ports after a successful start:
 3. Start the containers
 
 ```bash
-docker compose -f docker-compose-local.yml up
+docker compose -f compose-local.yaml up
 ```
 
 4. Start web apps:
@@ -115,7 +115,7 @@ To ensure consistency throughout the source code, please keep these rules in min
 ## Submitting a pull request
 
 1. Branch off `preview` and open your pull request against `preview`.
-2. Before pushing, run `pnpm check` (format, lint and types). For backend changes, also run `uv run ruff check .` in `apps/api` and the backend tests (`docker compose -f docker-compose-test.yml up --build --abort-on-container-exit --exit-code-from api-tests`, see [apps/api/tests/RUNNING_TESTS.md](./apps/api/tests/RUNNING_TESTS.md)).
+2. Before pushing, run `pnpm check` (format, lint and types). For backend changes, also run `uv run ruff check .` in `apps/api` and the backend tests (`docker compose -f compose-test.yaml up --build --abort-on-container-exit --exit-code-from api-tests`, see [apps/api/tests/RUNNING_TESTS.md](./apps/api/tests/RUNNING_TESTS.md)).
 3. If you add a Django migration, generate it with `makemigrations` and commit the updated `apps/api/migrations_lockfile.txt` with it (see [AGENTS.md](./AGENTS.md#migrations)).
 4. New source files need the copyright header from `COPYRIGHT.txt` (see [COPYRIGHT_CHECK.md](./COPYRIGHT_CHECK.md)).
 5. Fill in the pull request template: description, type of change, screenshots for UI changes, and the test scenarios you ran.

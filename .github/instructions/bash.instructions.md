@@ -53,7 +53,7 @@ We use **Turbo** for build system orchestration.
 
 ## Docker
 
-- Local development uses `docker-compose-local.yml`.
-- `docker-compose.yml` builds every service from the local Dockerfiles (for testing a full build).
+- Local development uses `compose-local.yaml`.
+- `compose.yaml` builds every service from the local Dockerfiles (for testing a full build).
 - Self-hosting configs for releases live in `deployments/` (`cli`, `aio`, `swarm`, `kubernetes`).
-- Backend tests run in `docker-compose-test.yml` (see `apps/api/tests/RUNNING_TESTS.md`).
+- Backend tests run in `compose-test.yaml` (see `apps/api/tests/RUNNING_TESTS.md`).

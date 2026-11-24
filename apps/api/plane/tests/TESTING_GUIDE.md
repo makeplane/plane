@@ -135,7 +135,7 @@ The recommended way is the isolated Docker stack described in [`apps/api/tests/R
 
 ```bash
 # From the repo root
-docker compose -f docker-compose-test.yml run --rm --build api-tests pytest -m unit
+docker compose -f compose-test.yaml run --rm --build api-tests pytest -m unit
 ```
 
 With a local env (`uv sync` in `apps/api` plus running Postgres, Redis, RabbitMQ and MinIO):
