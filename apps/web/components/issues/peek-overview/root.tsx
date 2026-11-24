@@ -20,6 +20,7 @@ import { useIssues } from "@/hooks/store/use-issues";
 import { useUserPermissions } from "@/hooks/store/user";
 import { useIssueStoreType } from "@/hooks/use-issue-layout-store";
 import { useWorkItemProperties } from "@/hooks/use-issue-properties";
+import { markWorkItemOpened } from "@/liviere/unread/mark-opened"; // Liviere/plane fork
 // local imports
 import type { TIssueOperations } from "../issue-detail";
 import { IssueView } from "./view";
@@ -70,6 +71,7 @@ export const IssuePeekOverview = observer(function IssuePeekOverview(props: IWor
         try {
           setError(false);
           await fetchIssue(workspaceSlug, projectId, issueId);
+          markWorkItemOpened(workspaceSlug, projectId, issueId); // Liviere/plane fork: "New" work items
         } catch (error) {
           setError(true);
           console.error("Error fetching the parent issue", error);

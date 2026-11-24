@@ -14,6 +14,12 @@ from .activity import (
     ProjectActivityLogsEndpoint,
     ProjectActivitySettingsEndpoint,
 )
+from .unread import (
+    NewWorkItemsCountEndpoint,
+    NewWorkItemsEndpoint,
+    NewWorkItemsMarkReadEndpoint,
+    WorkItemOpenedEndpoint,
+)
 from .views import PageApiBlockEndpoint
 
 urlpatterns = [
@@ -51,5 +57,25 @@ urlpatterns = [
         "workspaces/<str:slug>/liviere/activity/enabled-projects/",
         ActivityEnabledProjectsEndpoint.as_view(http_method_names=["get"]),
         name="liviere-activity-enabled-projects",
+    ),
+    path(
+        "workspaces/<str:slug>/liviere/new-work-items/",
+        NewWorkItemsEndpoint.as_view(http_method_names=["get"]),
+        name="liviere-new-work-items",
+    ),
+    path(
+        "workspaces/<str:slug>/liviere/new-work-items/count/",
+        NewWorkItemsCountEndpoint.as_view(http_method_names=["get"]),
+        name="liviere-new-work-items-count",
+    ),
+    path(
+        "workspaces/<str:slug>/liviere/new-work-items/mark-read/",
+        NewWorkItemsMarkReadEndpoint.as_view(http_method_names=["post"]),
+        name="liviere-new-work-items-mark-read",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/work-items/<uuid:issue_id>/opened/",
+        WorkItemOpenedEndpoint.as_view(http_method_names=["post"]),
+        name="liviere-work-item-opened",
     ),
 ]

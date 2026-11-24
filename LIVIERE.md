@@ -171,3 +171,56 @@ token from `~/.config/plane-mcp/env`, like the Plane MCP setup, and takes projec
 task): `docker compose exec api python manage.py shell -c "from django_celery_beat.models import PeriodicTask;
 PeriodicTask.objects.filter(name__startswith='liviere:').update(enabled=False)"`.
 
+
+## New work items (`/:workspace/new-work-items`)
+
+Most work items here are created by AI agents (API key, MCP). *New* lists the work items somebody else created in
+my projects that I have not opened yet, with a counter in the workspace sidebar.
+
+Code: `apps/api/plane/liviere/unread/queries.py` (rules), `liviere/models.py` (`WorkItemOpen`,
+`UnreadWorkspaceCutoff`, `UnreadProjectCutoff`), `liviere/app/unread.py` (endpoints), `apps/web/liviere/unread/`
+(page, sidebar item, `markWorkItemOpened`), i18n namespace `liviere` (`liviere.unread.*`). Tests:
+`apps/api/plane/tests/contract/app/test_unread_work_items.py`.
+
+**Rules.** A work item is new for a person when all of these hold:
+
+- it is listed normally (`Issue.issue_objects`: no drafts, triage/intake, archived or deleted items, no archived
+  projects), in any state;
+- the person is an active member of its project and may see others' work items (guests only with
+  `guest_view_all_features`; a restricted guest sees only their own, which never count);
+- somebody else created it (a work item without an author counts too);
+- it was created after the person's cutoff of the project and there is no `WorkItemOpen` row for it.
+
+The cutoff is the latest of three times: the workspace cutoff (`UnreadWorkspaceCutoff`, set to the migration time
+for every existing workspace by migration `0004`, so nothing that existed at deployment is new), the time the
+person joined the project (`ProjectMember.created_at`, so a newcomer does not inherit the project's history) and
+the person's *Mark all as read* time for the project (`UnreadProjectCutoff`). No rows are written per work item
+except when one is opened.
+
+**Opened = peek or full page.** The web app calls
+`POST /api/workspaces/{slug}/projects/{id}/liviere/work-items/{id}/opened/` (session only, idempotent, 204; 404 when
+the person may not see the work item) from two hooks: the peek overview (`components/issues/peek-overview/root.tsx`,
+after `fetchIssue`; every peek – layouts, *Your work*, Home, Inbox, pages – renders this component) and the full
+page (`app/(all)/[workspaceSlug]/(projects)/browse/[workItem]/page.tsx`). The upstream `retrieve` endpoints are not
+used: `fetchIssue` also retrieves the parent of the opened item and the edit modal retrieves its item, which would
+mark items nobody opened. Reading a work item through `/api/v1/` never marks it, also with the person's own key.
+Opening from the edit modal or the intake view does not count.
+
+**Endpoints** (session; any workspace role):
+
+| Endpoint | |
+|---|---|
+| `GET /api/workspaces/{slug}/liviere/new-work-items/` | newest first: `{results, has_more, as_of}`; `projects` (comma-separated ids), `per_page` (≤ 200, default 50), `older_than` (`created_at` of the last item – keyset paging, so items opened meanwhile do not shift the next page) |
+| `GET .../new-work-items/count/` | `{total, by_project, as_of}` |
+| `POST .../new-work-items/mark-read/` | `{before, project_ids?}` → `{cleared}`; moves the person's cutoff of the projects (all or the given ones) to `before`, never back |
+
+`before` must be the `as_of` the server returned (400 when missing or in the future), so the browser clock never
+decides what is marked and items created after the list was loaded stay new.
+
+**Web.** Sidebar item *New* with the count (hook in `components/workspace/sidebar/sidebar-menu-items.tsx`; always
+shown, not part of *Customize navigation*, which would need the upstream `UserPreferenceKeys` enum), refreshed
+every minute, on focus and after every change. The page (route in `app/routes/extended.ts`) has a project filter
+(`?projects=`) and *Mark all as read*; a row opens the peek (the full page on phones) and disappears once opened.
+
+**Going back** to images without our code: nothing to disable; the tables stay unused. `migrate liviere 0003` on a
+fork image removes them.

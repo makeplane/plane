@@ -78,3 +78,48 @@ class ProjectActivitySettings(models.Model):
 
     class Meta:
         db_table = "liviere_project_activity_settings"
+
+
+class WorkItemOpen(models.Model):
+    """A person opened a work item (peek or full page) for the first time; see plane/liviere/unread."""
+
+    id = models.BigAutoField(primary_key=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="+")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    opened_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "liviere_work_item_opens"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "issue"], name="liviere_work_item_open_unique"),
+        ]
+        indexes = [
+            models.Index(fields=["user", "project"], name="liviere_open_user_project"),
+        ]
+
+
+class UnreadWorkspaceCutoff(models.Model):
+    """Work items created up to `since` are read for everybody (set to the deployment time by a migration)."""
+
+    workspace = models.OneToOneField("db.Workspace", on_delete=models.CASCADE, related_name="+", primary_key=True)
+    since = models.DateTimeField()
+
+    class Meta:
+        db_table = "liviere_unread_workspace_cutoffs"
+
+
+class UnreadProjectCutoff(models.Model):
+    """Work items of a project created up to `since` are read for one person ("Mark all as read")."""
+
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    since = models.DateTimeField()
+
+    class Meta:
+        db_table = "liviere_unread_project_cutoffs"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "project"], name="liviere_unread_project_cutoff_unique"),
+        ]

@@ -124,6 +124,23 @@
         "empty_title": "Brak wpisów dziennika w tym zakresie",
         "empty_description": "Wpisy mówią, co i kiedy zostało zrobione. Dodaj je tutaj albo pozwól agentom AI zapisywać je przez API lub skrypt plane-log."
       }
+    },
+    "unread": {
+      "title": "Nowe",
+      "description": "Elementy pracy utworzone przez innych w Twoich projektach, których jeszcze nie otwierałeś.",
+      "all_projects": "Wszystkie projekty",
+      "load_error": "Nie udało się wczytać nowych elementów pracy.",
+      "empty_title": "Nic nowego",
+      "empty_description": "Otworzyłeś już wszystkie elementy pracy, które inni utworzyli w Twoich projektach.",
+      "mark_all": {
+        "button": "Oznacz wszystkie jako przeczytane",
+        "title": "Oznaczyć wszystkie jako przeczytane?",
+        "confirm": "{count, plural, one {# nowy element pracy} few {# nowe elementy pracy} many {# nowych elementów pracy} other {# nowego elementu pracy}} we wszystkich projektach przestanie być oznaczony jako nowy.",
+        "confirm_filtered": "{count, plural, one {# nowy element pracy} few {# nowe elementy pracy} many {# nowych elementów pracy} other {# nowego elementu pracy}} w wybranych projektach przestanie być oznaczony jako nowy.",
+        "marking": "Oznaczanie",
+        "done": "{count, plural, one {Oznaczono # element pracy jako przeczytany} few {Oznaczono # elementy pracy jako przeczytane} many {Oznaczono # elementów pracy jako przeczytane} other {Oznaczono # elementu pracy jako przeczytane}}",
+        "error": "Nie udało się oznaczyć elementów pracy jako przeczytanych."
+      }
     }
   }
 }

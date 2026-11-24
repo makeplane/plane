@@ -124,6 +124,23 @@
         "empty_title": "No log entries in this range",
         "empty_description": "Log entries say what was done and when. Add them here, or let AI agents write them through the API or the plane-log script."
       }
+    },
+    "unread": {
+      "title": "New",
+      "description": "Work items created by others in your projects that you have not opened yet.",
+      "all_projects": "All projects",
+      "load_error": "Could not load new work items.",
+      "empty_title": "Nothing new",
+      "empty_description": "You have opened every work item others created in your projects.",
+      "mark_all": {
+        "button": "Mark all as read",
+        "title": "Mark all as read?",
+        "confirm": "{count, plural, one {# new work item} other {# new work items}} in all projects will no longer be new.",
+        "confirm_filtered": "{count, plural, one {# new work item} other {# new work items}} in the selected projects will no longer be new.",
+        "marking": "Marking",
+        "done": "{count, plural, one {# work item marked as read} other {# work items marked as read}}",
+        "error": "Could not mark the work items as read."
+      }
     }
   }
 }
