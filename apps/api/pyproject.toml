@@ -79,6 +79,8 @@ dependencies = [
     "drf-spectacular==0.29.0",
     # html sanitizer
     "nh3==0.2.18",
+    # web push encryption (Liviere/plane fork: plane/liviere/push)
+    "http-ece==1.2.1",
 ]
 
 [dependency-groups]

@@ -37,3 +37,16 @@ export const useNewWorkItemsChanged = (onChange: () => void) => {
     return () => window.removeEventListener(NEW_WORK_ITEMS_CHANGED_EVENT, onChange);
   }, [onChange]);
 };
+
+/** A push notification about new work items arrived (message from public/liviere/push-sw.js): reload. */
+export const usePushRefresh = () => {
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
+    const onMessage = (event: MessageEvent<{ type?: string }>) => {
+      if (event.data?.type === "liviere:new-work-items") refreshNewWorkItems();
+    };
+    navigator.serviceWorker.addEventListener("message", onMessage);
+    navigator.serviceWorker.startMessages();
+    return () => navigator.serviceWorker.removeEventListener("message", onMessage);
+  }, []);
+};

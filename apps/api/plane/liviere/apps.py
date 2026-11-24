@@ -14,5 +14,7 @@ class LiviereConfig(AppConfig):
 
     def ready(self):
         from plane.liviere.activity import signals
+        from plane.liviere.push import signals as push_signals
 
         signals.connect()
+        push_signals.connect()

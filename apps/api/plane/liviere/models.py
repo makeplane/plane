@@ -123,3 +123,37 @@ class UnreadProjectCutoff(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["user", "project"], name="liviere_unread_project_cutoff_unique"),
         ]
+
+
+class PushSubscription(models.Model):
+    """Web push subscription of one browser (plane/liviere/push); removed when the push service answers 404/410."""
+
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    endpoint = models.TextField(unique=True)
+    p256dh = models.CharField(max_length=128)
+    auth = models.CharField(max_length=64)
+    user_agent = models.CharField(max_length=255, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_success_at = models.DateTimeField(null=True)
+    failure_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = "liviere_push_subscriptions"
+        indexes = [models.Index(fields=["user"], name="liviere_push_sub_user")]
+
+
+class PushProject(models.Model):
+    """A project the person wants push notifications about (for all their browsers)."""
+
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+
+    class Meta:
+        db_table = "liviere_push_projects"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "project"], name="liviere_push_project_unique"),
+        ]
+        indexes = [models.Index(fields=["project"], name="liviere_push_project_project")]

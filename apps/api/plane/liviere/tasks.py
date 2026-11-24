@@ -25,3 +25,35 @@ def sync_issue_activity_events():
     except Exception as e:
         log_exception(e)
         return 0
+
+
+NOTIFY_NEW_WORK_ITEM_TASK = "plane.liviere.tasks.notify_new_work_item"
+SEND_TEST_PUSH_TASK = "plane.liviere.tasks.send_test_push"
+
+
+@shared_task(name=NOTIFY_NEW_WORK_ITEM_TASK)
+def notify_new_work_item(issue_id):
+    """Web push about a new work item (queued by plane/liviere/push/signals.py after the commit)."""
+    from plane.liviere.push.config import vapid_config
+    from plane.liviere.push.notify import notify_new_work_item as notify
+
+    try:
+        config = vapid_config()
+        return notify(issue_id, config) if config else 0
+    except Exception as e:
+        log_exception(e)
+        return 0
+
+
+@shared_task(name=SEND_TEST_PUSH_TASK)
+def send_test_push(user_id):
+    """Test notification to the person's own browsers (Profile settings → Notifications)."""
+    from plane.liviere.push.config import vapid_config
+    from plane.liviere.push.notify import send_test
+
+    try:
+        config = vapid_config()
+        return send_test(user_id, config) if config else 0
+    except Exception as e:
+        log_exception(e)
+        return 0

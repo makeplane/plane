@@ -17,7 +17,7 @@ import { useTranslation } from "@plane/i18n";
 import { getNumberCount, joinUrlPath } from "@plane/utils";
 import { CountChip } from "@/components/common/count-chip";
 import { useAppTheme } from "@/hooks/store/use-app-theme";
-import { useNewWorkItemsCount } from "./use-new-work-items";
+import { useNewWorkItemsCount, usePushRefresh } from "./use-new-work-items";
 
 export const NEW_WORK_ITEMS_PATH = "new-work-items";
 
@@ -28,6 +28,7 @@ export const LiviereNewWorkItemsSidebarItem = observer(function LiviereNewWorkIt
   const slug = workspaceSlug?.toString() || "";
   const { toggleSidebar, isExtendedSidebarOpened, toggleExtendedSidebar } = useAppTheme();
   const { data: counts } = useNewWorkItemsCount(slug || undefined);
+  usePushRefresh();
 
   if (!slug) return null;
   const href = joinUrlPath(slug, NEW_WORK_ITEMS_PATH);

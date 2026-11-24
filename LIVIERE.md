@@ -224,3 +224,63 @@ every minute, on focus and after every change. The page (route in `app/routes/ex
 
 **Going back** to images without our code: nothing to disable; the tables stay unused. `migrate liviere 0003` on a
 fork image removes them.
+
+### Push notifications
+
+A system notification (Web Push, e.g. Firefox on Windows) when somebody else creates a work item in a project I
+chose. Code: `apps/api/plane/liviere/push/` (`config.py` VAPID keys, `webpush.py` sending, `notify.py`
+recipients and texts, `messages.py`, `signals.py`), `liviere/app/push.py` (endpoints), `liviere/models.py`
+(`PushSubscription`, `PushProject`, migration `0005`), `apps/web/liviere/push/` and the service worker
+`apps/web/public/liviere/push-sw.js`. Tests: `apps/api/plane/tests/contract/app/test_push_notifications.py`,
+`apps/api/plane/tests/unit/liviere/test_webpush.py`.
+
+**Keys** – environment only, never in the repository; all three or push stays off (the profile section then says
+it is unavailable, subscribing answers 503 and nothing is queued):
+
+| Variable | |
+|---|---|
+| `LIVIERE_VAPID_PUBLIC_KEY` | base64url of the uncompressed P-256 public point (65 bytes) |
+| `LIVIERE_VAPID_PRIVATE_KEY` | base64url of the 32-byte private scalar (must match the public key) |
+| `LIVIERE_VAPID_SUBJECT` | `mailto:…` or `https://…` contact for the push services |
+
+`api` and `worker` both need them (`x-app-env` in `deployments/cli/community/docker-compose.yml` passes them; the
+local `docker-compose-local.yml` reads `apps/api/.env`). The web app gets the public key from the API.
+
+**Flow.** `post_save` of a new `Issue` (app, `/api/v1/` with an API key, MCP) queues
+`plane.liviere.tasks.notify_new_work_item` with `transaction.on_commit`; nothing happens in the request when the keys
+are missing or the item is a draft, and the receiver never raises. The task reads the item from
+`Issue.issue_objects` (no drafts, triage, archived, deleted) and sends to every browser of every recipient:
+people who chose the project (`PushProject`, per account), except the author, who are active members allowed to
+see others' work items – the rules of *New*. Not notified: items created by `bulk_create` (imports) and intake
+items accepted later.
+
+**One notification per project.** The tag is `liviere-new-<project id>`, so a newer notification replaces the
+older one; `renotify` is not set, so a replacement is silent while the previous one is still shown. The title counts
+the recipient's new work items of the project at sending time: with one, `LS-7 · Project name` and a click opens
+the work item (which marks it as read); with more, `LS: 4 new work items` (Polish for a `pl` profile language:
+`nowe elementy pracy` / `nowych elementów pracy`) and a click opens *New* filtered to the project. The body is the
+title of the newest one. Nothing else of the work item is sent.
+
+**Sending** (`webpush.py`): aes128gcm (RFC 8291, `http-ece`) and a VAPID JWT (RFC 8292, ES256 with `PyJWT`), TTL
+24 h. The endpoint comes from the browser, so it must be `https://` on a known push service
+(`updates.push.services.mozilla.com`, `fcm.googleapis.com`, `*.notify.windows.com`, `*.push.apple.com`; checked when
+subscribing and when sending) and the request goes through `pinned_fetch` like webhooks. 404/410 removes the
+subscription; other failures increase `failure_count` and are not retried.
+
+**Endpoints** (session, user-level – the profile page is outside a workspace):
+
+| Endpoint | |
+|---|---|
+| `GET /api/users/me/liviere/push/` | `available`, `public_key`, workspaces with the projects one may choose (`selected`) |
+| `PUT .../push/projects/` | `{project_ids}` – the whole choice |
+| `POST`/`DELETE .../push/subscriptions/` | `{endpoint, keys: {p256dh, auth}}`; the same browser signed in with another account takes the subscription over |
+| `POST .../push/test/` | a test notification to my browsers (queued task) |
+
+**Web.** Profile settings → Notifications → *Push notifications* (hook in
+`components/settings/profile/content/pages/notifications/root.tsx`): *Enable in this browser* asks for the browser
+permission only on that click, then project switches, *Send a test* and *Turn off*. The service worker is registered
+with the scope `/liviere/push/`, so it controls no page and cannot clash with an app worker at `/` (the old unused
+`public/sw.js` is left alone). A click focuses a tab already showing the target or opens a new one.
+
+**Going back** to images without our code: nothing queues the task there; to stop pushes while staying on a fork
+image, remove one of the three variables.

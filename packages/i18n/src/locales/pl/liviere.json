@@ -141,6 +141,30 @@
         "done": "{count, plural, one {Oznaczono # element pracy jako przeczytany} few {Oznaczono # elementy pracy jako przeczytane} many {Oznaczono # elementów pracy jako przeczytane} other {Oznaczono # elementu pracy jako przeczytane}}",
         "error": "Nie udało się oznaczyć elementów pracy jako przeczytanych."
       }
+    },
+    "push": {
+      "heading": "Powiadomienia push",
+      "description": "Powiadomienie systemowe o nowych elementach pracy, które inni tworzą w wybranych projektach. Włącz je w każdej przeglądarce, w której chcesz je dostawać.",
+      "unavailable": "Powiadomienia push nie są dostępne na tym serwerze.",
+      "browser": {
+        "title": "Ta przeglądarka",
+        "loading": "Sprawdzanie przeglądarki…",
+        "unsupported": "Ta przeglądarka nie obsługuje powiadomień push.",
+        "denied": "Powiadomienia są zablokowane dla tej strony. Zezwól na nie w ustawieniach przeglądarki i odśwież stronę.",
+        "off": "Powiadomienia są wyłączone w tej przeglądarce.",
+        "on": "Powiadomienia są włączone w tej przeglądarce."
+      },
+      "enable": "Włącz w tej przeglądarce",
+      "disable": "Wyłącz",
+      "send_test": "Wyślij test",
+      "test_sent": "Wysłano powiadomienie testowe",
+      "projects": "Projekty w {workspace}",
+      "errors": {
+        "enable": "Nie udało się włączyć powiadomień w tej przeglądarce.",
+        "disable": "Nie udało się wyłączyć powiadomień w tej przeglądarce.",
+        "projects": "Nie udało się zapisać projektów.",
+        "test": "Nie udało się wysłać powiadomienia testowego."
+      }
     }
   }
 }

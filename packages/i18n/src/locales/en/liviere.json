@@ -141,6 +141,30 @@
         "done": "{count, plural, one {# work item marked as read} other {# work items marked as read}}",
         "error": "Could not mark the work items as read."
       }
+    },
+    "push": {
+      "heading": "Push notifications",
+      "description": "A system notification about new work items others create in the projects you choose. Turn them on in every browser where you want them.",
+      "unavailable": "Push notifications are not available on this server.",
+      "browser": {
+        "title": "This browser",
+        "loading": "Checking this browser…",
+        "unsupported": "This browser does not support push notifications.",
+        "denied": "Notifications are blocked for this site. Allow them in the browser settings, then reload the page.",
+        "off": "Notifications are off in this browser.",
+        "on": "Notifications are on in this browser."
+      },
+      "enable": "Enable in this browser",
+      "disable": "Turn off",
+      "send_test": "Send a test",
+      "test_sent": "Test notification sent",
+      "projects": "Projects in {workspace}",
+      "errors": {
+        "enable": "Could not turn on notifications in this browser.",
+        "disable": "Could not turn off notifications in this browser.",
+        "projects": "Could not save the projects.",
+        "test": "Could not send a test notification."
+      }
     }
   }
 }
