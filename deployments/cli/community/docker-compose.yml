@@ -71,6 +71,8 @@ x-app-env: &app-env
 services:
   web:
     image: makeplane/plane-frontend:${APP_RELEASE:-stable}
+    environment:
+      WEB_ASSET_RATE_LIMIT: ${WEB_ASSET_RATE_LIMIT:-300}
     deploy:
       replicas: ${WEB_REPLICAS:-1}
       restart_policy:
@@ -92,6 +94,8 @@ services:
 
   admin:
     image: makeplane/plane-admin:${APP_RELEASE:-stable}
+    environment:
+      ADMIN_ASSET_RATE_LIMIT: ${ADMIN_ASSET_RATE_LIMIT:-300}
     deploy:
       replicas: ${ADMIN_REPLICAS:-1}
       restart_policy:

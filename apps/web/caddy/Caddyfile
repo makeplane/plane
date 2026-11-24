@@ -9,11 +9,12 @@
 :3000 {
 	root * /usr/share/caddy/html
 
-	# Per-client-IP rate limiting for static asset requests
+	# Per-client-IP rate limiting for static asset requests.
+	# WEB_ASSET_RATE_LIMIT sets the requests allowed per client IP per minute (default 300).
 	rate_limit {
 		zone static {
 			key {client_ip}
-			events 300
+			events {$WEB_ASSET_RATE_LIMIT:300}
 			window 1m
 		}
 	}
