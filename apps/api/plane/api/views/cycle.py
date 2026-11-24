@@ -48,6 +48,7 @@ from plane.db.models import (
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.order_queryset import CYCLE_ORDER_BY_ALLOWLIST, ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.host import base_host
+from plane.utils.pql import apply_pql
 from .base import BaseAPIView
 from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
@@ -59,6 +60,7 @@ from plane.utils.openapi import (
     ORDER_BY_PARAMETER,
     FIELDS_PARAMETER,
     EXPAND_PARAMETER,
+    PQL_PARAMETER,
     create_paginated_response,
     # Request Examples
     CYCLE_CREATE_EXAMPLE,
@@ -76,6 +78,7 @@ from plane.utils.openapi import (
     CYCLE_CANNOT_ARCHIVE_RESPONSE,
     UNARCHIVED_RESPONSE,
     REQUIRED_FIELDS_RESPONSE,
+    INVALID_REQUEST_RESPONSE,
 )
 
 
@@ -878,7 +881,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         operation_id="list_cycle_work_items",
         summary="List cycle work items",
         description="Retrieve all work items assigned to a cycle.",
-        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER],
+        parameters=[CURSOR_PARAMETER, PER_PAGE_PARAMETER, PQL_PARAMETER],
         request={},
         responses={
             200: create_paginated_response(
@@ -887,6 +890,7 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
                 "Paginated list of cycle work items",
                 "Paginated Cycle Work Items",
             ),
+            400: INVALID_REQUEST_RESPONSE,
         },
     )
     def get(self, request, slug, project_id, cycle_id):
@@ -936,6 +940,10 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         # only see work items they created -- mirrors IssueDetailEndpoint.get.
         if is_restricted_guest(request.user.id, project_id, slug):
             issues = issues.filter(created_by=request.user)
+
+        issues = apply_pql(issues, request, slug, project_id)
+        if isinstance(issues, Response):
+            return issues
 
         return self.paginate(
             request=request,
