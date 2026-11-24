@@ -311,7 +311,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                     requested_data=None,
                     actor_id=str(self.request.user.id),
                     issue_id=None,
-                    project_id=str(self.kwargs.get("project_id", None)),
+                    project_id=str(draft_issue.project_id),
                     current_instance=json.dumps(
                         {
                             "updated_cycle_issues": None,
