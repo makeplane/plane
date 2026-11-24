@@ -8,13 +8,14 @@ import os
 
 from .common import *  # noqa
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "1") == "1"
 
-# Debug Toolbar settings
-INSTALLED_APPS += ("debug_toolbar",)  # noqa
-MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
+# Debug Toolbar settings (set DEBUG=0 to skip its per-request SQL/panel instrumentation)
+if DEBUG:
+    INSTALLED_APPS += ("debug_toolbar",)  # noqa
+    MIDDLEWARE += ("debug_toolbar.middleware.DebugToolbarMiddleware",)  # noqa
 
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 # Only show emails in console don't send it to smtp
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")

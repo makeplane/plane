@@ -2,6 +2,13 @@
   "module": {
     "label": "{count, plural, one {Modul} few {Moduly} other {Modulů}}",
     "no_module": "Žádný modul",
-    "select": "Přidat moduly"
+    "select": "Přidat moduly",
+    "details_drawer": {
+      "progress": {
+        "done": "Hotovo {completed} z {scope, plural, one {# pracovní položky} few {# pracovních položek} many {# pracovní položky} other {# pracovních položek}}",
+        "points_done": "Hotovo {completed} z {scope, plural, one {# bodu} few {# bodů} many {# bodu} other {# bodů}}",
+        "empty": "Přidejte do modulu pracovní položky a sledujte průběh."
+      }
+    }
   }
 }

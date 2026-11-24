@@ -66,12 +66,16 @@ class ProjectMemberPermission(BasePermission):
                 project_id=view.project_id,
                 is_active=True,
             ).exists()
-        ## Only workspace owners or admins can create the projects
+        # Scope POST to the URL project, as the other two branches already do.
+        # A workspace-only check would let any member create sub-resources in a
+        # project they do not belong to. Kept identical to the copy in
+        # app/permissions/project.py — the two must not drift.
         if request.method == "POST":
-            return WorkspaceMember.objects.filter(
+            return ProjectMember.objects.filter(
                 workspace__slug=view.workspace_slug,
                 member=request.user,
                 role__in=[ROLE.ADMIN.value, ROLE.MEMBER.value],
+                project_id=view.project_id,
                 is_active=True,
             ).exists()
 
@@ -124,13 +128,25 @@ class ProjectAdminPermission(BasePermission):
         if request.user.is_anonymous:
             return False
 
-        return ProjectMember.objects.filter(
+        project_member_qs = ProjectMember.objects.filter(
             workspace__slug=view.workspace_slug,
             member=request.user,
-            role=ROLE.ADMIN.value,
             project_id=view.project_id,
             is_active=True,
-        ).exists()
+        )
+        if project_member_qs.filter(role=ROLE.ADMIN.value).exists():
+            return True
+
+        # Same as allow_permission: a workspace admin who is a project member at any role counts as admin.
+        return (
+            project_member_qs.exists()
+            and WorkspaceMember.objects.filter(
+                member=request.user,
+                workspace__slug=view.workspace_slug,
+                role=ROLE.ADMIN.value,
+                is_active=True,
+            ).exists()
+        )
 
 
 class ProjectLitePermission(BasePermission):

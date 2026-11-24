@@ -20,8 +20,8 @@ On the server: `PLANE_IMAGE_REPO=ghcr.io/liviere` and `APP_RELEASE=<tag>` in `pl
 
 ```sh
 git fetch upstream --tags
-git switch liviere && git merge v1.4.3   # an official tag, not preview
-git tag v1.4.3-liviere.0 && git push origin liviere v1.4.3-liviere.0
+git switch liviere && git merge v1.5.0   # an official tag, not preview
+git tag v1.5.0-liviere.1 && git push origin liviere v1.5.0-liviere.1
 ```
 
 Never merge `preview` – it carries database migrations that releases do not have yet.
@@ -32,13 +32,17 @@ Never merge `preview` – it carries database migrations that releases do not ha
   migrations. Do not add files to `apps/api/plane/db/migrations/` (numbering clashes with upstream). Instead of
   altering official tables, add separate tables linked 1:1 or by a foreign key.
 - **Our code** goes to `liviere` directories next to the official code (`apps/api/plane/liviere/`,
-  `apps/live/src/liviere/`, `apps/web/core/liviere/`); official files only get hook points (a few lines, marked
-  `Liviere/plane fork`). Upstream removed the `apps/web/ce/` layer in v1.4 (#9245); its leftover stubs in
-  `core/` (e.g. `core/store/pages/extended-base-page.ts`, `packages/types/src/page/extended.ts`) are the
-  intended extension points.
+  `apps/live/src/liviere/`, `apps/web/liviere/`); official files only get hook points (a few lines, marked
+  `Liviere/plane fork`). Upstream removed the `apps/web/ce/` layer in v1.4 (#9245) and flattened
+  `apps/web/core/` into `apps/web/` in v1.5 (`@/*` points at the app root); the leftover stubs (e.g.
+  `apps/web/store/pages/extended-base-page.ts`, `packages/types/src/page/extended.ts`) are the intended
+  extension points.
 - Our app `plane.liviere` (`apps.py`, registered in `INSTALLED_APPS`) holds our models, migrations
   (`plane/liviere/migrations/`), signals and Celery tasks (`plane/liviere/tasks.py`, found by autodiscovery).
   Periodic tasks are scheduled by `django_celery_beat` rows created in our migrations, not in `plane/celery.py`.
+- Since v1.5 upstream's `makemigrations` also rewrites `apps/api/migrations_lockfile.txt` (latest migration per
+  app) and `makemigrations --check` fails when it does not match; commit our `liviere: <migration>` line with
+  every new migration of ours. It sorts last in the file, so upstream changes to the `db:` line do not conflict.
 - Going back to the official images: our migrations only add tables, which the official code ignores, so a
   change of `PLANE_IMAGE_REPO`/`APP_RELEASE` still works; disable our periodic tasks first (see the feature
   sections). Removing our tables needs `manage.py migrate liviere zero` on a fork image.
@@ -47,8 +51,8 @@ Never merge `preview` – it carries database migrations that releases do not ha
 ## Project pages API (`/api/v1/.../projects/{id}/pages/`)
 
 Our code is in `apps/api/plane/liviere/` (`api/` public API, `app/` app endpoints, `live_client.py`),
-`apps/live/src/liviere/` and `apps/web/core/liviere/`. Tests: `apps/api/plane/tests/contract/api/test_pages.py`,
-`apps/live/tests/liviere/`; compatibility check against `plane-sdk==0.3.1`:
+`apps/live/src/liviere/` and `apps/web/liviere/`. Tests: `apps/api/plane/tests/contract/api/test_pages.py`,
+`apps/live/tests/liviere/` (`redis-publish.test.ts` needs a Redis: `TEST_REDIS_URL=redis://…`); compatibility check against `plane-sdk==0.3.1`:
 `apps/api/plane/liviere/scripts/sdk_pages_smoke.py`. The contract follows the SDK: list, retrieve, create,
 `PUT`/`PATCH` (both partial), `POST`/`DELETE .../archive/`, `DELETE` (archived pages only).
 Permissions are the same as in the UI (`ProjectPagePermission`).
@@ -95,7 +99,7 @@ and the rest of today is dimmed; the page moves both on every quarter, without a
 
 Code: `apps/api/plane/liviere/activity/` (catalog, recording, queries), `liviere/models.py`
 (`ActivityEvent`, `ProjectActivitySettings`), `liviere/app/activity.py` and `liviere/api/activity.py`
-(endpoints), `apps/web/core/liviere/activity/` (page, settings, sidebar item), i18n namespace `liviere`
+(endpoints), `apps/web/liviere/activity/` (page, settings, sidebar item), i18n namespace `liviere`
 (`packages/i18n/src/locales/*/liviere.json`; only `en` and `pl` are translated). Tests:
 `apps/api/plane/tests/contract/api/test_activity.py`.
 

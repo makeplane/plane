@@ -1,6 +1,8 @@
 # Django 4.2 → 5.2 Migration Plan (`apps/api`)
 
-> **Status:** ✅ Executed & verified on branch `chore/django-5.2-upgrade` · **Target:** Django **5.2.15 LTS** from **4.2.30 LTS**
+> **Status:** ✅ Done. Merged in #9325 (Django **5.2.15 LTS** from **4.2.30 LTS**); `pyproject.toml` now pins Django 5.2.17, DRF 3.18.3 and psycopg 3.3.4.
+>
+> **Historical record.** This plan predates the move to uv (#9950). References below to `requirements/*.txt`, `pip install` and "no lockfile" describe the old setup: dependencies now live in `apps/api/pyproject.toml` and `apps/api/uv.lock` (see `AGENTS.md`), and backend tests run with `docker-compose-test.yml` (see `apps/api/tests/RUNNING_TESTS.md`). Line numbers cited below may have moved.
 > **Scope:** `apps/api` (the only Django service in the monorepo) · **Strategy:** single coordinated PR, direct 4.2 → 5.2 jump · **Dependency policy:** opportunistic (latest stable, with evidence-based safe overrides)
 
 ---

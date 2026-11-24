@@ -15,7 +15,7 @@ export const NAMESPACES = [
   "home",
   "inbox",
   "integration",
-  "liviere", // Liviere/plane fork (apps/web/core/liviere)
+  "liviere", // Liviere/plane fork (apps/web/liviere)
   "module",
   "navigation",
   "notification",

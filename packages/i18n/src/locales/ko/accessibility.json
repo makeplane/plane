@@ -1,6 +1,9 @@
 {
   "aria_labels": {
     "projects_sidebar": {
+      "main_sidebar": "기본 사이드바",
+      "resize_sidebar": "사이드바 크기 조절",
+      "sidebar_peek_view": "사이드바 미리보기",
       "workspace_logo": "워크스페이스 로고",
       "open_workspace_switcher": "워크스페이스 전환기 열기",
       "open_user_menu": "사용자 메뉴 열기",
@@ -29,6 +32,28 @@
       "hide_password": "비밀번호 숨기기",
       "close_alert": "알림 닫기",
       "close_popover": "팝오버 닫기"
+    },
+    "breadcrumb": {
+      "trail": "탐색 경로",
+      "show_more": "탐색 경로 더 보기"
+    },
+    "common": {
+      "more_actions": "추가 작업",
+      "remove": "제거"
+    },
+    "color_picker": {
+      "open": "색상 선택기 열기",
+      "swatches": "기본 색상",
+      "hex_input": "16진수 색상"
+    },
+    "project_board": {
+      "collapse_group": "그룹 접기"
+    },
+    "pagination": {
+      "root": "페이지 탐색",
+      "previous_page": "이전 페이지로 이동",
+      "next_page": "다음 페이지로 이동",
+      "go_to_page": "{page}페이지로 이동"
     }
   }
 }

@@ -4,6 +4,8 @@
 
 This guide explains the semantic design system philosophy for building consistent, maintainable UIs. The system is built on three core concepts: **Canvas**, **Surface**, and **Layer**.
 
+The tokens behind these classes come from the published `@makeplane/propel` package: `packages/tailwind-config/index.css` imports `@makeplane/propel/styles`, which defines the colors. This package only wires them into Tailwind.
+
 ## Core Concepts
 
 ### 1. Canvas (`bg-canvas`)
@@ -29,14 +31,9 @@ This guide explains the semantic design system philosophy for building consisten
 **Example**:
 
 ```tsx
-// ✅ Correct: Canvas at application root (only place it should be)
-// App.tsx or root layout
-<div className="bg-canvas min-h-screen">
-  {/* All application content goes here */}
-  <Routes>
-    <Route path="/" element={<Page />} />
-  </Routes>
-</div>;
+// ✅ Correct: Canvas is already applied once, to <body>, by @plane/tailwind-config/index.css:
+//   body { @apply font-body bg-canvas text-primary; }
+// Don't add bg-canvas anywhere else (root.tsx, layouts, pages).
 
 // ✅ Correct: Pages use surfaces, not canvas
 function Page() {
@@ -52,7 +49,7 @@ function Page() {
 <div className="bg-canvas p-4 rounded-md">{/* Card content */}</div>;
 ```
 
-### 2. Surface (`bg-surface-1`, `bg-surface-2`, `bg-surface-3`)
+### 2. Surface (`bg-surface-1`, `bg-surface-2`)
 
 **What it is**: Top-level containers that sit directly on the canvas. Surfaces never overlap each other - they are siblings in the layout hierarchy.
 
@@ -67,7 +64,6 @@ function Page() {
 
 - `bg-surface-1`: Primary surface (most common)
 - `bg-surface-2`: Secondary surface (for variation)
-- `bg-surface-3`: Tertiary surface (rare, for special cases)
 
 **Rules**:
 
@@ -152,7 +148,6 @@ function Page() {
 
 - `bg-surface-1` → use `bg-layer-1` for nested elements
 - `bg-surface-2` → use `bg-layer-2` for nested elements
-- `bg-surface-3` → use `bg-layer-3` for nested elements
 
 **Rare Exception - Visual Separation**:
 
@@ -303,14 +298,8 @@ Use `-selected` variants only when there's actual selection logic.
 ### Pattern 1: Application Root Layout
 
 ```tsx
-// ✅ Correct: Application root (only place for canvas)
-// App.tsx or root layout
-<div className="bg-canvas min-h-screen">
-  <Routes>
-    <Route path="/" element={<HomePage />} />
-    <Route path="/dashboard" element={<DashboardPage />} />
-  </Routes>
-</div>;
+// ✅ Correct: Application root - canvas comes from <body> (index.css), so the
+// root layout (app/root.tsx) and route modules add no background of their own
 
 // ✅ Correct: Individual page structure
 function HomePage() {
@@ -449,7 +438,7 @@ AND
 Is it a sibling to other containers (not nested)?
 OR
 Is this a modal/overlay on a different plane (z-index)?
-├─ YES → Use bg-surface-1 (or surface-2/3 for variation)
+├─ YES → Use bg-surface-1 (or surface-2 for variation)
 └─ NO → Continue to Layer decision
 ```
 
@@ -625,7 +614,7 @@ function Page() {
 ### Hierarchy Structure
 
 ```
-Canvas (one per page)
+Canvas (one per application, on <body>)
   └── Surface 1 (top-level container)
       └── Layer 1 (first level of depth)
           └── Layer 2 (second level)

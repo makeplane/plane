@@ -61,5 +61,8 @@
       "use_this": "使用此項",
       "refine": "精煉"
     }
+  },
+  "formatting_toolbar": {
+    "label": "格式設定"
   }
 }

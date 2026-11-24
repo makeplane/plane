@@ -61,5 +61,8 @@
       "use_this": "Folosește aceasta",
       "refine": "Rafinează"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Formatare"
   }
 }

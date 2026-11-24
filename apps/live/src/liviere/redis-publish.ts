@@ -23,5 +23,5 @@ export const publishDocumentUpdate = async (
   // Same private helpers the extension uses for its own sync messages (see broadcastToDocument)
   const channel = redis["pubKey"](documentName) as string;
   const payload = redis["encodeMessage"](message.toUint8Array()) as Buffer;
-  return redis["pub"].publishBuffer(channel, payload);
+  return redis["pub"].publish(channel, payload);
 };

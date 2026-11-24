@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "Вашите Stickies",
+    "placeholder": "щракнете, за да пишете тук",
+    "all": "Всички Stickies",
+    "no-data": "Запишете идея, мимолетно хрумване или внезапно прозрение. Добавете Sticky, за да започнете.",
+    "add": "Добави Sticky",
+    "search_placeholder": "Търсене по заглавие",
+    "delete": "Изтрий Sticky",
+    "delete_confirmation": "Сигурни ли сте, че искате да изтриете този Sticky?",
+    "empty_state": {
+      "simple": "Запишете идея, мимолетно хрумване или внезапно прозрение. Добавете Sticky, за да започнете.",
+      "general": {
+        "title": "Stickies са бързи бележки и задачи, които записвате в движение.",
+        "description": "Улавяйте мислите и идеите си без усилие, като създавате Stickies, до които имате достъп по всяко време и отвсякъде.",
+        "primary_button": {
+          "text": "Добави Sticky"
+        }
+      },
+      "search": {
+        "title": "Това не съвпада с нито един от вашите Stickies.",
+        "description": "Опитайте с друг термин или ни уведомете,\nако сте сигурни, че търсенето ви е правилно. ",
+        "primary_button": {
+          "text": "Добави Sticky"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "Името на Sticky не може да е по-дълго от 100 знака.",
+        "already_exists": "Вече съществува Sticky без описание"
+      },
+      "created": {
+        "title": "Sticky е създаден",
+        "message": "Sticky е създаден успешно"
+      },
+      "not_created": {
+        "title": "Sticky не е създаден",
+        "message": "Sticky не можа да бъде създаден"
+      },
+      "updated": {
+        "title": "Sticky е актуализиран",
+        "message": "Sticky е актуализиран успешно"
+      },
+      "not_updated": {
+        "title": "Sticky не е актуализиран",
+        "message": "Sticky не можа да бъде актуализиран"
+      },
+      "removed": {
+        "title": "Sticky е премахнат",
+        "message": "Sticky е премахнат успешно"
+      },
+      "not_removed": {
+        "title": "Sticky не е премахнат",
+        "message": "Sticky не можа да бъде премахнат"
+      }
+    }
+  }
+}

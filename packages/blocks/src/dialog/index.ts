@@ -1,0 +1,10 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+export { ConfirmDialog } from "./confirm-dialog";
+export type { ConfirmDialogProps, TConfirmDialogVariant } from "./confirm-dialog";
+export { TypeToConfirmDialog } from "./type-to-confirm-dialog";
+export type { TTypeToConfirmField, TypeToConfirmDialogProps } from "./type-to-confirm-dialog";

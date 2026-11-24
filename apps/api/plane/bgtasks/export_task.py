@@ -16,9 +16,10 @@ from celery import shared_task
 # Django imports
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 # Module imports
+from plane.app.permissions import ROLE
 from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
 from plane.utils.exception_logger import log_exception
 from plane.utils.porters.exporter import DataExporter
@@ -144,13 +145,18 @@ def issue_export_task(
         exporter_instance.status = "processing"
         exporter_instance.save(update_fields=["status"])
 
-        # Build base queryset for issues
+        # Build base queryset for issues; guests on projects without
+        # guest_view_all_features only get the issues they created.
         workspace_issues = (
             Issue.objects.filter(
+                Q(project__project_projectmember__role__gt=ROLE.GUEST.value)
+                | Q(project__guest_view_all_features=True)
+                | Q(created_by_id=exporter_instance.initiated_by_id),
                 workspace__id=workspace_id,
                 project_id__in=project_ids,
                 project__project_projectmember__member=exporter_instance.initiated_by_id,
                 project__project_projectmember__is_active=True,
+                project__project_projectmember__deleted_at__isnull=True,
                 project__archived_at__isnull=True,
             )
             .select_related(

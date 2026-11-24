@@ -10,7 +10,7 @@ import { useParams } from "next/navigation";
 // plane imports
 import { EIssueFilterType, ISSUE_DISPLAY_FILTERS_BY_PAGE } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { ChevronDownIcon } from "@plane/propel/icons";
+import { ChevronDownOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 // components
@@ -73,14 +73,14 @@ export const ProjectIssuesMobileHeader = observer(function ProjectIssuesMobileHe
           layouts={[EIssueLayoutTypes.LIST, EIssueLayoutTypes.KANBAN, EIssueLayoutTypes.CALENDAR]}
           onChange={handleLayoutChange}
         />
-        <div className="flex flex-grow items-center justify-center border-l border-subtle text-13 text-secondary">
+        <div className="flex flex-grow items-center justify-center border-l border-subtle text-body-xs-regular text-secondary">
           <FiltersDropdown
             title={t("common.display")}
             placement="bottom-end"
             menuButton={
-              <span className="flex items-center text-13 text-secondary">
+              <span className="flex items-center text-body-xs-regular text-secondary">
                 {t("common.display")}
-                <ChevronDownIcon className="ml-2 h-4 w-4 text-secondary" />
+                <ChevronDownOutline className="ml-2 h-4 w-4 text-secondary" />
               </span>
             }
           >
@@ -100,7 +100,7 @@ export const ProjectIssuesMobileHeader = observer(function ProjectIssuesMobileHe
 
         <button
           onClick={() => setAnalyticsModal(true)}
-          className="flex flex-grow justify-center border-l border-subtle text-13 text-secondary"
+          className="flex flex-grow justify-center border-l border-subtle text-body-xs-regular text-secondary"
         >
           {t("common.analytics")}
         </button>

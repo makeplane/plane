@@ -54,6 +54,18 @@ class WebhookSerializer(DynamicBaseSerializer):
         if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):
             raise serializers.ValidationError({"url": "URL domain or its subdomain is not allowed."})
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        # secret_key is the HMAC signing secret. It is only revealed on creation
+        # and secret regeneration (opt-in via the show_secret_key context flag),
+        # never on list/retrieve/update.
+        #
+        # This context flag is the enforcement point for secret_key; the fields=
+        # allowlists in views/webhook/base.py are defence in depth.
+        if not self.context.get("show_secret_key"):
+            data.pop("secret_key", None)
+        return data
+
     def create(self, validated_data):
         url = validated_data.get("url", None)
         self._validate_webhook_url(url)

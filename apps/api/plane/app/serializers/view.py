@@ -59,6 +59,7 @@ class IssueViewSerializer(DynamicBaseSerializer):
     class Meta:
         model = IssueView
         fields = "__all__"
+        # Audit fields are set server-side by BaseModel.save().
         read_only_fields = [
             "workspace",
             "project",
@@ -66,6 +67,8 @@ class IssueViewSerializer(DynamicBaseSerializer):
             "owned_by",
             "access",
             "is_locked",
+            "created_by",
+            "updated_by",
         ]
 
     def create(self, validated_data):

@@ -31,7 +31,7 @@ urlpatterns = [
     ),
     path(
         "workspaces/file-assets/<uuid:workspace_id>/<str:asset_key>/",
-        FileAssetEndpoint.as_view(),
+        FileAssetEndpoint.as_view(http_method_names=["get", "delete", "head", "options"]),
         name="file-assets",
     ),
     path("users/file-assets/", UserAssetsEndpoint.as_view(), name="user-file-assets"),

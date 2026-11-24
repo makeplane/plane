@@ -55,7 +55,7 @@ export class LivierePageEditController {
   async edit(req: Request, res: Response) {
     const parsed = editSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(400).json({ message: "Validation error", errors: parsed.error.errors });
+      return res.status(400).json({ message: "Validation error", errors: parsed.error.issues });
     }
     const { page_id: pageId, description_binary, description_html, name } = parsed.data;
     const edit = { descriptionHtml: description_html, name };
@@ -87,7 +87,7 @@ export class LivierePageEditController {
   async publish(req: Request, res: Response) {
     const parsed = publishSchema.safeParse(req.body);
     if (!parsed.success) {
-      return res.status(400).json({ message: "Validation error", errors: parsed.error.errors });
+      return res.status(400).json({ message: "Validation error", errors: parsed.error.issues });
     }
     const { page_id: pageId } = parsed.data;
     const update = Buffer.from(parsed.data.update, "base64");

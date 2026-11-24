@@ -127,7 +127,9 @@ export const getFileMetaDataForUpload = async (file: File): Promise<TFileMetaDat
  * @returns {string} assetId
  */
 export const getAssetIdFromUrl = (src: string): string => {
-  const sourcePaths = src.split("/");
+  // drop query string / hash so they don't leak into the asset key
+  // also drop a trailing slash (legacy URLs end in /<key>/)
+  const sourcePaths = src.split(/[?#]/, 1)[0].replace(/\/$/, "").split("/");
   const assetUrl = sourcePaths[sourcePaths.length - 1];
   return assetUrl ?? "";
 };

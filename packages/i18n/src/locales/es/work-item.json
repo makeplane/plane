@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Elemento de trabajo} other {Elementos de trabajo}}",
     "all": "Todos los elementos de trabajo",
     "edit": "Editar elemento de trabajo",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# propiedad más} other {# propiedades más}}",
+      "label_overflow_indicator": "{count, plural, one {+# etiqueta} other {+# etiquetas}}"
+    },
     "title": {
       "label": "Título del elemento de trabajo",
       "required": "El título del elemento de trabajo es obligatorio."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Ver otros elementos de trabajo"
         }
+      },
+      "no_access": {
+        "title": "No tienes acceso a este elemento de trabajo",
+        "description": "Contacta con un administrador del proyecto para solicitar acceso."
       }
     },
     "sibling": {
@@ -172,7 +180,9 @@
       },
       "failed": {
         "message": "No se pudo archivar el elemento de trabajo. Por favor, inténtalo de nuevo."
-      }
+      },
+      "banner_message": "Este elemento de trabajo ha sido archivado. Visite la sección Archivos para restaurarlo.",
+      "go_to_archives": "Ir a archivos"
     },
     "restore": {
       "success": {
@@ -183,6 +193,10 @@
         "message": "No se pudo restaurar el elemento de trabajo. Por favor, inténtalo de nuevo."
       }
     },
+    "archived_banner": "Este elemento de trabajo está archivado. Restáurelo para hacer cambios.",
+    "updated_time_ago": "Actualizado {time}",
+    "description_load_failed": "No se pudo cargar la descripción.",
+    "assignee_count": "{count, plural, one {# asignado} other {# asignados}}",
     "relation": {
       "relates_to": "Se relaciona con",
       "duplicate": "Duplicado de",
@@ -265,7 +279,12 @@
       "click_to_upvote": "Haz clic para votar a favor",
       "click_to_downvote": "Haz clic para votar en contra",
       "click_to_view_upvotes": "Haz clic para ver los votos a favor",
-      "click_to_view_downvotes": "Haz clic para ver los votos en contra"
+      "click_to_view_downvotes": "Haz clic para ver los votos en contra",
+      "title": "Votos",
+      "upvotes_count": "{count, plural, one {# voto a favor} other {# votos a favor}}",
+      "downvotes_count": "{count, plural, one {# voto en contra} other {# votos en contra}}",
+      "no_upvotes": "Aún no hay votos a favor",
+      "no_downvotes": "Aún no hay votos en contra"
     }
   },
   "sub_work_item": {
@@ -326,6 +345,10 @@
         "title": "No se pueden actualizar elementos de trabajo",
         "message": "El cambio de estado no está permitido para algunos elementos de trabajo. Asegúrese de que el cambio de estado esté permitido."
       }
+    },
+    "upgrade_banner": {
+      "message": "Cambie el estado, la prioridad y más para varios elementos de trabajo a la vez. Ahorre en promedio tres minutos por operación.",
+      "cta": "Actualizar a One"
     }
   },
   "recurring_work_items": {
