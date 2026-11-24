@@ -26,6 +26,7 @@ import { usePlatformOS } from "@/hooks/use-platform-os";
 // types
 import { HIGHLIGHT_CLASS, getIssueBlockId, isIssueNew } from "../utils";
 import { IssueBlock } from "./block";
+import { isIssueBlockExpanded } from "./expanded-issues-storage";
 import type { TRenderQuickActions } from "./list-view-types";
 
 type Props = {
@@ -69,7 +70,11 @@ export const IssueBlockRoot = observer(function IssueBlockRoot(props: Props) {
     isEpic = false,
   } = props;
   // states
-  const [isExpanded, setExpanded] = useState<boolean>(false);
+  // rows that were left expanded are restored from local storage; their sub-work items are fetched by `IssueBlock`
+  // once the row is rendered (visible) so a refresh does not request the children of every expanded row at once
+  const [isExpanded, setExpanded] = useState<boolean>(
+    () => !isEpic && nestingLevel < 3 && isIssueBlockExpanded(getIssueBlockId(issueId, groupId))
+  );
   const [instruction, setInstruction] = useState<"DRAG_OVER" | "DRAG_BELOW" | undefined>(undefined);
   const [isCurrentBlockDragging, setIsCurrentBlockDragging] = useState(false);
   // ref

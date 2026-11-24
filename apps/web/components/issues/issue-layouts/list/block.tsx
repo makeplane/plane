@@ -31,7 +31,8 @@ import { useProject } from "@/hooks/store/use-project";
 import { useListRowPropertiesBudget } from "@/hooks/use-list-row-properties-budget";
 import type { TSelectionHelper } from "@/hooks/use-multiple-select";
 import { usePlatformOS } from "@/hooks/use-platform-os";
-import { calculateIdentifierWidth } from "../utils";
+import { calculateIdentifierWidth, getIssueBlockId } from "../utils";
+import { persistIssueBlockExpandedState } from "./expanded-issues-storage";
 import type { TRenderQuickActions } from "./list-view-types";
 
 interface IssueBlockProps {
@@ -135,6 +136,16 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     );
   }, [isDraggingAllowed, issueId, groupId, setIsCurrentBlockDragging]);
 
+  // A row restored as expanded after a refresh loads its sub-work items here, not in `IssueBlockRoot`, because this
+  // component only mounts once the row is rendered. That way only the visible rows send a request, and rows that
+  // already have their sub-work items loaded (e.g. scrolled back into view) send none.
+  useEffect(() => {
+    if (!isExpanded || !workspaceSlug || !issue?.project_id || subIssuesCount === 0) return;
+    if (subIssuesStore.subIssuesByIssueId(issue.id)) return;
+    void subIssuesStore.fetchSubIssues(workspaceSlug, issue.project_id, issue.id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (!issue) return null;
 
   const projectIdentifier = getProjectIdentifierById(issue.project_id);
@@ -151,11 +162,11 @@ export const IssueBlock = observer(function IssueBlock(props: IssueBlockProps) {
     if (nestingLevel >= 3) {
       handleIssuePeekOverview(issue);
     } else {
-      setExpanded((prevState) => {
-        if (!prevState && workspaceSlug && issue && issue.project_id)
-          subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
-        return !prevState;
-      });
+      const nextState = !isExpanded;
+      if (nextState && workspaceSlug && issue && issue.project_id)
+        subIssuesStore.fetchSubIssues(workspaceSlug.toString(), issue.project_id, issue.id);
+      persistIssueBlockExpandedState(getIssueBlockId(issue.id, groupId), nextState);
+      setExpanded(nextState);
     }
   };
 
