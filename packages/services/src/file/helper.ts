@@ -82,6 +82,29 @@ const detectMimeTypeFromSignature = async (file: File): Promise<string> => {
 };
 
 /**
+ * Plain-text formats have no file signature, so signature detection can't identify them.
+ * Only inert text types are listed here; anything that can carry script (html, svg, js, xml) is left out.
+ */
+const SIGNATURELESS_TEXT_MIME_TYPES: Record<string, string> = {
+  txt: "text/plain",
+  log: "text/plain",
+  md: "text/markdown",
+  markdown: "text/markdown",
+  csv: "text/csv",
+  json: "application/json",
+};
+
+/**
+ * @description Detect the MIME type of a signature-less text file from its extension
+ * @param {string} filename
+ * @returns {string} MIME type or empty string if the extension is not a known text format
+ */
+const detectTextMimeTypeFromExtension = (filename: string): string => {
+  const extension = filename.split(".").pop()?.toLowerCase() ?? "";
+  return SIGNATURELESS_TEXT_MIME_TYPES[extension] ?? "";
+};
+
+/**
  * @description Validate and detect the MIME type of a file using signature detection
  * Also performs basic security checks on filename
  * @param {File} file
@@ -103,8 +126,8 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     console.warn("Error detecting file type from signature:", _error);
   }
 
-  // fallback for unknown files
-  return "";
+  // fallback for signature-less text files, empty for anything else
+  return detectTextMimeTypeFromExtension(file.name);
 };
 
 /**
