@@ -52,6 +52,7 @@ from .base import BaseAPIView
 from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.openapi.decorators import cycle_docs
+from plane.utils.external_id import external_pair_taken
 from plane.utils.openapi import (
     CURSOR_PARAMETER,
     PER_PAGE_PARAMETER,
@@ -572,15 +573,8 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             cycle, data=request.data, partial=True, context={"request": request, "project_id": project_id}
         )
         if serializer.is_valid():
-            if (
-                request.data.get("external_id")
-                and (cycle.external_id != request.data.get("external_id"))
-                and Cycle.objects.filter(
-                    project_id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source", cycle.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
+            if external_pair_taken(
+                Cycle.objects.filter(project_id=project_id, workspace__slug=slug), cycle, request.data
             ):
                 return Response(
                     {

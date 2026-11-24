@@ -16,6 +16,7 @@ from plane.api.serializers import StateSerializer
 from plane.app.permissions import ProjectAdminPermission, ProjectEntityPermission
 from plane.db.models import Issue, State
 from .base import BaseAPIView
+from plane.utils.external_id import external_pair_taken
 from plane.utils.openapi import (
     state_docs,
     STATE_ID_PARAMETER,
@@ -289,15 +290,8 @@ class StateDetailAPIEndpoint(BaseAPIView):
         state = State.objects.get(workspace__slug=slug, project_id=project_id, pk=state_id)
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
-            if (
-                request.data.get("external_id")
-                and (state.external_id != str(request.data.get("external_id")))
-                and State.objects.filter(
-                    project_id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source", state.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
+            if external_pair_taken(
+                State.objects.filter(project_id=project_id, workspace__slug=slug), state, request.data
             ):
                 return Response(
                     {
