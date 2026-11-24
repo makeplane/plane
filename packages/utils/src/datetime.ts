@@ -593,3 +593,18 @@ export const formatDuration = (seconds: number | undefined | null): string => {
  */
 export const isValidDate = (date: unknown): date is string | Date =>
   (typeof date === "string" || typeof date === "object") && date !== null && !isNaN(Date.parse(date as string));
+
+/**
+ * Resolves the timezone used to display "now" to the current user.
+ * Order: the user's profile timezone, then the workspace timezone, then the browser's timezone.
+ * Both saved timezones default to "UTC" for users and workspaces that never picked one, so "UTC" is treated as "not set".
+ * A person who really is in UTC gets the same result from the browser fallback.
+ * @param userTimezone The timezone saved on the user's profile
+ * @param workspaceTimezone The timezone saved on the workspace
+ * @returns An IANA timezone name
+ */
+export const resolveDisplayTimezone = (userTimezone?: string | null, workspaceTimezone?: string | null): string => {
+  if (userTimezone && userTimezone !== "UTC") return userTimezone;
+  if (workspaceTimezone && workspaceTimezone !== "UTC") return workspaceTimezone;
+  return Intl.DateTimeFormat().resolvedOptions().timeZone;
+};
