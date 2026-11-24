@@ -7,10 +7,10 @@
 # Recipients: people who chose the project for push (PushProject), except the author, who are active members
 # allowed to see others' work items (same rules as "New", plane/liviere/unread/queries.py).
 # A series of work items (an agent creating a parent with sub-items) gives one notification per project: the
-# tag is per project, so a newer notification replaces the older one (no `renotify`, so the replacement is
-# silent while the previous one is still shown). The title counts the recipient's new work items of the project
-# at sending time; with one it names the work item and a click opens it, with more a click opens "New"
-# filtered to the project.
+# tag is per project, so a newer notification replaces the older one (no `renotify`: by the Notifications API the
+# replacement does not alert again while the previous one is still shown). The title counts the recipient's
+# new work items of the project at sending time; with one it names the work item and a click opens it, with
+# more a click opens "New" filtered to the project.
 
 # Python imports
 import logging

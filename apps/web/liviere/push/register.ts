@@ -34,8 +34,9 @@ const activeWorker = (registration: ServiceWorkerRegistration) =>
   new Promise<void>((resolve) => {
     const worker = registration.installing ?? registration.waiting;
     if (registration.active || !worker) return resolve();
+    // "redundant": the installation failed; subscribe() then rejects and the caller shows an error
     worker.addEventListener("statechange", () => {
-      if (worker.state === "activated") resolve();
+      if (worker.state === "activated" || worker.state === "redundant") resolve();
     });
   });
 

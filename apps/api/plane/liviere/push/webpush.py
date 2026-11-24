@@ -29,6 +29,8 @@ ALLOWED_PUSH_HOST_SUFFIXES = (".notify.windows.com", ".push.apple.com")
 TTL_SECONDS = 24 * 60 * 60
 JWT_LIFETIME_SECONDS = 12 * 60 * 60
 TIMEOUT_SECONDS = 10
+# Real endpoints are a few hundred characters; the column is unique, so keep it bounded
+MAX_ENDPOINT_LENGTH = 2048
 
 
 class InvalidSubscription(ValueError):
@@ -37,6 +39,8 @@ class InvalidSubscription(ValueError):
 
 def validate_endpoint(endpoint):
     """Raises InvalidSubscription unless the endpoint is an https URL of an allowed push service."""
+    if not isinstance(endpoint, str) or len(endpoint) > MAX_ENDPOINT_LENGTH:
+        raise InvalidSubscription("endpoint must be a URL of at most 2048 characters")
     try:
         parts = urlsplit(endpoint or "")
     except ValueError:

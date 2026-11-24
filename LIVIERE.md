@@ -255,7 +255,8 @@ see others' work items – the rules of *New*. Not notified: items created by `b
 items accepted later.
 
 **One notification per project.** The tag is `liviere-new-<project id>`, so a newer notification replaces the
-older one; `renotify` is not set, so a replacement is silent while the previous one is still shown. The title counts
+older one; `renotify` is not set, so by the Notifications API a replacement does not alert again while the
+previous one is still shown (not yet verified in every browser). The title counts
 the recipient's new work items of the project at sending time: with one, `LS-7 · Project name` and a click opens
 the work item (which marks it as read); with more, `LS: 4 new work items` (Polish for a `pl` profile language:
 `nowe elementy pracy` / `nowych elementów pracy`) and a click opens *New* filtered to the project. The body is the

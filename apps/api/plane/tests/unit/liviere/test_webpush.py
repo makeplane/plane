@@ -98,6 +98,8 @@ class TestEndpoints:
             "https://fcm.googleapis.com:8443/fcm/send/abc",
             "",
             "not a url",
+            "https://fcm.googleapis.com/fcm/send/" + "a" * 2048,
+            None,
         ],
     )
     def test_other_endpoints_are_refused(self, endpoint):

@@ -7,8 +7,8 @@
 // Liviere/plane fork: service worker of web push notifications about new work items (apps/web/liviere/push).
 // Registered with the scope /liviere/push/: it controls no page, it only receives pushes and clicks, so it
 // cannot clash with a service worker of the app at "/". Payload: { title, body, tag, url }.
-// A notification with the same tag (one per project) replaces the previous one; `renotify` is not set, so the
-// replacement is silent while the previous one is still shown.
+// A notification with the same tag (one per project) replaces the previous one; `renotify` is not set, so by the
+// Notifications API the replacement does not alert again while the previous one is still shown.
 
 self.addEventListener("install", () => self.skipWaiting());
 
