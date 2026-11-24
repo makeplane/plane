@@ -123,6 +123,7 @@ export function SelectTrigger<T>(props: SelectTriggerProps<T>) {
                     and a `<label htmlFor>` pointing at a div focuses nothing. `data-*` stay on the
                     frame, which is the box a tour anchor wants to point at. */}
                 <BaseCombobox.Input
+                  ref={engine?.fieldRef}
                   id={id}
                   disabled={isDisabled}
                   tabIndex={tabIndex}
