@@ -6,7 +6,7 @@
 from uuid import uuid4
 
 # Django imports
-from django.db import models
+from django.db import models, transaction
 from django.conf import settings
 
 from .base import BaseModel
@@ -32,6 +32,10 @@ class APIToken(BaseModel):
 
     # User Information
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="bot_tokens")
+    # The account used for audit attribution. `user` remains the permission owner.
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="api_token_actors"
+    )
     user_type = models.PositiveSmallIntegerField(choices=((0, "Human"), (1, "Bot")), default=0)
     workspace = models.ForeignKey("db.Workspace", related_name="api_tokens", on_delete=models.CASCADE, null=True)
     expired_at = models.DateTimeField(blank=True, null=True)
@@ -44,6 +48,34 @@ class APIToken(BaseModel):
 
     def __str__(self):
         return str(self.user.id)
+
+    def ensure_actor(self):
+        """Return the token's audit identity, creating it for legacy tokens as needed."""
+        if self.actor_id:
+            return self.actor
+
+        from .user import User
+
+        with transaction.atomic():
+            locked_token = APIToken.objects.select_for_update().get(pk=self.pk)
+            if locked_token.actor_id:
+                self.actor = locked_token.actor
+                return self.actor
+
+            actor_id = uuid4().hex
+            actor = User.objects.create(
+                username=f"api_token_{actor_id}",
+                email=f"api-token-{actor_id}@plane.invalid",
+                display_name=locked_token.label,
+                first_name=locked_token.label,
+                is_bot=True,
+                is_active=True,
+                is_password_autoset=True,
+            )
+            locked_token.actor = actor
+            locked_token.save(update_fields=["actor"])
+            self.actor = actor
+        return self.actor
 
 
 class APIActivityLog(BaseModel):

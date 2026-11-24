@@ -7,6 +7,7 @@ from uuid import uuid4
 from typing import Optional
 
 # Third party
+from django.db import transaction
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -33,6 +34,7 @@ class ApiTokenEndpoint(BaseAPIView):
             user_type=user_type,
             expired_at=expired_at,
         )
+        api_token.ensure_actor()
 
         serializer = APITokenSerializer(api_token)
         # Token will be only visible while creating
@@ -54,9 +56,14 @@ class ApiTokenEndpoint(BaseAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def patch(self, request: Request, pk: str) -> Response:
-        api_token = APIToken.objects.get(user=request.user, pk=pk)
-        serializer = APITokenSerializer(api_token, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(APITokenReadSerializer(api_token).data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        with transaction.atomic():
+            api_token = APIToken.objects.select_for_update().get(user=request.user, pk=pk)
+            serializer = APITokenSerializer(api_token, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                if api_token.actor_id:
+                    api_token.actor.display_name = api_token.label
+                    api_token.actor.first_name = api_token.label
+                    api_token.actor.save(update_fields=["display_name", "first_name"])
+                return Response(APITokenReadSerializer(api_token).data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
