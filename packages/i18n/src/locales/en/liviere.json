@@ -7,7 +7,9 @@
       "ranges": {
         "7d": "7 days",
         "30d": "30 days",
-        "90d": "90 days"
+        "90d": "90 days",
+        "month": "This month",
+        "prev_month": "Last month"
       },
       "range_custom": "Period: pick the first and the last day",
       "range_too_long": "A period can be at most {days} days long.",

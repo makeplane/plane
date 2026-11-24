@@ -17,8 +17,11 @@ export const MAX_RANGE_DAYS = 366;
 
 export const DAY_PRESETS = { "7d": 7, "30d": 30, "90d": 90 } as const;
 export type TDayPreset = keyof typeof DAY_PRESETS;
-export type TRangePreset = TDayPreset;
-export const RANGE_PRESETS: TRangePreset[] = ["7d", "30d", "90d"];
+// The current month (from its first day to today) and the whole previous month
+export const MONTH_PRESETS = { month: 0, prev_month: -1 } as const;
+export type TMonthPreset = keyof typeof MONTH_PRESETS;
+export type TRangePreset = TDayPreset | TMonthPreset;
+export const RANGE_PRESETS: TRangePreset[] = ["7d", "30d", "90d", "month", "prev_month"];
 export const DEFAULT_PRESET: TRangePreset = "30d";
 
 /** A preset (resolved against today) or a fixed custom range. */
@@ -54,11 +57,28 @@ export const parseRange = (params: { get: (name: string) => string | null }): TR
   return custom ? { preset: null, ...custom } : { preset: DEFAULT_PRESET };
 };
 
+const pad = (value: number) => value.toString().padStart(2, "0");
+
+/**
+ * A calendar month relative to the month of `today` (YYYY-MM-DD): offset 0 is the current month up to today,
+ * -1 the whole previous month.
+ */
+export const monthRange = (today: string, offset: number): TDateRange => {
+  const [year, month] = today.split("-").map(Number);
+  // Date.UTC normalises month overflow (month -1 is December of the previous year)
+  const first = new Date(Date.UTC(year, month - 1 + offset, 1));
+  const from = `${first.getUTCFullYear()}-${pad(first.getUTCMonth() + 1)}-01`;
+  if (offset === 0) return { from, to: today };
+  // Day 0 of the next month is the last day of this one
+  const last = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0));
+  return { from, to: `${last.getUTCFullYear()}-${pad(last.getUTCMonth() + 1)}-${pad(last.getUTCDate())}` };
+};
+
 /** Dates of a preset on the given day (`today`, YYYY-MM-DD in the page's time zone). */
-export const presetRange = (preset: TRangePreset, today: string): TDateRange => ({
-  from: shiftDate(today, -(DAY_PRESETS[preset] - 1)),
-  to: today,
-});
+export const presetRange = (preset: TRangePreset, today: string): TDateRange =>
+  preset in MONTH_PRESETS
+    ? monthRange(today, MONTH_PRESETS[preset as TMonthPreset])
+    : { from: shiftDate(today, -(DAY_PRESETS[preset as TDayPreset] - 1)), to: today };
 
 export const resolveRange = (selection: TRangeSelection, today: string): TDateRange =>
   selection.preset ? presetRange(selection.preset, today) : { from: selection.from, to: selection.to };

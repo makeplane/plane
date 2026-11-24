@@ -7,7 +7,9 @@
       "ranges": {
         "7d": "7 dni",
         "30d": "30 dni",
-        "90d": "90 dni"
+        "90d": "90 dni",
+        "month": "Bieżący miesiąc",
+        "prev_month": "Poprzedni miesiąc"
       },
       "range_custom": "Okres: wybierz pierwszy i ostatni dzień",
       "range_too_long": "Okres może mieć najwyżej {days} dni.",
