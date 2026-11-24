@@ -574,7 +574,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
         )
         if serializer.is_valid():
             if external_pair_taken(
-                Cycle.objects.filter(project_id=project_id, workspace__slug=slug), cycle, request.data
+                Cycle.objects.filter(project_id=project_id, workspace__slug=slug), cycle, serializer.validated_data
             ):
                 return Response(
                     {

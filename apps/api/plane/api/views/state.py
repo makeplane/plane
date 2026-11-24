@@ -291,7 +291,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
             if external_pair_taken(
-                State.objects.filter(project_id=project_id, workspace__slug=slug), state, request.data
+                State.objects.filter(project_id=project_id, workspace__slug=slug), state, serializer.validated_data
             ):
                 return Response(
                     {

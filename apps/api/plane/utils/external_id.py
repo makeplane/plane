@@ -8,6 +8,8 @@ def external_pair_taken(queryset, instance, data):
 
     The pair is the ``external_id`` and ``external_source`` the row has after the
     update: each comes from ``data`` when it is sent, else from ``instance``.
+    Pass the serializer's ``validated_data``, so the values are compared as they
+    will be saved (trimmed, numbers as text).
     Only rows of ``queryset`` other than ``instance`` count. Nothing is checked
     when the update touches neither field, keeps the row's own pair, or leaves
     the row without an external id.
@@ -15,7 +17,7 @@ def external_pair_taken(queryset, instance, data):
     if "external_id" not in data and "external_source" not in data:
         return False
     external_id = data.get("external_id", instance.external_id)
-    if not external_id:
+    if external_id is None or external_id == "":
         return False
     external_source = data.get("external_source", instance.external_source)
     # Keeping the row's own pair is never a new conflict, even where duplicates

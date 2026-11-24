@@ -51,6 +51,8 @@ MODELS = {"issues": Issue, "cycles": Cycle, "modules": Module, "states": State, 
     [
         {"external_source": "jira"},
         {"external_id": "1", "external_source": "jira"},
+        {"external_source": " jira "},
+        {"external_id": 1, "external_source": "jira"},
     ],
 )
 def test_patch_into_an_existing_external_pair_is_409(api_key_client, workspace, project, create_user, kind, body):

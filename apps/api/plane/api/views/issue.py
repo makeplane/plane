@@ -853,7 +853,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         )
         if serializer.is_valid():
             if external_pair_taken(
-                Issue.objects.filter(project_id=project_id, workspace__slug=slug), issue, request.data
+                Issue.objects.filter(project_id=project_id, workspace__slug=slug), issue, serializer.validated_data
             ):
                 return Response(
                     {
@@ -1132,7 +1132,7 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
         serializer = LabelCreateUpdateSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
             if external_pair_taken(
-                Label.objects.filter(project_id=project_id, workspace__slug=slug), label, request.data
+                Label.objects.filter(project_id=project_id, workspace__slug=slug), label, serializer.validated_data
             ):
                 return Response(
                     {

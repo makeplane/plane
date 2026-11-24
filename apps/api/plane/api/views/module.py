@@ -469,7 +469,7 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         serializer = ModuleUpdateSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
         if serializer.is_valid():
             if external_pair_taken(
-                Module.objects.filter(project_id=project_id, workspace__slug=slug), module, request.data
+                Module.objects.filter(project_id=project_id, workspace__slug=slug), module, serializer.validated_data
             ):
                 return Response(
                     {
