@@ -385,3 +385,76 @@ class TestProjectV1LeadAssigneeMembership:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         project.refresh_from_db()
         assert project.project_lead_id is None
+
+
+class TestProjectNetworkAPI:
+    """`network` (project visibility) must be accepted and validated on create and update.
+
+    Regression for the field being silently dropped: the request succeeded but the
+    project stayed public (network=2), so API clients could not create private projects.
+    """
+
+    def get_list_url(self, workspace_slug):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/"
+
+    def get_detail_url(self, workspace_slug, project_id):
+        return f"/api/v1/workspaces/{workspace_slug}/projects/{project_id}/"
+
+    @pytest.mark.django_db
+    def test_create_private_project(self, api_key_client, workspace, create_user):
+        payload = {"name": "Private Project", "identifier": "PRIV", "network": 0}
+
+        response = api_key_client.post(self.get_list_url(workspace.slug), payload, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
+        assert response.data["network"] == 0
+        assert Project.objects.get(id=response.data["id"]).network == 0
+
+    @pytest.mark.django_db
+    def test_create_project_defaults_to_public(self, api_key_client, workspace, create_user):
+        payload = {"name": "Default Project", "identifier": "DEFP"}
+
+        response = api_key_client.post(self.get_list_url(workspace.slug), payload, format="json")
+
+        assert response.status_code == status.HTTP_201_CREATED, f"Got {response.status_code}: {response.data!r}"
+        assert Project.objects.get(id=response.data["id"]).network == 2
+
+    @pytest.mark.django_db
+    def test_create_project_with_invalid_network_returns_400(self, api_key_client, workspace, create_user):
+        payload = {"name": "Bad Network", "identifier": "BADN", "network": 5}
+
+        response = api_key_client.post(self.get_list_url(workspace.slug), payload, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert not Project.objects.filter(workspace=workspace, identifier="BADN").exists()
+
+    @pytest.mark.django_db
+    def test_update_project_network(self, api_key_client, workspace, create_user):
+        created = api_key_client.post(
+            self.get_list_url(workspace.slug),
+            {"name": "Switch Project", "identifier": "SWCH"},
+            format="json",
+        )
+        assert created.status_code == status.HTTP_201_CREATED, f"Got {created.status_code}: {created.data!r}"
+        url = self.get_detail_url(workspace.slug, created.data["id"])
+
+        response = api_key_client.patch(url, {"network": 0}, format="json")
+
+        assert response.status_code == status.HTTP_200_OK, f"Got {response.status_code}: {response.data!r}"
+        assert response.data["network"] == 0
+        assert Project.objects.get(id=created.data["id"]).network == 0
+
+    @pytest.mark.django_db
+    def test_update_project_with_invalid_network_returns_400(self, api_key_client, workspace, create_user):
+        created = api_key_client.post(
+            self.get_list_url(workspace.slug),
+            {"name": "Keep Project", "identifier": "KEEP"},
+            format="json",
+        )
+        assert created.status_code == status.HTTP_201_CREATED, f"Got {created.status_code}: {created.data!r}"
+        url = self.get_detail_url(workspace.slug, created.data["id"])
+
+        response = api_key_client.patch(url, {"network": 5}, format="json")
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert Project.objects.get(id=created.data["id"]).network == 2
