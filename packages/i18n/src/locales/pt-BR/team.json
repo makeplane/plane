@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Equipes",
+    "portfolio": "Portfólio",
+    "portfolios": "Portfólios",
+    "without_portfolio": "Sem portfólio",
+    "without_portfolio_hint": "Selecione projetos para adicioná-los a um portfólio. Primeiro você verá as mudanças de acesso.",
+    "settings_description": "Agrupe projetos em portfólios e atribua a cada equipe seus próprios administradores.",
+    "enable": {
+      "title": "Estrutura de equipes",
+      "description": "Mostrar as equipes na navegação e exigir um portfólio para novos projetos. Ao desativar, o acesso já concedido é mantido."
+    },
+    "create_team": "Criar equipe",
+    "edit_team": "Editar equipe",
+    "create_portfolio": "Criar portfólio",
+    "edit_portfolio": "Editar portfólio",
+    "select_portfolio": "Selecionar um portfólio",
+    "select_members": "Selecionar membros",
+    "portfolio_required": "Selecione um portfólio. Somente administradores de equipe podem criar projetos.",
+    "no_portfolios": "Ainda não há portfólios",
+    "no_projects": "Nenhum projeto para mostrar",
+    "not_found": "Esta página não existe ou foi removida.",
+    "archived": "Arquivado",
+    "archive_hint": "Uma equipe arquivada fica oculta da navegação. O acesso aos projetos dela é mantido.",
+    "delete_hint": "Só é possível excluir uma equipe sem portfólios.",
+    "via_team": "Pela equipe",
+    "kind": "Tipo",
+    "kinds": {
+      "regular": "Equipe regular",
+      "management": "Equipe de gestão"
+    },
+    "admins": "Administradores da equipe",
+    "admins_hint": "Se você não selecionar ninguém, você será o administrador.",
+    "roles": {
+      "admin": "Administrador",
+      "member": "Membro"
+    },
+    "delete_team": {
+      "title": "Excluir equipe",
+      "description": "A equipe \"{name}\" será excluída."
+    },
+    "delete_portfolio": {
+      "title": "Excluir portfólio",
+      "description": "O portfólio \"{name}\" será excluído. Só é possível excluir um portfólio vazio."
+    },
+    "move": {
+      "title": "Mover para um portfólio",
+      "action": "Mover",
+      "done": "Os projetos foram movidos.",
+      "gained": "Ganham acesso",
+      "lost": "Perdem acesso",
+      "changed": "Mudam de função",
+      "no_changes": "O acesso de ninguém muda."
+    },
+    "errors": {
+      "name_taken": "Este nome já está em uso.",
+      "management_exists": "O espaço de trabalho já tem uma equipe de gestão.",
+      "team_not_empty": "A equipe ainda tem portfólios.",
+      "portfolio_not_empty": "O portfólio ainda tem projetos.",
+      "last_admin": "Primeiro atribua outro administrador da equipe.",
+      "orphaned_project": "Um projeto ficaria sem administrador.",
+      "archived": "O portfólio ou a equipe dele está arquivado."
+    }
+  }
+}

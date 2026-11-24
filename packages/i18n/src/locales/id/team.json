@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Tim",
+    "portfolio": "Portofolio",
+    "portfolios": "Portofolio",
+    "without_portfolio": "Tanpa portofolio",
+    "without_portfolio_hint": "Pilih proyek untuk ditambahkan ke portofolio. Anda akan melihat perubahan akses terlebih dahulu.",
+    "settings_description": "Kelompokkan proyek ke dalam portofolio dan tetapkan admin sendiri untuk setiap tim.",
+    "enable": {
+      "title": "Struktur tim",
+      "description": "Tampilkan tim di navigasi dan wajibkan portofolio untuk proyek baru. Jika dimatikan, akses yang sudah diberikan tetap ada."
+    },
+    "create_team": "Buat tim",
+    "edit_team": "Ubah tim",
+    "create_portfolio": "Buat portofolio",
+    "edit_portfolio": "Ubah portofolio",
+    "select_portfolio": "Pilih portofolio",
+    "select_members": "Pilih anggota",
+    "portfolio_required": "Pilih portofolio. Hanya admin tim yang dapat membuat proyek.",
+    "no_portfolios": "Belum ada portofolio",
+    "no_projects": "Tidak ada proyek untuk ditampilkan",
+    "not_found": "Halaman ini tidak ada atau telah dihapus.",
+    "archived": "Diarsipkan",
+    "archive_hint": "Tim yang diarsipkan disembunyikan dari navigasi. Akses ke proyeknya tetap ada.",
+    "delete_hint": "Hanya tim tanpa portofolio yang dapat dihapus.",
+    "via_team": "Melalui tim",
+    "kind": "Jenis",
+    "kinds": {
+      "regular": "Tim biasa",
+      "management": "Tim manajemen"
+    },
+    "admins": "Admin tim",
+    "admins_hint": "Jika tidak memilih siapa pun, Anda menjadi admin.",
+    "roles": {
+      "admin": "Admin",
+      "member": "Anggota"
+    },
+    "delete_team": {
+      "title": "Hapus tim",
+      "description": "Tim \"{name}\" akan dihapus."
+    },
+    "delete_portfolio": {
+      "title": "Hapus portofolio",
+      "description": "Portofolio \"{name}\" akan dihapus. Hanya portofolio kosong yang dapat dihapus."
+    },
+    "move": {
+      "title": "Pindahkan ke portofolio",
+      "action": "Pindahkan",
+      "done": "Proyek telah dipindahkan.",
+      "gained": "Mendapat akses",
+      "lost": "Kehilangan akses",
+      "changed": "Berganti peran",
+      "no_changes": "Tidak ada akses yang berubah."
+    },
+    "errors": {
+      "name_taken": "Nama ini sudah digunakan.",
+      "management_exists": "Ruang kerja sudah memiliki tim manajemen.",
+      "team_not_empty": "Tim masih memiliki portofolio.",
+      "portfolio_not_empty": "Portofolio masih memiliki proyek.",
+      "last_admin": "Tetapkan admin tim lain terlebih dahulu.",
+      "orphaned_project": "Sebuah proyek akan tanpa admin.",
+      "archived": "Portofolio atau timnya diarsipkan."
+    }
+  }
+}

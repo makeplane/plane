@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Nhóm",
+    "portfolio": "Danh mục dự án",
+    "portfolios": "Danh mục dự án",
+    "without_portfolio": "Chưa có danh mục",
+    "without_portfolio_hint": "Chọn dự án để thêm vào danh mục. Bạn sẽ xem trước các thay đổi quyền truy cập.",
+    "settings_description": "Nhóm các dự án vào danh mục và gán cho mỗi nhóm quản trị viên riêng.",
+    "enable": {
+      "title": "Cấu trúc nhóm",
+      "description": "Hiển thị nhóm trong thanh điều hướng và yêu cầu danh mục cho dự án mới. Khi tắt, quyền truy cập đã cấp vẫn được giữ."
+    },
+    "create_team": "Tạo nhóm",
+    "edit_team": "Sửa nhóm",
+    "create_portfolio": "Tạo danh mục",
+    "edit_portfolio": "Sửa danh mục",
+    "select_portfolio": "Chọn danh mục",
+    "select_members": "Chọn thành viên",
+    "portfolio_required": "Hãy chọn danh mục. Chỉ quản trị viên nhóm có thể tạo dự án.",
+    "no_portfolios": "Chưa có danh mục nào",
+    "no_projects": "Không có dự án để hiển thị",
+    "not_found": "Trang này không tồn tại hoặc đã bị xóa.",
+    "archived": "Đã lưu trữ",
+    "archive_hint": "Nhóm đã lưu trữ bị ẩn khỏi thanh điều hướng. Quyền truy cập dự án của nhóm vẫn được giữ.",
+    "delete_hint": "Chỉ có thể xóa nhóm không có danh mục.",
+    "via_team": "Qua nhóm",
+    "kind": "Loại",
+    "kinds": {
+      "regular": "Nhóm thường",
+      "management": "Nhóm quản lý"
+    },
+    "admins": "Quản trị viên nhóm",
+    "admins_hint": "Nếu không chọn ai, bạn sẽ là quản trị viên.",
+    "roles": {
+      "admin": "Quản trị viên",
+      "member": "Thành viên"
+    },
+    "delete_team": {
+      "title": "Xóa nhóm",
+      "description": "Nhóm \"{name}\" sẽ bị xóa."
+    },
+    "delete_portfolio": {
+      "title": "Xóa danh mục",
+      "description": "Danh mục \"{name}\" sẽ bị xóa. Chỉ có thể xóa danh mục trống."
+    },
+    "move": {
+      "title": "Chuyển vào danh mục",
+      "action": "Chuyển",
+      "done": "Đã chuyển các dự án.",
+      "gained": "Được cấp quyền truy cập",
+      "lost": "Mất quyền truy cập",
+      "changed": "Thay đổi vai trò",
+      "no_changes": "Không ai thay đổi quyền truy cập."
+    },
+    "errors": {
+      "name_taken": "Tên này đã được sử dụng.",
+      "management_exists": "Không gian làm việc đã có nhóm quản lý.",
+      "team_not_empty": "Nhóm vẫn còn danh mục.",
+      "portfolio_not_empty": "Danh mục vẫn còn dự án.",
+      "last_admin": "Trước tiên hãy chỉ định quản trị viên khác cho nhóm.",
+      "orphaned_project": "Một dự án sẽ không còn quản trị viên.",
+      "archived": "Danh mục hoặc nhóm của danh mục đã được lưu trữ."
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Ekipler",
+    "portfolio": "Portföy",
+    "portfolios": "Portföyler",
+    "without_portfolio": "Portföysüz",
+    "without_portfolio_hint": "Bir portföye eklemek için projeleri seçin. Önce erişim değişikliklerini göreceksiniz.",
+    "settings_description": "Projeleri portföylerde gruplayın ve her ekibe kendi yöneticilerini atayın.",
+    "enable": {
+      "title": "Ekip yapısı",
+      "description": "Ekipleri gezinmede göster ve yeni projeler için portföy zorunlu kıl. Kapatıldığında verilmiş erişim korunur."
+    },
+    "create_team": "Ekip oluştur",
+    "edit_team": "Ekibi düzenle",
+    "create_portfolio": "Portföy oluştur",
+    "edit_portfolio": "Portföyü düzenle",
+    "select_portfolio": "Portföy seçin",
+    "select_members": "Üye seçin",
+    "portfolio_required": "Bir portföy seçin. Yalnızca ekip yöneticileri proje oluşturabilir.",
+    "no_portfolios": "Henüz portföy yok",
+    "no_projects": "Gösterilecek proje yok",
+    "not_found": "Bu sayfa yok veya kaldırılmış.",
+    "archived": "Arşivlendi",
+    "archive_hint": "Arşivlenen ekip gezinmede gizlenir. Projelerine erişim korunur.",
+    "delete_hint": "Yalnızca portföyü olmayan ekip silinebilir.",
+    "via_team": "Ekip aracılığıyla",
+    "kind": "Tür",
+    "kinds": {
+      "regular": "Normal ekip",
+      "management": "Yönetim ekibi"
+    },
+    "admins": "Ekip yöneticileri",
+    "admins_hint": "Kimseyi seçmezseniz yönetici siz olursunuz.",
+    "roles": {
+      "admin": "Yönetici",
+      "member": "Üye"
+    },
+    "delete_team": {
+      "title": "Ekibi sil",
+      "description": "\"{name}\" ekibi silinecek."
+    },
+    "delete_portfolio": {
+      "title": "Portföyü sil",
+      "description": "\"{name}\" portföyü silinecek. Yalnızca boş portföy silinebilir."
+    },
+    "move": {
+      "title": "Portföye taşı",
+      "action": "Taşı",
+      "done": "Projeler taşındı.",
+      "gained": "Erişim kazananlar",
+      "lost": "Erişimi kaybedenler",
+      "changed": "Rolü değişenler",
+      "no_changes": "Kimsenin erişimi değişmiyor."
+    },
+    "errors": {
+      "name_taken": "Bu ad zaten kullanılıyor.",
+      "management_exists": "Çalışma alanında zaten bir yönetim ekibi var.",
+      "team_not_empty": "Ekibin hâlâ portföyleri var.",
+      "portfolio_not_empty": "Portföyde hâlâ projeler var.",
+      "last_admin": "Önce başka bir ekip yöneticisi atayın.",
+      "orphaned_project": "Bir proje yöneticisiz kalacak.",
+      "archived": "Portföy veya ekibi arşivlenmiş."
+    }
+  }
+}

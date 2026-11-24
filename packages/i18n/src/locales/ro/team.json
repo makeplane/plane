@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Echipe",
+    "portfolio": "Portofoliu",
+    "portfolios": "Portofolii",
+    "without_portfolio": "Fără portofoliu",
+    "without_portfolio_hint": "Selectați proiecte pentru a le adăuga într-un portofoliu. Mai întâi veți vedea modificările de acces.",
+    "settings_description": "Grupați proiectele în portofolii și atribuiți fiecărei echipe propriii administratori.",
+    "enable": {
+      "title": "Structura echipelor",
+      "description": "Afișează echipele în navigare și solicită un portofoliu pentru proiectele noi. La dezactivare, accesul deja acordat se păstrează."
+    },
+    "create_team": "Creează echipă",
+    "edit_team": "Editează echipa",
+    "create_portfolio": "Creează portofoliu",
+    "edit_portfolio": "Editează portofoliul",
+    "select_portfolio": "Selectați un portofoliu",
+    "select_members": "Selectați membri",
+    "portfolio_required": "Selectați un portofoliu. Doar administratorii de echipă pot crea proiecte.",
+    "no_portfolios": "Încă nu există portofolii",
+    "no_projects": "Niciun proiect de afișat",
+    "not_found": "Această pagină nu există sau a fost eliminată.",
+    "archived": "Arhivat",
+    "archive_hint": "O echipă arhivată este ascunsă din navigare. Accesul la proiectele ei se păstrează.",
+    "delete_hint": "Se poate șterge doar o echipă fără portofolii.",
+    "via_team": "Prin echipă",
+    "kind": "Tip",
+    "kinds": {
+      "regular": "Echipă obișnuită",
+      "management": "Echipă de conducere"
+    },
+    "admins": "Administratorii echipei",
+    "admins_hint": "Dacă nu selectați pe nimeni, dumneavoastră deveniți administrator.",
+    "roles": {
+      "admin": "Administrator",
+      "member": "Membru"
+    },
+    "delete_team": {
+      "title": "Șterge echipa",
+      "description": "Echipa „{name}” va fi ștearsă."
+    },
+    "delete_portfolio": {
+      "title": "Șterge portofoliul",
+      "description": "Portofoliul „{name}” va fi șters. Se poate șterge doar un portofoliu gol."
+    },
+    "move": {
+      "title": "Mută într-un portofoliu",
+      "action": "Mută",
+      "done": "Proiectele au fost mutate.",
+      "gained": "Primesc acces",
+      "lost": "Pierd accesul",
+      "changed": "Își schimbă rolul",
+      "no_changes": "Accesul nimănui nu se modifică."
+    },
+    "errors": {
+      "name_taken": "Acest nume este deja folosit.",
+      "management_exists": "Spațiul de lucru are deja o echipă de conducere.",
+      "team_not_empty": "Echipa are încă portofolii.",
+      "portfolio_not_empty": "Portofoliul are încă proiecte.",
+      "last_admin": "Atribuiți mai întâi alt administrator al echipei.",
+      "orphaned_project": "Un proiect ar rămâne fără administrator.",
+      "archived": "Portofoliul sau echipa acestuia este arhivată."
+    }
+  }
+}

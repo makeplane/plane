@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Teams",
+    "portfolio": "Portfolio",
+    "portfolios": "Portfolio's",
+    "without_portfolio": "Zonder portfolio",
+    "without_portfolio_hint": "Selecteer projecten om ze aan een portfolio toe te voegen. U ziet eerst de toegangswijzigingen.",
+    "settings_description": "Groepeer projecten in portfolio's en geef elk team eigen beheerders.",
+    "enable": {
+      "title": "Teamstructuur",
+      "description": "Toon teams in de navigatie en vereis een portfolio voor nieuwe projecten. Bij uitschakelen blijft al verleende toegang behouden."
+    },
+    "create_team": "Team aanmaken",
+    "edit_team": "Team bewerken",
+    "create_portfolio": "Portfolio aanmaken",
+    "edit_portfolio": "Portfolio bewerken",
+    "select_portfolio": "Selecteer een portfolio",
+    "select_members": "Selecteer leden",
+    "portfolio_required": "Selecteer een portfolio. Alleen teambeheerders kunnen projecten aanmaken.",
+    "no_portfolios": "Nog geen portfolio's",
+    "no_projects": "Geen projecten om te tonen",
+    "not_found": "Deze pagina bestaat niet of is verwijderd.",
+    "archived": "Gearchiveerd",
+    "archive_hint": "Een gearchiveerd team is verborgen in de navigatie. De toegang tot de projecten blijft behouden.",
+    "delete_hint": "Alleen een team zonder portfolio's kan worden verwijderd.",
+    "via_team": "Via team",
+    "kind": "Type",
+    "kinds": {
+      "regular": "Regulier team",
+      "management": "Managementteam"
+    },
+    "admins": "Teambeheerders",
+    "admins_hint": "Als u niemand selecteert, wordt u de beheerder.",
+    "roles": {
+      "admin": "Beheerder",
+      "member": "Lid"
+    },
+    "delete_team": {
+      "title": "Team verwijderen",
+      "description": "Het team \"{name}\" wordt verwijderd."
+    },
+    "delete_portfolio": {
+      "title": "Portfolio verwijderen",
+      "description": "Het portfolio \"{name}\" wordt verwijderd. Alleen een leeg portfolio kan worden verwijderd."
+    },
+    "move": {
+      "title": "Naar een portfolio verplaatsen",
+      "action": "Verplaatsen",
+      "done": "De projecten zijn verplaatst.",
+      "gained": "Krijgen toegang",
+      "lost": "Verliezen toegang",
+      "changed": "Wisselen van rol",
+      "no_changes": "Niemands toegang verandert."
+    },
+    "errors": {
+      "name_taken": "Deze naam is al in gebruik.",
+      "management_exists": "De werkruimte heeft al een managementteam.",
+      "team_not_empty": "Het team heeft nog portfolio's.",
+      "portfolio_not_empty": "Het portfolio bevat nog projecten.",
+      "last_admin": "Wijs eerst een andere teambeheerder aan.",
+      "orphaned_project": "Een project zou zonder beheerder blijven.",
+      "archived": "Het portfolio of het team ervan is gearchiveerd."
+    }
+  }
+}
