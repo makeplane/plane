@@ -27,7 +27,7 @@ import { toSideAndAlign } from "@plane/blocks/common";
 import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/blocks/context-menu";
 // hooks
 import { useIssues } from "@/hooks/store/use-issues";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // local imports
 import { DeleteIssueModal } from "../../delete-issue-modal";
 import type { IQuickActionProps } from "../list/list-view-types";
@@ -56,6 +56,7 @@ export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickAct
   const { t } = useTranslation();
   // store hooks
   const { allowPermissions } = useUserPermissions();
+  const { data: currentUser } = useUser();
 
   const { issuesFilter } = useIssues(EIssuesStoreType.ARCHIVED);
   // derived values
@@ -66,13 +67,21 @@ export const ArchivedIssueQuickActions = observer(function ArchivedIssueQuickAct
   const isRestoringAllowed =
     handleRestore && allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT);
 
+  const isIssueCreator = issue.created_by === currentUser?.id;
+  const isProjectAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    issue.project_id ?? undefined
+  );
+
   // Menu items and modals using helper
   const menuItemProps: MenuItemFactoryProps = {
     issue,
     workspaceSlug: workspaceSlug?.toString(),
     activeLayout,
     isEditingAllowed,
-    isDeletingAllowed: isEditingAllowed,
+    isDeletingAllowed: isEditingAllowed && (isProjectAdmin || isIssueCreator),
     isRestoringAllowed: !!isRestoringAllowed,
     setIssueToEdit: () => {},
     setCreateUpdateIssueModal: () => {},

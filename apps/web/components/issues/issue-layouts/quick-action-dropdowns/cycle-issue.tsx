@@ -31,7 +31,7 @@ import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/bloc
 import { useIssues } from "@/hooks/store/use-issues";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
-import { useUserPermissions } from "@/hooks/store/user";
+import { useUser, useUserPermissions } from "@/hooks/store/user";
 // helper
 import { ArchiveIssueModal } from "../../archive-issue-modal";
 import { DeleteIssueModal } from "../../delete-issue-modal";
@@ -68,6 +68,7 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
   const { t } = useTranslation();
   const { issuesFilter } = useIssues(EIssuesStoreType.CYCLE);
   const { allowPermissions } = useUserPermissions();
+  const { data: currentUser } = useUser();
   const { getStateById } = useProjectState();
   const { getProjectIdentifierById } = useProject();
   // derived values
@@ -78,7 +79,14 @@ export const CycleIssueQuickActions = observer(function CycleIssueQuickActions(p
     allowPermissions([EUserPermissions.ADMIN, EUserPermissions.MEMBER], EUserPermissionsLevel.PROJECT) && !readOnly;
   const isArchivingAllowed = handleArchive && isEditingAllowed;
   const isInArchivableGroup = !!stateDetails && ARCHIVABLE_STATE_GROUPS.includes(stateDetails?.group);
-  const isDeletingAllowed = isEditingAllowed;
+  const isIssueCreator = issue.created_by === currentUser?.id;
+  const isProjectAdmin = allowPermissions(
+    [EUserPermissions.ADMIN],
+    EUserPermissionsLevel.PROJECT,
+    workspaceSlug?.toString(),
+    issue.project_id ?? undefined
+  );
+  const isDeletingAllowed = isEditingAllowed && (isProjectAdmin || isIssueCreator);
 
   const activeLayout = `${issuesFilter.issueFilters?.displayFilters?.layout} layout`;
 
