@@ -6,8 +6,6 @@
 
 import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { NodeViewWrapper, NodeViewContent } from "@tiptap/react";
-import ts from "highlight.js/lib/languages/typescript";
-import { common, createLowlight } from "lowlight";
 import { CopyOutline, TickOutline } from "@makeplane/propel/icons";
 import { useState } from "react";
 // ui
@@ -15,10 +13,6 @@ import { IconButton } from "@makeplane/propel/components/icon-button";
 // types
 import type { TCodeBlockAttributes } from "./types";
 import { ECodeBlockAttributeNames } from "./types";
-
-// we just have ts support for now
-const lowlight = createLowlight(common);
-lowlight.register("ts", ts);
 
 type Props = {
   node: ProseMirrorNode;
