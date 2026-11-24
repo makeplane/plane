@@ -42,6 +42,7 @@ from plane.db.models import (
     ProjectPage,
     WorkspaceMember,
 )
+from plane.utils.query_params import positive_int_param
 
 
 class GlobalSearchEndpoint(BaseAPIView):
@@ -334,7 +335,7 @@ class SearchEndpoint(BaseAPIView):
         query = request.query_params.get("query", False)
         query_types = request.query_params.get("query_type", "user_mention").split(",")
         query_types = [qt.strip() for qt in query_types]
-        count = int(request.query_params.get("count", 5))
+        count = positive_int_param(request, "count", 5)
         project_id = request.query_params.get("project_id", None)
 
         response_data = {}
