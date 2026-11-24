@@ -34,6 +34,7 @@ import {
 import { useFavorite } from "@/hooks/store/use-favorite";
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
+import { useTeam } from "@/hooks/store/use-team";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useWorkspace } from "@/hooks/store/use-workspace";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
@@ -51,6 +52,7 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   // store hooks
   const { signOut, data: currentUser } = useUser();
   const { fetchPartialProjects } = useProject();
+  const { isEnabled: isTeamStructureEnabled, fetchStructure: fetchTeamStructure } = useTeam();
   const { fetchFavorite } = useFavorite();
   const {
     workspace: { fetchWorkspaceMembers },
@@ -86,6 +88,12 @@ export const WorkspaceAuthWrapper = observer(function WorkspaceAuthWrapper(props
   useSWR(
     workspaceSlug && currentWorkspace ? WORKSPACE_PARTIAL_PROJECTS(workspaceSlug.toString()) : null,
     workspaceSlug && currentWorkspace ? () => fetchPartialProjects(workspaceSlug.toString()) : null,
+    { revalidateIfStale: false, revalidateOnFocus: false }
+  );
+  // fetch teams and portfolios
+  useSWR(
+    workspaceSlug && isTeamStructureEnabled ? `WORKSPACE_TEAM_STRUCTURE_${workspaceSlug.toString()}` : null,
+    workspaceSlug && isTeamStructureEnabled ? () => fetchTeamStructure(workspaceSlug.toString()) : null,
     { revalidateIfStale: false, revalidateOnFocus: false }
   );
   // fetch workspace members

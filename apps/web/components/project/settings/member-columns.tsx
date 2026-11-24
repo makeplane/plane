@@ -8,6 +8,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "@makeplane/propel/components/avatar";
+import { Badge } from "@makeplane/propel/components/badge";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
@@ -23,7 +24,7 @@ import { getFileURL } from "@plane/utils";
 import { useMember } from "@/hooks/store/use-member";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 
-export interface RowData extends Pick<TProjectMembership, "original_role"> {
+export interface RowData extends Pick<TProjectMembership, "original_role" | "is_team_managed"> {
   member: IWorkspaceMember;
 }
 
@@ -64,6 +65,7 @@ export function NameColumn(props: NameProps) {
           <span className="truncate">
             {first_name} {last_name}
           </span>
+          {rowData.is_team_managed && <Badge size="xs" variant="neutral" label={t("team_structure.via_team")} />}
         </div>
         {(isAdmin || id === currentUser?.id) && (
           <Menu>
@@ -83,6 +85,7 @@ export function NameColumn(props: NameProps) {
               <MenuItem
                 variant="danger"
                 icon={<Icon icon={UserMinusOutline} />}
+                disabled={rowData.is_team_managed}
                 label={rowData.member?.id === currentUser?.id ? t("leave") : t("remove")}
                 onClick={() => setRemoveMemberModal(rowData)}
               />
@@ -111,20 +114,18 @@ export const AccountTypeColumn = observer(function AccountTypeColumn(props: Acco
     formState: { errors },
   } = useForm();
   // derived values
-  const roleLabel = ROLE[rowData.original_role ?? EUserPermissions.GUEST];
+  const roleLabel = ROLE[rowData.original_role];
   const isCurrentUser = currentUser?.id === rowData.member.id;
   const isRowDataWorkspaceAdmin = [EUserPermissions.ADMIN].includes(
-    Number(getWorkspaceMemberDetails(rowData.member.id)?.role) ?? EUserPermissions.GUEST
+    Number(getWorkspaceMemberDetails(rowData.member.id)?.role)
   );
   const isCurrentUserWorkspaceAdmin = currentUser
-    ? [EUserPermissions.ADMIN].includes(
-        Number(getWorkspaceMemberDetails(currentUser.id)?.role) ?? EUserPermissions.GUEST
-      )
+    ? [EUserPermissions.ADMIN].includes(Number(getWorkspaceMemberDetails(currentUser.id)?.role))
     : false;
   const currentProjectRole = getProjectRoleByWorkspaceSlugAndProjectId(workspaceSlug, projectId);
 
   const isCurrentUserProjectAdmin = currentProjectRole
-    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole) ?? EUserPermissions.GUEST)
+    ? ![EUserPermissions.MEMBER, EUserPermissions.GUEST].includes(Number(currentProjectRole))
     : false;
 
   // logic
