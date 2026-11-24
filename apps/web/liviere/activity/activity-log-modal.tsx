@@ -166,7 +166,7 @@ export function ActivityLogModal(props: Props) {
                   resize="vertical"
                   rows={5}
                 />
-                <div className="w-40">
+                <div className="w-56">
                   <InputField
                     size="md"
                     orientation="vertical"

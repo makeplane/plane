@@ -102,12 +102,15 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
   return (
     <div ref={containerRef} className="flex h-full w-full flex-col gap-5 overflow-y-auto px-6 py-5">
       <div className="flex shrink-0 flex-wrap items-center gap-3">
-        <Tabs value={view} variant="contained" stretch="auto" onValueChange={(value) => setView(String(value))}>
-          <TabsList aria-label={t("liviere.activity.title")}>
-            <Tab value="grid" label={t("liviere.activity.view_grid")} />
-            <Tab value={LOG_VIEW} label={t("liviere.activity.view_log")} />
-          </TabsList>
-        </Tabs>
+        {/* Tabs and the member select fill their parent by default; here they are items of the toolbar */}
+        <div className="w-fit">
+          <Tabs value={view} variant="contained" stretch="auto" onValueChange={(value) => setView(String(value))}>
+            <TabsList aria-label={t("liviere.activity.title")}>
+              <Tab value="grid" label={t("liviere.activity.view_grid")} />
+              <Tab value={LOG_VIEW} label={t("liviere.activity.view_log")} />
+            </TabsList>
+          </Tabs>
+        </div>
         <div className="flex overflow-hidden rounded-md border border-subtle">
           {RANGES.map((range) => (
             <button
@@ -126,19 +129,21 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
             </button>
           ))}
         </div>
-        <MemberSelect
-          projectId={projectId}
-          value={actor}
-          // The clear row emits "", which means all members
-          onChange={(value: string) => {
-            setActor(value || null);
-            setSelected(null);
-          }}
-          variant="select-md"
-          placeholder={t("liviere.activity.all_members")}
-          clearable
-          clearLabel={t("liviere.activity.all_members")}
-        />
+        <div className="w-56">
+          <MemberSelect
+            projectId={projectId}
+            value={actor}
+            // The clear row emits "", which means all members
+            onChange={(value: string) => {
+              setActor(value || null);
+              setSelected(null);
+            }}
+            variant="select-md"
+            placeholder={t("liviere.activity.all_members")}
+            clearable
+            clearLabel={t("liviere.activity.all_members")}
+          />
+        </div>
         {actor && (
           <button
             type="button"
