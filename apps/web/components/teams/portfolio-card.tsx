@@ -9,6 +9,7 @@ import { observer } from "mobx-react";
 import Link from "next/link";
 import { Badge } from "@makeplane/propel/components/badge";
 import { Icon } from "@makeplane/propel/components/icon";
+import { Button } from "@makeplane/propel/components/button";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { MoreHorizontalOutline } from "@makeplane/propel/icons";
@@ -16,6 +17,8 @@ import { MoreHorizontalOutline } from "@makeplane/propel/icons";
 import { ConfirmDialog } from "@plane/blocks/dialog";
 import { useTranslation } from "@plane/i18n";
 import type { TPortfolio } from "@plane/types";
+// components
+import { CreateProjectModal } from "@/components/project/create-project-modal";
 // hooks
 import { useTeam } from "@/hooks/store/use-team";
 // local imports
@@ -33,12 +36,16 @@ type Props = {
 
 export const PortfolioCard = observer(function PortfolioCard(props: Props) {
   const { workspaceSlug, portfolio, isLinked = true, onDeleted } = props;
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const { canManageTeam, updatePortfolio, deletePortfolio, setPortfolioArchived } = useTeam();
+  const { canManageTeam, teamMap, updatePortfolio, deletePortfolio, setPortfolioArchived } = useTeam();
   const run = useTeamAction();
   const { t } = useTranslation();
+  // derived values
+  const canManage = canManageTeam(portfolio.team);
+  const canCreateProject = canManage && !portfolio.archived_at && !teamMap[portfolio.team]?.archived_at;
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -50,6 +57,12 @@ export const PortfolioCard = observer(function PortfolioCard(props: Props) {
 
   return (
     <section className="space-y-2 rounded-lg border border-subtle bg-layer-2 p-4">
+      <CreateProjectModal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        workspaceSlug={workspaceSlug}
+        data={{ portfolio_id: portfolio.id }}
+      />
       <EntityFormDialog
         isOpen={isEditOpen}
         title={t("team_structure.edit_portfolio")}
@@ -77,29 +90,41 @@ export const PortfolioCard = observer(function PortfolioCard(props: Props) {
           </h4>
           {portfolio.archived_at && <Badge size="xs" variant="neutral" label={t("team_structure.archived")} />}
         </div>
-        {canManageTeam(portfolio.team) && (
-          <Menu>
-            <MenuTrigger
-              render={
-                <IconButton
-                  variant="ghost"
-                  size="sm"
-                  aria-label={t("aria_labels.common.more_actions")}
-                  icon={<Icon icon={MoreHorizontalOutline} />}
-                />
-              }
-            />
-            <MenuContent side="bottom" align="end">
-              <MenuItem label={t("edit")} onClick={() => setIsEditOpen(true)} />
-              <MenuItem
-                label={portfolio.archived_at ? t("restore") : t("archive")}
-                onClick={() =>
-                  void run(() => setPortfolioArchived(workspaceSlug, portfolio.id, !portfolio.archived_at))
+        {canManage && (
+          <div className="flex shrink-0 items-center gap-2">
+            {canCreateProject && !isLinked && (
+              <Button
+                variant="primary"
+                size="sm"
+                stretch="auto"
+                label={t("create_project")}
+                onClick={() => setIsCreateOpen(true)}
+              />
+            )}
+            <Menu>
+              <MenuTrigger
+                render={
+                  <IconButton
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t("aria_labels.common.more_actions")}
+                    icon={<Icon icon={MoreHorizontalOutline} />}
+                  />
                 }
               />
-              <MenuItem variant="danger" label={t("delete")} onClick={() => setIsDeleteOpen(true)} />
-            </MenuContent>
-          </Menu>
+              <MenuContent side="bottom" align="end">
+                {canCreateProject && <MenuItem label={t("create_project")} onClick={() => setIsCreateOpen(true)} />}
+                <MenuItem label={t("edit")} onClick={() => setIsEditOpen(true)} />
+                <MenuItem
+                  label={portfolio.archived_at ? t("restore") : t("archive")}
+                  onClick={() =>
+                    void run(() => setPortfolioArchived(workspaceSlug, portfolio.id, !portfolio.archived_at))
+                  }
+                />
+                <MenuItem variant="danger" label={t("delete")} onClick={() => setIsDeleteOpen(true)} />
+              </MenuContent>
+            </Menu>
+          </div>
         )}
       </div>
       {portfolio.description && <p className="text-body-xs-regular text-tertiary">{portfolio.description}</p>}
