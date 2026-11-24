@@ -190,6 +190,36 @@ describe("PDF Rendering Integration", () => {
       expect(text).toMatch(/2\./);
     });
 
+    it("should number an ordered list from its start attribute", async () => {
+      // Typing "3. " in the editor creates an orderedList with start: 3, shown as 3., 4.
+      const doc: TipTapDocument = {
+        type: "doc",
+        content: [
+          {
+            type: "orderedList",
+            attrs: { start: 3 },
+            content: [
+              {
+                type: "listItem",
+                content: [{ type: "paragraph", content: [{ type: "text", text: "Step three" }] }],
+              },
+              {
+                type: "listItem",
+                content: [{ type: "paragraph", content: [{ type: "text", text: "Step four" }] }],
+              },
+            ],
+          },
+        ],
+      };
+
+      const buffer = await renderPlaneDocToPdfBuffer(doc);
+      const text = await extractPdfText(buffer);
+
+      expect(text).toMatch(/3\.\s*Step three/);
+      expect(text).toMatch(/4\.\s*Step four/);
+      expect(text).not.toMatch(/1\.\s*Step three/);
+    });
+
     it("should render task list with task text", async () => {
       const doc: TipTapDocument = {
         type: "doc",
