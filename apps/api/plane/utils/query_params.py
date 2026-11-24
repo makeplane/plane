@@ -12,12 +12,12 @@ from plane.utils.paginator import MAX_LIMIT
 def positive_int_param(request, name, default, max_value=MAX_LIMIT):
     """Read a whole number query parameter between 1 and ``max_value``.
 
-    A missing or empty value gives ``default``. Anything else that is not a
-    whole number in that range raises ``ParseError``, which the views answer
-    with HTTP 400, as the paginator does for ``per_page``.
+    A missing value gives ``default``. Anything else that is not a whole number
+    in that range, an empty value included, raises ``ParseError``, which the
+    views answer with HTTP 400, as the paginator does for ``per_page``.
     """
     value = request.query_params.get(name)
-    if value in (None, ""):
+    if value is None:
         return default
     try:
         number = int(value)

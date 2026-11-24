@@ -29,7 +29,7 @@ def url(workspace):
 
 @pytest.mark.contract
 @pytest.mark.django_db
-@pytest.mark.parametrize("limit", ["abc", "-1", "0", "1.5", "1001"])
+@pytest.mark.parametrize("limit", ["abc", "-1", "0", "1.5", "1001", ""])
 def test_invalid_limit_is_400(api_key_client, workspace, project, limit):
     response = api_key_client.get(url(workspace), {"search": "findme", "workspace_search": "true", "limit": limit})
 

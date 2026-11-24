@@ -19,7 +19,7 @@ def url(workspace):
 
 @pytest.mark.contract
 @pytest.mark.django_db
-@pytest.mark.parametrize("count", ["abc", "-1", "0"])
+@pytest.mark.parametrize("count", ["abc", "-1", "0", ""])
 def test_invalid_count_is_400(session_client, workspace, count):
     response = session_client.get(url(workspace), {"query": "a", "query_type": "user_mention", "count": count})
 
