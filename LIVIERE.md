@@ -40,6 +40,9 @@ Never merge `preview` – it carries database migrations that releases do not ha
 - Our app `plane.liviere` (`apps.py`, registered in `INSTALLED_APPS`) holds our models, migrations
   (`plane/liviere/migrations/`), signals and Celery tasks (`plane/liviere/tasks.py`, found by autodiscovery).
   Periodic tasks are scheduled by `django_celery_beat` rows created in our migrations, not in `plane/celery.py`.
+- Since v1.5 upstream's `makemigrations` also rewrites `apps/api/migrations_lockfile.txt` (latest migration per
+  app) and `makemigrations --check` fails when it does not match; commit our `liviere: <migration>` line with
+  every new migration of ours. It sorts last in the file, so upstream changes to the `db:` line do not conflict.
 - Going back to the official images: our migrations only add tables, which the official code ignores, so a
   change of `PLANE_IMAGE_REPO`/`APP_RELEASE` still works; disable our periodic tasks first (see the feature
   sections). Removing our tables needs `manage.py migrate liviere zero` on a fork image.
@@ -49,7 +52,7 @@ Never merge `preview` – it carries database migrations that releases do not ha
 
 Our code is in `apps/api/plane/liviere/` (`api/` public API, `app/` app endpoints, `live_client.py`),
 `apps/live/src/liviere/` and `apps/web/liviere/`. Tests: `apps/api/plane/tests/contract/api/test_pages.py`,
-`apps/live/tests/liviere/`; compatibility check against `plane-sdk==0.3.1`:
+`apps/live/tests/liviere/` (`redis-publish.test.ts` needs a Redis: `TEST_REDIS_URL=redis://…`); compatibility check against `plane-sdk==0.3.1`:
 `apps/api/plane/liviere/scripts/sdk_pages_smoke.py`. The contract follows the SDK: list, retrieve, create,
 `PUT`/`PATCH` (both partial), `POST`/`DELETE .../archive/`, `DELETE` (archived pages only).
 Permissions are the same as in the UI (`ProjectPagePermission`).
