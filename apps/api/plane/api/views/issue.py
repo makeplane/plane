@@ -93,7 +93,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from .base import BaseAPIView
 from plane.utils.host import base_host
 from plane.utils.serializers import writable_data
-from plane.utils.issue_relation_mapper import get_actual_relation
+from plane.utils.issue_relation_mapper import get_actual_relation, get_inverse_relation
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
 from plane.utils.openapi import (
@@ -2868,6 +2868,15 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
         # The URL issue must belong to the URL project; relation rows stay workspace-scoped.
         if not Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id, pk=issue_id).exists():
             return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+        # Only act on pairs whose other side the caller may view. Otherwise a member of
+        # this project could probe work items in projects they cannot access by removing
+        # existing vs missing pairs. The list endpoint applies the same rule.
+        if not Issue.objects.filter(
+            visible_issue_q(request.user),
+            workspace__slug=slug,
+            pk=related_issue,
+        ).exists():
+            return Response({"error": "Issue relation not found"}, status=status.HTTP_404_NOT_FOUND)
 
         relations = (
             IssueRelation.objects.filter(workspace__slug=slug)
@@ -2884,10 +2893,17 @@ class IssueRelationRemoveAPIEndpoint(BaseAPIView):
         # The delete activity handler reads `related_issue`, so emit one activity per removed relation.
         for relation in relations:
             counterpart_id = relation.related_issue_id if relation.issue_id == issue_id else relation.issue_id
+            # A stored row pointing at the path issue is the inverse relation from the
+            # path issue's point of view; the handler inverts it again for the counterpart.
+            relation_type = (
+                get_inverse_relation(relation.relation_type)
+                if relation.related_issue_id == issue_id
+                else relation.relation_type
+            )
             issue_activity.delay(
                 type="issue_relation.activity.deleted",
                 requested_data=json.dumps(
-                    {"related_issue": str(counterpart_id), "relation_type": relation.relation_type},
+                    {"related_issue": str(counterpart_id), "relation_type": relation_type},
                     cls=DjangoJSONEncoder,
                 ),
                 actor_id=str(request.user.id),

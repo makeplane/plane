@@ -19,6 +19,7 @@ from uuid import uuid4
 import pytest
 from rest_framework import status
 
+from plane.bgtasks.issue_activities_task import delete_issue_relation_activity
 from plane.db.models import Issue, IssueRelation, Project, ProjectMember
 
 
@@ -222,3 +223,152 @@ def test_remove_invalid_api_key_is_rejected(api_client, workspace, own_project, 
     )
 
     assert response.status_code in (status.HTTP_401_UNAUTHORIZED, status.HTTP_403_FORBIDDEN)
+
+
+@pytest.fixture
+def hidden_project(workspace, create_bot_user):
+    """A project the API-key user is NOT a member of."""
+    project = Project.objects.create(
+        name="HIDDEN",
+        identifier="HIDDEN",
+        workspace=workspace,
+        created_by=create_bot_user,
+    )
+    ProjectMember.objects.create(project=project, member=create_bot_user, workspace=workspace, role=20)
+    return project
+
+
+@pytest.fixture
+def hidden_issue(hidden_project):
+    """An issue in a project the API-key user cannot see."""
+    return Issue.objects.create(name="Hidden", project=hidden_project, workspace=hidden_project.workspace)
+
+
+@pytest.fixture
+def other_project(workspace, create_user):
+    """A project in the same workspace that the API-key user IS a member of (for cross-project tests)."""
+    project = Project.objects.create(name="OTHER", identifier="OTHER", workspace=workspace, created_by=create_user)
+    ProjectMember.objects.create(project=project, member=create_user, workspace=workspace, role=20)
+    return project
+
+
+@pytest.fixture
+def other_issue(other_project):
+    """An issue in another project that the API-key user CAN see."""
+    return Issue.objects.create(name="Other", project=other_project, workspace=other_project.workspace)
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_remove_counterpart_hidden_returns_404_and_relation_survives(
+    api_key_client, workspace, own_project, own_issue, hidden_issue, activity_mock
+):
+    """COUNTERPART VISIBILITY: Caller cannot view hidden counterpart → 404.
+
+    Security: prevent work item probing in projects the caller cannot access.
+    Uses visible_issue_q (same rule as list endpoint). Not limited to same-project.
+
+    Assert: 404 response AND relation row survives (not deleted).
+    """
+    # Create the relation row directly (bypassing the API endpoint which would
+    # check visibility at create time). This simulates a cross-project pair where
+    # the hidden issue is legitimately related but now hidden from the caller.
+    relation = IssueRelation.objects.create(
+        issue=own_issue,
+        related_issue=hidden_issue,
+        relation_type="blocked_by",
+        project=own_project,
+        workspace=workspace,
+    )
+    assert IssueRelation.objects.filter(pk=relation.pk).exists()
+
+    # Attempt to remove the relation to the hidden issue.
+    response = _remove(api_key_client, workspace, own_project, own_issue, hidden_issue.id)
+
+    # Must return 404, not 500 or 204.
+    assert response.status_code == status.HTTP_404_NOT_FOUND, response.content
+    assert "error" in response.data
+
+    # Relation row must NOT be deleted (it was hidden, not removed).
+    assert IssueRelation.objects.filter(pk=relation.pk).exists()
+
+    # Activity should NOT be emitted for a failed visibility check.
+    activity_mock.delay.assert_not_called()
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+def test_remove_inverse_relation_type_in_deletion_activity(
+    api_key_client, workspace, own_project, own_issue, related_issue, activity_mock
+):
+    """INVERSE RELATION TYPE: Activity for reversed relations carries inverted type.
+
+    When the stored row points toward the path issue (relation.related_issue_id == path),
+    the activity payload must carry get_inverse_relation(stored type), not the stored type.
+
+    Example: 'blocking' stored as (issue=related, related_issue=own, type='blocked_by').
+    When removed from own_issue, the activity for own_issue carries 'blocking', not 'blocked_by'.
+
+    Assert: activity payload relation_type == 'blocking'.
+    """
+    # Create a "blocking" relation, which is stored reversed:
+    # IssueRelation(issue=related_issue, related_issue=own_issue, relation_type="blocked_by")
+    created = _create(api_key_client, workspace, own_project, own_issue, "blocking", [related_issue.id])
+    assert created.status_code == status.HTTP_201_CREATED, created.content
+
+    # Verify the row was stored reversed.
+    stored_relation = IssueRelation.objects.get(issue=related_issue, related_issue=own_issue)
+    assert stored_relation.relation_type == "blocked_by"
+
+    # Reset the mock to measure only the delete activity.
+    activity_mock.reset_mock()
+
+    # Remove from the path issue (own_issue). The stored row points AT own_issue
+    # (related_issue_id == own_issue.id), so it's the inverse from own_issue's view.
+    response = _remove(api_key_client, workspace, own_project, own_issue, related_issue.id)
+    assert response.status_code == status.HTTP_204_NO_CONTENT, response.content
+
+    # Check the activity payload.
+    assert activity_mock.delay.call_count == 1
+    kwargs = activity_mock.delay.call_args.kwargs
+    payload = json.loads(kwargs["requested_data"])
+
+    # The activity for own_issue (path issue) must carry the INVERSE type.
+    assert payload["relation_type"] == "blocking", (
+        f"Expected 'blocking' (inverse of stored 'blocked_by'), got '{payload['relation_type']}'"
+    )
+
+
+@pytest.mark.unit
+@pytest.mark.django_db
+def test_delete_relation_activity_scopes_counterpart_to_its_own_project(
+    workspace, own_project, own_issue, other_project, other_issue, create_user
+):
+    """COUNTERPART PROJECT SCOPING: the counterpart's activity belongs to its own project.
+
+    Exercises delete_issue_relation_activity directly (no mocked delay call), so a
+    counterpart row stamped with the path project actually fails here.
+    """
+    issue_activities = []
+
+    delete_issue_relation_activity(
+        requested_data=json.dumps({"related_issue": str(other_issue.id), "relation_type": "blocking"}),
+        current_instance=None,
+        issue_id=str(own_issue.id),
+        project_id=str(own_project.id),
+        workspace_id=str(workspace.id),
+        actor_id=str(create_user.id),
+        issue_activities=issue_activities,
+        epoch=1,
+    )
+
+    assert len(issue_activities) == 2
+    path_activity, counterpart_activity = issue_activities
+
+    assert str(path_activity.issue_id) == str(own_issue.id)
+    assert str(path_activity.project_id) == str(own_project.id)
+    assert path_activity.field == "blocking"
+
+    assert str(counterpart_activity.issue_id) == str(other_issue.id)
+    assert str(counterpart_activity.project_id) == str(other_project.id)
+    assert counterpart_activity.field == "blocked_by"

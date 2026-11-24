@@ -1377,7 +1377,7 @@ def delete_issue_relation_activity(
     issue_activities,
     epoch,
 ):
-    requested_data = json.loads(requested_data) if requested_data is not None else None
+    requested_data = json.loads(requested_data) if requested_data is not None else {}
     current_instance = json.loads(current_instance) if current_instance is not None else None
     current_issue = Issue.objects.filter(pk=issue_id, project_id=project_id, workspace_id=workspace_id).first()
     issue = Issue.objects.filter(pk=requested_data.get("related_issue"), workspace_id=workspace_id).first()
@@ -1405,16 +1405,10 @@ def delete_issue_relation_activity(
             verb="deleted",
             old_value=f"{current_issue.project.identifier}-{current_issue.sequence_id}",
             new_value="",
-            field=(
-                "blocking"
-                if requested_data.get("relation_type") == "blocked_by"
-                else (
-                    "blocked_by"
-                    if requested_data.get("relation_type") == "blocking"
-                    else requested_data.get("relation_type")
-                )
-            ),
-            project_id=project_id,
+            field=get_inverse_relation(requested_data.get("relation_type")),
+            # The counterpart may live in another project; its activity must be
+            # project-scoped to its own project to show up in that project's feed.
+            project_id=issue.project_id,
             workspace_id=workspace_id,
             comment=f"deleted {requested_data.get('relation_type')} relation",
             old_identifier=requested_data.get("related_issue"),
