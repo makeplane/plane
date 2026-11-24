@@ -83,7 +83,10 @@ export function CreateWebhookModal(props: ICreateWebhookModal) {
         setToast({
           type: "error",
           title: t("workspace_settings.settings.webhooks.toasts.not_created.title"),
-          message: error?.error ?? t("workspace_settings.settings.webhooks.toasts.not_created.message"),
+          message:
+            (Array.isArray(error?.url) ? error.url[0] : error?.url) ??
+            error?.error ??
+            t("workspace_settings.settings.webhooks.toasts.not_created.message"),
         });
       });
   };

@@ -72,7 +72,10 @@ function WebhookDetailsPage({ params }: Route.ComponentProps) {
       setToast({
         type: "error",
         title: "Error!",
-        message: error?.error ?? "Something went wrong. Please try again.",
+        message:
+          (Array.isArray(error?.url) ? error.url[0] : error?.url) ??
+          error?.error ??
+          "Something went wrong. Please try again.",
       });
     }
   };
