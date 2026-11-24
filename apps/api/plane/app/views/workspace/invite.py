@@ -56,6 +56,16 @@ class WorkspaceInvitationsViewset(BaseViewSet):
         if not emails:
             return Response({"error": "Emails are required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Each entry is an object with an email and, optionally, an integer role
+        if not isinstance(emails, list) or not all(
+            isinstance(email, dict) and isinstance(email.get("email"), str) and str(email.get("role", 5)).isdecimal()
+            for email in emails
+        ):
+            return Response(
+                {"error": "Emails must be a list of objects with an email and a role"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         # check for role level of the requesting user
         requesting_user = WorkspaceMember.objects.get(workspace__slug=slug, member=request.user, is_active=True)
 
