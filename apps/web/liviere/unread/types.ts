@@ -16,7 +16,7 @@ export type TNewWorkItem = {
   created_at: string;
   project: { id: string; identifier: string; name: string };
   state: { id: string; name: string; group: TStateGroups; color: string } | null;
-  created_by: { id: string; display_name: string; avatar_url: string | null } | null;
+  created_by: { id: string; display_name: string } | null;
 };
 
 export type TNewWorkItemsPage = {

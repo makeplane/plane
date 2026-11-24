@@ -58,9 +58,10 @@ export const NewWorkItemsPage = observer(function NewWorkItemsPage(props: Props)
     (index: number, previous: TNewWorkItemsPage | null) => {
       if (previous && !previous.has_more) return null;
       const last = previous?.results[previous.results.length - 1];
-      return [baseKey, last?.created_at];
+      return [baseKey, last?.created_at, last?.id];
     },
-    ([, olderThan]: [string, string | undefined]) => newWorkItemsService.list(workspaceSlug, projectIds, olderThan),
+    ([, createdAt, id]: [string, string | undefined, string | undefined]) =>
+      newWorkItemsService.list(workspaceSlug, projectIds, createdAt && id ? { created_at: createdAt, id } : undefined),
     { revalidateOnFocus: false, revalidateFirstPage: false }
   );
 

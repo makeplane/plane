@@ -8,7 +8,8 @@
 // (hook in components/settings/profile/content/pages/notifications/root.tsx). Turning them on asks for the
 // browser permission only after a click. Projects are chosen per account; each browser is turned on separately.
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { observer } from "mobx-react";
 import useSWR from "swr";
 import { Button } from "@makeplane/propel/components/button";
 import { Switch } from "@makeplane/propel/components/switch";
@@ -16,15 +17,25 @@ import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
 import { SettingsControlItem } from "@/components/settings/control-item";
 import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
+import { useUser } from "@/hooks/store/user";
 import { pushService } from "./push.service";
-import { currentSubscription, isPushSupported, subscribeBrowser } from "./register";
+import {
+  currentSubscription,
+  isPushSupported,
+  ownSubscription,
+  pushOwner,
+  rememberPushOwner,
+  subscribeBrowser,
+} from "./register";
 
 type TBrowserState = "loading" | "unsupported" | "denied" | "off" | "on";
 
 const PUSH_SETTINGS_KEY = "LIVIERE_PUSH_SETTINGS";
 
-export function LivierePushSettings() {
+export const LivierePushSettings = observer(function LivierePushSettings() {
   const { t } = useTranslation();
+  const { data: currentUser } = useUser();
+  const userId = currentUser?.id;
   const { data: settings, mutate } = useSWR(PUSH_SETTINGS_KEY, () => pushService.settings(), {
     revalidateOnFocus: false,
   });
@@ -36,13 +47,26 @@ export function LivierePushSettings() {
     [t]
   );
 
-  // State of this browser; a subscription the server lost (expired, other account) is registered again
+  // Projects shown at once; saves run one after another so quick switches are not lost
+  const [selected, setSelected] = useState<Set<string> | null>(null);
+  const saving = useRef<Promise<unknown>>(Promise.resolve());
   useEffect(() => {
-    if (!settings?.available) return;
+    if (settings && selected === null)
+      setSelected(
+        new Set(
+          settings.workspaces.flatMap((workspace) => workspace.projects.filter((p) => p.selected).map((p) => p.id))
+        )
+      );
+  }, [settings, selected]);
+
+  // State of this browser. A subscription of this account the server forgot (expired, signed out) is
+  // registered again; one made by another account here is shown as off until this person turns it on.
+  useEffect(() => {
+    if (!settings?.available || !userId) return;
     if (!isPushSupported()) return setBrowser("unsupported");
     if (Notification.permission === "denied") return setBrowser("denied");
     let cancelled = false;
-    void currentSubscription()
+    void ownSubscription(userId)
       .then(async (subscription) => {
         if (subscription) await pushService.subscribe(subscription.toJSON()).catch(() => undefined);
         if (!cancelled) setBrowser(subscription ? "on" : "off");
@@ -54,7 +78,7 @@ export function LivierePushSettings() {
     return () => {
       cancelled = true;
     };
-  }, [settings?.available]);
+  }, [settings?.available, userId]);
 
   const enable = async () => {
     if (!settings?.public_key) return;
@@ -66,6 +90,7 @@ export function LivierePushSettings() {
         return;
       }
       await pushService.subscribe(subscription.toJSON());
+      rememberPushOwner(userId ?? null);
       setBrowser("on");
     } catch {
       fail("enable");
@@ -82,6 +107,7 @@ export function LivierePushSettings() {
         await pushService.unsubscribe(subscription.endpoint).catch(() => undefined);
         await subscription.unsubscribe();
       }
+      if (pushOwner() === userId) rememberPushOwner(null);
       setBrowser("off");
     } catch {
       fail("disable");
@@ -90,18 +116,20 @@ export function LivierePushSettings() {
     }
   };
 
-  const toggleProject = async (projectId: string, selected: boolean) => {
-    if (!settings) return;
-    const ids = settings.workspaces
-      .flatMap((workspace) => workspace.projects)
-      .filter((project) => (project.id === projectId ? selected : project.selected))
-      .map((project) => project.id);
-    try {
-      await pushService.setProjects(ids);
-      await mutate();
-    } catch {
-      fail("projects");
-    }
+  const toggleProject = (projectId: string, isSelected: boolean) => {
+    if (!selected) return;
+    const next = new Set(selected);
+    if (isSelected) next.add(projectId);
+    else next.delete(projectId);
+    setSelected(next);
+    const ids = [...next];
+    saving.current = saving.current
+      .then(() => pushService.setProjects(ids))
+      .catch(async () => {
+        fail("projects");
+        setSelected(null);
+        await mutate();
+      });
   };
 
   const sendTest = async () => {
@@ -170,8 +198,8 @@ export function LivierePushSettings() {
                     control={
                       <Switch
                         size="sm"
-                        checked={project.selected}
-                        onCheckedChange={(selected) => void toggleProject(project.id, selected)}
+                        checked={selected?.has(project.id) ?? project.selected}
+                        onCheckedChange={(isSelected) => toggleProject(project.id, isSelected)}
                         aria-label={project.name}
                       />
                     }
@@ -184,4 +212,4 @@ export function LivierePushSettings() {
       </div>
     </div>
   );
-}
+});

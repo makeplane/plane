@@ -46,10 +46,45 @@ export const subscribeBrowser = async (publicKey: string): Promise<PushSubscript
   if (permission !== "granted") return null;
   const registration = await navigator.serviceWorker.register(PUSH_WORKER_URL, { scope: PUSH_WORKER_SCOPE });
   await activeWorker(registration);
+  const key = applicationServerKey(publicKey);
   const existing = await registration.pushManager.getSubscription();
-  if (existing) return existing;
-  return registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: applicationServerKey(publicKey),
-  });
+  if (existing) {
+    // A subscription made with another server key (the VAPID keys changed) cannot receive our pushes
+    if (sameKey(existing.options.applicationServerKey, key)) return existing;
+    await existing.unsubscribe();
+  }
+  return registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+};
+
+const sameKey = (current: ArrayBuffer | null, expected: Uint8Array) => {
+  if (!current) return false;
+  const bytes = new Uint8Array(current);
+  return bytes.length === expected.length && bytes.every((byte, index) => byte === expected[index]);
+};
+
+// The account that turned push on in this browser. After signing out the server forgets the subscription;
+// it is registered again only for the same account, never silently for somebody else signing in here.
+const OWNER_KEY = "liviere.push.user";
+
+export const rememberPushOwner = (userId: string | null) => {
+  try {
+    if (userId) window.localStorage.setItem(OWNER_KEY, userId);
+    else window.localStorage.removeItem(OWNER_KEY);
+  } catch {
+    // Storage blocked: the person turns push on again in the profile
+  }
+};
+
+export const pushOwner = () => {
+  try {
+    return window.localStorage.getItem(OWNER_KEY);
+  } catch {
+    return null;
+  }
+};
+
+/** The existing subscription of this browser, if it belongs to `userId` and push is still allowed. */
+export const ownSubscription = async (userId: string | undefined) => {
+  if (!userId || !isPushSupported() || Notification.permission !== "granted" || pushOwner() !== userId) return null;
+  return currentSubscription();
 };

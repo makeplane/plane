@@ -29,13 +29,17 @@ export class NewWorkItemsService extends APIService {
       });
   }
 
-  async list(workspaceSlug: string, projectIds: string[], olderThan?: string): Promise<TNewWorkItemsPage> {
+  async list(
+    workspaceSlug: string,
+    projectIds: string[],
+    olderThan?: { created_at: string; id: string }
+  ): Promise<TNewWorkItemsPage> {
     return this.unwrap(
       this.get(this.url(workspaceSlug), {
         params: {
           per_page: NEW_WORK_ITEMS_PAGE_SIZE,
           ...(projectIds.length ? { projects: projectIds.join(",") } : {}),
-          ...(olderThan ? { older_than: olderThan } : {}),
+          ...(olderThan ? { older_than: olderThan.created_at, older_than_id: olderThan.id } : {}),
         },
       })
     );
