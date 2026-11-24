@@ -39,6 +39,7 @@ import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/bloc
 import { FavoriteStar } from "@plane/blocks/common";
 import { copyUrlToClipboard, cn, getFileURL } from "@plane/utils";
 // components
+import { ProjectStructurePath } from "@/components/teams/project-structure-path";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
 import { useProject } from "@/hooks/store/use-project";
@@ -319,6 +320,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
                 {project.network === 0 && <LockOutline className="size-3 shrink-0 text-icon-secondary" />}
               </div>
             </div>
+            <ProjectStructurePath portfolioId={project.portfolio} />
             {/* lead */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">

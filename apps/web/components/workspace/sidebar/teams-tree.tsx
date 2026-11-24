@@ -5,23 +5,27 @@
  */
 
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { Icon } from "@makeplane/propel/components/icon";
 import { IconButton } from "@makeplane/propel/components/icon-button";
 import { ListItem, ListItemLabel, ListItemLink } from "@makeplane/propel/elements/list";
+import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { AddOutline } from "@makeplane/propel/icons";
+import { AddOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
-import type { TProject, TTeam } from "@plane/types";
+import type { TPortfolio, TProject, TTeam } from "@plane/types";
 import { copyUrlToClipboard } from "@plane/utils";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
+import { EntityFormDialog } from "@/components/teams/entity-form-dialog";
+import { useTeamAction } from "@/components/teams/use-team-action";
 // hooks
 import { useTeam } from "@/hooks/store/use-team";
 import useLocalStorage from "@/hooks/use-local-storage";
@@ -66,44 +70,125 @@ const TreeProjects = observer(function TreeProjects({ projects }: TProjectsProps
   );
 });
 
+type TNodeMenuProps = { label: string; children: ReactNode };
+
+/** Three-dots menu of a tree node. Always in the tab order, so it is reachable without a mouse. */
+function NodeMenu({ label, children }: TNodeMenuProps) {
+  return (
+    <Menu>
+      <MenuTrigger
+        render={
+          <IconButton variant="ghost" size="xs" icon={<Icon icon={MoreHorizontalOutline} />} aria-label={label} />
+        }
+      />
+      <MenuContent side="bottom" align="start">
+        {children}
+      </MenuContent>
+    </Menu>
+  );
+}
+
+type TPortfolioNodeProps = { portfolio: TPortfolio };
+
+const PortfolioNode = observer(function PortfolioNode({ portfolio }: TPortfolioNodeProps) {
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const { workspaceSlug } = useParams();
+  const router = useRouter();
+  const { canManageTeam, getPortfolioProjects } = useTeam();
+  const { t } = useTranslation();
+  const { storedValue: isOpen, setValue: setIsOpen } = useLocalStorage<boolean>(
+    `sidebar_portfolio_${portfolio.id}_open`,
+    true
+  );
+  const projects = getPortfolioProjects(portfolio.id);
+
+  return (
+    <>
+      {workspaceSlug && (
+        <CreateProjectModal
+          isOpen={isCreateOpen}
+          onClose={() => setIsCreateOpen(false)}
+          workspaceSlug={workspaceSlug.toString()}
+          data={{ portfolio_id: portfolio.id }}
+        />
+      )}
+      <Collapsible
+        placement="sidebar"
+        open={!!isOpen}
+        onOpenChange={setIsOpen}
+        trigger={<span className="truncate text-body-xs-medium text-tertiary">{portfolio.name}</span>}
+        trailing={
+          <NodeMenu label={`${t("aria_labels.common.more_actions")}: ${portfolio.name}`}>
+            <MenuItem
+              label={t("common.overview")}
+              onClick={() => router.push(`/${workspaceSlug}/portfolios/${portfolio.id}`)}
+            />
+            {canManageTeam(portfolio.team) && (
+              <MenuItem label={t("create_project")} onClick={() => setIsCreateOpen(true)} />
+            )}
+          </NodeMenu>
+        }
+      >
+        <div className="flex w-full flex-col gap-px pl-2">
+          <TreeProjects projects={projects} />
+          {projects.length === 0 && (
+            <p className="px-2 py-1 text-caption-sm-regular text-placeholder">{t("team_structure.no_projects")}</p>
+          )}
+        </div>
+      </Collapsible>
+    </>
+  );
+});
+
 type TTeamNodeProps = { team: TTeam };
 
 const TeamNode = observer(function TeamNode({ team }: TTeamNodeProps) {
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { workspaceSlug } = useParams();
-  const { getTeamPortfolios, getPortfolioProjects } = useTeam();
+  const router = useRouter();
+  const { canManageTeam, createPortfolio, getTeamPortfolios } = useTeam();
+  const run = useTeamAction();
   const { t } = useTranslation();
   // the user's own teams start open
   const { storedValue: isOpen, setValue: setIsOpen } = useLocalStorage<boolean>(
     `sidebar_team_${team.id}_open`,
     !!team.member_role
   );
+  const portfolios = getTeamPortfolios(team.id, false);
 
   return (
-    <Collapsible
-      placement="sidebar"
-      open={!!isOpen}
-      onOpenChange={setIsOpen}
-      trigger={<span className="truncate text-body-xs-semibold text-secondary">{team.name}</span>}
-    >
-      <div className="flex w-full flex-col gap-px pl-2">
-        <ListItem density="comfortable">
-          <ListItemLink render={<Link href={`/${workspaceSlug}/teams/${team.id}`} />}>
-            <ListItemLabel>{t("common.overview")}</ListItemLabel>
-          </ListItemLink>
-        </ListItem>
-        {getTeamPortfolios(team.id, false).map((portfolio) => (
-          <div key={portfolio.id}>
-            <Link
-              href={`/${workspaceSlug}/portfolios/${portfolio.id}`}
-              className="block truncate px-2 pt-2 pb-1 text-caption-sm-medium text-tertiary hover:text-secondary"
-            >
-              {portfolio.name}
-            </Link>
-            <TreeProjects projects={getPortfolioProjects(portfolio.id)} />
-          </div>
-        ))}
-      </div>
-    </Collapsible>
+    <>
+      <EntityFormDialog
+        isOpen={isCreateOpen}
+        title={t("team_structure.create_portfolio")}
+        submitLabel={t("team_structure.create_portfolio")}
+        onClose={() => setIsCreateOpen(false)}
+        onSubmit={(values) => run(() => createPortfolio(workspaceSlug?.toString() ?? "", team.id, values))}
+      />
+      <Collapsible
+        placement="sidebar"
+        open={!!isOpen}
+        onOpenChange={setIsOpen}
+        trigger={<span className="truncate text-body-xs-semibold text-secondary">{team.name}</span>}
+        trailing={
+          <NodeMenu label={`${t("aria_labels.common.more_actions")}: ${team.name}`}>
+            <MenuItem label={t("common.overview")} onClick={() => router.push(`/${workspaceSlug}/teams/${team.id}`)} />
+            {team.kind === "regular" && canManageTeam(team.id) && (
+              <MenuItem label={t("team_structure.create_portfolio")} onClick={() => setIsCreateOpen(true)} />
+            )}
+          </NodeMenu>
+        }
+      >
+        <div className="flex w-full flex-col gap-px pl-2">
+          {portfolios.map((portfolio) => (
+            <PortfolioNode key={portfolio.id} portfolio={portfolio} />
+          ))}
+          {portfolios.length === 0 && team.kind === "regular" && (
+            <p className="px-2 py-1 text-caption-sm-regular text-placeholder">{t("team_structure.no_portfolios")}</p>
+          )}
+        </div>
+      </Collapsible>
+    </>
   );
 });
 
