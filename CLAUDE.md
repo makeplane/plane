@@ -6,9 +6,20 @@ The rules below override AGENTS.md where they conflict.
 
 ## Branch and deploy
 
-- Work directly on `main`. Do not create feature branches or open PRs against `preview`; the AGENTS.md PR section describes the upstream workflow and does not apply here.
-- **Every push to `main` deploys to production** via `.github/workflows/deploy.yml`. It SSHes into the server, runs `git reset --hard origin/main`, then `docker compose up -d --build`. There is no staging environment and no other CI (upstream workflows were removed), so local checks are the only gate before prod.
-- Do not push unless the user explicitly asks for it. Before pushing, say that the push will deploy to prod.
+- **Direct pushes to `main` are forbidden.** Never commit on `main` or push to it, including force-pushes; changes reach it only through a PR that the user merges.
+- For every task, create a branch `feature/<name>` (short kebab-case name) from a fresh `main`. This naming overrides the `branch-name` skill.
+
+  ```bash
+  git fetch origin main
+  git switch --no-track -c feature/<name> origin/main
+  ```
+
+- Commit the work on that branch and push it with `git push -u origin feature/<name>`. This needs no separate confirmation.
+- After pushing, give the user a link for creating the PR; do not create or merge the PR yourself unless asked:
+  `https://github.com/ikopytok/plane/compare/main...feature/<name>?expand=1`
+- PRs go to `main` of `ikopytok/plane` (remote `origin`), **never to `makeplane/plane`** (remote `upstream`). The AGENTS.md PR section and the `create-pull-request` skill's base branch describe the upstream workflow and do not apply here. If asked to create a PR with `gh`, always pass `--repo ikopytok/plane --base main`, because `gh` may default to the upstream repo.
+- **Merging into `main` deploys to production** via `.github/workflows/deploy.yml`. It SSHes into the server, runs `git reset --hard origin/main`, then `docker compose up -d --build`. There is no staging environment. Pushing a feature branch does not deploy.
+- CI (`.github/workflows/ci.yml`) runs on PRs to `main`: lint, types and build for the apps, plus API lint and tests. Upstream workflows were removed. Still run the local checks below before committing.
 - Migrations in `apps/api` reach the production database on deploy. Treat them as irreversible and point them out to the user before committing.
 
 ## Before every commit
