@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-apps:
+    name: Lint, types, build (${{ matrix.app }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [web, admin, space, live]
+    env:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+      # pnpm version comes from packageManager in package.json.
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm turbo run check:lint --filter=${{ matrix.app }}
+      # check:types and build depend on ^build, so turbo builds the workspace packages first.
+      - name: Check types
+        run: pnpm turbo run check:types --filter=${{ matrix.app }}
+      - name: Build
+        run: pnpm turbo run build --filter=${{ matrix.app }}
+
+  api-lint:
+    name: Lint API
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          # uv version comes from [tool.uv] required-version.
+          version-file: apps/api/pyproject.toml
+          python-version: "3.12"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      # ruff lives in the dev group; --locked fails if uv.lock is out of date.
+      - name: Install dependencies
+        run: uv sync --locked --only-group dev
+      - name: Lint
+        run: uv run --no-sync ruff check .
+
+  api-tests:
+    name: Test API
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+      # Documented prerequisite of docker-compose-test.yml: generates apps/api/.env
+      # from .env.example on the runner (no real secrets involved).
+      - name: Generate env files
+        run: ./setup.sh
+      - name: Run pytest
+        run: docker compose -f docker-compose-test.yml up --build --abort-on-container-exit --exit-code-from api-tests
+      - name: Tear down
+        if: always()
+        run: docker compose -f docker-compose-test.yml down -v
