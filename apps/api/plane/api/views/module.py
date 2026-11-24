@@ -45,6 +45,7 @@ from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
 from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, MODULE_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.external_id import external_pair_taken
 from plane.utils.openapi import (
     module_docs,
     module_issue_docs,
@@ -467,15 +468,8 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             )
         serializer = ModuleUpdateSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
         if serializer.is_valid():
-            if (
-                request.data.get("external_id")
-                and (module.external_id != request.data.get("external_id"))
-                and Module.objects.filter(
-                    project_id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source", module.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
+            if external_pair_taken(
+                Module.objects.filter(project_id=project_id, workspace__slug=slug), module, serializer.validated_data
             ):
                 return Response(
                     {

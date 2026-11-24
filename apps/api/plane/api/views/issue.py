@@ -95,6 +95,7 @@ from plane.utils.serializers import writable_data
 from plane.utils.issue_relation_mapper import get_actual_relation
 from plane.bgtasks.webhook_task import model_activity
 from plane.app.permissions import ROLE
+from plane.utils.external_id import external_pair_taken
 from plane.utils.openapi import (
     work_item_docs,
     work_item_relation_docs,
@@ -851,15 +852,8 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             partial=True,
         )
         if serializer.is_valid():
-            if (
-                request.data.get("external_id")
-                and (issue.external_id != str(request.data.get("external_id")))
-                and Issue.objects.filter(
-                    project_id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source", issue.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
+            if external_pair_taken(
+                Issue.objects.filter(project_id=project_id, workspace__slug=slug), issue, serializer.validated_data
             ):
                 return Response(
                     {
@@ -1137,17 +1131,8 @@ class LabelDetailAPIEndpoint(LabelListCreateAPIEndpoint):
         label = self.get_queryset().get(pk=pk)
         serializer = LabelCreateUpdateSerializer(label, data=request.data, partial=True)
         if serializer.is_valid():
-            if (
-                request.data.get("external_id")
-                and request.data.get("external_source")
-                and Label.objects.filter(
-                    project_id=project_id,
-                    workspace__slug=slug,
-                    external_source=request.data.get("external_source"),
-                    external_id=request.data.get("external_id"),
-                )
-                .exclude(id=pk)
-                .exists()
+            if external_pair_taken(
+                Label.objects.filter(project_id=project_id, workspace__slug=slug), label, serializer.validated_data
             ):
                 return Response(
                     {
