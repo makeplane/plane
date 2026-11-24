@@ -32,17 +32,25 @@ Create a pull request using the repo's PR template, a Plane work item ID as the 
    **Body**: Fill in every section from the PR template based on the actual diff:
    - **Description** — Clear, concise summary of what the PR does and why. Focus on the "what" and "why", not line-by-line changes. Mention important implementation decisions.
    - **Type of Change** — Check the appropriate box(es): Bug fix, Feature, Improvement, Code refactoring, Performance improvements, Documentation update.
-   - **Screenshots and Media** — Leave a placeholder: `<!-- Add screenshots here -->`
+   - **Screenshots and Media** — If you have screenshots or videos of the change, reference them by local path (for example a `Before` / `After` table with `![before](./before.png)`) and upload them with `--attach` in step 5. Otherwise leave a placeholder: `<!-- Add screenshots here -->`
    - **Test Scenarios** — Suggest concrete scenarios grounded in the actual changes (e.g., "Navigate to project settings and verify the new toggle works"), not generic ones.
    - **References** — Include the work item ID, any linked issues the user mentions, and any Sentry issue links/IDs (e.g., `SENTRY-ABC123` or Sentry URLs) referenced earlier in the conversation.
 
-   Append a Claude Code session line at the bottom of the body.
-
 5. **Push and create** (in parallel where possible):
    - Push branch with `-u` if no upstream is set
-   - Create PR via `gh pr create` using a HEREDOC for the body
+   - Create PR via `gh pr create` using a HEREDOC for the body, or `--body-file` when attaching media
+   - Pass each referenced screenshot or video with `--attach` (see Screenshots and Media)
 
 6. **Return the PR URL** to the user.
+
+## Screenshots and Media
+
+Upload images and videos with the GitHub CLI's `--attach` flag (gh 2.99.0 or later; uploading needs push access to the repo). It uploads to `github.com/user-attachments/assets/...`, and those links follow the repo's visibility, so don't host screenshots in gists or on external image hosts.
+
+- Write the body to a file and reference each file by a path relative to it, e.g. `![after](./after.png)`. gh uploads every `--attach` file and rewrites the matching reference to the uploaded URL. Attached files that the body doesn't reference are appended at the end.
+- Alt text goes after `#` in the path: `--attach './after.png#Error toast after the fix'`.
+- Example: `gh pr create --title "..." --body-file body.md --attach ./before.png --attach ./after.png`
+- To add screenshots to an existing PR: `gh pr edit <number> --body-file body.md --attach ./before.png --attach ./after.png`
 
 ## Example Title
 
