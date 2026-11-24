@@ -187,3 +187,30 @@ class TestSend:
         with mock.patch.object(webpush, "pinned_fetch") as fetch, pytest.raises(webpush.InvalidSubscription):
             webpush.send(subscription, {}, config)
         fetch.assert_not_called()
+
+
+@pytest.mark.unit
+class TestReviewFixes:
+    def test_audience_is_the_normalized_origin(self):
+        _, private, public = _key_pair()
+        with mock.patch.dict(os.environ, _env(private, public)):
+            config = push_config.vapid_config()
+        header = webpush.vapid_headers("https://FCM.googleapis.com:443/fcm/send/abc", config)["Authorization"]
+        token = header.removeprefix("vapid t=").split(", k=")[0]
+        assert jwt.decode(token, options={"verify_signature": False})["aud"] == "https://fcm.googleapis.com"
+
+    @pytest.mark.parametrize("value", ["abc=", "a+b/", "ab cd", "", None, 123])
+    def test_keys_must_be_strict_base64url(self, value):
+        receiver = ec.generate_private_key(ec.SECP256R1())
+        with pytest.raises(webpush.InvalidSubscription):
+            webpush.validate_keys(value, b64url_encode(os.urandom(16)))
+        with pytest.raises(webpush.InvalidSubscription):
+            webpush.validate_keys(b64url_encode(public_key_bytes(receiver)), value)
+
+    def test_payload_keeps_non_ascii_and_cuts_long_texts(self):
+        payload = webpush.payload_bytes({"title": "Ł" * 500, "body": "ż" * 5000, "url": "/"})
+        message = json.loads(payload)
+        assert len(message["title"]) == webpush.MAX_TITLE_LENGTH
+        assert len(message["body"]) == webpush.MAX_BODY_LENGTH
+        assert "Ł".encode() in payload
+        assert len(payload) < 4096

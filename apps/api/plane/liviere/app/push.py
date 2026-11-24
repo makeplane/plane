@@ -14,6 +14,7 @@ from django.db import transaction
 # Third party imports
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.throttling import UserRateThrottle
 
 # Module imports
 from plane.app.views.base import BaseAPIView
@@ -22,6 +23,15 @@ from plane.liviere.models import PushProject, PushSubscription
 from plane.liviere.push.config import vapid_config
 from plane.liviere.push.webpush import InvalidSubscription, validate_endpoint, validate_keys
 from plane.liviere.unread.queries import can_see_others
+
+
+# Browsers per person; subscribing one more drops the oldest
+MAX_SUBSCRIPTIONS_PER_USER = 10
+
+
+class PushTestThrottle(UserRateThrottle):
+    scope = "liviere_push_test"
+    rate = "5/minute"
 
 
 def unavailable():
@@ -102,9 +112,13 @@ class PushSubscriptionsEndpoint(BaseAPIView):
         try:
             validate_endpoint(endpoint)
             validate_keys(keys.get("p256dh"), keys.get("auth"))
-        except (InvalidSubscription, AttributeError) as e:
+        except (InvalidSubscription, AttributeError, TypeError) as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        # The same browser signed in with another account takes the subscription over
+        existing = PushSubscription.objects.filter(endpoint=endpoint).first()
+        if existing and (existing.p256dh, existing.auth) != (keys["p256dh"], keys["auth"]):
+            # Another browser cannot have this endpoint: refuse instead of taking it over
+            return Response({"error": "This subscription exists with other keys."}, status=status.HTTP_409_CONFLICT)
+        # The same browser (same keys) signed in with another account takes the subscription over
         PushSubscription.objects.update_or_create(
             endpoint=endpoint,
             defaults={
@@ -115,6 +129,10 @@ class PushSubscriptionsEndpoint(BaseAPIView):
                 "failure_count": 0,
             },
         )
+        stale = PushSubscription.objects.filter(user=request.user).order_by("-created_at", "-id")[
+            MAX_SUBSCRIPTIONS_PER_USER:
+        ]
+        PushSubscription.objects.filter(pk__in=list(stale.values_list("pk", flat=True))).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request):
@@ -126,6 +144,8 @@ class PushSubscriptionsEndpoint(BaseAPIView):
 
 
 class PushTestEndpoint(BaseAPIView):
+    throttle_classes = [PushTestThrottle]
+
     def post(self, request):
         if vapid_config() is None:
             return unavailable()

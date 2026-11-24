@@ -19,9 +19,6 @@ import logging
 from django.db.models import F
 from django.utils import timezone
 
-# Third party imports
-import requests
-
 # Module imports
 from plane.db.models import Issue, Profile, ProjectMember
 from plane.liviere.models import PushProject, PushSubscription
@@ -31,8 +28,11 @@ from plane.liviere.unread.queries import can_see_others, new_work_items
 
 logger = logging.getLogger("plane.worker")
 
-# Push services answer 404/410 for a subscription that expired or was revoked
-GONE = (404, 410)
+# Push services answer 404/410 for a subscription that expired or was revoked, and 400/403 when it does not
+# match our keys (e.g. after the VAPID keys changed): the subscription is useless, remove it
+GONE = (400, 403, 404, 410)
+# A subscription that failed this many times in a row is removed as well
+MAX_FAILURES = 5
 
 
 def language_of(user_id):
@@ -71,16 +71,26 @@ def message_for(user, issue):
     }
 
 
+def record_failure(subscription):
+    if subscription.failure_count + 1 >= MAX_FAILURES:
+        subscription.delete()
+        return
+    PushSubscription.objects.filter(pk=subscription.pk).update(failure_count=F("failure_count") + 1)
+
+
 def deliver(subscription, message, config):
-    """Sends one message; removes a subscription the push service no longer knows. Returns the status or None."""
+    """Sends one message; removes a subscription that is gone or keeps failing. Returns the status or None.
+
+    Never raises: one broken subscription must not stop the others."""
     try:
         status_code = send(subscription, message, config)
     except InvalidSubscription:
         subscription.delete()
         return None
-    except (requests.RequestException, ValueError) as e:
+    except Exception as e:
+        # Network errors, blocked addresses, encryption or JWT errors – only the type is logged
         logger.warning("liviere push: delivery failed: %s", type(e).__name__)
-        PushSubscription.objects.filter(pk=subscription.pk).update(failure_count=F("failure_count") + 1)
+        record_failure(subscription)
         return None
     if status_code in GONE:
         subscription.delete()
@@ -88,7 +98,7 @@ def deliver(subscription, message, config):
         PushSubscription.objects.filter(pk=subscription.pk).update(last_success_at=timezone.now(), failure_count=0)
     else:
         logger.warning("liviere push: push service answered %s", status_code)
-        PushSubscription.objects.filter(pk=subscription.pk).update(failure_count=F("failure_count") + 1)
+        record_failure(subscription)
     return status_code
 
 

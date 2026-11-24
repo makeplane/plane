@@ -15,7 +15,8 @@ from rest_framework.test import APIClient
 
 from plane.db.models import Issue, Project, ProjectMember, State, User, WorkspaceMember
 from plane.db.models.api import APIToken
-from plane.liviere.models import UnreadProjectCutoff, UnreadWorkspaceCutoff, WorkItemOpen
+from plane.liviere.models import UnreadMembershipState, UnreadProjectCutoff, UnreadWorkspaceCutoff, WorkItemOpen
+from plane.liviere.unread.queries import sync_membership_states
 
 ADMIN, MEMBER, GUEST = 20, 15, 5
 
@@ -295,3 +296,71 @@ class TestNewWorkItems:
         client = _session(outsider)
         assert client.get(_url(workspace)).status_code == status.HTTP_403_FORBIDDEN
         assert client.get(_url(workspace, "count/")).status_code == status.HTTP_403_FORBIDDEN
+
+
+@pytest.mark.contract
+class TestReviewFixes:
+    def test_paging_keeps_items_created_at_the_same_moment(self, workspace, project, me, agent):
+        items = [_issue(project, agent, f"Same {n}") for n in range(3)]
+        moment = max(item.created_at for item in items)
+        Issue.objects.filter(pk__in=[item.pk for item in items]).update(created_at=moment)
+        client = _session(me)
+
+        first = client.get(_url(workspace), {"per_page": 2}).data
+        last = first["results"][-1]
+        second = client.get(
+            _url(workspace), {"per_page": 2, "older_than": last["created_at"], "older_than_id": last["id"]}
+        ).data
+        seen = [item["id"] for item in first["results"] + second["results"]]
+        assert sorted(seen) == sorted(str(item.id) for item in items)
+        assert second["has_more"] is False
+
+    @pytest.mark.parametrize(
+        "params",
+        [
+            {"older_than": "2026-13-01T10:00:00+00:00"},
+            {"older_than": "2026-01-01T10:00:00+00:00", "older_than_id": "x"},
+        ],
+    )
+    def test_impossible_dates_and_bad_ids_answer_400(self, workspace, project, me, params):
+        assert _session(me).get(_url(workspace), params).status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_mark_read_with_an_impossible_date_answers_400(self, workspace, project, me):
+        response = _session(me).post(
+            _url(workspace, "mark-read/"), {"before": "2026-13-01T10:00:00+00:00"}, format="json"
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_author_has_no_avatar_lookup(self, workspace, project, me, agent):
+        _issue(project, agent)
+        item = _session(me).get(_url(workspace)).data["results"][0]
+        assert set(item["created_by"]) == {"id", "display_name"}
+
+    def test_work_items_from_the_time_away_are_not_new_after_rejoining(self, workspace, project, me, agent):
+        returning = _join(project, _make_user("returning"))
+        before_leaving = _issue(project, agent, "Before leaving")
+        sync_membership_states()
+        assert UnreadMembershipState.objects.get(user=returning, project=project).is_active is True
+
+        # Removed from the project (Plane saves the row inactive) and seen so by the next run
+        ProjectMember.objects.filter(project=project, member=returning).update(is_active=False)
+        sync_membership_states()
+        away = _issue(project, agent, "While away")
+        sync_membership_states()
+        # Added again: Plane re-activates the old row with bulk_update (no signal, old created_at)
+        ProjectMember.objects.filter(project=project, member=returning).update(is_active=True)
+        after = _issue(project, agent, "After rejoining")
+        assert sync_membership_states() == 1
+
+        ids = _new_ids(_session(returning), workspace)
+        assert ids == [str(after.id)]
+        # One cutoff per project: what was not opened before leaving counts as read too
+        assert str(away.id) not in ids
+        assert str(before_leaving.id) not in ids
+        assert sync_membership_states() == 0
+        assert UnreadProjectCutoff.objects.filter(user=returning, project=project).count() == 1
+
+    def test_first_run_sets_no_cutoff(self, workspace, project, me, agent):
+        sync_membership_states()
+        assert UnreadMembershipState.objects.count() == ProjectMember.objects.count()
+        assert UnreadProjectCutoff.objects.count() == 0

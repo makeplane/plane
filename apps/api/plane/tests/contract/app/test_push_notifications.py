@@ -13,6 +13,7 @@ import requests
 from crum import impersonate
 from cryptography.hazmat.primitives.asymmetric import ec
 from rest_framework import status
+from django.test import Client
 from rest_framework.test import APIClient
 
 from plane.db.models import Issue, Profile, Project, ProjectMember, State, User, WorkspaceMember
@@ -248,7 +249,7 @@ class TestRecipients:
 
 @pytest.mark.contract
 class TestDelivery:
-    @pytest.mark.parametrize("status_code", [404, 410])
+    @pytest.mark.parametrize("status_code", [400, 403, 404, 410])
     def test_expired_subscription_is_removed(self, workspace, project, me, agent, vapid, status_code):
         subscription = _subscribe(me)
         _choose(me, project)
@@ -403,3 +404,104 @@ class TestSettingsEndpoints:
 
     def test_anonymous_is_refused(self, db):
         assert APIClient().get(SETTINGS_URL).status_code in (401, 403)
+
+
+@pytest.mark.contract
+class TestReviewFixes:
+    def test_a_broken_broker_does_not_break_creating_a_work_item(
+        self, workspace, project, me, agent, vapid, django_capture_on_commit_callbacks
+    ):
+        token = APIToken.objects.create(user=agent, label="push", token=f"plane_api_{uuid4().hex}")
+        client = APIClient()
+        client.credentials(HTTP_X_API_KEY=token.token)
+        with mock.patch("plane.liviere.tasks.notify_new_work_item.delay", side_effect=RuntimeError("broker down")):
+            with django_capture_on_commit_callbacks(execute=True):
+                response = client.post(
+                    f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/issues/", {"name": "x"}, format="json"
+                )
+            with django_capture_on_commit_callbacks(execute=True):
+                issue = _issue(project, agent, "From the app")
+        assert response.status_code == status.HTTP_201_CREATED
+        assert Issue.objects.filter(pk=response.data["id"]).exists()
+        assert Issue.objects.filter(pk=issue.pk).exists()
+
+    def test_five_failures_in_a_row_remove_the_subscription(self, workspace, project, me, agent, vapid):
+        subscription = _subscribe(me)
+        _choose(me, project)
+        with mock.patch.object(notify, "send", return_value=500):
+            for _ in range(4):
+                notify.notify_new_work_item(_issue(project, agent).id, vapid)
+            assert PushSubscription.objects.get(pk=subscription.pk).failure_count == 4
+            notify.notify_new_work_item(_issue(project, agent).id, vapid)
+        assert not PushSubscription.objects.filter(pk=subscription.pk).exists()
+
+    def test_an_unexpected_error_does_not_stop_the_other_browsers(self, workspace, project, me, agent, vapid):
+        broken = _subscribe(me, "broken")
+        working = _subscribe(me, "working")
+        _choose(me, project)
+
+        def fake_send(subscription, message, config):
+            if subscription.pk == broken.pk:
+                raise RuntimeError("encryption failed")
+            return 201
+
+        with mock.patch.object(notify, "send", side_effect=fake_send):
+            assert notify.notify_new_work_item(_issue(project, agent).id, vapid) == 1
+        assert PushSubscription.objects.get(pk=broken.pk).failure_count == 1
+        assert PushSubscription.objects.get(pk=working.pk).last_success_at is not None
+
+    def test_the_longest_title_fits_the_payload(self, workspace, project, me, agent, vapid, sent):
+        _subscribe(me)
+        _choose(me, project)
+        notify.notify_new_work_item(_issue(project, agent, "ż" * 255).id, vapid)
+        from plane.liviere.push.webpush import payload_bytes
+
+        payload = payload_bytes(sent[-1][1])
+        assert len(payload) < 4096
+        assert "ż".encode() in payload
+
+    def test_at_most_ten_browsers_per_person(self, me, vapid):
+        client = _session(me)
+        bodies = [_subscription_body() for _ in range(11)]
+        for body in bodies:
+            assert client.post(f"{SETTINGS_URL}subscriptions/", body, format="json").status_code == 204
+        endpoints = set(PushSubscription.objects.filter(user=me).values_list("endpoint", flat=True))
+        assert len(endpoints) == 10
+        assert bodies[0]["endpoint"] not in endpoints
+
+    def test_the_same_endpoint_with_other_keys_is_refused(self, me, agent, vapid):
+        body = _subscription_body()
+        assert _session(me).post(f"{SETTINGS_URL}subscriptions/", body, format="json").status_code == 204
+        other = _subscription_body(body["endpoint"])
+        assert _session(agent).post(f"{SETTINGS_URL}subscriptions/", other, format="json").status_code == 409
+        assert PushSubscription.objects.get(endpoint=body["endpoint"]).user_id == me.id
+
+    @pytest.mark.parametrize(
+        "endpoint",
+        [
+            "https://fcm.googleapis.com:abc/fcm/send/x",
+            "https://fcm.googleapis.com:99999/fcm/send/x",
+            "https://:@fcm.googleapis.com/fcm/send/x",
+            "https://fcm.googleapis.com/fcm/send/zażółć",
+        ],
+    )
+    def test_malformed_endpoints_answer_400(self, me, vapid, endpoint):
+        response = _session(me).post(f"{SETTINGS_URL}subscriptions/", _subscription_body(endpoint), format="json")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_test_notifications_are_throttled(self, me, vapid):
+        _subscribe(me)
+        client = _session(me)
+        with mock.patch("plane.liviere.tasks.send_test_push.delay"):
+            codes = [client.post(f"{SETTINGS_URL}test/").status_code for _ in range(6)]
+        assert codes == [202] * 5 + [429]
+
+    def test_signing_out_removes_the_subscriptions(self, me, agent, vapid):
+        _subscribe(me)
+        _subscribe(me)
+        _subscribe(agent)
+        client = Client()
+        client.force_login(me)
+        client.post("/auth/sign-out/")
+        assert PushSubscription.objects.filter(user=me).count() == 0
+        assert PushSubscription.objects.filter(user=agent).count() == 1

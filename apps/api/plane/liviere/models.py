@@ -125,6 +125,27 @@ class UnreadProjectCutoff(models.Model):
         ]
 
 
+class UnreadMembershipState(models.Model):
+    """Last seen state of a project membership, kept by plane.liviere.tasks.sync_unread_memberships.
+
+    Plane re-activates an old ProjectMember row (bulk_update, no signal, old created_at) when a person is added to
+    a project again; the task notices the change and moves the person's cutoff of the project, so the time they
+    were away does not show up as "New"."""
+
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    is_active = models.BooleanField()
+    # Last time the membership was seen in this state (moved forward only while it is inactive)
+    checked_at = models.DateTimeField()
+
+    class Meta:
+        db_table = "liviere_unread_membership_states"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "project"], name="liviere_unread_membership_unique"),
+        ]
+
+
 class PushSubscription(models.Model):
     """Web push subscription of one browser (plane/liviere/push); removed when the push service answers 404/410."""
 

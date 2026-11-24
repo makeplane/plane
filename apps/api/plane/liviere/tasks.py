@@ -27,6 +27,21 @@ def sync_issue_activity_events():
         return 0
 
 
+SYNC_UNREAD_MEMBERSHIPS_TASK = "plane.liviere.tasks.sync_unread_memberships"
+
+
+@shared_task(name=SYNC_UNREAD_MEMBERSHIPS_TASK)
+def sync_unread_memberships():
+    """Notices people added to a project again ("New" work items, plane/liviere/unread/queries.py)."""
+    from plane.liviere.unread.queries import sync_membership_states
+
+    try:
+        return sync_membership_states()
+    except Exception as e:
+        log_exception(e)
+        return 0
+
+
 NOTIFY_NEW_WORK_ITEM_TASK = "plane.liviere.tasks.notify_new_work_item"
 SEND_TEST_PUSH_TASK = "plane.liviere.tasks.send_test_push"
 

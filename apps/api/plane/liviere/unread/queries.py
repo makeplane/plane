@@ -22,7 +22,7 @@ from django.utils.dateparse import parse_datetime
 # Module imports
 from plane.app.permissions import ROLE
 from plane.db.models import Issue, ProjectMember
-from plane.liviere.models import UnreadProjectCutoff, UnreadWorkspaceCutoff, WorkItemOpen
+from plane.liviere.models import UnreadMembershipState, UnreadProjectCutoff, UnreadWorkspaceCutoff, WorkItemOpen
 
 
 class InvalidParams(ValueError):
@@ -42,25 +42,39 @@ def parse_project_ids(value):
         raise InvalidParams("projects must be a list of project ids")
 
 
+def parse_moment(value, name):
+    """An ISO date-time with an offset; a well-formed but impossible one (month 13) is invalid too."""
+    try:
+        moment = parse_datetime(str(value))
+    except ValueError:
+        moment = None
+    if moment is None or timezone.is_naive(moment):
+        raise InvalidParams(f"{name} must be an ISO date-time with an offset")
+    return moment
+
+
 def parse_before(value):
     """The `as_of` time returned by the server; never in the future."""
     if not value:
         raise InvalidParams("before is required (use as_of from the list or the count)")
-    moment = parse_datetime(str(value))
-    if moment is None or timezone.is_naive(moment):
-        raise InvalidParams("before must be an ISO date-time with an offset")
+    moment = parse_moment(value, "before")
     if moment > timezone.now():
         raise InvalidParams("before must not be in the future")
     return moment
 
 
-def parse_older_than(value):
+def parse_older_than(value, value_id=None):
+    """Keyset cursor of the list: created_at of the last item and, for items created at the same moment, its id."""
     if not value:
         return None
-    moment = parse_datetime(str(value))
-    if moment is None or timezone.is_naive(moment):
-        raise InvalidParams("older_than must be an ISO date-time with an offset")
-    return moment
+    moment = parse_moment(value, "older_than")
+    if not value_id:
+        return Q(created_at__lt=moment)
+    try:
+        last_id = UUID(str(value_id))
+    except ValueError:
+        raise InvalidParams("older_than_id must be a work item id")
+    return Q(created_at__lt=moment) | Q(created_at=moment, id__lt=last_id)
 
 
 def parse_per_page(value, default=50, maximum=200):
@@ -144,16 +158,50 @@ def count_new_work_items(user, workspace_id, project_ids=None):
     return {"total": sum(by_project.values()), "by_project": by_project}
 
 
+def move_cutoff(user_id, project_id, since):
+    """Moves the person's cutoff of the project to `since`, never back."""
+    cutoff, created = UnreadProjectCutoff.objects.get_or_create(
+        user_id=user_id, project_id=project_id, defaults={"since": since}
+    )
+    if not created and cutoff.since < since:
+        cutoff.since = since
+        cutoff.save(update_fields=["since"])
+
+
+def sync_membership_states(now=None):
+    """Compares project memberships with their last seen state (run every minute).
+
+    A membership seen inactive and now active again was re-activated after the last check that saw it inactive:
+    the person's cutoff of the project moves to that check, so work items created while they were away are not
+    new (the ones from the last minute before re-activation are). Returns the number of re-activations."""
+    now = now or timezone.now()
+    states = {(state.user_id, state.project_id): state for state in UnreadMembershipState.objects.all()}
+    rejoined = 0
+    new_states, changed = [], []
+    for user_id, project_id, is_active in ProjectMember.objects.values_list("member_id", "project_id", "is_active"):
+        state = states.get((user_id, project_id))
+        if state is None:
+            new_states.append(
+                UnreadMembershipState(user_id=user_id, project_id=project_id, is_active=is_active, checked_at=now)
+            )
+            continue
+        if is_active and not state.is_active:
+            move_cutoff(user_id, project_id, state.checked_at)
+            rejoined += 1
+        if is_active != state.is_active or not is_active:
+            state.is_active = is_active
+            state.checked_at = now
+            changed.append(state)
+    UnreadMembershipState.objects.bulk_create(new_states, ignore_conflicts=True)
+    UnreadMembershipState.objects.bulk_update(changed, ["is_active", "checked_at"], batch_size=500)
+    return rejoined
+
+
 def mark_all_read(user, workspace_id, before, project_ids=None):
     """Moves the person's cutoff of the projects to `before`; returns how many new work items it cleared."""
     cleared = new_work_items(user, workspace_id, project_ids, before=before).count()
     for row in memberships(user, workspace_id, project_ids):
-        cutoff, created = UnreadProjectCutoff.objects.get_or_create(
-            user=user, project_id=row.project_id, defaults={"since": before}
-        )
-        if not created and cutoff.since < before:
-            cutoff.since = before
-            cutoff.save(update_fields=["since"])
+        move_cutoff(user.id, row.project_id, before)
     return cleared
 
 
@@ -209,7 +257,6 @@ def serialize_work_items(items):
                 {
                     "id": str(item.created_by_id),
                     "display_name": item.created_by.display_name,
-                    "avatar_url": item.created_by.avatar_url,
                 }
                 if item.created_by_id
                 else None

@@ -197,6 +197,13 @@ person joined the project (`ProjectMember.created_at`, so a newcomer does not in
 the person's *Mark all as read* time for the project (`UnreadProjectCutoff`). No rows are written per work item
 except when one is opened.
 
+Plane adds a person to a project again by re-activating the old `ProjectMember` row (`bulk_update`, no signal,
+old `created_at`). The periodic task `plane.liviere.tasks.sync_unread_memberships` (every minute,
+django_celery_beat row `liviere: sync memberships for new work items`, migration `0006`) compares memberships with
+`UnreadMembershipState`; a membership seen inactive and active again moves the person's cutoff of the project to
+the last check that saw it inactive, so the time away does not show up as new (at most the last minute before the
+re-activation does). It is one cutoff per project, so work items not opened before leaving count as read too.
+
 **Opened = peek or full page.** The web app calls
 `POST /api/workspaces/{slug}/projects/{id}/liviere/work-items/{id}/opened/` (session only, idempotent, 204; 404 when
 the person may not see the work item) from two hooks: the peek overview (`components/issues/peek-overview/root.tsx`,
@@ -210,12 +217,14 @@ Opening from the edit modal or the intake view does not count.
 
 | Endpoint | |
 |---|---|
-| `GET /api/workspaces/{slug}/liviere/new-work-items/` | newest first: `{results, has_more, as_of}`; `projects` (comma-separated ids), `per_page` (≤ 200, default 50), `older_than` (`created_at` of the last item – keyset paging, so items opened meanwhile do not shift the next page) |
+| `GET /api/workspaces/{slug}/liviere/new-work-items/` | newest first: `{results, has_more, as_of}`; `projects` (comma-separated ids), `per_page` (≤ 200, default 50), `older_than` + `older_than_id` (`created_at` and `id` of the last item – keyset paging, so items opened meanwhile do not shift the next page) |
 | `GET .../new-work-items/count/` | `{total, by_project, as_of}` |
 | `POST .../new-work-items/mark-read/` | `{before, project_ids?}` → `{cleared}`; moves the person's cutoff of the projects (all or the given ones) to `before`, never back |
 
 `before` must be the `as_of` the server returned (400 when missing or in the future), so the browser clock never
-decides what is marked and items created after the list was loaded stay new.
+decides what is marked and items created after the list was loaded stay new. Known gap: `created_at` is set before
+the creating transaction commits, so a work item committed a few milliseconds after `as_of` with an earlier
+`created_at` can be marked read without having been listed.
 
 **Web.** Sidebar item *New* with the count (hook in `components/workspace/sidebar/sidebar-menu-items.tsx`; always
 shown, not part of *Customize navigation*, which would need the upstream `UserPreferenceKeys` enum), refreshed
@@ -266,7 +275,17 @@ title of the newest one. Nothing else of the work item is sent.
 24 h. The endpoint comes from the browser, so it must be `https://` on a known push service
 (`updates.push.services.mozilla.com`, `fcm.googleapis.com`, `*.notify.windows.com`, `*.push.apple.com`; checked when
 subscribing and when sending) and the request goes through `pinned_fetch` like webhooks. 404/410 removes the
-subscription; other failures increase `failure_count` and are not retried.
+subscription, and so do 400/403 (the subscription does not match our keys, e.g. after they changed) and five
+failures in a row; a failure is never retried. An error with one subscription never stops the others. Titles and
+bodies are cut to 150/500 characters (payload well under the ~4 KB push services accept). A person keeps at most 10
+browsers (subscribing another drops the oldest); an endpoint already stored with other keys is refused (409); the
+test notification is limited to 5 a minute. All pushes share the default Celery queue; at our volume (tens of work
+items a day) a separate queue is not needed.
+
+**Signing out** (`user_logged_out`) removes all push subscriptions of the person – the browser cannot be told apart
+from their other browsers. After the next sign-in the web app registers the subscription this browser still has
+again, but only for the account that turned push on in it (remembered in `localStorage`); for another account the
+profile shows push as off until they turn it on themselves. A subscription made with old VAPID keys is replaced.
 
 **Endpoints** (session, user-level – the profile page is outside a workspace):
 
@@ -283,5 +302,6 @@ permission only on that click, then project switches, *Send a test* and *Turn of
 with the scope `/liviere/push/`, so it controls no page and cannot clash with an app worker at `/` (the old unused
 `public/sw.js` is left alone). A click focuses a tab already showing the target or opens a new one.
 
-**Going back** to images without our code: nothing queues the task there; to stop pushes while staying on a fork
-image, remove one of the three variables.
+**Going back** to images without our code: nothing queues the push task there; disable the membership sync first
+(the `liviere:` periodic tasks, see *Disabling the sync* above). To stop pushes while staying on a fork image,
+remove one of the three variables.

@@ -42,21 +42,21 @@ def workspace_id(slug):
 
 
 class NewWorkItemsEndpoint(BaseAPIView):
-    """Newest first. Pages by `older_than` (created_at of the last item) instead of an offset, so work items
-    opened while the list is shown do not shift the next page."""
+    """Newest first. Pages by `older_than` + `older_than_id` (created_at and id of the last item) instead of an
+    offset, so work items opened while the list is shown do not shift the next page."""
 
     @allow_permission(WORKSPACE_ROLES, level="WORKSPACE")
     def get(self, request, slug):
         as_of = timezone.now()
         try:
             project_ids = parse_project_ids(request.GET.get("projects"))
-            older_than = parse_older_than(request.GET.get("older_than"))
+            older_than = parse_older_than(request.GET.get("older_than"), request.GET.get("older_than_id"))
             per_page = parse_per_page(request.GET.get("per_page"))
         except InvalidParams as e:
             return bad_request(e)
         items = new_work_items(request.user, workspace_id(slug), project_ids, before=as_of)
         if older_than is not None:
-            items = items.filter(created_at__lt=older_than)
+            items = items.filter(older_than)
         page = list(
             items.select_related("project", "state", "created_by").order_by("-created_at", "-id")[: per_page + 1]
         )
