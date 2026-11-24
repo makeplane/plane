@@ -5,7 +5,7 @@
 # Django imports
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
-from django.db.models import Q, UUIDField, Value, QuerySet, OuterRef, Subquery
+from django.db.models import F, FilteredRelation, Q, UUIDField, Value, QuerySet, OuterRef, Subquery
 from django.db.models.functions import Coalesce
 
 # Module imports
@@ -36,15 +36,26 @@ def issue_queryset_grouper(
         "module_ids": "issue_module__module_id",
     }
 
-    GROUP_FILTER_MAPPER: Dict[str, Q] = {
-        "assignees__id": Q(issue_assignee__deleted_at__isnull=True),
-        "labels__id": Q(label_issue__deleted_at__isnull=True),
-        "issue_module__module_id": Q(issue_module__deleted_at__isnull=True),
+    # m2m group keys -> (through relation, through table column). The group key is
+    # annotated over a join limited to live rows, so a work item whose links were all
+    # soft deleted (label deleted or removed) falls into the "None" group instead of
+    # being filtered out.
+    GROUP_RELATION_MAPPER: Dict[str, Tuple[str, str]] = {
+        "assignees__id": ("issue_assignee", "assignee_id"),
+        "labels__id": ("label_issue", "label_id"),
+        "issue_module__module_id": ("issue_module", "module_id"),
     }
 
-    for group_key in [group_by, sub_group_by]:
-        if group_key in GROUP_FILTER_MAPPER:
-            queryset = queryset.filter(GROUP_FILTER_MAPPER[group_key])
+    for group_key in {group_by, sub_group_by}:
+        if group_key in GROUP_RELATION_MAPPER:
+            relation, column = GROUP_RELATION_MAPPER[group_key]
+            alias = f"live_{relation}"
+            queryset = queryset.annotate(
+                **{
+                    alias: FilteredRelation(relation, condition=Q(**{f"{relation}__deleted_at__isnull": True})),
+                    group_key: F(f"{alias}__{column}"),
+                }
+            )
 
     issue_assignee_subquery = Subquery(
         IssueAssignee.objects.filter(
