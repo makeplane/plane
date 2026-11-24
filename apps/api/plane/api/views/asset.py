@@ -18,6 +18,7 @@ from drf_spectacular.utils import OpenApiExample, OpenApiRequest
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
+from plane.utils.upload import parse_upload_size
 from plane.db.models import FileAsset, Project, ProjectMember, User, Workspace
 from plane.app.permissions import WorkspaceUserPermission
 from plane.api.views.base import BaseAPIView
@@ -119,7 +120,12 @@ class UserAssetEndpoint(BaseAPIView):
         # get the asset key
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        size = parse_upload_size(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if size is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         entity_type = request.data.get("entity_type", False)
 
         # Check if the file size is within the limit
@@ -292,7 +298,12 @@ class UserServerAssetEndpoint(BaseAPIView):
         # get the asset key
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        size = parse_upload_size(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if size is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         entity_type = request.data.get("entity_type", False)
 
         # Check if the file size is within the limit
@@ -520,7 +531,12 @@ class GenericAssetEndpoint(BaseAPIView):
         """
         name = sanitize_filename(request.data.get("name"))
         type = request.data.get("type")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        size = parse_upload_size(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if size is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         project_id = request.data.get("project_id")
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
