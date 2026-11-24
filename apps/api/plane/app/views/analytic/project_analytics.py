@@ -5,7 +5,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from typing import Dict, Any
-from django.db.models import QuerySet, Q, Count
+from django.db.models import QuerySet, Q, Count, FilteredRelation
 from django.http import HttpRequest
 from django.db.models.functions import TruncMonth
 from django.utils import timezone
@@ -131,22 +131,27 @@ class ProjectAdvanceAnalyticsStatsEndpoint(ProjectAdvanceAnalyticsBaseView):
         else:
             base_queryset = Issue.issue_objects.filter(**self.filters["base_filters"], project_id=project_id)
         return (
-            base_queryset.annotate(display_name=F("assignees__display_name"))
-            .annotate(assignee_id=F("assignees__id"))
-            .annotate(avatar=F("assignees__avatar"))
+            base_queryset.annotate(
+                active_assignee=FilteredRelation("issue_assignee", condition=Q(issue_assignee__deleted_at__isnull=True))
+            )
+            .annotate(display_name=F("active_assignee__assignee__display_name"))
+            .annotate(assignee_id=F("active_assignee__assignee__id"))
+            .annotate(avatar=F("active_assignee__assignee__avatar"))
             .annotate(
                 avatar_url=Case(
                     # If `avatar_asset` exists, use it to generate the asset URL
                     When(
-                        assignees__avatar_asset__isnull=False,
+                        active_assignee__assignee__avatar_asset__isnull=False,
                         then=Concat(
                             Value("/api/assets/v2/static/"),
-                            Cast("assignees__avatar_asset", models.CharField()),
+                            Cast("active_assignee__assignee__avatar_asset", models.CharField()),
                             Value("/"),
                         ),
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(assignees__avatar_asset__isnull=True, then="assignees__avatar"),
+                    When(
+                        active_assignee__assignee__avatar_asset__isnull=True, then="active_assignee__assignee__avatar"
+                    ),
                     default=Value(None),
                     output_field=models.CharField(),
                 )

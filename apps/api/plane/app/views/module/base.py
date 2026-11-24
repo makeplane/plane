@@ -9,6 +9,7 @@ import json
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.db.models import (
+    FilteredRelation,
     Count,
     Exists,
     F,
@@ -436,25 +437,30 @@ class ModuleViewSet(BaseViewSet):
                     workspace__slug=slug,
                     project_id=project_id,
                 )
-                .annotate(first_name=F("assignees__first_name"))
-                .annotate(last_name=F("assignees__last_name"))
-                .annotate(assignee_id=F("assignees__id"))
-                .annotate(display_name=F("assignees__display_name"))
+                .annotate(
+                    active_assignee=FilteredRelation(
+                        "issue_assignee", condition=Q(issue_assignee__deleted_at__isnull=True)
+                    )
+                )
+                .annotate(first_name=F("active_assignee__assignee__first_name"))
+                .annotate(last_name=F("active_assignee__assignee__last_name"))
+                .annotate(assignee_id=F("active_assignee__assignee__id"))
+                .annotate(display_name=F("active_assignee__assignee__display_name"))
                 .annotate(
                     avatar_url=Case(
                         # If `avatar_asset` exists, use it to generate the asset URL
                         When(
-                            assignees__avatar_asset__isnull=False,
+                            active_assignee__assignee__avatar_asset__isnull=False,
                             then=Concat(
                                 Value("/api/assets/v2/static/"),
-                                Cast("assignees__avatar_asset", models.CharField()),
+                                Cast("active_assignee__assignee__avatar_asset", models.CharField()),
                                 Value("/"),
                             ),
                         ),
                         # If `avatar_asset` is None, fall back to using `avatar` field directly
                         When(
-                            assignees__avatar_asset__isnull=True,
-                            then="assignees__avatar",
+                            active_assignee__assignee__avatar_asset__isnull=True,
+                            then="active_assignee__assignee__avatar",
                         ),
                         default=Value(None),
                         output_field=models.CharField(),
@@ -544,23 +550,28 @@ class ModuleViewSet(BaseViewSet):
                 workspace__slug=slug,
                 project_id=project_id,
             )
-            .annotate(first_name=F("assignees__first_name"))
-            .annotate(last_name=F("assignees__last_name"))
-            .annotate(assignee_id=F("assignees__id"))
-            .annotate(display_name=F("assignees__display_name"))
+            .annotate(
+                active_assignee=FilteredRelation("issue_assignee", condition=Q(issue_assignee__deleted_at__isnull=True))
+            )
+            .annotate(first_name=F("active_assignee__assignee__first_name"))
+            .annotate(last_name=F("active_assignee__assignee__last_name"))
+            .annotate(assignee_id=F("active_assignee__assignee__id"))
+            .annotate(display_name=F("active_assignee__assignee__display_name"))
             .annotate(
                 avatar_url=Case(
                     # If `avatar_asset` exists, use it to generate the asset URL
                     When(
-                        assignees__avatar_asset__isnull=False,
+                        active_assignee__assignee__avatar_asset__isnull=False,
                         then=Concat(
                             Value("/api/assets/v2/static/"),
-                            Cast("assignees__avatar_asset", models.CharField()),
+                            Cast("active_assignee__assignee__avatar_asset", models.CharField()),
                             Value("/"),
                         ),
                     ),
                     # If `avatar_asset` is None, fall back to using `avatar` field directly
-                    When(assignees__avatar_asset__isnull=True, then="assignees__avatar"),
+                    When(
+                        active_assignee__assignee__avatar_asset__isnull=True, then="active_assignee__assignee__avatar"
+                    ),
                     default=Value(None),
                     output_field=models.CharField(),
                 )
