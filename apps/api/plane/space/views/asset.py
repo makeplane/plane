@@ -19,6 +19,7 @@ from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
 from plane.db.models import DeployBoard, FileAsset, IssueComment
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
+from plane.utils.upload import parse_upload_size
 
 # Module imports
 from .base import BaseAPIView
@@ -101,9 +102,8 @@ class EntityAssetEndpoint(BaseAPIView):
         # Get the asset
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
-        try:
-            size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
-        except (TypeError, ValueError):
+        size = parse_upload_size(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if size is None:
             return Response(
                 {"error": "Invalid size.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
