@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "Alt iş öğelerini göster",
-        "show_empty_groups": "Boş grupları göster"
+        "show_empty_groups": "Boş grupları göster",
+        "collapse_filters_on_open": "Filtreleri açarken daralt"
       }
     },
     "layouts": {

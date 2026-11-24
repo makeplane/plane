@@ -81,7 +81,19 @@ export const WorkspaceLevelWorkItemFiltersHOC = observer(function WorkspaceLevel
   const updateViewLabel = useMemo(() => props.updateViewOptions?.label, [props.updateViewOptions?.label]);
   const hasAdditionalChanges = useMemo(
     () =>
-      !isEqual(initialWorkItemFilters?.displayFilters, viewDetails?.display_filters) ||
+      !isEqual(
+        {
+          ...initialWorkItemFilters?.displayFilters,
+          // The computed display filters always include this key, while a view
+          // saved before it existed omits it. Treat an omitted value as
+          // `false` on both sides so a legacy view is not reported as changed.
+          filters_collapsed_by_default: initialWorkItemFilters?.displayFilters?.filters_collapsed_by_default ?? false,
+        },
+        {
+          ...viewDetails?.display_filters,
+          filters_collapsed_by_default: viewDetails?.display_filters?.filters_collapsed_by_default ?? false,
+        }
+      ) ||
       !isEqual(
         removeNillKeys(initialWorkItemFilters?.displayProperties),
         removeNillKeys(viewDetails?.display_properties)

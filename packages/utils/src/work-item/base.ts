@@ -297,6 +297,10 @@ export const getComputedDisplayFilters = (
     sub_group_by: filters?.sub_group_by || null,
     sub_issue: filters?.sub_issue || false,
     show_empty_groups: filters?.show_empty_groups || false,
+    // Preserve the saved-view setting. It is part of the view's persisted
+    // display filters, so dropping it here would reset the setting whenever the
+    // filters are recomputed.
+    filters_collapsed_by_default: filters?.filters_collapsed_by_default || false,
   };
 };
 

@@ -69,7 +69,8 @@
       },
       "extra": {
         "show_sub_issues": "Покажи подчинените работни елементи",
-        "show_empty_groups": "Покажи празните групи"
+        "show_empty_groups": "Покажи празните групи",
+        "collapse_filters_on_open": "Свиване на филтрите при отваряне"
       }
     },
     "layouts": {
