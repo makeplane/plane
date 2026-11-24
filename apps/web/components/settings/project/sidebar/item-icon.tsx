@@ -1,0 +1,40 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import type { IconGlyph } from "@makeplane/propel/components/icon";
+import {
+  CyclesOutline,
+  EstimateOutline,
+  IntakeOutline,
+  LabelsOutline,
+  MembersOutline,
+  ModuleOutline,
+  PagesOutline,
+  StateOutline,
+  TriggerOutline,
+  ViewsOutline,
+} from "@makeplane/propel/icons";
+// plane imports
+import type { ISvgIcons } from "@plane/blocks/icons";
+import type { TProjectSettingsTabs } from "@plane/types";
+// components
+import { SettingIcon } from "@/components/icons/attachment";
+import { ActivityIcon } from "@/liviere/activity/activity-icon"; // Liviere/plane fork
+
+export const PROJECT_SETTINGS_ICONS: Record<TProjectSettingsTabs, IconGlyph | React.FC<ISvgIcons>> = {
+  general: SettingIcon,
+  members: MembersOutline,
+  features_cycles: CyclesOutline,
+  features_modules: ModuleOutline,
+  features_views: ViewsOutline,
+  features_pages: PagesOutline,
+  features_intake: IntakeOutline,
+  features_activity: ActivityIcon, // Liviere/plane fork
+  states: StateOutline,
+  labels: LabelsOutline,
+  estimates: EstimateOutline,
+  automations: TriggerOutline,
+};

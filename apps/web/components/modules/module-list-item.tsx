@@ -1,0 +1,123 @@
+/**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+import React, { useRef } from "react";
+import { observer } from "mobx-react";
+import { useParams, usePathname, useSearchParams } from "next/navigation";
+// icons
+import { InfoOutline, TickOutline } from "@makeplane/propel/icons";
+// ui
+import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
+import { useTranslation } from "@plane/i18n";
+import { ProgressRing } from "@plane/blocks/progress";
+// components
+import { generateQueryParams } from "@plane/utils";
+import { ListItem } from "@/components/core/list";
+import { ModuleListItemAction, ModuleQuickActions } from "@/components/modules";
+// helpers
+// hooks
+import { useModule } from "@/hooks/store/use-module";
+import { useAppRouter } from "@/hooks/use-app-router";
+import { usePlatformOS } from "@/hooks/use-platform-os";
+
+type Props = {
+  moduleId: string;
+};
+
+export const ModuleListItem = observer(function ModuleListItem(props: Props) {
+  const { moduleId } = props;
+  const { t } = useTranslation();
+  // refs
+  const parentRef = useRef(null);
+  // router
+  const router = useAppRouter();
+  const { workspaceSlug, projectId } = useParams();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  // store hooks
+  const { getModuleById } = useModule();
+  const { isMobile } = usePlatformOS();
+
+  // derived values
+  const moduleDetails = getModuleById(moduleId);
+
+  if (!moduleDetails) return null;
+
+  // Same rule as the module sidebar: cancelled work items are left out of the scope, not counted as done.
+  const progressScope = Math.max(moduleDetails.total_issues - moduleDetails.cancelled_issues, 0);
+  const progress =
+    progressScope > 0 ? Math.floor((Math.min(moduleDetails.completed_issues, progressScope) * 100) / progressScope) : 0;
+
+  const completedModuleCheck = moduleDetails.status === "completed";
+
+  // handlers
+  const openModuleOverview = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const query = generateQueryParams(searchParams, ["peekModule"]);
+    if (searchParams.has("peekModule") && searchParams.get("peekModule") === moduleId) {
+      router.push(`${pathname}?${query}`);
+    } else {
+      router.push(`${pathname}?${query && `${query}&`}peekModule=${moduleId}`);
+    }
+  };
+
+  const handleArchivedModuleClick = (e: React.MouseEvent<HTMLButtonElement | HTMLAnchorElement>) => {
+    openModuleOverview(e);
+  };
+
+  const handleItemClick = moduleDetails.archived_at ? handleArchivedModuleClick : undefined;
+
+  return (
+    <ListItem
+      title={moduleDetails?.name ?? ""}
+      itemLink={`/${workspaceSlug?.toString()}/projects/${moduleDetails.project_id}/modules/${moduleDetails.id}`}
+      onItemClick={handleItemClick}
+      prependTitleElement={
+        <ProgressRing value={progress} size={30} strokeWidth={3} aria-label={t("common.progress")}>
+          {completedModuleCheck ? (
+            progress === 100 ? (
+              <TickOutline className="h-3 w-3 text-accent-primary" />
+            ) : (
+              <span className="text-body-xs-regular text-accent-primary">{`!`}</span>
+            )
+          ) : progress === 100 ? (
+            <TickOutline className="h-3 w-3 text-accent-primary" />
+          ) : (
+            <span className="text-caption-2xs-regular text-tertiary">{`${progress}%`}</span>
+          )}
+        </ProgressRing>
+      }
+      actionableItems={<ModuleListItemAction moduleId={moduleId} moduleDetails={moduleDetails} parentRef={parentRef} />}
+      quickActionElement={
+        <div className="flex shrink-0 items-center gap-2 p-1">
+          <IconButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            aria-label={t("info")}
+            showTooltip={!isMobile}
+            onClick={openModuleOverview}
+            icon={<Icon icon={InfoOutline} />}
+          />
+          <div className="block md:hidden">
+            <ModuleQuickActions
+              parentRef={parentRef}
+              moduleId={moduleId}
+              projectId={projectId.toString()}
+              workspaceSlug={workspaceSlug.toString()}
+              size="sm"
+            />
+          </div>
+        </div>
+      }
+      isMobile={isMobile}
+      parentRef={parentRef}
+    />
+  );
+});

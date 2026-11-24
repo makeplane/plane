@@ -1,12 +1,12 @@
 ---
 name: branch-name
-description: Use when starting a new branch or renaming an existing one — produces a branch name in the format `<type>/<work-item-id>-<short-description>` that's compatible with the create-pr skill's work item ID extraction.
+description: Use when starting a new branch or renaming an existing one — produces a branch name in the format `<type>/<work-item-id>-<short-description>` that's compatible with the create-pull-request skill's work item ID extraction.
 user_invocable: true
 ---
 
 # Branch Naming
 
-Create branch names that follow the convention `<type>/<work-item-id>-<short-description>`, where the work item ID can be cleanly extracted later (e.g., by the create-pr skill).
+Create branch names that follow the convention `<type>/<work-item-id>-<short-description>`, where the work item ID can be cleanly extracted later (e.g., by the create-pull-request skill).
 
 ## Format
 
@@ -51,7 +51,7 @@ Create branch names that follow the convention `<type>/<work-item-id>-<short-des
 ```
 fix/silo-1146-relative-config-urls
 feat/web-1234-app-tile-visibility
-chore/web-2201-bump-eslint
+chore/web-2201-bump-oxlint
 refactor/silo-980-extract-auth-middleware
 docs/web-1500-pr-template-update
 perf/silo-1310-cache-workspace-lookup

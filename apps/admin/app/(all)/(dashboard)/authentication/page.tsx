@@ -9,13 +9,14 @@ import { observer } from "mobx-react";
 import { useTheme } from "next-themes";
 import useSWR from "swr";
 // plane internal packages
-import { setPromiseToast, setToast, TOAST_TYPE } from "@plane/propel/toast";
+import { Switch } from "@makeplane/propel/components/switch";
 import type { TInstanceConfigurationKeys, TInstanceAuthenticationModes } from "@plane/types";
-import { Loader, ToggleSwitch } from "@plane/ui";
 import { cn, resolveGeneralTheme } from "@plane/utils";
 // components
 import { PageWrapper } from "@/components/common/page-wrapper";
 import { AuthenticationMethodCard } from "@/components/authentication/authentication-method-card";
+import { Skeleton } from "@plane/blocks/skeleton";
+import { setPromiseToast, setToast } from "@plane/blocks/toast";
 // helpers
 import { canDisableAuthMethod } from "@/helpers/authentication";
 // hooks
@@ -54,7 +55,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
 
           if (!canDisable) {
             setToast({
-              type: TOAST_TYPE.ERROR,
+              type: "error",
               title: "Cannot disable authentication",
               message:
                 "At least one authentication method must remain enabled. Please enable another method before disabling this one.",
@@ -119,20 +120,23 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
     >
       {formattedConfig ? (
         <div className="space-y-3">
-          <div className={cn("flex w-full items-center gap-14 rounded-sm")}>
-            <div className="flex grow items-center gap-4">
-              <div className="grow">
-                <div className="pb-1 text-16 font-medium">Allow anyone to sign up even without an invite</div>
-                <div className={cn("text-11 leading-5 font-regular text-tertiary")}>
+          <div className="flex w-full items-start justify-between gap-4 rounded-lg border border-subtle bg-layer-2 px-4 py-3 md:items-center md:gap-8">
+            <div className="flex min-w-0 grow items-center gap-4">
+              <div className="min-w-0 grow">
+                <div className="pb-1 text-body-sm-medium text-primary">
+                  Allow anyone to sign up even without an invite
+                </div>
+                <div className="text-body-xs-regular leading-5 text-tertiary">
                   Toggling this off will only let users sign up when they are invited.
                 </div>
               </div>
             </div>
-            <div className={`shrink-0 pr-4 ${isSubmitting && "opacity-70"}`}>
+            <div className={cn("shrink-0", { "opacity-70": isSubmitting })}>
               <div className="flex items-center gap-4">
-                <ToggleSwitch
-                  value={Boolean(parseInt(enableSignUpConfig))}
-                  onChange={() => {
+                <Switch
+                  aria-label="Allow anyone to sign up even without an invite"
+                  checked={Boolean(parseInt(enableSignUpConfig))}
+                  onCheckedChange={() => {
                     if (Boolean(parseInt(enableSignUpConfig)) === true) {
                       updateConfig("ENABLE_SIGNUP", "0");
                     } else {
@@ -145,7 +149,7 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
               </div>
             </div>
           </div>
-          <div className="text-lg pt-6 font-medium">Available authentication modes</div>
+          <h3 className="pt-3 text-h6-medium text-primary">Available authentication modes</h3>
           {authenticationModes.map((method) => (
             <AuthenticationMethodCard
               key={method.key}
@@ -159,13 +163,13 @@ const InstanceAuthenticationPage = observer(function InstanceAuthenticationPage(
           ))}
         </div>
       ) : (
-        <Loader className="space-y-10">
-          <Loader.Item height="50px" width="75%" />
-          <Loader.Item height="50px" width="75%" />
-          <Loader.Item height="50px" width="40%" />
-          <Loader.Item height="50px" width="40%" />
-          <Loader.Item height="50px" width="20%" />
-        </Loader>
+        <Skeleton className="space-y-10">
+          <Skeleton.Item height="50px" width="75%" />
+          <Skeleton.Item height="50px" width="75%" />
+          <Skeleton.Item height="50px" width="40%" />
+          <Skeleton.Item height="50px" width="40%" />
+          <Skeleton.Item height="50px" width="20%" />
+        </Skeleton>
       )}
     </PageWrapper>
   );

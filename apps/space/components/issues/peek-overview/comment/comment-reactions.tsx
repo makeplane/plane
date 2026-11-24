@@ -8,9 +8,9 @@ import React, { useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 // plane imports
-import { stringToEmoji } from "@plane/propel/emoji-icon-picker";
-import { EmojiReactionGroup, EmojiReactionPicker } from "@plane/propel/emoji-reaction";
-import type { EmojiReactionType } from "@plane/propel/emoji-reaction";
+import { stringToEmoji } from "@plane/blocks/emoji-icon-picker";
+import { EmojiReactionButton, EmojiReactionGroup, EmojiReactionPicker } from "@plane/blocks/emoji-reaction";
+import type { EmojiReactionType } from "@plane/blocks/emoji-reaction";
 // helpers
 import { groupReactions } from "@/helpers/emoji.helper";
 import { queryParamGenerator } from "@/helpers/query-param-generator";
@@ -123,21 +123,22 @@ export const CommentReactions = observer(function CommentReactions(props: Props)
   };
 
   return (
-    <div className="mt-2">
-      <EmojiReactionPicker
-        isOpen={isPickerOpen}
-        handleToggle={setIsPickerOpen}
-        onChange={handleEmojiSelect}
+    <div>
+      <EmojiReactionGroup
         disabled={isInIframe}
-        label={
-          <EmojiReactionGroup
-            reactions={propelReactions}
-            onReactionClick={handleEmojiClick}
-            showAddButton={!isInIframe}
-            onAddReaction={() => setIsPickerOpen(true)}
+        reactions={propelReactions}
+        onReactionClick={handleEmojiClick}
+        showAddButton={!isInIframe}
+        addReactionButton={
+          <EmojiReactionPicker
+            isOpen={isPickerOpen}
+            handleToggle={setIsPickerOpen}
+            onChange={handleEmojiSelect}
+            disabled={isInIframe}
+            render={<EmojiReactionButton />}
+            placement="bottom-start"
           />
         }
-        placement="bottom-start"
       />
     </div>
   );

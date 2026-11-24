@@ -1,0 +1,477 @@
+{
+  "work_item_types": {
+    "label": "Werkitemtypes",
+    "label_lowercase": "werkitemtypes",
+    "settings": {
+      "description": "Pas eigenschappen aan en voeg je eigen eigenschappen toe zodat ze aansluiten op de behoeften van je team.",
+      "cant_delete_default_message": "Dit werkitemtype kan niet worden verwijderd omdat het is ingesteld als standaard voor dit project",
+      "set_as_default": "Instellen als standaard",
+      "cant_set_default_inactive_message": "Activeer dit type voordat je het als standaard instelt",
+      "set_default_confirmation": {
+        "title": "Instellen als standaard werkitemtype",
+        "description": "Als je {name} als standaard instelt, wordt het geïmporteerd naar alle projecten in deze werkruimte. Alle nieuwe werkitems gebruiken dan standaard dit type.",
+        "confirm_button": "Instellen als standaard"
+      },
+      "properties": {
+        "title": "Eigenschappen",
+        "description": "Maak en pas eigenschappen aan.",
+        "tooltip": "Elk werkitemtype komt met een standaardset eigenschappen zoals Titel, Omschrijving, Toegewezene, Status, Prioriteit, Startdatum, Vervaldatum, Module, Cyclus enzovoort. Je kunt ook je eigen eigenschappen aanpassen en toevoegen zodat ze aansluiten op de behoeften van je team.",
+        "add_button": "Nieuwe eigenschap toevoegen",
+        "project": {
+          "add_button": {
+            "import_from_workspace": "Importeren uit werkruimte"
+          }
+        },
+        "dropdown": {
+          "label": "Type eigenschap",
+          "placeholder": "Selecteer type"
+        },
+        "property_type": {
+          "text": {
+            "label": "Tekst"
+          },
+          "number": {
+            "label": "Getal"
+          },
+          "dropdown": {
+            "label": "Dropdown"
+          },
+          "boolean": {
+            "label": "Boolean"
+          },
+          "date": {
+            "label": "Datum"
+          },
+          "member_picker": {
+            "label": "Ledenkiezer"
+          },
+          "formula": {
+            "label": "Formule"
+          }
+        },
+        "attributes": {
+          "label": "Attributen",
+          "text": {
+            "single_line": {
+              "label": "Enkele regel"
+            },
+            "multi_line": {
+              "label": "Alinea"
+            },
+            "readonly": {
+              "label": "Alleen-lezen",
+              "header": "Alleen-lezen gegevens"
+            },
+            "invalid_text_format": {
+              "label": "Ongeldige tekstopmaak"
+            }
+          },
+          "number": {
+            "default": {
+              "placeholder": "Getal toevoegen"
+            }
+          },
+          "relation": {
+            "single_select": {
+              "label": "Enkele selectie"
+            },
+            "multi_select": {
+              "label": "Meervoudige selectie"
+            },
+            "no_default_value": {
+              "label": "Geen standaardwaarde"
+            }
+          },
+          "boolean": {
+            "label": "Waar | Onwaar",
+            "no_default": "Geen standaardwaarde"
+          },
+          "option": {
+            "create_update": {
+              "label": "Opties",
+              "form": {
+                "placeholder": "Optie toevoegen",
+                "errors": {
+                  "name": {
+                    "required": "Optienaam is verplicht.",
+                    "integrity": "Er bestaat al een optie met dezelfde naam."
+                  }
+                }
+              }
+            },
+            "select": {
+              "placeholder": {
+                "single": "Selecteer optie",
+                "multi": {
+                  "default": "Selecteer opties",
+                  "variable": "{count} opties geselecteerd"
+                }
+              }
+            }
+          }
+        },
+        "toast": {
+          "create": {
+            "success": {
+              "title": "Gelukt!",
+              "message": "Eigenschap {name} is aangemaakt."
+            },
+            "error": {
+              "title": "Fout!",
+              "message": "Aanmaken van eigenschap mislukt. Probeer het opnieuw!"
+            }
+          },
+          "update": {
+            "success": {
+              "title": "Gelukt!",
+              "message": "Eigenschap {name} is bijgewerkt."
+            },
+            "error": {
+              "title": "Fout!",
+              "message": "Bijwerken van eigenschap mislukt. Probeer het opnieuw!"
+            }
+          },
+          "delete": {
+            "success": {
+              "title": "Gelukt!",
+              "message": "Eigenschap {name} is verwijderd."
+            },
+            "error": {
+              "title": "Fout!",
+              "message": "Verwijderen van eigenschap mislukt. Probeer het opnieuw!"
+            }
+          },
+          "enable_disable": {
+            "loading": "Eigenschap {name} {action}",
+            "success": {
+              "title": "Gelukt!",
+              "message": "Eigenschap {name} is {action}."
+            },
+            "error": {
+              "title": "Fout!",
+              "message": "Kon eigenschap niet {action}. Probeer het opnieuw!"
+            }
+          }
+        },
+        "create_update": {
+          "title": {
+            "create": "Nieuwe aangepaste eigenschap aanmaken",
+            "update": "Aangepaste eigenschap bijwerken"
+          },
+          "form": {
+            "display_name": {
+              "placeholder": "Titel"
+            },
+            "description": {
+              "placeholder": "Omschrijving"
+            }
+          },
+          "errors": {
+            "name": {
+              "required": "Je moet je eigenschap een naam geven.",
+              "max_length": "Eigenschapsnaam mag niet langer zijn dan 255 tekens."
+            },
+            "property_type": {
+              "required": "Je moet een type eigenschap selecteren."
+            },
+            "options": {
+              "required": "Je moet minstens een optie toevoegen."
+            },
+            "formula": {
+              "required": "Formule-expressie is verplicht.",
+              "invalid": "Ongeldige formule: {error}",
+              "circular_reference": "Circulaire verwijzing gedetecteerd. Een formule kan niet direct of indirect naar zichzelf verwijzen.",
+              "invalid_reference": "Formule verwijst naar een niet-bestaande eigenschap."
+            }
+          }
+        },
+        "formula": {
+          "field_label": "Formuleveld",
+          "tooltip": "Voer een formule in met de syntaxis '{'Field Name'}'. Ondersteunt de operatoren +, -, *, /, &.",
+          "placeholder": "Schrijf de formule",
+          "test_button": "Testen",
+          "validating": "Valideren",
+          "validation_success": "Formule is geldig! Geeft {resultType} terug",
+          "validation_success_with_refs": "Formule is geldig! Geeft {resultType} terug ({count} veld(en) waarnaar wordt verwezen)",
+          "error": {
+            "empty": "Voer een formule in",
+            "missing_context": "Ontbrekende context voor werkruimte, project of werkitemtype",
+            "validation_failed": "Validatie mislukt"
+          },
+          "picker": {
+            "no_match": "Geen overeenkomende eigenschappen",
+            "no_available": "Geen beschikbare eigenschappen"
+          }
+        },
+        "enable_disable": {
+          "label": "Actief",
+          "tooltip": {
+            "disabled": "Klik om uit te schakelen",
+            "enabled": "Klik om in te schakelen"
+          }
+        },
+        "delete_confirmation": {
+          "title": "Deze eigenschap verwijderen",
+          "description": "Het verwijderen van eigenschappen kan leiden tot verlies van bestaande gegevens.",
+          "secondary_description": "Wil je de eigenschap in plaats daarvan uitschakelen?",
+          "primary_button": "{action}, verwijder het",
+          "secondary_button": "Ja, uitschakelen"
+        },
+        "mandate_confirmation": {
+          "label": "Verplichte eigenschap",
+          "content": "Er lijkt een standaardoptie voor deze eigenschap te zijn. Als je de eigenschap verplicht maakt, wordt de standaardwaarde verwijderd en moeten gebruikers zelf een waarde toevoegen.",
+          "tooltip": {
+            "disabled": "Dit type eigenschap kan niet verplicht worden gemaakt",
+            "enabled": "Vink uit om het veld als optioneel te markeren",
+            "checked": "Vink aan om het veld als verplicht te markeren"
+          }
+        },
+        "empty_state": {
+          "title": "Aangepaste eigenschappen toevoegen",
+          "description": "Nieuwe eigenschappen die je voor dit werkitemtype toevoegt, verschijnen hier."
+        }
+      },
+      "types": {
+        "title": "Types",
+        "description": "Maak en pas werkitemtypes met eigenschappen aan.",
+        "sort_options": {
+          "project_count": "Aantal projecten waar het deel van is"
+        },
+        "filter_options": {
+          "show_active": "Actieve tonen",
+          "show_inactive": "Inactieve tonen"
+        },
+        "project": {
+          "add_button": {
+            "create_new": "Nieuw aanmaken",
+            "import_from_workspace": "Importeren uit werkruimte"
+          },
+          "banner": {
+            "with_access": "Schakel werkitemtypes in om types op werkruimteniveau te importeren",
+            "without_access": "Werkitemtypes zijn uitgeschakeld. Neem contact op met de beheerder van de werkruimte om ze in te schakelen in de werkruimte-instellingen."
+          }
+        }
+      },
+      "linked_properties": {
+        "title": "Aangepaste eigenschappen",
+        "add_button": "Eigenschappen toevoegen",
+        "modal": {
+          "title": "Eigenschappen toevoegen",
+          "empty": {
+            "title": "Geen eigenschappen beschikbaar",
+            "description": "Alle eigenschappen zijn al aan dit type gekoppeld."
+          }
+        },
+        "unlink_confirmation": {
+          "title": "Eigenschap ontkoppelen",
+          "description": "Als je deze eigenschap ontkoppelt, worden alle waarden ervan permanent verwijderd uit elk werkitem dat dit type gebruikt. Deze actie kan niet ongedaan worden gemaakt.",
+          "input_label": "Typ",
+          "input_label_suffix": "om door te gaan:",
+          "confirm": "Eigenschap ontkoppelen",
+          "loading": "Ontkoppelen"
+        }
+      },
+      "item_delete_confirmation": {
+        "title": "Dit type verwijderen",
+        "description": "Het verwijderen van types kan leiden tot verlies van bestaande gegevens.",
+        "can_disable_warning": "Wil je het type in plaats daarvan uitschakelen?",
+        "primary_button": "Ja, verwijderen",
+        "toast": {
+          "success": {
+            "title": "Gelukt!",
+            "message": "Werkitemtype is verwijderd."
+          },
+          "error": {
+            "title": "Fout!",
+            "message": "Verwijderen van werkitemtype mislukt. Probeer het opnieuw!"
+          }
+        },
+        "errors": {
+          "cannot_delete_default_work_item_type": "Kan standaard werkitemtype niet verwijderen",
+          "cannot_delete_work_item_type_with_associated_work_items": "Kan werkitemtype met bijbehorende werkitems niet verwijderen"
+        }
+      }
+    },
+    "create": {
+      "title": "Werkitemtype aanmaken",
+      "button": "Werkitemtype toevoegen",
+      "toast": {
+        "success": {
+          "title": "Gelukt!",
+          "message": "Werkitemtype is aangemaakt."
+        },
+        "error": {
+          "title": "Fout!",
+          "message": {
+            "default": "Aanmaken van werkitemtype mislukt. Probeer het opnieuw!",
+            "conflict": "Type {name} bestaat al. Kies een andere naam."
+          }
+        }
+      }
+    },
+    "update": {
+      "title": "Werkitemtype bijwerken",
+      "button": "Werkitemtype bijwerken",
+      "toast": {
+        "success": {
+          "title": "Gelukt!",
+          "message": "Werkitemtype {name} is bijgewerkt."
+        },
+        "error": {
+          "title": "Fout!",
+          "message": {
+            "default": "Bijwerken van werkitemtype mislukt. Probeer het opnieuw!",
+            "conflict": "Type {name} bestaat al. Kies een andere naam."
+          }
+        }
+      }
+    },
+    "create_update": {
+      "form": {
+        "name": {
+          "placeholder": "Geef dit werkitemtype een unieke naam"
+        },
+        "description": {
+          "placeholder": "Beschrijf waar dit werkitemtype voor bedoeld is en wanneer je het gebruikt."
+        }
+      }
+    },
+    "enable_disable": {
+      "toast": {
+        "loading": "Werkitemtype {name} {action}",
+        "success": {
+          "title": "Gelukt!",
+          "message": "Werkitemtype {name} is {action}."
+        },
+        "error": {
+          "title": "Fout!",
+          "message": "Kon werkitemtype niet {action}. Probeer het opnieuw!"
+        }
+      },
+      "tooltip": "Klik om te {action}"
+    },
+    "change_confirmation": {
+      "title": "Werkitemtype wijzigen?",
+      "description": "Het wijzigen van het werkitemtype kan leiden tot verlies van waarden van aangepaste eigenschappen die specifiek zijn voor het huidige type. Deze actie kan niet ongedaan worden gemaakt.",
+      "button": {
+        "loading": "Wijzigen",
+        "default": "Type wijzigen"
+      }
+    },
+    "empty_state": {
+      "enable": {
+        "title": "Werkitemtypes inschakelen",
+        "description": "Vorm werkitems naar je werk met werkitemtypes. Pas ze aan met pictogrammen, achtergronden en eigenschappen en configureer ze voor dit project.",
+        "primary_button": {
+          "text": "Inschakelen"
+        },
+        "confirmation": {
+          "title": "Eenmaal ingeschakeld kunnen werkitemtypes niet meer worden uitgeschakeld.",
+          "description": "Het Werkitem van Plane wordt het standaard werkitemtype voor dit project en verschijnt met zijn pictogram en achtergrond in dit project.",
+          "button": {
+            "default": "Inschakelen",
+            "loading": "Instellen"
+          }
+        }
+      },
+      "get_pro": {
+        "title": "Neem Pro om werkitemtypes in te schakelen.",
+        "description": "Vorm werkitems naar je werk met werkitemtypes. Pas ze aan met pictogrammen, achtergronden en eigenschappen en configureer ze voor dit project.",
+        "primary_button": {
+          "text": "Neem Pro"
+        }
+      },
+      "upgrade": {
+        "title": "Upgrade om werkitemtypes in te schakelen.",
+        "description": "Vorm werkitems naar je werk met werkitemtypes. Pas ze aan met pictogrammen, achtergronden en eigenschappen en configureer ze voor dit project.",
+        "primary_button": {
+          "text": "Upgraden"
+        }
+      }
+    }
+  },
+  "work_item_type_hierarchy": {
+    "settings": {
+      "title": "Hiërarchie",
+      "tab_label": "Hiërarchie",
+      "description": "Stel hiërarchieniveaus in om je werk te organiseren. Elk niveau definieert een bovenliggende relatie met het item er direct boven en een onderliggende relatie met het item er direct onder. ",
+      "sidebar_label": "Hiërarchie",
+      "enable_control": {
+        "title": "Hiërarchie inschakelen",
+        "description": "Maak bovenliggende en onderliggende relaties tussen verschillende werkitemtypes.",
+        "tooltip": "Je kunt hiërarchie niet meer uitschakelen zodra deze is ingeschakeld."
+      },
+      "workspace_work_item_types_disabled_banner": {
+        "content": "Definieer eerst werkitemtypes om een nieuwe hiërarchie te maken.",
+        "cta": "Instellingen werkitemtypes"
+      }
+    },
+    "levels": {
+      "max_level_placeholder": "Sleep een type hierheen om een nieuw hiërarchieniveau toe te voegen",
+      "empty_level_placeholder": "Sleep een werkitemtype naar niveau {level}",
+      "drag_tooltip": "Sleep om het niveau te wijzigen",
+      "quick_actions": {
+        "set_as_default": {
+          "label": "Instellen als standaard",
+          "toast": {
+            "loading": "Instellen als standaard...",
+            "success": {
+              "title": "Gelukt!",
+              "message": "Hiërarchieniveau {level} is als standaard ingesteld."
+            },
+            "error": {
+              "title": "Fout!",
+              "message": "Kon hiërarchieniveau {level} niet als standaard instellen. Probeer het opnieuw."
+            }
+          }
+        }
+      },
+      "update_level_toast": {
+        "loading": "{workItemTypeName} verplaatsen naar niveau {level}...",
+        "success": {
+          "title": "Gelukt!",
+          "message": "{workItemTypeName} is verplaatst naar niveau {level}."
+        }
+      }
+    },
+    "break_hierarchy_modal": {
+      "title": "Validatiefout!",
+      "content": {
+        "intro": "Werkitemtype {workItemTypeName} heeft:",
+        "parent_items": "{count, plural, one {bovenliggend werkitem} other {bovenliggende werkitems}}",
+        "child_items": "{count, plural, one {subwerkitem} other {subwerkitems}}",
+        "parent_line_suffix_when_also_children": ", en ",
+        "footer": "Deze wijziging verwijdert de bovenliggende en onderliggende relaties van bestaande werkitems van het werkitemtype {workItemTypeName}."
+      },
+      "confirm_input": {
+        "label": "Typ \"Confirm\" om door te gaan.",
+        "placeholder": "Confirm"
+      },
+      "error_toast": {
+        "title": "Fout!",
+        "message": "Kon hiërarchie niet verbreken. Probeer het opnieuw."
+      },
+      "confirm_button": {
+        "loading": "Toepassen",
+        "default": "Toepassen en ontkoppelen"
+      }
+    },
+    "work_item_modal": {
+      "invalid_work_item_type_create_toast": {
+        "title": "Fout!",
+        "message": "Het geselecteerde werkitemtype kan niet worden gebruikt om een nieuw werkitem aan te maken omdat het de hiërarchieregels schendt."
+      },
+      "invalid_work_item_type_update_toast": {
+        "title": "Fout!",
+        "message": "Werkitemtype kan niet worden bijgewerkt omdat het de hiërarchieregels schendt."
+      }
+    },
+    "work_item_type_modal": {
+      "level": "Hiërarchieniveau",
+      "invalid_level_toast": {
+        "title": "Fout!",
+        "message": "Werkitemtype kan niet worden bijgewerkt omdat het de hiërarchieregels schendt."
+      }
+    }
+  }
+}

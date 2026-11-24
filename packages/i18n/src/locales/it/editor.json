@@ -61,5 +61,8 @@
       "use_this": "Usa questo",
       "refine": "Affina"
     }
+  },
+  "formatting_toolbar": {
+    "label": "Formattazione"
   }
 }

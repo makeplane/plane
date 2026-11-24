@@ -51,6 +51,7 @@ from plane.app.views.base import BaseAPIView
 from plane.utils.timezone_converter import user_timezone_converter
 from plane.utils.global_paginator import paginate
 from plane.utils.host import base_host
+from plane.utils.serializers import writable_data
 from plane.db.models.intake import SourceType
 
 
@@ -409,11 +410,12 @@ class IntakeIssueViewSet(BaseViewSet):
                 }
 
             issue_current_instance = json.dumps(IssueDetailSerializer(issue).data, cls=DjangoJSONEncoder)
-            issue_requested_data = json.dumps(issue_data, cls=DjangoJSONEncoder)
 
             issue_serializer = IssueCreateSerializer(
                 issue, data=issue_data, partial=True, context={"project_id": project_id, "allow_triage_state": True}
             )
+            # Read-only fields are ignored on save, so they are not reported as changes either.
+            issue_requested_data = json.dumps(writable_data(issue_serializer, issue_data), cls=DjangoJSONEncoder)
 
             if not issue_serializer.is_valid():
                 return Response(issue_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

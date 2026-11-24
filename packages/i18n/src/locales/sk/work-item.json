@@ -3,6 +3,10 @@
     "label": "{count, plural, one {Pracovná položka} few {Pracovné položky} other {Pracovných položiek}}",
     "all": "Všetky pracovné položky",
     "edit": "Upraviť pracovnú položku",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# ďalšia vlastnosť} few {# ďalšie vlastnosti} many {# ďalšej vlastnosti} other {# ďalších vlastností}}",
+      "label_overflow_indicator": "{count, plural, one {+# štítok} few {+# štítky} many {+# štítku} other {+# štítkov}}"
+    },
     "title": {
       "label": "Názov pracovnej položky",
       "required": "Názov pracovnej položky je povinný."
@@ -157,6 +161,10 @@
         "primary_button": {
           "text": "Zobraziť ďalšie pracovné položky"
         }
+      },
+      "no_access": {
+        "title": "K tejto pracovnej položke nemáte prístup",
+        "description": "Požiadajte o prístup administrátora projektu."
       }
     },
     "sibling": {
@@ -172,7 +180,9 @@
       },
       "failed": {
         "message": "Archivácia pracovnej položky zlyhala. Skúste to prosím znova."
-      }
+      },
+      "banner_message": "Táto pracovná položka bola archivovaná. Prejdite do sekcie Archívy a obnovte ju.",
+      "go_to_archives": "Prejsť do archívov"
     },
     "restore": {
       "success": {
@@ -183,6 +193,10 @@
         "message": "Obnovenie pracovnej položky zlyhalo. Skúste to prosím znova."
       }
     },
+    "archived_banner": "Táto pracovná položka je archivovaná. Ak chcete vykonať zmeny, obnovte ju.",
+    "updated_time_ago": "Aktualizované {time}",
+    "description_load_failed": "Popis sa nepodarilo načítať.",
+    "assignee_count": "{count, plural, one {# priradený} few {# priradení} many {# priradeného} other {# priradených}}",
     "relation": {
       "relates_to": "Súvisiace s",
       "duplicate": "Duplikát",
@@ -265,7 +279,12 @@
       "click_to_upvote": "Kliknite pre hlasovanie hore",
       "click_to_downvote": "Kliknite pre hlasovanie dole",
       "click_to_view_upvotes": "Kliknite pre zobrazenie hlasov hore",
-      "click_to_view_downvotes": "Kliknite pre zobrazenie hlasov dole"
+      "click_to_view_downvotes": "Kliknite pre zobrazenie hlasov dole",
+      "title": "Hlasy",
+      "upvotes_count": "{count, plural, one {# hlas hore} few {# hlasy hore} many {# hlasu hore} other {# hlasov hore}}",
+      "downvotes_count": "{count, plural, one {# hlas dole} few {# hlasy dole} many {# hlasu dole} other {# hlasov dole}}",
+      "no_upvotes": "Zatiaľ žiadne hlasy hore",
+      "no_downvotes": "Zatiaľ žiadne hlasy dole"
     }
   },
   "sub_work_item": {
@@ -326,6 +345,10 @@
         "title": "Nemožno aktualizovať pracovné položky",
         "message": "Zmena stavu nie je povolená pre niektoré pracovné položky. Uistite sa, že zmena stavu je povolená."
       }
+    },
+    "upgrade_banner": {
+      "message": "Menite stav, prioritu a ďalšie vlastnosti viacerých pracovných položiek naraz. V priemere ušetríte tri minúty na operáciu.",
+      "cta": "Upgradovať na One"
     }
   },
   "recurring_work_items": {

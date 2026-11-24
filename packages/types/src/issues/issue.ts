@@ -185,7 +185,7 @@ export interface IPublicIssue extends Pick<
 > {
   comments: TIssuePublicComment[];
   reaction_items: IIssuePublicReaction[];
-  vote_items: IPublicVote[];
+  vote_items: IPublicVote[] | null;
 }
 
 type TPublicIssueResponseResults =

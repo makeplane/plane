@@ -1,0 +1,273 @@
+{
+  "automations": {
+    "settings": {
+      "title": "Персонализирани автоматизации",
+      "create_automation": "Създай автоматизация"
+    },
+    "scope": {
+      "label": "Обхват",
+      "run_on": "Изпълнение за"
+    },
+    "trigger": {
+      "label": "Тригер",
+      "add_trigger": "Добави тригер",
+      "sidebar_header": "Конфигурация на тригера",
+      "input_label": "Какъв е тригерът за тази автоматизация?",
+      "input_placeholder": "Изберете опция",
+      "section_plane_events": "Събития в Plane",
+      "section_time_based": "По време",
+      "fixed_schedule": "Фиксиран график",
+      "schedule": {
+        "frequency": "Честота",
+        "select_day": "Изберете ден",
+        "day_of_month": "Ден от месеца",
+        "monthly_every": "Всеки",
+        "monthly_day_aria": "Ден {day}",
+        "time": "Час",
+        "hour": "Час",
+        "minute": "Минута",
+        "hour_suffix": "ч",
+        "minute_suffix": "мин",
+        "am": "пр.об.",
+        "pm": "сл.об.",
+        "timezone": "Часова зона",
+        "timezone_placeholder": "Изберете часова зона",
+        "frequency_daily": "Ежедневно",
+        "frequency_weekly": "Ежеседмично",
+        "frequency_monthly": "Ежемесечно",
+        "on": "В",
+        "validation_weekly_day_required": "Изберете поне един ден от седмицата.",
+        "validation_monthly_date_required": "Изберете ден от месеца.",
+        "main_content_schedule_summary_daily": "Всеки ден в {time} ({timezone}).",
+        "main_content_schedule_summary_weekly": "Всяка седмица в {days} в {time} ({timezone}).",
+        "main_content_schedule_summary_monthly": "Всеки месец на {day}-о число в {time} ({timezone}).",
+        "schedule_mode": "Режим на графика",
+        "schedule_mode_fixed": "Фиксиран",
+        "schedule_mode_cron": "Cron",
+        "cron_expression_label": "Въведете Cron израз",
+        "cron_expression_placeholder": "0 9 * * 1-5",
+        "cron_invalid": "Невалиден Cron израз.",
+        "cron_preview": "Този Cron израз се изпълнява „{description}“.",
+        "main_content_cron_summary": "{description} ({timezone})."
+      },
+      "button": {
+        "previous": "Назад",
+        "next": "Добави действие"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Не можете да промените типа на тригера след създаването му"
+      }
+    },
+    "condition": {
+      "label": "При условие",
+      "add_condition": "Добави условие",
+      "adding_condition": "Добавяне на условие"
+    },
+    "action": {
+      "label": "Действие",
+      "add_action": "Добави действие",
+      "sidebar_header": "Действия",
+      "input_label": "Какво прави автоматизацията?",
+      "input_placeholder": "Изберете опция",
+      "handler_name": {
+        "add_comment": "Добави коментар",
+        "change_property": "Промени свойство",
+        "run_script": "Изпълни скрипт"
+      },
+      "configuration": {
+        "label": "Конфигурация",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Изберете свойство",
+            "change_type": "Изберете",
+            "property_value_select": "{count, plural, one{Изберете стойност} other{Изберете стойности}}",
+            "property_value_select_date": "Изберете дата"
+          },
+          "validation": {
+            "property_name_required": "Името на свойството е задължително",
+            "change_type_required": "Типът на промяната е задължителен",
+            "property_value_required": "Стойността на свойството е задължителна"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Добави коментар"
+      },
+      "run_script_block": {
+        "title": "Изпълни скрипт"
+      },
+      "change_property_block": {
+        "title": "Промени свойство"
+      },
+      "validation": {
+        "delete_only_action": "Деактивирайте автоматизацията, преди да изтриете единственото ѝ действие."
+      }
+    },
+    "conjunctions": {
+      "and": "И",
+      "or": "Или",
+      "if": "Ако",
+      "then": "Тогава"
+    },
+    "enable": {
+      "alert": "Натиснете „Активирай“, когато автоматизацията е готова. След активиране тя ще бъде готова за изпълнение.",
+      "validation": {
+        "required": "За да бъде активирана, автоматизацията трябва да има тригер и поне едно действие."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "Автоматизацията трябва да бъде деактивирана, преди да бъде изтрита."
+      }
+    },
+    "table": {
+      "title": "Заглавие на автоматизацията",
+      "scope": "Обхват",
+      "projects": "Проекти",
+      "last_run_on": "Последно изпълнение",
+      "created_on": "Създадена на",
+      "last_updated_on": "Последна промяна",
+      "last_run_status": "Статус на последното изпълнение",
+      "average_duration": "Средна продължителност",
+      "owner": "Собственик",
+      "executions": "Изпълнения"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Създай автоматизация",
+        "update": "Обнови автоматизацията"
+      },
+      "title": {
+        "placeholder": "Именувайте автоматизацията.",
+        "required_error": "Заглавието е задължително"
+      },
+      "description": {
+        "placeholder": "Опишете автоматизацията."
+      },
+      "submit_button": {
+        "create": "Създай автоматизация",
+        "update": "Обнови автоматизацията"
+      }
+    },
+    "delete_modal": {
+      "heading": "Изтрий автоматизацията"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Покажи неуспешните",
+        "all": "Всички",
+        "only_activity": "Само активност",
+        "only_run_history": "Само история на изпълненията"
+      },
+      "run_history": {
+        "initiator": "Инициатор"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Успех!",
+          "message": "Автоматизацията е създадена успешно."
+        },
+        "error": {
+          "title": "Грешка!",
+          "message": "Автоматизацията не можа да бъде създадена."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Успех!",
+          "message": "Автоматизацията е обновена успешно."
+        },
+        "error": {
+          "title": "Грешка!",
+          "message": "Автоматизацията не можа да бъде обновена."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Успех!",
+          "message": "Автоматизацията е активирана успешно."
+        },
+        "error": {
+          "title": "Грешка!",
+          "message": "Автоматизацията не можа да бъде активирана."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Успех!",
+          "message": "Автоматизацията е деактивирана успешно."
+        },
+        "error": {
+          "title": "Грешка!",
+          "message": "Автоматизацията не можа да бъде деактивирана."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Автоматизацията е изтрита",
+          "message": "Автоматизацията {name} беше изтрита от вашия проект."
+        },
+        "error": {
+          "title": "Този път не успяхме да изтрием автоматизацията.",
+          "message": "Опитайте да я изтриете отново или се върнете към нея по-късно. Ако и тогава не успеете, свържете се с нас."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Грешка!",
+            "message": "Действието не можа да бъде създадено. Опитайте отново!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Грешка!",
+            "message": "Действието не можа да бъде обновено. Опитайте отново!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Все още няма автоматизации за показване.",
+        "description": "Автоматизациите ви помагат да премахнете повтарящите се задачи чрез тригери, условия и действия. Създайте една, за да спестите време и работата да върви без усилие."
+      },
+      "upgrade": {
+        "title": "Автоматизации",
+        "description": "Автоматизациите са начин да автоматизирате задачите във вашия проект.",
+        "sub_description": "Върнете си 80% от времето за администриране с автоматизациите."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Изберете проектите, за които да се изпълнява тази автоматизация",
+        "all_projects": {
+          "label": "Всички проекти",
+          "description": "Автоматизацията ще се изпълнява за всички проекти в работното пространство."
+        },
+        "select_projects": {
+          "label": "Избрани проекти",
+          "description": "Автоматизацията ще се изпълнява за избраните проекти в работното пространство.",
+          "placeholder": "Изберете проекти"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Автоматизации",
+        "title": "Автоматизации",
+        "description": "Стандартизирайте процесите в работното пространство с глобални автоматизации."
+      },
+      "table": {
+        "scope": {
+          "global": "Глобален",
+          "project": {
+            "label": "Проект",
+            "multiple": "Няколко",
+            "all": "Всички"
+          }
+        }
+      }
+    }
+  }
+}

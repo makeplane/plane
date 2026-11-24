@@ -8,10 +8,12 @@ import { observer } from "mobx-react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 // ui
-import { Banner } from "@plane/propel/banner";
-import { Button } from "@plane/propel/button";
-import { ArchiveIcon } from "@plane/propel/icons";
-import { Loader } from "@plane/ui";
+import { Banner } from "@makeplane/propel/components/banner";
+import { Icon } from "@makeplane/propel/components/icon";
+import { ArchiveOutline } from "@makeplane/propel/icons";
+import { useTranslation } from "@plane/i18n";
+import { Button } from "@makeplane/propel/components/button";
+import { Loader } from "@plane/blocks/skeleton";
 // components
 import { PageHead } from "@/components/core/page-title";
 import { IssueDetailRoot } from "@/components/issues/issue-detail";
@@ -27,6 +29,7 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
   const router = useRouter();
   // states
   // hooks
+  const { t } = useTranslation();
   const {
     fetchIssue,
     issue: { getIssueById },
@@ -68,18 +71,19 @@ function ArchivedIssueDetailsPage({ params }: Route.ComponentProps) {
       ) : (
         <>
           <Banner
+            placement="page"
             variant="warning"
-            title="This work item has been archived. Visit the Archives section to restore it."
-            icon={<ArchiveIcon className="size-4" />}
-            action={
+            title={t("issue.archive.banner_message")}
+            icon={<Icon icon={ArchiveOutline} />}
+            actions={
               <Button
                 variant="secondary"
+                size="sm"
+                stretch="auto"
+                label={t("issue.archive.go_to_archives")}
                 onClick={() => router.push(`/${workspaceSlug}/projects/${projectId}/archives/issues/`)}
-              >
-                Go to archives
-              </Button>
+              />
             }
-            className="border-b border-subtle"
           />
           <div className="flex h-full overflow-hidden">
             <div className="h-full w-full space-y-3 divide-y-2 divide-subtle-1 overflow-y-auto">

@@ -26,6 +26,16 @@
           "highlight_changes": "Mettre en évidence les modifications"
         }
       },
+      "version_history": {
+        "view_only": "Lecture seule",
+        "loading_details": "Chargement des détails de la version",
+        "load_error_description": "Impossible de charger la version. Veuillez réessayer.",
+        "list_error_description": "Impossible de charger l’historique des versions.",
+        "try_again": "Réessayer",
+        "restoring": "Restauration",
+        "restore_success": "Version de la page restaurée.",
+        "restore_failed": "Impossible de restaurer la version de la page."
+      },
       "assets": {
         "label": "Ressources",
         "download_button": "Télécharger",
@@ -111,5 +121,8 @@
       "success_message": "Page retirée de la collection.",
       "error_message": "La page n'a pas pu être retirée de la collection. Veuillez réessayer."
     }
+  },
+  "page_content_limit_banner": {
+    "message": "Limite de contenu atteinte et la synchronisation en direct est désactivée. Créez une nouvelle page ou utilisez des pages imbriquées pour continuer la synchronisation."
   }
 }

@@ -23,6 +23,16 @@ from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
 from plane.app.permissions.base import allow_permission, ROLE
 
+# Personal fields of a membership row, only returned to the member who owns it
+PERSONAL_MEMBER_FIELDS = ("preferences", "view_props", "default_props")
+
+
+def _without_personal_fields(data, project_member, user):
+    if project_member.member_id != user.id:
+        for field in PERSONAL_MEMBER_FIELDS:
+            data.pop(field, None)
+    return data
+
 
 class ProjectMemberViewSet(BaseViewSet):
     serializer_class = ProjectMemberAdminSerializer
@@ -165,7 +175,9 @@ class ProjectMemberViewSet(BaseViewSet):
             member__member_workspace__is_active=True,
         ).select_related("project", "member", "workspace")
 
-        serializer = ProjectMemberRoleSerializer(project_members, fields=("id", "member", "role"), many=True)
+        serializer = ProjectMemberRoleSerializer(
+            project_members, fields=("id", "member", "role", "original_role", "created_at"), many=True
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -198,13 +210,25 @@ class ProjectMemberViewSet(BaseViewSet):
         if requesting_project_member.role > ROLE.GUEST.value:
             serializer = ProjectMemberAdminSerializer(project_member)
         else:
-            serializer = ProjectMemberRoleSerializer(project_member, fields=("id", "member", "role"))
+            serializer = ProjectMemberRoleSerializer(
+                project_member, fields=("id", "member", "role", "original_role", "created_at")
+            )
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            _without_personal_fields(serializer.data, project_member, request.user), status=status.HTTP_200_OK
+        )
 
-    @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
+    # Only project admins (or workspace admins in the project) may edit membership rows
+    @allow_permission([ROLE.ADMIN])
     def partial_update(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(pk=pk, workspace__slug=slug, project_id=project_id, is_active=True)
+
+        # Personal fields can only be changed by the member who owns them
+        if project_member.member_id != request.user.id and any(f in request.data for f in PERSONAL_MEMBER_FIELDS):
+            return Response(
+                {"error": "You cannot update another member's personal settings"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # Fetch the target's workspace role (used to cap the new project role)
         target_workspace_role = WorkspaceMember.objects.get(
@@ -284,7 +308,9 @@ class ProjectMemberViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(
+                _without_personal_fields(serializer.data, project_member, request.user), status=status.HTTP_200_OK
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @allow_permission([ROLE.ADMIN])
@@ -389,6 +415,12 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def patch(self, request, slug, project_id, member_id):
+        # Preferences are personal: a member may only modify their own.
+        if str(member_id) != str(request.user.id):
+            return Response(
+                {"error": "You cannot access another member's preferences."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         project_member = self.get_queryset(slug, project_id, member_id)
 
         serializer = ProjectMemberPreferenceSerializer(project_member, {"preferences": request.data}, partial=True)
@@ -401,6 +433,12 @@ class ProjectMemberPreferenceEndpoint(BaseAPIView):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id, member_id):
+        # Preferences are personal: a member may only read their own.
+        if str(member_id) != str(request.user.id):
+            return Response(
+                {"error": "You cannot access another member's preferences."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         project_member = self.get_queryset(slug, project_id, member_id)
 
         serializer = ProjectMemberPreferenceSerializer(project_member)

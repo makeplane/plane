@@ -70,6 +70,39 @@ from plane.bgtasks.issue_activities_task import issue_activity
 from plane.utils.issue_filters import issue_filters
 
 
+# Public Spaces board writes must bind caller-supplied object ids to the board's
+# project + workspace. Shared by every create() so the check can't drift between
+# endpoints or be forgotten on a new one.
+def _issue_in_board_scope(issue_id, project_deploy_board):
+    """A board-visible issue in the board's project + workspace.
+
+    Uses ``issue_objects`` (excludes draft/archived/triage) to match exactly
+    what the public board displays via ProjectIssuesPublicEndpoint /
+    IssueRetrievePublicEndpoint — you can only write on what the board shows.
+    """
+    return Issue.issue_objects.filter(
+        id=issue_id,
+        project_id=project_deploy_board.project_id,
+        workspace_id=project_deploy_board.workspace_id,
+    ).exists()
+
+
+def _comment_in_board_scope(comment_id, project_deploy_board):
+    """A public (EXTERNAL) comment in the board's project + workspace."""
+    return IssueComment.objects.filter(
+        id=comment_id,
+        project_id=project_deploy_board.project_id,
+        workspace_id=project_deploy_board.workspace_id,
+        access="EXTERNAL",
+    ).exists()
+
+
+def _public_comment_content(data):
+    """Only a comment's content is writable from a public board; actor, access,
+    parent and the other system fields stay server-controlled."""
+    return {key: data[key] for key in ("comment_html", "comment_json") if key in data}
+
+
 class ProjectIssuesPublicEndpoint(BaseAPIView):
     permission_classes = [AllowAny]
 
@@ -233,6 +266,7 @@ class IssueCommentPublicViewSet(BaseViewSet):
                     super()
                     .get_queryset()
                     .filter(workspace_id=project_deploy_board.workspace_id)
+                    .filter(project_id=project_deploy_board.project_id)
                     .filter(issue_id=self.kwargs.get("issue_id"))
                     .filter(access="EXTERNAL")
                     .select_related("project")
@@ -263,7 +297,11 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = IssueCommentSerializer(data=request.data)
+        # Bind the caller-supplied issue_id to this board.
+        if not _issue_in_board_scope(issue_id, project_deploy_board):
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = IssueCommentSerializer(data=_public_comment_content(request.data))
         if serializer.is_valid():
             serializer.save(
                 project_id=project_deploy_board.project_id,
@@ -301,17 +339,27 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        comment = IssueComment.objects.get(pk=pk, actor=request.user)
-        serializer = IssueCommentSerializer(comment, data=request.data, partial=True)
+        # Bind the comment to this board + issue, matching create()/get_queryset().
+        comment = IssueComment.objects.get(
+            pk=pk,
+            issue_id=issue_id,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
+            access="EXTERNAL",
+            actor=request.user,
+        )
+        data = _public_comment_content(request.data)
+        current_instance = json.dumps(IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder)
+        serializer = IssueCommentSerializer(comment, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             issue_activity.delay(
                 type="comment.activity.updated",
-                requested_data=json.dumps(request.data, cls=DjangoJSONEncoder),
+                requested_data=json.dumps(data, cls=DjangoJSONEncoder),
                 actor_id=str(request.user.id),
                 issue_id=str(issue_id),
                 project_id=str(project_deploy_board.project_id),
-                current_instance=json.dumps(IssueCommentSerializer(comment).data, cls=DjangoJSONEncoder),
+                current_instance=current_instance,
                 epoch=int(timezone.now().timestamp()),
             )
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -325,7 +373,15 @@ class IssueCommentPublicViewSet(BaseViewSet):
                 {"error": "Comments are not enabled for this project"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        comment = IssueComment.objects.get(pk=pk, actor=request.user)
+        # Bind the comment to this board + issue, matching create()/get_queryset().
+        comment = IssueComment.objects.get(
+            pk=pk,
+            issue_id=issue_id,
+            project_id=project_deploy_board.project_id,
+            workspace_id=project_deploy_board.workspace_id,
+            access="EXTERNAL",
+            actor=request.user,
+        )
         issue_activity.delay(
             type="comment.activity.deleted",
             requested_data=json.dumps({"comment_id": str(pk)}),
@@ -372,6 +428,10 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Bind the caller-supplied issue_id to this board.
+        if not _issue_in_board_scope(issue_id, project_deploy_board):
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = IssueReactionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(
@@ -408,8 +468,12 @@ class IssueReactionPublicViewSet(BaseViewSet):
                 {"error": "Reactions are not enabled for this project board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        # Bind the reaction to this board's project, not just its workspace,
+        # matching create() - otherwise a reaction on an issue in a different
+        # project of the same workspace could be reached through this board.
         issue_reaction = IssueReaction.objects.get(
             workspace_id=project_deploy_board.workspace_id,
+            project_id=project_deploy_board.project_id,
             issue_id=issue_id,
             reaction=reaction_code,
             actor=request.user,
@@ -441,6 +505,10 @@ class CommentReactionPublicViewSet(BaseViewSet):
                     .filter(workspace_id=project_deploy_board.workspace_id)
                     .filter(project_id=project_deploy_board.project_id)
                     .filter(comment_id=self.kwargs.get("comment_id"))
+                    # Only reactions on public (EXTERNAL) comments are visible
+                    # through the public board, matching create()'s
+                    # _comment_in_board_scope check.
+                    .filter(comment__access="EXTERNAL")
                     .order_by("-created_at")
                     .distinct()
                 )
@@ -456,6 +524,10 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 {"error": "Reactions are not enabled for this board"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        # Bind the caller-supplied comment_id to this board.
+        if not _comment_in_board_scope(comment_id, project_deploy_board):
+            return Response({"error": "Comment not found"}, status=status.HTTP_404_NOT_FOUND)
 
         serializer = CommentReactionSerializer(data=request.data)
         if serializer.is_valid():
@@ -478,7 +550,13 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 requested_data=json.dumps(self.request.data, cls=DjangoJSONEncoder),
                 actor_id=str(self.request.user.id),
                 issue_id=None,
-                project_id=str(self.kwargs.get("project_id", None)),
+                # This route's URL only supplies `anchor` and `comment_id`,
+                # never `project_id` - self.kwargs.get("project_id") was
+                # always None here, silently corrupting the activity log for
+                # every comment reaction created on a public board. Use the
+                # project resolved from the deploy board, matching destroy()
+                # below.
+                project_id=str(project_deploy_board.project_id),
                 current_instance=None,
                 epoch=int(timezone.now().timestamp()),
             )
@@ -493,10 +571,13 @@ class CommentReactionPublicViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Only a reaction on a public (EXTERNAL) comment bound to this board
+        # can be removed through it, matching create() and get_queryset().
         comment_reaction = CommentReaction.objects.get(
             project_id=project_deploy_board.project_id,
             workspace_id=project_deploy_board.workspace_id,
             comment_id=comment_id,
+            comment__access="EXTERNAL",
             reaction=reaction_code,
             actor=request.user,
         )
@@ -542,6 +623,17 @@ class IssueVotePublicViewSet(BaseViewSet):
 
     def create(self, request, anchor, issue_id):
         project_deploy_board = DeployBoard.objects.get(anchor=anchor, entity_name="project")
+
+        if not project_deploy_board.is_votes_enabled:
+            return Response(
+                {"error": "Votes are not enabled for this project board"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Bind the caller-supplied issue_id to this board.
+        if not _issue_in_board_scope(issue_id, project_deploy_board):
+            return Response({"error": "Issue not found"}, status=status.HTTP_404_NOT_FOUND)
+
         issue_vote, _ = IssueVote.objects.get_or_create(
             actor_id=request.user.id,
             project_id=project_deploy_board.project_id,

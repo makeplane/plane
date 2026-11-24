@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 // plane imports
 import { ISSUE_PRIORITY_FILTERS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { PriorityIcon } from "@plane/propel/icons";
+import { PriorityIcon } from "@plane/blocks/icons";
 // local imports
 import { FilterHeader } from "./helpers/filter-header";
 import { FilterOption } from "./helpers/filter-option";
@@ -52,7 +52,7 @@ export const FilterPriority = observer(function FilterPriority(props: Props) {
               />
             ))
           ) : (
-            <p className="text-11 text-placeholder italic">{t("common.search.no_matches_found")}</p>
+            <p className="text-caption-sm-regular text-placeholder italic">{t("common.search.no_matches_found")}</p>
           )}
         </div>
       )}

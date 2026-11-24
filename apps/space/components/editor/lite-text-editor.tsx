@@ -25,6 +25,8 @@ type LiteTextEditorWrapperProps = MakeOptional<
   "disabledExtensions" | "flaggedExtensions" | "getEditorMetaData"
 > & {
   anchor: string;
+  /** Classes for the bordered wrapper, e.g. `border-none p-0` for a read-only comment body. */
+  parentClassName?: string;
   isSubmitting?: boolean;
   showSubmitButton?: boolean;
   workspaceId: string;
@@ -48,6 +50,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
     disabledExtensions: additionalDisabledExtensions = [],
     editable,
     isSubmitting = false,
+    parentClassName,
     showSubmitButton = true,
     workspaceId,
     ...rest
@@ -65,7 +68,7 @@ export const LiteTextEditor = React.forwardRef(function LiteTextEditor(
   });
 
   return (
-    <div className="space-y-3 rounded-sm border border-subtle p-3">
+    <div className={cn("space-y-3 rounded-sm border border-subtle p-3", parentClassName)}>
       <LiteTextEditorWithRef
         ref={ref}
         disabledExtensions={[...liteTextEditorExtensions.disabled, ...additionalDisabledExtensions]}

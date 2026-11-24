@@ -6,6 +6,7 @@
 
 import type { AxiosInstance, AxiosRequestConfig } from "axios";
 import { create } from "axios";
+import { normalizeAPIRequestURL } from "./helpers/url";
 
 /**
  * Abstract base class for making HTTP requests using axios
@@ -24,6 +25,19 @@ export abstract class APIService {
     this.axiosInstance = create({
       baseURL,
       withCredentials: true,
+    });
+
+    this.axiosInstance.interceptors.request.use((config) => {
+      try {
+        if (config.url) {
+          config.url = normalizeAPIRequestURL(config.url, this.baseURL);
+        }
+      } catch (error) {
+        // Never block a request because of slash normalization — fall back to the
+        // original URL and let the call proceed.
+        console.warn("[APIService] Failed to normalize trailing slash:", config.url, error);
+      }
+      return config;
     });
   }
 

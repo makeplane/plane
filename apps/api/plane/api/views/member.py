@@ -210,6 +210,11 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
     )
     def patch(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        # A partial update may omit `member`, so check the existing target's workspace membership here.
+        if not WorkspaceMember.objects.filter(
+            workspace__slug=slug, member_id=project_member.member_id, is_active=True
+        ).exists():
+            return Response({"member": ["Member not found in workspace"]}, status=status.HTTP_400_BAD_REQUEST)
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True, context={"slug": slug})
         serializer.is_valid(raise_exception=True)
         serializer.save()
