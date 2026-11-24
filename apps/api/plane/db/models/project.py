@@ -114,6 +114,10 @@ class Project(ChangeTrackerMixin, BaseModel):
     logo_props = models.JSONField(default=dict)
     default_state = models.ForeignKey("db.State", on_delete=models.SET_NULL, null=True, related_name="default_state")
     archived_at = models.DateTimeField(null=True)
+    # SET_NULL, not PROTECT: soft deletion treats PROTECT as a cascade and would delete the projects
+    portfolio = models.ForeignKey(
+        "db.Portfolio", on_delete=models.SET_NULL, related_name="projects", null=True, blank=True
+    )
     # timezone
     TIMEZONE_CHOICES = tuple(zip(pytz.common_timezones, pytz.common_timezones))
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
@@ -272,6 +276,10 @@ class ProjectMember(ProjectBaseModel):
     preferences = models.JSONField(default=get_default_preferences)
     sort_order = models.FloatField(default=65535)
     is_active = models.BooleanField(default=True)
+    # Set by plane.utils.team_access while the project's team grants (part of) this access.
+    # `manual_role` is the role to fall back to when the team grant ends; null means none.
+    is_team_managed = models.BooleanField(default=False)
+    manual_role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self._state.adding and self.member:
