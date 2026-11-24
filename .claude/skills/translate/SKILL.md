@@ -355,7 +355,7 @@ Formality defaults for locales currently in the repo. Add a row for each new loc
 | Locale  | Default "you"                                                                | Notes                                                                |
 | ------- | ---------------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | fr      | **vous**                                                                     | Never "tu" in product UI                                             |
-| es      | **usted** + **ustedes**                                                      | Neutral Spanish — no "vosotros", no "tú"                             |
+| es      | **tú** + **ustedes**                                                         | Neutral Spanish — no "vosotros"; use informal second-person singular consistently |
 | it      | **Lei** (formal third-person)                                                | B2B/enterprise convention                                            |
 | de      | **Sie**                                                                      | Use infinitive constructions for system messages                     |
 | pt-BR   | **você**                                                                     | Semi-formal default; never "tu"                                      |
@@ -541,7 +541,7 @@ pnpm --filter @plane/i18n run check:sync
 - **Copying English as a translation** — `sync-check` passes, users see English. The fastest way to ship bad i18n.
 - **No half-width space around Latin tokens in Chinese** — `使用GitHub登录` is a readability bug. The space rule applies around any remaining Latin token (brand mark), not around translated feature nouns.
 - **Missing `ー` in Japanese katakana (`ユーザ` instead of `ユーザー`)** — inconsistent with the Microsoft style guide and the rest of the product.
-- **Using informal pronouns** — `du/tu/ты/tú/you (informal)` breaks Plane's formal register in languages that distinguish.
+- **Using informal pronouns where the locale row calls for formal address** breaks Plane's register in languages that distinguish.
 - **Translating keyboard keys** — `Ctrl` stays `Ctrl`, never `Strg` or `コントロール`, because the physical key says `Ctrl`.
 - **Hard-coded date/number strings** — `"Due on MM/DD/YYYY"` is a locale bug waiting to ship; use ICU formatters.
 - **Translating `PQL`, `SSO`, `API`** — acronyms are DNT. The prose around them may be translated.
@@ -564,7 +564,7 @@ You see yourself about to do any of the following → stop, delete, restart this
 - Dropping `few` or `many` from a Slavic-language plural, or adding `few` to German.
 - Using nominative plural for `few` in ru/ua plural blocks (it should be genitive singular per CLDR).
 - Editing one locale file and deciding to "do the others later" without updating the PR description.
-- Using `du`, `tu`, `ты`, `tú`, plain-form Japanese, or 반말 Korean in any product string.
+- Using `du`, `tu`, or `ты` where the locale row calls for formal address, plain-form Japanese, or 반말 Korean in any product string.
 - Stripping diacritics from Vietnamese, lowercasing `Anda` in Indonesian.
 - Hard-coding a date or number format.
 

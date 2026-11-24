@@ -19,14 +19,14 @@
         "delete_workspace_description": "Al eliminar un espacio de trabajo, todos los datos y recursos dentro de ese espacio se eliminarán permanentemente y no podrán recuperarse.",
         "delete_btn": "Eliminar este espacio de trabajo",
         "delete_modal": {
-          "title": "¿Está seguro de que desea eliminar este espacio de trabajo?",
-          "description": "Tiene una prueba activa de uno de nuestros planes de pago. Por favor, cancelela primero para continuar.",
+          "title": "¿Estás seguro de que quieres eliminar este espacio de trabajo?",
+          "description": "Tienes una prueba activa de uno de nuestros planes de pago. Por favor, cancélala primero para continuar.",
           "dismiss": "Descartar",
           "cancel": "Cancelar prueba",
           "success_title": "Espacio de trabajo eliminado.",
-          "success_message": "Pronto irá a su página de perfil.",
+          "success_message": "Pronto irás a tu página de perfil.",
           "error_title": "Eso no funcionó.",
-          "error_message": "Por favor, inténtelo de nuevo.",
+          "error_message": "Por favor, inténtalo de nuevo.",
           "confirm_description": "Estás a punto de eliminar el espacio de trabajo {workspaceName}. Perderás el acceso a todos los datos de trabajo de este espacio y no se podrán restaurar."
         },
         "errors": {
@@ -156,7 +156,7 @@
       },
       "api_tokens": {
         "heading": "Tokens de API",
-        "description": "Genere tokens de API seguros para integrar sus datos con sistemas y aplicaciones externos.",
+        "description": "Genera tokens de API seguros para integrar tus datos con sistemas y aplicaciones externos.",
         "title": "Tokens de API",
         "add_token": "Agregar token de acceso",
         "create_token": "Crear token",
@@ -202,14 +202,14 @@
       "group_syncing": {
         "title": "Sincronización de grupos",
         "heading": "Sincronización de grupos",
-        "description": "Vincule los grupos del proveedor de identidad con proyectos y roles. El acceso de los usuarios se actualiza automáticamente cuando cambia la pertenencia al grupo en su IdP, simplificando la incorporación y baja.",
+        "description": "Vincula los grupos del proveedor de identidad con proyectos y roles. El acceso de los usuarios se actualiza automáticamente cuando cambia la pertenencia al grupo en tu IdP, simplificando la incorporación y baja.",
         "enable": {
           "title": "Activar sincronización de grupos",
           "description": "Añadir automáticamente usuarios a proyectos según los grupos del proveedor de identidad."
         },
         "config": {
           "title": "Configurar sincronización de grupos",
-          "description": "Configure cómo se asignan los grupos del proveedor de identidad a proyectos y roles.",
+          "description": "Configura cómo se asignan los grupos del proveedor de identidad a proyectos y roles.",
           "sync_on_login": {
             "title": "Sincronizar al iniciar sesión",
             "description": "Actualizar pertenencia al grupo y acceso al proyecto cuando un usuario inicia sesión."
@@ -230,7 +230,7 @@
         },
         "group_mapping": {
           "title": "Asignación de grupos",
-          "description": "Vincule los grupos del proveedor de identidad con proyectos y roles.",
+          "description": "Vincula los grupos del proveedor de identidad con proyectos y roles.",
           "button_text": "Añadir nueva sincronización de grupos"
         },
         "toast": {
@@ -246,24 +246,24 @@
           "idp_group_name": {
             "text": "Grupo de usuario",
             "required": "El grupo de usuario es obligatorio",
-            "placeholder": "Introduzca los nombres de grupos IdP"
+            "placeholder": "Introduce los nombres de grupos IdP"
           },
           "project": {
             "text": "Proyecto",
             "required": "El proyecto es obligatorio",
-            "placeholder": "Seleccione un proyecto"
+            "placeholder": "Selecciona un proyecto"
           },
           "default_role": {
             "text": "Rol del proyecto",
             "required": "El rol del proyecto es obligatorio",
-            "placeholder": "Seleccione un rol del proyecto"
+            "placeholder": "Selecciona un rol del proyecto"
           }
         }
       },
       "identity": {
         "title": "Identidad",
         "heading": "Identidad",
-        "description": "Configure su dominio y habilite el inicio de sesión único"
+        "description": "Configura tu dominio y habilita el inicio de sesión único"
       },
       "project_states": {
         "title": "Estados del proyecto",
@@ -316,11 +316,11 @@
         "app_available": "Has hecho que esta aplicación esté disponible para usar con un espacio de trabajo de Plane",
         "app_credentials_regenrated": {
           "title": "Las credenciales de la aplicación se han regenerado correctamente",
-          "description": "Reemplace el secreto del cliente en todos los lugares donde se utilice. El secreto anterior ya no es válido."
+          "description": "Reemplaza el secreto del cliente en todos los lugares donde se utilice. El secreto anterior ya no es válido."
         },
         "app_created": {
           "title": "La aplicación se creó correctamente",
-          "description": "Utilice las credenciales para instalar la aplicación en un espacio de trabajo de Plane"
+          "description": "Utiliza las credenciales para instalar la aplicación en un espacio de trabajo de Plane"
         },
         "installed_apps": "Aplicaciones instaladas",
         "all_apps": "Todas las aplicaciones",
@@ -328,15 +328,15 @@
         "app_name_title": "¿Cómo llamarás a esta aplicación?",
         "app_description_title": {
           "label": "Descripción larga",
-          "placeholder": "Escriba una descripción larga para el mercado. Presione '/' para ver los comandos."
+          "placeholder": "Escribe una descripción larga para el mercado. Presiona '/' para ver los comandos."
         },
         "authorization_grant_type": {
           "title": "Tipo de conexión",
-          "description": "Elija si su aplicación debe instalarse una vez para el espacio de trabajo o permitir que cada usuario conecte su propia cuenta"
+          "description": "Elige si tu aplicación debe instalarse una vez para el espacio de trabajo o permitir que cada usuario conecte su propia cuenta"
         },
         "website": {
           "title": "Sitio web",
-          "description": "Enlace al sitio web de su aplicación.",
+          "description": "Enlace al sitio web de tu aplicación.",
           "placeholder": "https://example.com"
         },
         "app_maker": {
@@ -351,7 +351,7 @@
         },
         "webhook_url": {
           "label": "URL del webhook",
-          "description": "Aquí es donde enviaremos eventos y actualizaciones de webhook desde los espacios de trabajo donde está instalada su aplicación.",
+          "description": "Aquí es donde enviaremos eventos y actualizaciones de webhook desde los espacios de trabajo donde está instalada tu aplicación.",
           "placeholder": "https://example.com/webhook"
         },
         "webhook_secret": {
@@ -469,7 +469,7 @@
         "select_scopes": "Seleccionar ámbitos",
         "read_access_to": "Acceso de solo lectura a",
         "write_access_to": "Acceso de escritura a",
-        "global_permission_expiration": "Los ámbitos globales caducarán pronto. Utilice ámbitos granulares en su lugar. Por ejemplo, use project:read en lugar de una lectura global.",
+        "global_permission_expiration": "Los ámbitos globales caducarán pronto. Utiliza ámbitos granulares en su lugar. Por ejemplo, usa project:read en lugar de una lectura global.",
         "selected_scopes": "{count} seleccionados",
         "scopes_and_permissions": "Ámbitos y permisos",
         "read": "Lectura",

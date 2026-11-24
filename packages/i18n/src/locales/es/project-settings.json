@@ -27,11 +27,11 @@
     "members": {
       "label": "Miembros",
       "project_lead": "Líder del proyecto",
-      "project_lead_description": "Seleccione el responsable del proyecto.",
+      "project_lead_description": "Selecciona el responsable del proyecto.",
       "default_assignee": "Asignado por defecto",
-      "default_assignee_description": "Seleccione el asignado predeterminado para el proyecto.",
+      "default_assignee_description": "Selecciona el asignado predeterminado para el proyecto.",
       "project_subscribers": "Suscriptores del proyecto",
-      "project_subscribers_description": "Seleccione los miembros que recibirán notificaciones para este proyecto.",
+      "project_subscribers_description": "Selecciona los miembros que recibirán notificaciones para este proyecto.",
       "guest_super_permissions": {
         "title": "Otorgar acceso de visualización a todos los elementos de trabajo para usuarios invitados:",
         "sub_heading": "Esto permitirá a los invitados tener acceso de visualización a todos los elementos de trabajo del proyecto."

@@ -118,7 +118,7 @@
             },
             "error": {
               "title": "¡Error!",
-              "message": "Error al crear la propiedad. ¡Por favor intente nuevamente!"
+              "message": "Error al crear la propiedad. ¡Por favor intenta nuevamente!"
             }
           },
           "update": {
@@ -128,7 +128,7 @@
             },
             "error": {
               "title": "¡Error!",
-              "message": "Error al actualizar la propiedad. ¡Por favor intente nuevamente!"
+              "message": "Error al actualizar la propiedad. ¡Por favor intenta nuevamente!"
             }
           },
           "delete": {
@@ -138,7 +138,7 @@
             },
             "error": {
               "title": "¡Error!",
-              "message": "Error al eliminar la propiedad. ¡Por favor intente nuevamente!"
+              "message": "Error al eliminar la propiedad. ¡Por favor intenta nuevamente!"
             }
           },
           "enable_disable": {
@@ -149,7 +149,7 @@
             },
             "error": {
               "title": "¡Error!",
-              "message": "Error al {action} la propiedad. ¡Por favor intente nuevamente!"
+              "message": "Error al {action} la propiedad. ¡Por favor intenta nuevamente!"
             }
           }
         },
@@ -187,14 +187,14 @@
         },
         "formula": {
           "field_label": "Campo de fórmula",
-          "tooltip": "Ingrese una fórmula usando la sintaxis '{'Nombre del campo'}'. Admite operadores +, -, *, / y &.",
+          "tooltip": "Ingresa una fórmula usando la sintaxis '{'Nombre del campo'}'. Admite operadores +, -, *, / y &.",
           "placeholder": "Escribir la fórmula",
           "test_button": "Probar",
           "validating": "Validando",
           "validation_success": "¡La fórmula es válida! Devuelve {resultType}",
           "validation_success_with_refs": "¡La fórmula es válida! Devuelve {resultType} ({count} campo(s) referenciado(s))",
           "error": {
-            "empty": "Por favor ingrese una fórmula",
+            "empty": "Por favor ingresa una fórmula",
             "missing_context": "Falta el contexto de espacio de trabajo, proyecto o tipo de elemento de trabajo",
             "validation_failed": "La validación falló"
           },
@@ -274,7 +274,7 @@
       "item_delete_confirmation": {
         "title": "Eliminar este tipo",
         "description": "La eliminación de tipos puede provocar la pérdida de datos existentes.",
-        "can_disable_warning": "¿Desea desactivar el tipo en su lugar?",
+        "can_disable_warning": "¿Deseas desactivar el tipo en su lugar?",
         "primary_button": "Sí, eliminarlo",
         "toast": {
           "success": {
@@ -303,7 +303,7 @@
         "error": {
           "title": "¡Error!",
           "message": {
-            "default": "Error al crear el tipo de elemento de trabajo. ¡Por favor intente nuevamente!",
+            "default": "Error al crear el tipo de elemento de trabajo. ¡Por favor intenta nuevamente!",
             "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
           }
         }
@@ -320,7 +320,7 @@
         "error": {
           "title": "¡Error!",
           "message": {
-            "default": "Error al actualizar el tipo de elemento de trabajo. ¡Por favor intente nuevamente!",
+            "default": "Error al actualizar el tipo de elemento de trabajo. ¡Por favor intenta nuevamente!",
             "conflict": "El tipo {name} ya existe. Elige un nombre diferente."
           }
         }
@@ -345,7 +345,7 @@
         },
         "error": {
           "title": "¡Error!",
-          "message": "Error al {action} el tipo de elemento de trabajo. ¡Por favor intente nuevamente!"
+          "message": "Error al {action} el tipo de elemento de trabajo. ¡Por favor intenta nuevamente!"
         }
       },
       "tooltip": "Clic para {action}"
@@ -421,7 +421,7 @@
             },
             "error": {
               "title": "¡Error!",
-              "message": "No se pudo establecer el nivel de jerarquía {level} como predeterminado. Por favor, inténtelo de nuevo."
+              "message": "No se pudo establecer el nivel de jerarquía {level} como predeterminado. Por favor, inténtalo de nuevo."
             }
           }
         }
@@ -449,7 +449,7 @@
       },
       "error_toast": {
         "title": "¡Error!",
-        "message": "No se pudieron desvincular los enlaces ni guardar. Inténtelo de nuevo."
+        "message": "No se pudieron desvincular los enlaces ni guardar. Inténtalo de nuevo."
       },
       "confirm_button": {
         "loading": "Guardando",
