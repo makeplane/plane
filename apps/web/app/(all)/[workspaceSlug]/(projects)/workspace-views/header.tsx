@@ -111,7 +111,7 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
       <CreateUpdateWorkspaceViewModal isOpen={createViewModal} onClose={() => setCreateViewModal(false)} />
       <Header>
         <Header.LeftItem>
-          <Breadcrumbs>
+          <Breadcrumbs showOverflowMenu={false}>
             <Breadcrumbs.Item
               component={
                 <BreadcrumbLink label={t("views")} icon={<ViewsOutline className="h-4 w-4 text-tertiary" />} />
