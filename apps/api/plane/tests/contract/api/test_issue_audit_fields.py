@@ -415,14 +415,16 @@ class TestCompleteAPITokenActorWorkflow:
             comments_url = _comments_url(workspace.slug, project.id, issue_id)
             visible_comments = reviewer.get(f"{comments_url}?expand=created_by,actor")
             assert visible_comments.status_code == status.HTTP_200_OK
-            visible_comment_names = {
-                row["actor"]["display_name"] for row in visible_comments.data["results"]
+            comments_by_id = {row["id"]: row for row in visible_comments.data["results"]}
+            expected_comment_authors = {
+                planner_comment_response.data["id"]: "planner-agent",
+                second_planner_comment.data["id"]: "planner-agent",
+                reviewer_comment_response.data["id"]: "review-agent",
+                human_comment.data["id"]: member_user.display_name,
             }
-            assert visible_comment_names == {"planner-agent", "review-agent", member_user.display_name}
-            visible_comment_creator_names = {
-                row["created_by"]["display_name"] for row in visible_comments.data["results"]
-            }
-            assert visible_comment_creator_names == {"planner-agent", "review-agent", member_user.display_name}
+            for comment_id, expected_author in expected_comment_authors.items():
+                assert comments_by_id[comment_id]["actor"]["display_name"] == expected_author
+                assert comments_by_id[comment_id]["created_by"]["display_name"] == expected_author
 
             reviewer_comment_id = reviewer_comment_response.data["id"]
             reviewer_comment_before_rename = reviewer.get(
@@ -447,8 +449,14 @@ class TestCompleteAPITokenActorWorkflow:
                 f"/api/v1/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue_id}/activities/?expand=actor"
             )
             assert activity_response.status_code == status.HTTP_200_OK
-            history_names = {row["actor"]["display_name"] for row in activity_response.data["results"]}
-            assert {"planner-agent", "review-agent-renamed", member_user.display_name}.issubset(history_names)
+            title_changes = {
+                row["new_value"]: row
+                for row in activity_response.data["results"]
+                if row["field"] == "name"
+            }
+            assert title_changes["Planner updated the issue"]["actor"]["display_name"] == "planner-agent"
+            assert title_changes["Reviewer updated the issue"]["actor"]["display_name"] == "review-agent-renamed"
+            assert title_changes["Human updated the issue"]["actor"]["display_name"] == member_user.display_name
 
             revoke_response = owner_session.delete(reverse("api-tokens-details", kwargs={"pk": planner_token.pk}))
             assert revoke_response.status_code == status.HTTP_204_NO_CONTENT

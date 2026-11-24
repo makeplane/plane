@@ -66,8 +66,8 @@ class APIToken(BaseModel):
             actor = User.objects.create(
                 username=f"api_token_{actor_id}",
                 email=f"api-token-{actor_id}@plane.invalid",
-                display_name=self.label,
-                first_name=self.label,
+                display_name=locked_token.label,
+                first_name=locked_token.label,
                 is_bot=True,
                 is_active=True,
                 is_password_autoset=True,
