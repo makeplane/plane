@@ -49,7 +49,10 @@ from plane.api.serializers import (
     ProjectCreateSerializer,
     ProjectUpdateSerializer,
 )
+from plane.utils.team_access import reconcile_project_access
 from plane.app.permissions import (
+    PortfolioChoiceError,
+    get_portfolio_for_new_project,
     ProjectArchiveUnarchivePermission,
     ProjectBasePermission,
     WorkSpaceAdminPermission,
@@ -238,7 +241,10 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
 
             if serializer.is_valid():
                 with transaction.atomic():
-                    serializer.save()
+                    portfolio = get_portfolio_for_new_project(
+                        request.user, workspace, request.data.get("portfolio_id")
+                    )
+                    serializer.save(portfolio=portfolio)
 
                     # Add the creator as Administrator of the project.
                     _ = ProjectMember.objects.create(project_id=serializer.instance.id, member=request.user, role=20)
@@ -273,6 +279,9 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                             for state in DEFAULT_STATES
                         ]
                     )
+
+                    if portfolio is not None:
+                        reconcile_project_access([serializer.instance.id])
 
                     project = self.get_queryset().filter(pk=serializer.instance.id).first()
 
@@ -324,6 +333,8 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
                 {"error": "An unexpected error occurred"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+        except PortfolioChoiceError as e:
+            return Response({"error": str(e)}, status=e.status_code)
         except Workspace.DoesNotExist:
             return Response({"error": "Workspace does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except ValidationError:

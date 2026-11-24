@@ -17,6 +17,7 @@ from plane.tests.factories import UserFactory
 ALLOWED = {"id", "member", "role"}
 NON_GUEST_WORKSPACE_FIELDS = ALLOWED | {"is_active", "created_at"}
 PROJECT_LIST_FIELDS = ALLOWED | {"original_role", "created_at"}
+NON_GUEST_PROJECT_LIST_FIELDS = PROJECT_LIST_FIELDS | {"is_team_managed"}
 
 
 @pytest.fixture
@@ -89,4 +90,4 @@ class TestNonGuestMemberFields:
         assert response.status_code == 200
         assert response.data
         for row in response.data:
-            assert set(row) == PROJECT_LIST_FIELDS
+            assert set(row) == NON_GUEST_PROJECT_LIST_FIELDS

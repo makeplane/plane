@@ -24,6 +24,7 @@ from plane.app.serializers import (
 from plane.app.views.base import BaseAPIView
 from plane.db.models import Project, ProjectMember, WorkspaceMember, DraftIssue
 from plane.utils.cache import invalidate_cache
+from plane.utils.team_access import TeamAccessError, leave_all_teams, reconcile_user_teams
 
 from .. import BaseViewSet
 
@@ -127,14 +128,20 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        with transaction.atomic():
-            if is_guest:
-                ProjectMember.objects.filter(
-                    workspace_id=workspace_member.workspace_id, member_id=workspace_member.member_id
-                ).update(role=ROLE.GUEST.value, updated_at=timezone.now())
-            workspace_member.role = role
-            # Write only these columns so a concurrent removal or view_props save isn't reverted.
-            workspace_member.save(update_fields=["role", "updated_at", "updated_by"])
+        try:
+            with transaction.atomic():
+                if is_guest:
+                    # Guests cannot be in a team
+                    leave_all_teams(workspace_member.workspace_id, workspace_member.member_id)
+                    ProjectMember.objects.filter(
+                        workspace_id=workspace_member.workspace_id, member_id=workspace_member.member_id
+                    ).update(role=ROLE.GUEST.value, updated_at=timezone.now())
+                workspace_member.role = role
+                # Write only these columns so a concurrent removal or view_props save isn't reverted.
+                workspace_member.save(update_fields=["role", "updated_at", "updated_by"])
+                reconcile_user_teams(workspace_member.workspace_id, workspace_member.member_id)
+        except TeamAccessError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(WorkSpaceMemberSerializer(workspace_member).data, status=status.HTTP_200_OK)
 
@@ -170,13 +177,18 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Deactivate the users from the projects where the user is part of
-        _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False, updated_at=timezone.now())
+        try:
+            with transaction.atomic():
+                # Deactivate the users from the projects where the user is part of
+                leave_all_teams(workspace_member.workspace_id, workspace_member.member_id)
+                _ = ProjectMember.objects.filter(
+                    workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
+                ).update(is_active=False, updated_at=timezone.now())
 
-        workspace_member.is_active = False
-        workspace_member.save()
+                workspace_member.is_active = False
+                workspace_member.save()
+        except TeamAccessError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @invalidate_cache(
@@ -211,14 +223,19 @@ class WorkSpaceMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # # Deactivate the users from the projects where the user is part of
-        _ = ProjectMember.objects.filter(
-            workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
-        ).update(is_active=False, updated_at=timezone.now())
+        try:
+            with transaction.atomic():
+                # # Deactivate the users from the projects where the user is part of
+                leave_all_teams(workspace_member.workspace_id, workspace_member.member_id)
+                _ = ProjectMember.objects.filter(
+                    workspace__slug=slug, member_id=workspace_member.member_id, is_active=True
+                ).update(is_active=False, updated_at=timezone.now())
 
-        # # Deactivate the user
-        workspace_member.is_active = False
-        workspace_member.save()
+                # # Deactivate the user
+                workspace_member.is_active = False
+                workspace_member.save()
+        except TeamAccessError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -269,7 +286,9 @@ class WorkspaceProjectMemberEndpoint(BaseAPIView):
         project_members = ProjectMember.objects.filter(
             workspace__slug=slug, project_id__in=project_ids, is_active=True
         ).select_related("project", "member", "workspace")
-        project_members = ProjectMemberRoleSerializer(project_members, many=True).data
+        project_members = ProjectMemberRoleSerializer(
+            project_members, fields=("id", "role", "member", "project", "original_role", "created_at"), many=True
+        ).data
 
         project_members_dict = dict()
 

@@ -8,6 +8,7 @@ import json
 
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import Exists, F, OuterRef, Prefetch, Q, Subquery, Count
 from django.utils import timezone
 
@@ -16,7 +17,13 @@ from rest_framework import status
 from rest_framework.response import Response
 
 # Module imports
-from plane.app.permissions import ROLE, ProjectMemberPermission, allow_permission
+from plane.app.permissions import (
+    ROLE,
+    PortfolioChoiceError,
+    ProjectMemberPermission,
+    allow_permission,
+    get_portfolio_for_new_project,
+)
 from plane.app.serializers import (
     DeployBoardSerializer,
     ProjectListSerializer,
@@ -42,6 +49,7 @@ from plane.db.models import (
 )
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
+from plane.utils.team_access import TeamAccessError, reconcile_project_access
 from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
 
 
@@ -61,7 +69,7 @@ class ProjectViewSet(BaseViewSet):
             super()
             .get_queryset()
             .filter(workspace__slug=self.kwargs.get("slug"))
-            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead")
+            .select_related("workspace", "workspace__owner", "default_assignee", "project_lead", "portfolio")
             .annotate(
                 is_favorite=Exists(
                     UserFavorite.objects.filter(
@@ -170,7 +178,7 @@ class ProjectViewSet(BaseViewSet):
                     ),
                 )
             )
-            .annotate(inbox_view=F("intake_view"))
+            .annotate(inbox_view=F("intake_view"), team=F("portfolio__team_id"))
             .annotate(sort_order=Subquery(sort_order))
             .distinct()
         ).values(
@@ -191,6 +199,8 @@ class ProjectViewSet(BaseViewSet):
             "guest_view_all_features",
             "project_lead",
             "network",
+            "portfolio",
+            "team",
             "created_at",
             "updated_at",
             "created_by",
@@ -261,39 +271,49 @@ class ProjectViewSet(BaseViewSet):
 
         serializer = ProjectSerializer(data={**request.data}, context={"workspace_id": workspace.id})
         if serializer.is_valid():
-            serializer.save()
-
-            # Add the user as Administrator to the project
-            _ = ProjectMember.objects.create(
-                project_id=serializer.data["id"],
-                member=request.user,
-                role=ROLE.ADMIN.value,
-            )
-
-            if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
-                request.user.id
-            ):
-                ProjectMember.objects.create(
-                    project_id=serializer.data["id"],
-                    member_id=serializer.data["project_lead"],
-                    role=ROLE.ADMIN.value,
-                )
-
-            State.objects.bulk_create(
-                [
-                    State(
-                        name=state["name"],
-                        color=state["color"],
-                        project=serializer.instance,
-                        sequence=state["sequence"],
-                        workspace=serializer.instance.workspace,
-                        group=state["group"],
-                        default=state.get("default", False),
-                        created_by=request.user,
+            try:
+                with transaction.atomic():
+                    portfolio = get_portfolio_for_new_project(
+                        request.user, workspace, request.data.get("portfolio_id")
                     )
-                    for state in DEFAULT_STATES
-                ]
-            )
+                    serializer.save(portfolio=portfolio)
+
+                    # Add the user as Administrator to the project
+                    _ = ProjectMember.objects.create(
+                        project_id=serializer.data["id"],
+                        member=request.user,
+                        role=ROLE.ADMIN.value,
+                    )
+
+                    if serializer.data["project_lead"] is not None and str(serializer.data["project_lead"]) != str(
+                        request.user.id
+                    ):
+                        ProjectMember.objects.create(
+                            project_id=serializer.data["id"],
+                            member_id=serializer.data["project_lead"],
+                            role=ROLE.ADMIN.value,
+                        )
+
+                    State.objects.bulk_create(
+                        [
+                            State(
+                                name=state["name"],
+                                color=state["color"],
+                                project=serializer.instance,
+                                sequence=state["sequence"],
+                                workspace=serializer.instance.workspace,
+                                group=state["group"],
+                                default=state.get("default", False),
+                                created_by=request.user,
+                            )
+                            for state in DEFAULT_STATES
+                        ]
+                    )
+
+                    if portfolio is not None:
+                        reconcile_project_access([serializer.instance.id])
+            except PortfolioChoiceError as e:
+                return Response({"error": str(e)}, status=e.status_code)
 
             project = self.get_queryset().filter(pk=serializer.data["id"]).first()
 
@@ -355,7 +375,14 @@ class ProjectViewSet(BaseViewSet):
         )
 
         if serializer.is_valid():
-            serializer.save()
+            try:
+                with transaction.atomic():
+                    serializer.save()
+                    # Team members only have access to public projects
+                    if "network" in request.data:
+                        reconcile_project_access([project.id])
+            except TeamAccessError as e:
+                return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
             if intake_view:
                 intake = Intake.objects.filter(project=project, is_default=True).first()
                 if not intake:

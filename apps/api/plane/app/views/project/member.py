@@ -5,6 +5,7 @@
 # Third Party imports
 from rest_framework.response import Response
 from rest_framework import status
+from django.db import transaction
 from django.db.models import Min
 
 # Module imports
@@ -21,10 +22,18 @@ from plane.app.permissions import WorkspaceUserPermission
 from plane.db.models import Project, ProjectMember, ProjectUserProperty, WorkspaceMember
 from plane.bgtasks.project_add_user_email_task import project_add_user_email
 from plane.utils.host import base_host
+from plane.utils.team_access import absorb_manual_roles
 from plane.app.permissions.base import allow_permission, ROLE
 
 # Personal fields of a membership row, only returned to the member who owns it
 PERSONAL_MEMBER_FIELDS = ("preferences", "view_props", "default_props")
+
+
+def _team_managed_response():
+    return Response(
+        {"error": "This access is granted by the team. Change the team membership instead."},
+        status=status.HTTP_409_CONFLICT,
+    )
 
 
 def _without_personal_fields(data, project_member, user):
@@ -145,6 +154,8 @@ class ProjectMemberViewSet(BaseViewSet):
 
         _ = ProjectUserProperty.objects.bulk_create(bulk_issue_props, batch_size=10, ignore_conflicts=True)
 
+        absorb_manual_roles(project_id, list(member_roles))
+
         project_members = ProjectMember.objects.filter(
             project_id=project_id,
             member_id__in=[member.get("member_id") for member in members],
@@ -175,9 +186,18 @@ class ProjectMemberViewSet(BaseViewSet):
             member__member_workspace__is_active=True,
         ).select_related("project", "member", "workspace")
 
-        serializer = ProjectMemberRoleSerializer(
-            project_members, fields=("id", "member", "role", "original_role", "created_at"), many=True
-        )
+        fields = ("id", "member", "role", "original_role", "created_at")
+        # How others got their access is not shown to guests
+        if ProjectMember.objects.filter(
+            project_id=project_id,
+            workspace__slug=slug,
+            member=request.user,
+            role__gt=ROLE.GUEST.value,
+            is_active=True,
+        ).exists():
+            fields += ("is_team_managed",)
+
+        serializer = ProjectMemberRoleSerializer(project_members, fields=fields, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
@@ -304,10 +324,17 @@ class ProjectMemberViewSet(BaseViewSet):
                     status=status.HTTP_403_FORBIDDEN,
                 )
 
+            if project_member.is_team_managed:
+                return _team_managed_response()
+
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True)
 
         if serializer.is_valid():
-            serializer.save()
+            with transaction.atomic():
+                serializer.save()
+                if "role" in request.data:
+                    absorb_manual_roles(project_id, [project_member.member_id])
+                    project_member.refresh_from_db()
             return Response(
                 _without_personal_fields(serializer.data, project_member, request.user), status=status.HTTP_200_OK
             )
@@ -342,6 +369,9 @@ class ProjectMemberViewSet(BaseViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        if project_member.is_team_managed:
+            return _team_managed_response()
+
         project_member.is_active = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -354,6 +384,9 @@ class ProjectMemberViewSet(BaseViewSet):
             member=request.user,
             is_active=True,
         )
+
+        if project_member.is_team_managed:
+            return _team_managed_response()
 
         # Check if the leaving user is the only admin of the project
         if (

@@ -137,6 +137,7 @@ class Workspace(BaseModel):
     organization_size = models.CharField(max_length=20, blank=True, null=True)
     timezone = models.CharField(max_length=255, default="UTC", choices=TIMEZONE_CHOICES)
     background_color = models.CharField(max_length=255, default=get_random_color)
+    is_team_structure_enabled = models.BooleanField(default=False)
 
     def __str__(self):
         """Return name of the Workspace"""
@@ -258,11 +259,18 @@ class WorkspaceMemberInvite(BaseModel):
         return f"{self.workspace.name} {self.email} {self.accepted}"
 
 
+class TeamKind(models.TextChoices):
+    REGULAR = "regular", "Regular"
+    MANAGEMENT = "management", "Management"
+
+
 class Team(BaseModel):
     name = models.CharField(max_length=255, verbose_name="Team Name")
     description = models.TextField(verbose_name="Team Description", blank=True)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name="workspace_team")
     logo_props = models.JSONField(default=dict)
+    kind = models.CharField(max_length=20, choices=TeamKind.choices, default=TeamKind.REGULAR)
+    archived_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         """Return name of the team"""
@@ -275,11 +283,45 @@ class Team(BaseModel):
                 fields=["name", "workspace"],
                 condition=models.Q(deleted_at__isnull=True),
                 name="team_unique_name_workspace_when_deleted_at_null",
-            )
+            ),
+            models.UniqueConstraint(
+                fields=["workspace"],
+                condition=models.Q(kind="management", deleted_at__isnull=True),
+                name="team_unique_management_team_per_workspace",
+            ),
         ]
         verbose_name = "Team"
         verbose_name_plural = "Teams"
         db_table = "teams"
+        ordering = ("-created_at",)
+
+
+class TeamMember(BaseModel):
+    """Membership of a team. Only Admin (20) and Member (15) roles are used."""
+
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="team_members")
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name="workspace_team_members")
+    member = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="team_memberships")
+    role = models.PositiveSmallIntegerField(choices=((20, "Admin"), (15, "Member")), default=15)
+
+    def save(self, *args, **kwargs):
+        self.workspace_id = self.team.workspace_id
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.member_id} <{self.team_id}>"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["team", "member"],
+                condition=models.Q(deleted_at__isnull=True),
+                name="team_member_unique_team_member_when_deleted_at_null",
+            )
+        ]
+        verbose_name = "Team Member"
+        verbose_name_plural = "Team Members"
+        db_table = "team_members"
         ordering = ("-created_at",)
 
 
