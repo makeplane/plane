@@ -21,6 +21,7 @@ from plane.api.serializers import (
 )
 from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
 from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
+from plane.utils.team_access import absorb_manual_roles
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -166,6 +167,12 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
 
 # API endpoint to get and update a project member
 class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
+    def team_managed_response(self):
+        return Response(
+            {"error": "This access is granted by the team. Change the team membership instead."},
+            status=status.HTTP_409_CONFLICT,
+        )
+
     @extend_schema(
         operation_id="get_project_member",
         summary="Get project member",
@@ -218,6 +225,9 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         serializer = ProjectMemberSerializer(project_member, data=request.data, partial=True, context={"slug": slug})
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        if "role" in request.data:
+            absorb_manual_roles(project_id, [project_member.member_id])
+            project_member.refresh_from_db()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @extend_schema(
@@ -230,6 +240,8 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
     )
     def delete(self, request, slug, project_id, pk):
         project_member = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
+        if project_member.is_team_managed:
+            return self.team_managed_response()
         project_member.is_active = False
         project_member.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

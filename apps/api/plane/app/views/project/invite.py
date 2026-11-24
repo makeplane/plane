@@ -34,6 +34,7 @@ from plane.db.models import (
 )
 from plane.db.models.project import ProjectNetwork
 from plane.utils.host import base_host
+from plane.utils.team_access import absorb_manual_roles
 
 
 class ProjectInvitationsViewset(BaseViewSet):
@@ -283,6 +284,7 @@ class ProjectJoinEndpoint(BaseAPIView):
                     project_member.is_active = True
                     project_member.role = project_invite.role
                     project_member.save()
+                    absorb_manual_roles(project_id, [user.id])
 
                 return Response(
                     {"message": "Project Invitation Accepted"},

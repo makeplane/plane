@@ -30,6 +30,7 @@ from plane.bgtasks.workspace_invitation_task import workspace_invitation
 from plane.db.models import User, Workspace, WorkspaceMember, WorkspaceMemberInvite
 from plane.utils.cache import invalidate_cache, invalidate_cache_directly
 from plane.utils.host import base_host
+from plane.utils.team_access import reconcile_user_teams
 from .. import BaseViewSet
 
 
@@ -216,6 +217,7 @@ class WorkspaceJoinEndpoint(BaseAPIView):
                         workspace_member.is_active = True
                         workspace_member.role = workspace_invite.role
                         workspace_member.save()
+                        reconcile_user_teams(workspace_member.workspace_id, user.id)
                     else:
                         # Create a Workspace
                         _ = WorkspaceMember.objects.create(
@@ -292,6 +294,8 @@ class UserWorkspaceInvitationsViewSet(BaseViewSet):
             WorkspaceMember.objects.filter(workspace_id=invitation.workspace_id, member=request.user).update(
                 is_active=True, role=invitation.role
             )
+            # Guests cannot be in a team; the role change may also alter what the teams grant
+            reconcile_user_teams(invitation.workspace_id, request.user.id)
 
         # Bulk create the user for all the workspaces
         WorkspaceMember.objects.bulk_create(

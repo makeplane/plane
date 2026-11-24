@@ -9,6 +9,7 @@ import logging
 import secrets
 
 # Django imports
+from django.db import transaction
 from django.db.models import Case, Count, IntegerField, Q, When
 from django.contrib.auth import logout
 from django.utils import timezone
@@ -45,6 +46,7 @@ from plane.db.models import (
 )
 from plane.license.models import Instance, InstanceAdmin
 from plane.utils.paginator import BasePaginator
+from plane.utils.team_access import TeamAccessError, leave_all_teams
 from plane.utils.order_queryset import ACTIVITY_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.authentication.utils.host import user_ip
 from plane.bgtasks.user_deactivation_email_task import user_deactivation_email
@@ -330,6 +332,13 @@ class UserEndpoint(BaseViewSet):
                     {"error": "You cannot deactivate account as you are the only admin in some workspaces."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
+
+        try:
+            with transaction.atomic():
+                for workspace in workspaces_to_deactivate:
+                    leave_all_teams(workspace.workspace_id, request.user.id)
+        except TeamAccessError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         ProjectMember.objects.bulk_update(projects_to_deactivate, ["is_active"], batch_size=100)
 

@@ -231,6 +231,7 @@ class ProjectSerializer(BaseSerializer):
             "id",
             "emoji",
             "workspace",
+            "portfolio",
             "created_at",
             "updated_at",
             "created_by",

@@ -36,7 +36,8 @@ class ProjectSerializer(BaseSerializer):
         model = Project
         fields = "__all__"
         # Audit fields are set server-side by BaseModel.save().
-        read_only_fields = ["workspace", "deleted_at", "created_by", "updated_by"]
+        # The portfolio decides who has access, so it only changes through the move endpoint.
+        read_only_fields = ["workspace", "portfolio", "deleted_at", "created_by", "updated_by"]
 
     def validate_name(self, name):
         project_id = self.instance.id if self.instance else None
@@ -134,6 +135,10 @@ class ProjectListSerializer(DynamicBaseSerializer):
     cover_image_url = serializers.CharField(read_only=True)
     inbox_view = serializers.BooleanField(read_only=True, source="intake_view")
     next_work_item_sequence = serializers.SerializerMethodField()
+    team = serializers.SerializerMethodField()
+
+    def get_team(self, obj):
+        return obj.portfolio.team_id if obj.portfolio_id else None
 
     def get_members(self, obj):
         project_members = getattr(obj, "members_list", None)
@@ -174,7 +179,7 @@ class ProjectMemberSerializer(BaseSerializer):
     class Meta:
         model = ProjectMember
         fields = "__all__"
-        read_only_fields = ["deleted_at", "created_by", "updated_by"]
+        read_only_fields = ["is_team_managed", "manual_role", "deleted_at", "created_by", "updated_by"]
 
 
 class ProjectMemberPreferenceSerializer(BaseSerializer):
@@ -204,8 +209,8 @@ class ProjectMemberRoleSerializer(DynamicBaseSerializer):
 
     class Meta:
         model = ProjectMember
-        fields = ("id", "role", "member", "project", "original_role", "created_at")
-        read_only_fields = ["original_role", "created_at"]
+        fields = ("id", "role", "member", "project", "original_role", "is_team_managed", "created_at")
+        read_only_fields = ["original_role", "is_team_managed", "created_at"]
 
 
 class ProjectMemberInviteSerializer(BaseSerializer):
