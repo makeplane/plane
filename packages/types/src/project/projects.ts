@@ -40,6 +40,8 @@ export interface IPartialProject {
   created_by?: string;
   updated_by?: string;
   intake_count?: number;
+  portfolio?: string | null;
+  readonly team?: string | null;
 }
 
 export interface IProject extends IPartialProject {
@@ -59,6 +61,8 @@ export interface IProject extends IPartialProject {
   members?: string[];
   timezone?: string;
   next_work_item_sequence?: number;
+  // only sent when creating a project; the portfolio then changes through the move endpoint
+  portfolio_id?: string | null;
 }
 
 export type TProjectAnalyticsCountParams = {
@@ -94,6 +98,8 @@ export interface IProjectMemberLite {
 
 export type TProjectMembership = {
   member: string;
+  // the access comes from the team; not returned to guests
+  is_team_managed?: boolean;
   role: TUserPermissions | EUserProjectRoles;
 } & (
   | {
