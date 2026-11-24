@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Teams",
+    "portfolio": "Portfolio",
+    "portfolios": "Portfolios",
+    "without_portfolio": "Ohne Portfolio",
+    "without_portfolio_hint": "Projekte auswählen, um sie einem Portfolio hinzuzufügen. Die Zugriffsänderungen werden vorab angezeigt.",
+    "settings_description": "Projekte in Portfolios gruppieren und jedem Team eigene Admins zuweisen.",
+    "enable": {
+      "title": "Teamstruktur",
+      "description": "Teams in der Navigation anzeigen und für neue Projekte ein Portfolio verlangen. Beim Deaktivieren bleibt bereits gewährter Zugriff erhalten."
+    },
+    "create_team": "Team erstellen",
+    "edit_team": "Team bearbeiten",
+    "create_portfolio": "Portfolio erstellen",
+    "edit_portfolio": "Portfolio bearbeiten",
+    "select_portfolio": "Portfolio auswählen",
+    "select_members": "Mitglieder auswählen",
+    "portfolio_required": "Bitte ein Portfolio auswählen. Nur Team-Admins können Projekte erstellen.",
+    "no_portfolios": "Noch keine Portfolios",
+    "no_projects": "Keine Projekte vorhanden",
+    "not_found": "Diese Seite existiert nicht oder wurde entfernt.",
+    "archived": "Archiviert",
+    "archive_hint": "Ein archiviertes Team ist in der Navigation ausgeblendet. Der Zugriff auf seine Projekte bleibt erhalten.",
+    "delete_hint": "Nur ein Team ohne Portfolios kann gelöscht werden.",
+    "via_team": "Über das Team",
+    "kind": "Typ",
+    "kinds": {
+      "regular": "Reguläres Team",
+      "management": "Leitungsteam"
+    },
+    "admins": "Team-Admins",
+    "admins_hint": "Ohne Auswahl werden Sie selbst Admin.",
+    "roles": {
+      "admin": "Admin",
+      "member": "Mitglied"
+    },
+    "delete_team": {
+      "title": "Team löschen",
+      "description": "Das Team „{name}“ wird gelöscht."
+    },
+    "delete_portfolio": {
+      "title": "Portfolio löschen",
+      "description": "Das Portfolio „{name}“ wird gelöscht. Nur ein leeres Portfolio kann gelöscht werden."
+    },
+    "move": {
+      "title": "In ein Portfolio verschieben",
+      "action": "Verschieben",
+      "done": "Die Projekte wurden verschoben.",
+      "gained": "Erhalten Zugriff",
+      "lost": "Verlieren Zugriff",
+      "changed": "Wechseln die Rolle",
+      "no_changes": "Der Zugriff ändert sich für niemanden."
+    },
+    "errors": {
+      "name_taken": "Dieser Name ist bereits vergeben.",
+      "management_exists": "Der Arbeitsbereich hat bereits ein Leitungsteam.",
+      "team_not_empty": "Das Team enthält noch Portfolios.",
+      "portfolio_not_empty": "Das Portfolio enthält noch Projekte.",
+      "last_admin": "Zuerst einen anderen Team-Admin zuweisen.",
+      "orphaned_project": "Ein Projekt hätte keinen Admin mehr.",
+      "archived": "Das Portfolio oder sein Team ist archiviert."
+    }
+  }
+}

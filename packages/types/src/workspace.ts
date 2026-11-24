@@ -34,6 +34,7 @@ export interface IWorkspace {
   total_projects?: number;
   role: number;
   timezone: string;
+  is_team_structure_enabled?: boolean;
 }
 
 export interface IWorkspaceLite {

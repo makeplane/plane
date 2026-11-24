@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "團隊",
+    "portfolio": "專案組合",
+    "portfolios": "專案組合",
+    "without_portfolio": "無專案組合",
+    "without_portfolio_hint": "請選擇要加入專案組合的專案。您會先看到存取權限的變更。",
+    "settings_description": "將專案歸入專案組合，並為每個團隊指定自己的管理員。",
+    "enable": {
+      "title": "團隊結構",
+      "description": "在導覽中顯示團隊，並要求新專案選擇專案組合。關閉後，已授予的存取權限保留。"
+    },
+    "create_team": "建立團隊",
+    "edit_team": "編輯團隊",
+    "create_portfolio": "建立專案組合",
+    "edit_portfolio": "編輯專案組合",
+    "select_portfolio": "選擇專案組合",
+    "select_members": "選擇成員",
+    "portfolio_required": "請選擇專案組合。只有團隊管理員可以建立專案。",
+    "no_portfolios": "尚無專案組合",
+    "no_projects": "沒有可顯示的專案",
+    "not_found": "此頁面不存在或已被移除。",
+    "archived": "已封存",
+    "archive_hint": "已封存的團隊不會顯示在導覽中。對其專案的存取權限保留。",
+    "delete_hint": "只能刪除沒有專案組合的團隊。",
+    "via_team": "透過團隊",
+    "kind": "類型",
+    "kinds": {
+      "regular": "一般團隊",
+      "management": "管理團隊"
+    },
+    "admins": "團隊管理員",
+    "admins_hint": "如果不選擇任何人，您將成為管理員。",
+    "roles": {
+      "admin": "管理員",
+      "member": "成員"
+    },
+    "delete_team": {
+      "title": "刪除團隊",
+      "description": "團隊「{name}」將被刪除。"
+    },
+    "delete_portfolio": {
+      "title": "刪除專案組合",
+      "description": "專案組合「{name}」將被刪除。只能刪除空的專案組合。"
+    },
+    "move": {
+      "title": "移至專案組合",
+      "action": "移動",
+      "done": "專案已移動。",
+      "gained": "取得存取權限",
+      "lost": "失去存取權限",
+      "changed": "角色變更",
+      "no_changes": "沒有人的存取權限發生變更。"
+    },
+    "errors": {
+      "name_taken": "此名稱已被使用。",
+      "management_exists": "工作區已有管理團隊。",
+      "team_not_empty": "團隊中仍有專案組合。",
+      "portfolio_not_empty": "專案組合中仍有專案。",
+      "last_admin": "請先指定其他團隊管理員。",
+      "orphaned_project": "會有專案沒有管理員。",
+      "archived": "專案組合或其團隊已封存。"
+    }
+  }
+}

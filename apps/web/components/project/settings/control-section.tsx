@@ -12,6 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import { Button } from "@makeplane/propel/components/button";
 // components
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
+import { ProjectPortfolioControl } from "@/components/teams/project-portfolio-control";
 // hooks
 import { useProject } from "@/hooks/store/use-project";
 // local imports
@@ -54,6 +55,7 @@ export const GeneralProjectSettingsControlSection = observer(function GeneralPro
         isOpen={Boolean(selectProject)}
         onClose={() => setSelectedProject(null)}
       />
+      {workspaceSlug && <ProjectPortfolioControl workspaceSlug={workspaceSlug} projectId={projectId} />}
       <div className="rounded-lg border border-subtle bg-layer-2">
         {/* Project Selector */}
         <SettingsBoxedControlItem

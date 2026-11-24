@@ -105,6 +105,17 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(":workspaceSlug/stickies", "./(all)/[workspaceSlug]/(projects)/stickies/page.tsx"),
         ]),
 
+        // Teams and portfolios
+        layout("./(all)/[workspaceSlug]/(projects)/teams/[teamId]/layout.tsx", [
+          route(":workspaceSlug/teams/:teamId", "./(all)/[workspaceSlug]/(projects)/teams/[teamId]/page.tsx"),
+        ]),
+        layout("./(all)/[workspaceSlug]/(projects)/portfolios/[portfolioId]/layout.tsx", [
+          route(
+            ":workspaceSlug/portfolios/:portfolioId",
+            "./(all)/[workspaceSlug]/(projects)/portfolios/[portfolioId]/page.tsx"
+          ),
+        ]),
+
         // Workspace Views
         layout("./(all)/[workspaceSlug]/(projects)/workspace-views/layout.tsx", [
           route(":workspaceSlug/workspace-views", "./(all)/[workspaceSlug]/(projects)/workspace-views/page.tsx"),
@@ -269,6 +280,10 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(
             ":workspaceSlug/settings/billing",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/billing/page.tsx"
+          ),
+          route(
+            ":workspaceSlug/settings/teams",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/teams/page.tsx"
           ),
           route(
             ":workspaceSlug/settings/exports",

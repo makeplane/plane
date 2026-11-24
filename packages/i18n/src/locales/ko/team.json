@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "팀",
+    "portfolio": "포트폴리오",
+    "portfolios": "포트폴리오",
+    "without_portfolio": "포트폴리오 없음",
+    "without_portfolio_hint": "포트폴리오에 추가할 프로젝트를 선택하세요. 먼저 액세스 변경 사항이 표시됩니다.",
+    "settings_description": "프로젝트를 포트폴리오로 묶고 팀마다 관리자를 지정합니다.",
+    "enable": {
+      "title": "팀 구조",
+      "description": "내비게이션에 팀을 표시하고 새 프로젝트에 포트폴리오를 필수로 지정합니다. 꺼도 이미 부여된 액세스는 유지됩니다."
+    },
+    "create_team": "팀 만들기",
+    "edit_team": "팀 편집",
+    "create_portfolio": "포트폴리오 만들기",
+    "edit_portfolio": "포트폴리오 편집",
+    "select_portfolio": "포트폴리오 선택",
+    "select_members": "멤버 선택",
+    "portfolio_required": "포트폴리오를 선택하세요. 팀 관리자만 프로젝트를 만들 수 있습니다.",
+    "no_portfolios": "아직 포트폴리오가 없습니다",
+    "no_projects": "표시할 프로젝트가 없습니다",
+    "not_found": "이 페이지는 존재하지 않거나 삭제되었습니다.",
+    "archived": "보관됨",
+    "archive_hint": "보관된 팀은 내비게이션에서 숨겨집니다. 프로젝트 액세스는 유지됩니다.",
+    "delete_hint": "포트폴리오가 없는 팀만 삭제할 수 있습니다.",
+    "via_team": "팀을 통해",
+    "kind": "유형",
+    "kinds": {
+      "regular": "일반 팀",
+      "management": "관리 팀"
+    },
+    "admins": "팀 관리자",
+    "admins_hint": "아무도 선택하지 않으면 본인이 관리자가 됩니다.",
+    "roles": {
+      "admin": "관리자",
+      "member": "멤버"
+    },
+    "delete_team": {
+      "title": "팀 삭제",
+      "description": "\"{name}\" 팀이 삭제됩니다."
+    },
+    "delete_portfolio": {
+      "title": "포트폴리오 삭제",
+      "description": "\"{name}\" 포트폴리오가 삭제됩니다. 빈 포트폴리오만 삭제할 수 있습니다."
+    },
+    "move": {
+      "title": "포트폴리오로 이동",
+      "action": "이동",
+      "done": "프로젝트가 이동되었습니다.",
+      "gained": "액세스 획득",
+      "lost": "액세스 상실",
+      "changed": "역할 변경",
+      "no_changes": "액세스가 변경되는 사람이 없습니다."
+    },
+    "errors": {
+      "name_taken": "이미 사용 중인 이름입니다.",
+      "management_exists": "워크스페이스에 이미 관리 팀이 있습니다.",
+      "team_not_empty": "팀에 아직 포트폴리오가 있습니다.",
+      "portfolio_not_empty": "포트폴리오에 아직 프로젝트가 있습니다.",
+      "last_admin": "먼저 다른 팀 관리자를 지정하세요.",
+      "orphaned_project": "관리자가 없는 프로젝트가 생깁니다.",
+      "archived": "포트폴리오 또는 해당 팀이 보관되었습니다."
+    }
+  }
+}

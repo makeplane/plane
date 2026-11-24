@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Teams",
+    "portfolio": "Portfolio",
+    "portfolios": "Portfolios",
+    "without_portfolio": "Without a portfolio",
+    "without_portfolio_hint": "Select projects to add them to a portfolio. You will see the access changes first.",
+    "settings_description": "Group projects into portfolios and give every team its own admins.",
+    "enable": {
+      "title": "Team structure",
+      "description": "Show teams in the navigation and require a portfolio for new projects. Turning it off keeps the access already granted."
+    },
+    "create_team": "Create team",
+    "edit_team": "Edit team",
+    "create_portfolio": "Create portfolio",
+    "edit_portfolio": "Edit portfolio",
+    "select_portfolio": "Select a portfolio",
+    "select_members": "Select members",
+    "portfolio_required": "Select a portfolio. Only team admins can create projects.",
+    "no_portfolios": "No portfolios yet",
+    "no_projects": "No projects to show",
+    "not_found": "This page does not exist or was removed.",
+    "archived": "Archived",
+    "archive_hint": "An archived team is hidden from the navigation. Access to its projects stays.",
+    "delete_hint": "Only a team without portfolios can be deleted.",
+    "via_team": "Via team",
+    "kind": "Type",
+    "kinds": {
+      "regular": "Regular team",
+      "management": "Management team"
+    },
+    "admins": "Team admins",
+    "admins_hint": "You become the admin if you do not select anyone.",
+    "roles": {
+      "admin": "Admin",
+      "member": "Member"
+    },
+    "delete_team": {
+      "title": "Delete team",
+      "description": "The team \"{name}\" will be deleted."
+    },
+    "delete_portfolio": {
+      "title": "Delete portfolio",
+      "description": "The portfolio \"{name}\" will be deleted. Only an empty portfolio can be deleted."
+    },
+    "move": {
+      "title": "Move to a portfolio",
+      "action": "Move",
+      "done": "The projects were moved.",
+      "gained": "Gain access",
+      "lost": "Lose access",
+      "changed": "Change role",
+      "no_changes": "Nobody's access changes."
+    },
+    "errors": {
+      "name_taken": "This name is already taken.",
+      "management_exists": "The workspace already has a management team.",
+      "team_not_empty": "The team still has portfolios.",
+      "portfolio_not_empty": "The portfolio still has projects.",
+      "last_admin": "Assign another team admin first.",
+      "orphaned_project": "A project would be left without an admin.",
+      "archived": "The portfolio or its team is archived."
+    }
+  }
+}

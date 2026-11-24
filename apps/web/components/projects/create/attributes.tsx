@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { observer } from "mobx-react";
 import { Controller, useFormContext } from "react-hook-form";
 // plane imports
 import { Select } from "@plane/blocks/select";
@@ -15,15 +16,22 @@ import { getTabIndex } from "@plane/utils";
 // components
 import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
+import { PortfolioSelect } from "@/components/teams/portfolio-select";
+// hooks
+import { useTeam } from "@/hooks/store/use-team";
 
 type Props = {
   isMobile?: boolean;
 };
 
-function ProjectAttributes(props: Props) {
+const ProjectAttributes = observer(function ProjectAttributes(props: Props) {
   const { isMobile = false } = props;
   const { t } = useTranslation();
-  const { control } = useFormContext<IProject>();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<IProject>();
+  const { isEnabled: isTeamStructureEnabled } = useTeam();
   const { getIndex } = getTabIndex(ETabIndices.PROJECT_CREATE, isMobile);
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -83,9 +91,22 @@ function ProjectAttributes(props: Props) {
           else return <></>;
         }}
       />
+      {isTeamStructureEnabled && (
+        <Controller
+          name="portfolio_id"
+          control={control}
+          rules={{ required: t("team_structure.portfolio_required") }}
+          render={({ field: { value, onChange } }) => (
+            <PortfolioSelect value={value} onChange={onChange} variant="pill-md" />
+          )}
+        />
+      )}
+      {errors.portfolio_id?.message && (
+        <p className="w-full text-body-xs-regular text-danger-primary">{errors.portfolio_id.message}</p>
+      )}
     </div>
   );
-}
+});
 
 export default ProjectAttributes;
 

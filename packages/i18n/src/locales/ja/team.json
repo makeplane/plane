@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "チーム",
+    "portfolio": "ポートフォリオ",
+    "portfolios": "ポートフォリオ",
+    "without_portfolio": "ポートフォリオなし",
+    "without_portfolio_hint": "ポートフォリオに追加するプロジェクトを選択してください。先にアクセス権の変更を確認できます。",
+    "settings_description": "プロジェクトをポートフォリオにまとめ、チームごとに管理者を割り当てます。",
+    "enable": {
+      "title": "チーム構造",
+      "description": "ナビゲーションにチームを表示し、新しいプロジェクトにポートフォリオを必須にします。オフにしても、付与済みのアクセス権は維持されます。"
+    },
+    "create_team": "チームを作成",
+    "edit_team": "チームを編集",
+    "create_portfolio": "ポートフォリオを作成",
+    "edit_portfolio": "ポートフォリオを編集",
+    "select_portfolio": "ポートフォリオを選択",
+    "select_members": "メンバーを選択",
+    "portfolio_required": "ポートフォリオを選択してください。プロジェクトを作成できるのはチーム管理者のみです。",
+    "no_portfolios": "ポートフォリオはまだありません",
+    "no_projects": "表示するプロジェクトがありません",
+    "not_found": "このページは存在しないか、削除されました。",
+    "archived": "アーカイブ済み",
+    "archive_hint": "アーカイブしたチームはナビゲーションに表示されません。プロジェクトへのアクセス権は維持されます。",
+    "delete_hint": "削除できるのはポートフォリオのないチームのみです。",
+    "via_team": "チーム経由",
+    "kind": "種類",
+    "kinds": {
+      "regular": "通常チーム",
+      "management": "管理チーム"
+    },
+    "admins": "チーム管理者",
+    "admins_hint": "誰も選択しない場合は、あなたが管理者になります。",
+    "roles": {
+      "admin": "管理者",
+      "member": "メンバー"
+    },
+    "delete_team": {
+      "title": "チームを削除",
+      "description": "チーム「{name}」を削除します。"
+    },
+    "delete_portfolio": {
+      "title": "ポートフォリオを削除",
+      "description": "ポートフォリオ「{name}」を削除します。削除できるのは空のポートフォリオのみです。"
+    },
+    "move": {
+      "title": "ポートフォリオに移動",
+      "action": "移動",
+      "done": "プロジェクトを移動しました。",
+      "gained": "アクセス権を得るメンバー",
+      "lost": "アクセス権を失うメンバー",
+      "changed": "ロールが変わるメンバー",
+      "no_changes": "アクセス権の変更はありません。"
+    },
+    "errors": {
+      "name_taken": "この名前は既に使用されています。",
+      "management_exists": "ワークスペースには既に管理チームがあります。",
+      "team_not_empty": "チームにはまだポートフォリオがあります。",
+      "portfolio_not_empty": "ポートフォリオにはまだプロジェクトがあります。",
+      "last_admin": "先に別のチーム管理者を割り当ててください。",
+      "orphaned_project": "管理者のいないプロジェクトが生じます。",
+      "archived": "ポートフォリオまたはそのチームはアーカイブされています。"
+    }
+  }
+}

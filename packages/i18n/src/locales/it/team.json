@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Team",
+    "portfolio": "Portfolio",
+    "portfolios": "Portfolio",
+    "without_portfolio": "Senza portfolio",
+    "without_portfolio_hint": "Selezioni i progetti da aggiungere a un portfolio. Prima vedrà le modifiche agli accessi.",
+    "settings_description": "Raggruppi i progetti in portfolio e assegni a ogni team i propri amministratori.",
+    "enable": {
+      "title": "Struttura dei team",
+      "description": "Mostra i team nella navigazione e richiede un portfolio per i nuovi progetti. Disattivandola, gli accessi già concessi restano."
+    },
+    "create_team": "Crea team",
+    "edit_team": "Modifica team",
+    "create_portfolio": "Crea portfolio",
+    "edit_portfolio": "Modifica portfolio",
+    "select_portfolio": "Seleziona un portfolio",
+    "select_members": "Seleziona membri",
+    "portfolio_required": "Selezioni un portfolio. Solo gli amministratori dei team possono creare progetti.",
+    "no_portfolios": "Ancora nessun portfolio",
+    "no_projects": "Nessun progetto da mostrare",
+    "not_found": "Questa pagina non esiste o è stata rimossa.",
+    "archived": "Archiviato",
+    "archive_hint": "Un team archiviato è nascosto dalla navigazione. L'accesso ai suoi progetti resta.",
+    "delete_hint": "È possibile eliminare solo un team senza portfolio.",
+    "via_team": "Tramite il team",
+    "kind": "Tipo",
+    "kinds": {
+      "regular": "Team ordinario",
+      "management": "Team direttivo"
+    },
+    "admins": "Amministratori del team",
+    "admins_hint": "Se non seleziona nessuno, l'amministratore sarà Lei.",
+    "roles": {
+      "admin": "Amministratore",
+      "member": "Membro"
+    },
+    "delete_team": {
+      "title": "Elimina team",
+      "description": "Il team «{name}» verrà eliminato."
+    },
+    "delete_portfolio": {
+      "title": "Elimina portfolio",
+      "description": "Il portfolio «{name}» verrà eliminato. È possibile eliminare solo un portfolio vuoto."
+    },
+    "move": {
+      "title": "Sposta in un portfolio",
+      "action": "Sposta",
+      "done": "I progetti sono stati spostati.",
+      "gained": "Ottengono l'accesso",
+      "lost": "Perdono l'accesso",
+      "changed": "Cambiano ruolo",
+      "no_changes": "L'accesso non cambia per nessuno."
+    },
+    "errors": {
+      "name_taken": "Questo nome è già in uso.",
+      "management_exists": "Lo spazio di lavoro ha già un team direttivo.",
+      "team_not_empty": "Il team ha ancora dei portfolio.",
+      "portfolio_not_empty": "Il portfolio contiene ancora progetti.",
+      "last_admin": "Assegni prima un altro amministratore del team.",
+      "orphaned_project": "Un progetto resterebbe senza amministratore.",
+      "archived": "Il portfolio o il suo team è archiviato."
+    }
+  }
+}

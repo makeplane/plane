@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Équipes",
+    "portfolio": "Portefeuille",
+    "portfolios": "Portefeuilles",
+    "without_portfolio": "Sans portefeuille",
+    "without_portfolio_hint": "Sélectionnez des projets à ajouter à un portefeuille. Vous verrez d’abord les changements d’accès.",
+    "settings_description": "Regroupez les projets en portefeuilles et attribuez à chaque équipe ses propres administrateurs.",
+    "enable": {
+      "title": "Structure des équipes",
+      "description": "Afficher les équipes dans la navigation et exiger un portefeuille pour les nouveaux projets. La désactivation conserve les accès déjà accordés."
+    },
+    "create_team": "Créer une équipe",
+    "edit_team": "Modifier l’équipe",
+    "create_portfolio": "Créer un portefeuille",
+    "edit_portfolio": "Modifier le portefeuille",
+    "select_portfolio": "Sélectionner un portefeuille",
+    "select_members": "Sélectionner des membres",
+    "portfolio_required": "Sélectionnez un portefeuille. Seuls les administrateurs d’équipe peuvent créer des projets.",
+    "no_portfolios": "Aucun portefeuille pour le moment",
+    "no_projects": "Aucun projet à afficher",
+    "not_found": "Cette page n’existe pas ou a été supprimée.",
+    "archived": "Archivé",
+    "archive_hint": "Une équipe archivée est masquée dans la navigation. L’accès à ses projets est conservé.",
+    "delete_hint": "Seule une équipe sans portefeuille peut être supprimée.",
+    "via_team": "Via l’équipe",
+    "kind": "Type",
+    "kinds": {
+      "regular": "Équipe ordinaire",
+      "management": "Équipe de direction"
+    },
+    "admins": "Administrateurs de l’équipe",
+    "admins_hint": "Si vous ne sélectionnez personne, vous devenez administrateur.",
+    "roles": {
+      "admin": "Administrateur",
+      "member": "Membre"
+    },
+    "delete_team": {
+      "title": "Supprimer l’équipe",
+      "description": "L’équipe « {name} » sera supprimée."
+    },
+    "delete_portfolio": {
+      "title": "Supprimer le portefeuille",
+      "description": "Le portefeuille « {name} » sera supprimé. Seul un portefeuille vide peut être supprimé."
+    },
+    "move": {
+      "title": "Déplacer vers un portefeuille",
+      "action": "Déplacer",
+      "done": "Les projets ont été déplacés.",
+      "gained": "Obtiennent l’accès",
+      "lost": "Perdent l’accès",
+      "changed": "Changent de rôle",
+      "no_changes": "Aucun accès ne change."
+    },
+    "errors": {
+      "name_taken": "Ce nom est déjà utilisé.",
+      "management_exists": "L’espace de travail a déjà une équipe de direction.",
+      "team_not_empty": "L’équipe a encore des portefeuilles.",
+      "portfolio_not_empty": "Le portefeuille contient encore des projets.",
+      "last_admin": "Désignez d’abord un autre administrateur d’équipe.",
+      "orphaned_project": "Un projet se retrouverait sans administrateur.",
+      "archived": "Le portefeuille ou son équipe est archivé."
+    }
+  }
+}

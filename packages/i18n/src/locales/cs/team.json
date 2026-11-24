@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Týmy",
+    "portfolio": "Portfolio",
+    "portfolios": "Portfolia",
+    "without_portfolio": "Bez portfolia",
+    "without_portfolio_hint": "Vyberte projekty, které chcete přidat do portfolia. Nejprve uvidíte změny přístupu.",
+    "settings_description": "Seskupte projekty do portfolií a přiřaďte každému týmu vlastní správce.",
+    "enable": {
+      "title": "Struktura týmů",
+      "description": "Zobrazovat týmy v navigaci a vyžadovat portfolio pro nové projekty. Po vypnutí zůstává již udělený přístup zachován."
+    },
+    "create_team": "Vytvořit tým",
+    "edit_team": "Upravit tým",
+    "create_portfolio": "Vytvořit portfolio",
+    "edit_portfolio": "Upravit portfolio",
+    "select_portfolio": "Vyberte portfolio",
+    "select_members": "Vyberte členy",
+    "portfolio_required": "Vyberte portfolio. Projekty mohou vytvářet pouze správci týmů.",
+    "no_portfolios": "Zatím žádná portfolia",
+    "no_projects": "Žádné projekty k zobrazení",
+    "not_found": "Tato stránka neexistuje nebo byla odstraněna.",
+    "archived": "Archivováno",
+    "archive_hint": "Archivovaný tým je v navigaci skrytý. Přístup k jeho projektům zůstává.",
+    "delete_hint": "Smazat lze pouze tým bez portfolií.",
+    "via_team": "Přes tým",
+    "kind": "Typ",
+    "kinds": {
+      "regular": "Běžný tým",
+      "management": "Řídicí tým"
+    },
+    "admins": "Správci týmu",
+    "admins_hint": "Pokud nikoho nevyberete, stanete se správcem Vy.",
+    "roles": {
+      "admin": "Správce",
+      "member": "Člen"
+    },
+    "delete_team": {
+      "title": "Smazat tým",
+      "description": "Tým „{name}“ bude smazán."
+    },
+    "delete_portfolio": {
+      "title": "Smazat portfolio",
+      "description": "Portfolio „{name}“ bude smazáno. Smazat lze pouze prázdné portfolio."
+    },
+    "move": {
+      "title": "Přesunout do portfolia",
+      "action": "Přesunout",
+      "done": "Projekty byly přesunuty.",
+      "gained": "Získají přístup",
+      "lost": "Ztratí přístup",
+      "changed": "Změní roli",
+      "no_changes": "Nikomu se přístup nezmění."
+    },
+    "errors": {
+      "name_taken": "Tento název je již obsazen.",
+      "management_exists": "Pracovní prostor již má řídicí tým.",
+      "team_not_empty": "Tým má stále portfolia.",
+      "portfolio_not_empty": "Portfolio má stále projekty.",
+      "last_admin": "Nejprve přiřaďte jiného správce týmu.",
+      "orphaned_project": "Projekt by zůstal bez správce.",
+      "archived": "Portfolio nebo jeho tým je archivován."
+    }
+  }
+}

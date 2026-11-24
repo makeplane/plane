@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "Zespoły",
+    "portfolio": "Portfel",
+    "portfolios": "Portfele",
+    "without_portfolio": "Bez portfela",
+    "without_portfolio_hint": "Wybór projektów do dodania do portfela. Najpierw zostaną pokazane zmiany dostępu.",
+    "settings_description": "Grupowanie projektów w portfele i przypisywanie każdemu zespołowi własnych administratorów.",
+    "enable": {
+      "title": "Struktura zespołów",
+      "description": "Pokazuj zespoły w nawigacji i wymagaj portfela dla nowych projektów. Po wyłączeniu przyznany już dostęp pozostaje."
+    },
+    "create_team": "Utwórz zespół",
+    "edit_team": "Edytuj zespół",
+    "create_portfolio": "Utwórz portfel",
+    "edit_portfolio": "Edytuj portfel",
+    "select_portfolio": "Wybierz portfel",
+    "select_members": "Wybierz członków",
+    "portfolio_required": "Należy wybrać portfel. Tylko administratorzy zespołów mogą tworzyć projekty.",
+    "no_portfolios": "Nie ma jeszcze portfeli",
+    "no_projects": "Brak projektów do wyświetlenia",
+    "not_found": "Ta strona nie istnieje lub została usunięta.",
+    "archived": "Zarchiwizowano",
+    "archive_hint": "Zarchiwizowany zespół jest ukryty w nawigacji. Dostęp do jego projektów pozostaje.",
+    "delete_hint": "Usunąć można tylko zespół bez portfeli.",
+    "via_team": "Przez zespół",
+    "kind": "Typ",
+    "kinds": {
+      "regular": "Zwykły zespół",
+      "management": "Zespół zarządzający"
+    },
+    "admins": "Administratorzy zespołu",
+    "admins_hint": "Bez wyboru administratorem zostaje osoba tworząca zespół.",
+    "roles": {
+      "admin": "Administrator",
+      "member": "Członek"
+    },
+    "delete_team": {
+      "title": "Usuń zespół",
+      "description": "Zespół „{name}” zostanie usunięty."
+    },
+    "delete_portfolio": {
+      "title": "Usuń portfel",
+      "description": "Portfel „{name}” zostanie usunięty. Usunąć można tylko pusty portfel."
+    },
+    "move": {
+      "title": "Przenieś do portfela",
+      "action": "Przenieś",
+      "done": "Projekty zostały przeniesione.",
+      "gained": "Zyskują dostęp",
+      "lost": "Tracą dostęp",
+      "changed": "Zmieniają rolę",
+      "no_changes": "Niczyj dostęp się nie zmieni."
+    },
+    "errors": {
+      "name_taken": "Ta nazwa jest już zajęta.",
+      "management_exists": "Przestrzeń robocza ma już zespół zarządzający.",
+      "team_not_empty": "Zespół nadal ma portfele.",
+      "portfolio_not_empty": "W portfelu nadal są projekty.",
+      "last_admin": "Najpierw należy wyznaczyć innego administratora zespołu.",
+      "orphaned_project": "Projekt pozostałby bez administratora.",
+      "archived": "Portfel lub jego zespół jest zarchiwizowany."
+    }
+  }
+}

@@ -10,6 +10,7 @@ import {
   BuildingOutline,
   ExportOutline,
   MembersOutline,
+  TeamspacesOutline,
   WebhooksOutline,
 } from "@makeplane/propel/icons";
 // plane imports
@@ -19,6 +20,7 @@ import type { TWorkspaceSettingsTabs } from "@plane/types";
 export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, IconGlyph | React.FC<ISvgIcons>> = {
   general: BuildingOutline,
   members: MembersOutline,
+  teams: TeamspacesOutline,
   export: ExportOutline,
   "billing-and-plans": BillingsOutline,
   webhooks: WebhooksOutline,

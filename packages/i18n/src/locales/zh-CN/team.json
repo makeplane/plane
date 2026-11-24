@@ -1,0 +1,65 @@
+{
+  "team_structure": {
+    "teams": "团队",
+    "portfolio": "项目组合",
+    "portfolios": "项目组合",
+    "without_portfolio": "无项目组合",
+    "without_portfolio_hint": "请选择要加入项目组合的项目。您会先看到访问权限的变化。",
+    "settings_description": "将项目归入项目组合，并为每个团队指定自己的管理员。",
+    "enable": {
+      "title": "团队结构",
+      "description": "在导航中显示团队，并要求新项目选择项目组合。关闭后，已授予的访问权限保留。"
+    },
+    "create_team": "创建团队",
+    "edit_team": "编辑团队",
+    "create_portfolio": "创建项目组合",
+    "edit_portfolio": "编辑项目组合",
+    "select_portfolio": "选择项目组合",
+    "select_members": "选择成员",
+    "portfolio_required": "请选择项目组合。只有团队管理员可以创建项目。",
+    "no_portfolios": "暂无项目组合",
+    "no_projects": "没有可显示的项目",
+    "not_found": "此页面不存在或已被删除。",
+    "archived": "已归档",
+    "archive_hint": "已归档的团队不在导航中显示。对其项目的访问权限保留。",
+    "delete_hint": "只能删除没有项目组合的团队。",
+    "via_team": "通过团队",
+    "kind": "类型",
+    "kinds": {
+      "regular": "普通团队",
+      "management": "管理团队"
+    },
+    "admins": "团队管理员",
+    "admins_hint": "如果不选择任何人，您将成为管理员。",
+    "roles": {
+      "admin": "管理员",
+      "member": "成员"
+    },
+    "delete_team": {
+      "title": "删除团队",
+      "description": "团队“{name}”将被删除。"
+    },
+    "delete_portfolio": {
+      "title": "删除项目组合",
+      "description": "项目组合“{name}”将被删除。只能删除空的项目组合。"
+    },
+    "move": {
+      "title": "移至项目组合",
+      "action": "移动",
+      "done": "项目已移动。",
+      "gained": "获得访问权限",
+      "lost": "失去访问权限",
+      "changed": "角色变更",
+      "no_changes": "没有人的访问权限发生变化。"
+    },
+    "errors": {
+      "name_taken": "该名称已被使用。",
+      "management_exists": "工作区已有管理团队。",
+      "team_not_empty": "团队中仍有项目组合。",
+      "portfolio_not_empty": "项目组合中仍有项目。",
+      "last_admin": "请先指定其他团队管理员。",
+      "orphaned_project": "会有项目没有管理员。",
+      "archived": "项目组合或其团队已归档。"
+    }
+  }
+}
