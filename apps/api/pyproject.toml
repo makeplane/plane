@@ -75,6 +75,18 @@ dependencies = [
     "opentelemetry-instrumentation-django==0.66b2",
     "opentelemetry-exporter-otlp==1.45.2",
     "opentelemetry-exporter-otlp-proto-grpc==1.45.2",
+    "opentelemetry-exporter-otlp-proto-http==1.45.2",
+    # Required for http.server.* spans + metrics on the ASGI serving path (uvicorn worker).
+    # DjangoInstrumentor declares it only as an optional ASGI extra; without it
+    # _is_asgi_supported=False and every ASGI request is skipped (no server span/metric).
+    "opentelemetry-instrumentation-asgi==0.66b2",
+    "opentelemetry-instrumentation-celery==0.66b2",
+    "opentelemetry-instrumentation-psycopg==0.66b2",
+    "opentelemetry-instrumentation-redis==0.66b2",
+    "opentelemetry-instrumentation-requests==0.66b2",
+    # [instruments] extra: this package imports httpx at module scope but declares it
+    # only under that extra, so request it rather than rely on httpx arriving transitively.
+    "opentelemetry-instrumentation-httpx[instruments]==0.66b2",
     # OpenAPI Specification
     "drf-spectacular==0.29.0",
     # html sanitizer

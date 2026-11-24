@@ -4,13 +4,21 @@
 
 # Python imports
 import os
+import sys
 import logging
 from datetime import timedelta
 
 # Third party imports
 from celery import Celery
 from pythonjsonlogger.json import JsonFormatter
-from celery.signals import after_setup_logger, after_setup_task_logger
+from celery.signals import (
+    after_setup_logger,
+    after_setup_task_logger,
+    worker_init,
+    worker_process_init,
+    worker_process_shutdown,
+)
+from celery.concurrency import get_implementation
 from celery.schedules import crontab, schedule
 
 # Module imports
@@ -18,6 +26,86 @@ from plane.settings.redis import redis_instance
 
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "plane.settings.production")
+
+# Bootstrap OpenTelemetry before Celery wires up so CeleryInstrumentor can
+# patch task execution. No-op unless OTel is active.
+from plane.observability.setup import (  # noqa: E402
+    configure_otel,
+    flush_otel,
+    init_process_providers,
+)
+from plane.observability.logging import TraceContextFilter, is_otel_active  # noqa: E402
+
+
+# Celery worker processes defer exporter creation until the pool is known; every
+# other process (wsgi/asgi/manage.py/beat) builds its providers right here.
+# The OTLP gRPC exporter opens its channel eagerly and registers no
+# os.register_at_fork handler, so a channel made in the prefork MainProcess and
+# inherited by a forked child is not safe to export on.
+configure_otel(defer_providers="worker" in sys.argv)
+
+# Whether to trace-correlate worker logs. Same is_otel_active() gate as the
+# Django LOGGING config, so the log schema only changes when traces are exported.
+_OTEL_LOG_ENABLED = is_otel_active()
+
+
+@worker_init.connect
+def init_otel_for_non_forking_pool(sender=None, **kwargs):
+    """Create the exporters in this process unless the pool is prefork.
+
+    Fires in the worker MainProcess once Celery has resolved the pool from
+    -P/--pool, the CELERY_WORKER_POOL env var or the worker_pool setting, and
+    before any child is forked. threads/solo/gevent/eventlet run tasks here and
+    never dispatch worker_process_init, so they need their providers now.
+    """
+    if get_implementation(sender.pool_cls) is not get_implementation("prefork"):
+        init_process_providers()
+
+
+@worker_process_init.connect
+def init_otel_in_worker_child(*args, **kwargs):
+    """Create this child's OTLP exporters after the prefork fork.
+
+    No-op unless configure_otel() deferred them (Celery worker processes).
+    """
+    init_process_providers()
+
+
+# Base JSON log fmt (unchanged off-path); the OTel variant appends the
+# trace-context fields that TraceContextFilter populates.
+_CELERY_LOG_FMT = '"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s'
+_CELERY_OTEL_LOG_FMT = (
+    '"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s '
+    "%(service_name)s %(trace_id)s %(span_id)s %(trace_flags)s"
+)
+
+
+@worker_process_shutdown.connect
+def flush_otel_on_worker_shutdown(*args, **kwargs):
+    """Flush buffered spans/metrics when a prefork child exits.
+
+    Prefork children exit via os._exit and skip atexit, so without this the tail
+    of each child's telemetry is dropped on --max-tasks-per-child recycling and
+    warm shutdown. No-op (bounded, never raises) unless OTel was configured.
+    """
+    flush_otel()
+
+
+def _build_celery_log_handler() -> logging.Handler:
+    """Build the worker's JSON StreamHandler.
+
+    Off-path: identical to the historical handler (same fmt). When OTel logging
+    is enabled, use the extended fmt and attach TraceContextFilter so worker
+    log lines carry trace_id/span_id/service_name, matching the Django request
+    path.
+    """
+    fmt = _CELERY_OTEL_LOG_FMT if _OTEL_LOG_ENABLED else _CELERY_LOG_FMT
+    handler = logging.StreamHandler()
+    handler.setFormatter(fmt=JsonFormatter(fmt))
+    if _OTEL_LOG_ENABLED:
+        handler.addFilter(TraceContextFilter())
+    return handler
+
 
 ri = redis_instance()
 
@@ -104,18 +192,12 @@ app.conf.beat_schedule = {
 # Setup logging
 @after_setup_logger.connect
 def setup_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(fmt=formatter)
-    logger.addHandler(handler)
+    logger.addHandler(_build_celery_log_handler())
 
 
 @after_setup_task_logger.connect
 def setup_task_loggers(logger, *args, **kwargs):
-    formatter = JsonFormatter('"%(levelname)s %(asctime)s %(module)s %(name)s %(message)s')
-    handler = logging.StreamHandler()
-    handler.setFormatter(fmt=formatter)
-    logger.addHandler(handler)
+    logger.addHandler(_build_celery_log_handler())
 
 
 # Load task modules from all registered Django app configs.

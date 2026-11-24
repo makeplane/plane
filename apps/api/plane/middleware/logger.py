@@ -18,6 +18,7 @@ from rest_framework.request import Request
 # Module imports
 from plane.utils.ip_address import get_client_ip
 from plane.utils.exception_logger import log_exception
+from plane.utils.url_redaction import redacted_url
 from plane.bgtasks.logger_task import process_logs
 
 api_logger = logging.getLogger("plane.api.request")
@@ -63,11 +64,19 @@ class RequestLoggerMiddleware:
 
         user_agent = request.META.get("HTTP_USER_AGENT", "")
 
+        # Mask password-reset tokens and OAuth code/state; other requests log unchanged.
+        redacted = redacted_url(request)
+        if redacted:
+            path, query = redacted
+            full_path = f"{path}?{query}" if query else path
+        else:
+            path, full_path = request.path, request.get_full_path()
+
         # Log the request information
         api_logger.info(
-            f"{request.method} {request.get_full_path()} {response.status_code}",
+            f"{request.method} {full_path} {response.status_code}",
             extra={
-                "path": request.path,
+                "path": path,
                 "method": request.method,
                 "status_code": response.status_code,
                 "duration_ms": int(duration * 1000),
