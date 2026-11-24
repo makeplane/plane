@@ -6,7 +6,7 @@
 
 // Liviere/plane fork: icon of the "Activity" feature, a small heatmap.
 
-import type { ISvgIcons } from "@plane/propel/icons";
+import type { ISvgIcons } from "@plane/blocks/icons";
 
 const CELLS = [
   [0, 0, 0.35],
@@ -21,8 +21,7 @@ const CELLS = [
 ];
 
 export function ActivityIcon(props: ISvgIcons) {
-  // `percentage` belongs to progress icons only and is not an SVG attribute
-  const { className = "", percentage: _percentage, ...rest } = props;
+  const { className = "", ...rest } = props;
   return (
     <svg viewBox="0 0 16 16" fill="currentColor" className={className} aria-hidden="true" {...rest}>
       {CELLS.map(([x, y, opacity]) => (

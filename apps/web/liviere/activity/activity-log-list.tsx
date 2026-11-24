@@ -11,7 +11,7 @@ import { useMemo, useState } from "react";
 import type { RefObject } from "react";
 import useSWRInfinite from "swr/infinite";
 import { useTranslation } from "@plane/i18n";
-import { EmptyStateCompact } from "@plane/propel/empty-state";
+import { EmptyStateCompact } from "@plane/blocks/empty-state";
 import { ListLoaderItemRow } from "@/components/ui/loader/layouts/list-layout-loader";
 import { ActivitySettingsLoader } from "@/components/ui/loader/settings/activity";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";

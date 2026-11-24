@@ -12,15 +12,17 @@
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plus } from "lucide-react";
+import { Button } from "@makeplane/propel/components/button";
+import { Icon } from "@makeplane/propel/components/icon";
+import { Tab, Tabs, TabsList } from "@makeplane/propel/components/tabs";
+import { AddOutline } from "@makeplane/propel/icons";
+import { ConfirmDialog } from "@plane/blocks/dialog";
+import { Loader } from "@plane/blocks/skeleton";
+import { setToast } from "@plane/blocks/toast";
 import { EUserPermissions, EUserPermissionsLevel } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { Tabs } from "@plane/propel/tabs";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { AlertModalCore, Loader } from "@plane/ui";
 import { cn } from "@plane/utils";
-import { MemberDropdown } from "@/components/dropdowns/member/dropdown";
+import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { useUser, useUserPermissions } from "@/hooks/store/user";
 import { useQueryParams } from "@/hooks/use-query-params";
 import { projectActivityService } from "./activity.service";
@@ -85,7 +87,7 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
       entriesChanged();
       setDeleting(null);
     } catch {
-      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t("liviere.activity.log.delete_error") });
+      setToast({ type: "error", title: t("error"), message: t("liviere.activity.log.delete_error") });
     } finally {
       setIsDeleting(false);
     }
@@ -100,16 +102,11 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
   return (
     <div ref={containerRef} className="flex h-full w-full flex-col gap-5 overflow-y-auto px-6 py-5">
       <div className="flex shrink-0 flex-wrap items-center gap-3">
-        {/* Tabs fill their parent by default; here they are one item of the toolbar */}
-        <Tabs value={view} onValueChange={(value) => setView(String(value))} className="h-auto w-fit">
-          <Tabs.List className="flex h-7 w-fit">
-            <Tabs.Trigger value="grid" size="md" className="h-6 px-3">
-              {t("liviere.activity.view_grid")}
-            </Tabs.Trigger>
-            <Tabs.Trigger value={LOG_VIEW} size="md" className="h-6 px-3">
-              {t("liviere.activity.view_log")}
-            </Tabs.Trigger>
-          </Tabs.List>
+        <Tabs value={view} variant="contained" stretch="auto" onValueChange={(value) => setView(String(value))}>
+          <TabsList aria-label={t("liviere.activity.title")}>
+            <Tab value="grid" label={t("liviere.activity.view_grid")} />
+            <Tab value={LOG_VIEW} label={t("liviere.activity.view_log")} />
+          </TabsList>
         </Tabs>
         <div className="flex overflow-hidden rounded-md border border-subtle">
           {RANGES.map((range) => (
@@ -129,17 +126,18 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
             </button>
           ))}
         </div>
-        <MemberDropdown
+        <MemberSelect
           projectId={projectId}
           value={actor}
-          multiple={false}
-          onChange={(value) => {
-            setActor(value === actor ? null : value);
+          // The clear row emits "", which means all members
+          onChange={(value: string) => {
+            setActor(value || null);
             setSelected(null);
           }}
-          buttonVariant="border-with-text"
+          variant="select-md"
           placeholder={t("liviere.activity.all_members")}
-          showUserDetails
+          clearable
+          clearLabel={t("liviere.activity.all_members")}
         />
         {actor && (
           <button
@@ -153,15 +151,16 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
             {t("liviere.activity.all_members")}
           </button>
         )}
-        <Button
-          variant="secondary"
-          size="sm"
-          prependIcon={<Plus />}
-          onClick={() => setLogDialog({})}
-          className="ml-auto"
-        >
-          {t("liviere.activity.log.add")}
-        </Button>
+        <div className="ml-auto">
+          <Button
+            variant="secondary"
+            size="md"
+            stretch="auto"
+            icon={<Icon icon={AddOutline} />}
+            label={t("liviere.activity.log.add")}
+            onClick={() => setLogDialog({})}
+          />
+        </div>
         {view === "grid" && heatmap && (
           <span className="text-13 text-secondary">
             {t("liviere.activity.summary", {
@@ -235,7 +234,7 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
           onClose={() => setLogDialog(null)}
         />
       )}
-      <AlertModalCore
+      <ConfirmDialog
         isOpen={!!deleting}
         handleClose={() => setDeleting(null)}
         handleSubmit={() => void deleteEntry()}

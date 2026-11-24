@@ -8,9 +8,20 @@
 // entered on the viewer's clock, like the heatmap shows them.
 
 import { useState } from "react";
+import { Button } from "@makeplane/propel/components/button";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogHeader,
+  DialogHeading,
+  DialogMain,
+  DialogTitle,
+} from "@makeplane/propel/components/dialog";
+import { InputField } from "@makeplane/propel/components/input-field";
+import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { useTranslation } from "@plane/i18n";
-import { Button } from "@plane/propel/button";
-import { EModalPosition, EModalWidth, Input, ModalCore, TextArea } from "@plane/ui";
 import { projectActivityService } from "./activity.service";
 import type { TSelectedBucket } from "./activity-root";
 import { SLOTS_PER_DAY, slotTime } from "./grid";
@@ -94,50 +105,96 @@ export function ActivityLogModal(props: Props) {
   };
 
   return (
-    <ModalCore isOpen handleClose={onClose} position={EModalPosition.CENTER} width={EModalWidth.XL}>
-      <form onSubmit={(event) => void submit(event)} className="flex flex-col gap-4 p-5">
-        <h3 className="text-16 font-medium text-primary">
-          {entry ? t("liviere.activity.log.edit_title") : t("liviere.activity.log.add_title")}
-        </h3>
-        <div className="grid grid-cols-3 gap-3">
-          <label className="flex flex-col gap-1 text-12 text-tertiary">
-            {t("liviere.activity.log.date")}
-            <Input type="date" value={form.date} onChange={set("date")} required className="w-full" />
-          </label>
-          <label className="flex flex-col gap-1 text-12 text-tertiary">
-            {t("liviere.activity.log.from")}
-            <Input type="time" value={form.from} onChange={set("from")} required className="w-full" />
-          </label>
-          <label className="flex flex-col gap-1 text-12 text-tertiary">
-            {t("liviere.activity.log.to")}
-            <Input type="time" value={form.to} onChange={set("to")} className="w-full" />
-          </label>
-        </div>
-        <label className="flex flex-col gap-1 text-12 text-tertiary">
-          {t("liviere.activity.log.text")}
-          <TextArea
-            value={form.text}
-            onChange={set("text")}
-            placeholder={t("liviere.activity.log.text_placeholder")}
-            maxLength={4000}
-            required
-            className="min-h-28 w-full resize-y text-14"
-          />
-        </label>
-        <label className="flex flex-col gap-1 text-12 text-tertiary">
-          {t("liviere.activity.log.issue")}
-          <Input value={form.issue} onChange={set("issue")} placeholder="ORD-12" className="w-40" />
-        </label>
-        {error && <p className="text-13 text-danger-primary">{error}</p>}
-        <div className="flex justify-end gap-2">
-          <Button variant="secondary" size="lg" type="button" onClick={onClose}>
-            {t("cancel")}
-          </Button>
-          <Button variant="primary" size="lg" type="submit" loading={isSubmitting} disabled={!form.text.trim()}>
-            {t("save")}
-          </Button>
-        </div>
-      </form>
-    </ModalCore>
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
+      <DialogContent size="md">
+        <form onSubmit={(event) => void submit(event)} className="flex min-h-0 flex-1 flex-col">
+          <DialogMain>
+            <DialogHeader>
+              <DialogHeading>
+                <DialogTitle>
+                  {entry ? t("liviere.activity.log.edit_title") : t("liviere.activity.log.add_title")}
+                </DialogTitle>
+              </DialogHeading>
+            </DialogHeader>
+            <DialogBody>
+              <div className="flex flex-col gap-4">
+                <div className="grid grid-cols-3 gap-3">
+                  <InputField
+                    size="md"
+                    orientation="vertical"
+                    name="date"
+                    label={t("liviere.activity.log.date")}
+                    type="date"
+                    value={form.date}
+                    onChange={set("date")}
+                    required
+                  />
+                  <InputField
+                    size="md"
+                    orientation="vertical"
+                    name="from"
+                    label={t("liviere.activity.log.from")}
+                    type="time"
+                    value={form.from}
+                    onChange={set("from")}
+                    required
+                  />
+                  <InputField
+                    size="md"
+                    orientation="vertical"
+                    name="to"
+                    label={t("liviere.activity.log.to")}
+                    type="time"
+                    value={form.to}
+                    onChange={set("to")}
+                  />
+                </div>
+                <TextAreaField
+                  size="lg"
+                  name="text"
+                  label={t("liviere.activity.log.text")}
+                  value={form.text}
+                  onChange={set("text")}
+                  placeholder={t("liviere.activity.log.text_placeholder")}
+                  maxLength={4000}
+                  required
+                  resize="vertical"
+                  rows={5}
+                />
+                <div className="w-40">
+                  <InputField
+                    size="md"
+                    orientation="vertical"
+                    name="issue"
+                    label={t("liviere.activity.log.issue")}
+                    value={form.issue}
+                    onChange={set("issue")}
+                    placeholder="ORD-12"
+                  />
+                </div>
+                {error && <p className="text-13 text-danger-primary">{error}</p>}
+              </div>
+            </DialogBody>
+          </DialogMain>
+          <DialogActions>
+            <Button variant="secondary" size="md" stretch="auto" type="button" onClick={onClose} label={t("cancel")} />
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              type="submit"
+              loading={isSubmitting}
+              disabled={!form.text.trim()}
+              label={t("save")}
+            />
+          </DialogActions>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

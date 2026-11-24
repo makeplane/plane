@@ -10,8 +10,9 @@
 import { observer } from "mobx-react";
 import { mutate } from "swr";
 import { useTranslation } from "@plane/i18n";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { Loader, ToggleSwitch } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import { Loader } from "@plane/blocks/skeleton";
+import { setToast } from "@plane/blocks/toast";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsControlItem } from "@/components/settings/control-item";
 import { SettingsHeading } from "@/components/settings/heading";
@@ -40,7 +41,7 @@ export const ProjectActivitySettings = observer(function ProjectActivitySettings
       if ("enabled" in change) await mutate(enabledProjectsKey(workspaceSlug));
     } catch {
       await mutate(key, settings, { revalidate: false });
-      setToast({ type: TOAST_TYPE.ERROR, title: t("error"), message: t("liviere.activity.settings.save_error") });
+      setToast({ type: "error", title: t("error"), message: t("liviere.activity.settings.save_error") });
     }
   };
 
@@ -67,10 +68,11 @@ export const ProjectActivitySettings = observer(function ProjectActivitySettings
             title={t("liviere.activity.settings.toggle_title")}
             description={t("liviere.activity.settings.toggle_description")}
             control={
-              <ToggleSwitch
-                value={settings.enabled}
-                onChange={() => void save({ enabled: !settings.enabled })}
+              <Switch
                 size="sm"
+                checked={settings.enabled}
+                onCheckedChange={(on) => void save({ enabled: on })}
+                aria-label={t("liviere.activity.settings.toggle_title")}
               />
             }
           />
@@ -89,10 +91,11 @@ export const ProjectActivitySettings = observer(function ProjectActivitySettings
                       title={t(`liviere.activity.kinds.${key}`)}
                       description={t(`liviere.activity.kind_descriptions.${key}`)}
                       control={
-                        <ToggleSwitch
-                          value={settings.kinds.includes(key)}
-                          onChange={(on) => toggleKind(key, on)}
+                        <Switch
                           size="sm"
+                          checked={settings.kinds.includes(key)}
+                          onCheckedChange={(on) => toggleKind(key, on)}
+                          aria-label={t(`liviere.activity.kinds.${key}`)}
                         />
                       }
                     />

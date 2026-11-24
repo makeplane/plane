@@ -8,9 +8,10 @@
 // object it changed and, for log entries, the text with edit/delete for the author and project admins.
 
 import Link from "next/link";
-import { Pencil, Trash2 } from "lucide-react";
+import { Avatar } from "@makeplane/propel/components/avatar";
+import { Icon } from "@makeplane/propel/components/icon";
+import { DeleteOutline, EditOutline } from "@makeplane/propel/icons";
 import { useTranslation } from "@plane/i18n";
-import { Avatar } from "@plane/ui";
 import { cn, getFileURL } from "@plane/utils";
 import { ACTIVITY_LOG_SOURCE } from "./types";
 import type { TActivityEvent } from "./types";
@@ -69,7 +70,7 @@ export function ActivityEventRow(props: Props) {
           {event.ended_at && `–${time.format(new Date(event.ended_at))}`}
         </span>
         {event.actor ? (
-          <Avatar name={event.actor.display_name} src={getFileURL(event.actor.avatar_url ?? "")} size="sm" />
+          <Avatar alt={event.actor.display_name} src={getFileURL(event.actor.avatar_url ?? "")} size="sm" />
         ) : null}
         <span className="shrink-0 text-secondary">{event.actor?.display_name ?? "—"}</span>
         {!hideKind && <span className="shrink-0 text-primary">{t(`liviere.activity.kinds.${event.kind}`)}</span>}
@@ -92,7 +93,7 @@ export function ActivityEventRow(props: Props) {
               aria-label={t("edit")}
               className="rounded-sm p-1 text-tertiary hover:bg-layer-transparent-hover hover:text-primary"
             >
-              <Pencil className="size-3.5" />
+              <Icon icon={EditOutline} size="sm" />
             </button>
             <button
               type="button"
@@ -100,7 +101,7 @@ export function ActivityEventRow(props: Props) {
               aria-label={t("delete")}
               className="rounded-sm p-1 text-tertiary hover:bg-layer-transparent-hover hover:text-danger-primary"
             >
-              <Trash2 className="size-3.5" />
+              <Icon icon={DeleteOutline} size="sm" />
             </button>
           </span>
         )}

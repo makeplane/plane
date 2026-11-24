@@ -9,9 +9,9 @@
 
 import { useCallback, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { TOAST_TYPE, setToast } from "@plane/propel/toast";
-import { ToggleSwitch } from "@plane/ui";
-import type { TContextMenuItem } from "@plane/ui";
+import { Switch } from "@makeplane/propel/components/switch";
+import type { TContextMenuItem } from "@plane/blocks/context-menu";
+import { setToast } from "@plane/blocks/toast";
 import type { TPageActions } from "@/components/pages/dropdowns/actions";
 import type { TPageInstance } from "@/store/pages/base-page";
 import type { TExtendedPageInstance } from "@/store/pages/extended-base-page";
@@ -36,7 +36,7 @@ export const usePageApiBlockOption = (page: TPageInstance) => {
     } catch {
       setApiChangesBlocked(!blocked);
       setToast({
-        type: TOAST_TYPE.ERROR,
+        type: "error",
         title: "Error!",
         message: "The setting could not be saved. Please try again later.",
       });
@@ -47,13 +47,13 @@ export const usePageApiBlockOption = (page: TPageInstance) => {
     (): TContextMenuItem & { key: TPageActions } => ({
       key: PAGE_API_BLOCK_OPTION_KEY,
       action: () => void toggle(),
+      title: "Block API changes",
+      // The row itself does the toggling; the switch is the state readout at the row's end (as upstream does)
       customContent: (
-        <>
-          Block API changes
-          <ToggleSwitch value={isApiChangesBlocked} onChange={() => {}} />
-        </>
+        <span className="pointer-events-none">
+          <Switch size="sm" checked={isApiChangesBlocked} aria-hidden tabIndex={-1} />
+        </span>
       ),
-      className: "flex items-center justify-between gap-2",
       // Project pages only; same rule as locking a page
       shouldRender: Boolean(projectId) && canCurrentUserLockPage,
     }),

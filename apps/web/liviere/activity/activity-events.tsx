@@ -9,9 +9,10 @@
 
 import { useEffect, useRef } from "react";
 import useSWR from "swr";
-import { X } from "lucide-react";
+import { Icon } from "@makeplane/propel/components/icon";
+import { CloseOutline } from "@makeplane/propel/icons";
+import { Loader } from "@plane/blocks/skeleton";
 import { useTranslation } from "@plane/i18n";
-import { Loader } from "@plane/ui";
 import { projectActivityService } from "./activity.service";
 import type { TSelectedBucket } from "./activity-root";
 import { ActivityEventRow } from "./activity-event-row";
@@ -67,7 +68,7 @@ export function ActivityEventList(props: Props) {
           aria-label={t("liviere.activity.close")}
           className="rounded-sm p-1 text-tertiary hover:bg-layer-transparent-hover"
         >
-          <X className="size-4" />
+          <Icon icon={CloseOutline} size="md" />
         </button>
       </header>
       {error ? (
