@@ -21,23 +21,10 @@ import { getPasswordStrength, validatePersonName, validateCompanyName } from "@p
 // components
 import { AuthHeader } from "@/app/(all)/(home)/auth-header";
 import { FormHeader } from "./form-header";
+// helpers
+import { getSetupFormError } from "./setup-form-error";
 // hooks
 import { useCsrfToken } from "@/hooks/use-csrf-token";
-
-// error codes
-enum EErrorCodes {
-  INSTANCE_NOT_CONFIGURED = "INSTANCE_NOT_CONFIGURED",
-  ADMIN_ALREADY_EXIST = "ADMIN_ALREADY_EXIST",
-  REQUIRED_EMAIL_PASSWORD_FIRST_NAME = "REQUIRED_EMAIL_PASSWORD_FIRST_NAME",
-  INVALID_EMAIL = "INVALID_EMAIL",
-  INVALID_PASSWORD = "INVALID_PASSWORD",
-  USER_ALREADY_EXISTS = "USER_ALREADY_EXISTS",
-}
-
-type TError = {
-  type: EErrorCodes | undefined;
-  message: string | undefined;
-};
 
 // form data
 type TFormData = {
@@ -70,7 +57,6 @@ export function InstanceSetupForm() {
   const telemetryParam = searchParams?.get("is_telemetry_enabled");
   const isTelemetryEnabledParam = telemetryParam ? telemetryParam === "True" : undefined;
   const errorCode = searchParams?.get("error_code") || undefined;
-  const errorMessage = searchParams?.get("error_message") || undefined;
   // state
   const [showPassword, setShowPassword] = useState({
     password: false,
@@ -98,26 +84,7 @@ export function InstanceSetupForm() {
   }, [firstNameParam, lastNameParam, companyParam, emailParam, isTelemetryEnabledParam]);
 
   // derived values
-  const errorData: TError = useMemo(() => {
-    if (errorCode && errorMessage) {
-      switch (errorCode) {
-        case EErrorCodes.INSTANCE_NOT_CONFIGURED:
-          return { type: EErrorCodes.INSTANCE_NOT_CONFIGURED, message: errorMessage };
-        case EErrorCodes.ADMIN_ALREADY_EXIST:
-          return { type: EErrorCodes.ADMIN_ALREADY_EXIST, message: errorMessage };
-        case EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME:
-          return { type: EErrorCodes.REQUIRED_EMAIL_PASSWORD_FIRST_NAME, message: errorMessage };
-        case EErrorCodes.INVALID_EMAIL:
-          return { type: EErrorCodes.INVALID_EMAIL, message: errorMessage };
-        case EErrorCodes.INVALID_PASSWORD:
-          return { type: EErrorCodes.INVALID_PASSWORD, message: errorMessage };
-        case EErrorCodes.USER_ALREADY_EXISTS:
-          return { type: EErrorCodes.USER_ALREADY_EXISTS, message: errorMessage };
-        default:
-          return { type: undefined, message: undefined };
-      }
-    } else return { type: undefined, message: undefined };
-  }, [errorCode, errorMessage]);
+  const errorData = useMemo(() => getSetupFormError(errorCode), [errorCode]);
 
   const isButtonDisabled = useMemo(
     () =>
@@ -144,11 +111,9 @@ export function InstanceSetupForm() {
             heading="Setup your Plane Instance"
             subHeading="Post setup you will be able to manage this Plane instance."
           />
-          {errorData.type &&
-            errorData?.message &&
-            ![EErrorCodes.INVALID_EMAIL, EErrorCodes.INVALID_PASSWORD].includes(errorData.type) && (
-              <Banner placement="inline" variant="danger" description={errorData?.message} />
-            )}
+          {errorData.field === "banner" && (
+            <Banner placement="inline" variant="danger" description={errorData.message} />
+          )}
           <form
             className="space-y-4"
             method="POST"
@@ -214,12 +179,12 @@ export function InstanceSetupForm() {
               placeholder="name@company.com"
               value={formData.email}
               onChange={(e) => handleFormChange("email", e.target.value)}
-              aria-invalid={errorData.type === EErrorCodes.INVALID_EMAIL}
+              aria-invalid={errorData.field === "email"}
               autoComplete="off"
               orientation="vertical"
               label="Email"
               required
-              error={errorData.type === EErrorCodes.INVALID_EMAIL && errorData.message ? errorData.message : undefined}
+              error={errorData.field === "email" ? errorData.message : undefined}
             />
 
             <InputField
@@ -250,16 +215,14 @@ export function InstanceSetupForm() {
                 placeholder="New password"
                 value={formData.password}
                 onChange={(e) => handleFormChange("password", e.target.value)}
-                aria-invalid={errorData.type === EErrorCodes.INVALID_PASSWORD}
+                aria-invalid={errorData.field === "password"}
                 onFocus={() => setIsPasswordInputFocused(true)}
                 onBlur={() => setIsPasswordInputFocused(false)}
                 autoComplete="new-password"
                 orientation="vertical"
                 label="Set a password"
                 required
-                error={
-                  errorData.type === EErrorCodes.INVALID_PASSWORD && errorData.message ? errorData.message : undefined
-                }
+                error={errorData.field === "password" ? errorData.message : undefined}
                 endIcon={
                   <IconButton
                     type="button"
