@@ -20,7 +20,7 @@ from django.db.models import Prefetch, Q
 
 # Module imports
 from plane.app.permissions import ROLE
-from plane.db.models import ExporterHistory, Issue, IssueComment, IssueRelation, IssueSubscriber
+from plane.db.models import ExporterHistory, Issue, IssueAssignee, IssueComment, IssueRelation, IssueSubscriber
 from plane.utils.exception_logger import log_exception
 from plane.utils.porters.exporter import DataExporter
 from plane.utils.porters.serializers.issue import IssueExportSerializer
@@ -170,7 +170,10 @@ def issue_export_task(
                 "labels",
                 "issue_cycle__cycle",
                 "issue_module__module",
-                "assignees",
+                Prefetch(
+                    "issue_assignee",
+                    queryset=IssueAssignee.objects.select_related("assignee"),
+                ),
                 "issue_link",
                 Prefetch(
                     "issue_subscribers",
