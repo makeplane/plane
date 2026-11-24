@@ -16,6 +16,7 @@ from urllib.parse import urljoin
 import dj_database_url
 
 # Django imports
+from django.core.exceptions import ImproperlyConfigured
 from django.core.management.utils import get_random_secret_key
 from corsheaders.defaults import default_headers
 
@@ -31,22 +32,35 @@ _logger = logging.getLogger("plane")
 # Secret Key — use `or` so an explicitly empty env var is treated the same as unset,
 # falling back to a random key rather than passing "" to Django (GHSA-cmwv-pjmw-8483).
 SECRET_KEY = os.environ.get("SECRET_KEY") or get_random_secret_key()
-# Refuse to run silently with a publicly-known or placeholder SECRET_KEY
-# (GHSA-cmwv-pjmw-8483). Emit a critical log so operators notice immediately.
-# The `or get_random_secret_key()` above means the only way to reach this branch
-# is if the environment explicitly passes one of the flagged values.
+# Refuse to start with a publicly-known or placeholder SECRET_KEY or
+# LIVE_SERVER_SECRET_KEY (GHSA-cmwv-pjmw-8483). Keep this list in sync with
+# check_secrets in deployments/aio/community/start.sh.
+# The `or get_random_secret_key()` above means SECRET_KEY can only match if the
+# environment explicitly passes one of the flagged values; an unset
+# LIVE_SERVER_SECRET_KEY is not checked here.
 _INSECURE_SECRET_KEYS = {
     "60gp0byfz2dvffa45cxl20p1scy9xbpf6d8c5y0geejgkyp1b5",  # old publicly-known default
+    "htbqvBJAgpm9bzvf3r4urJer0ENReatceh",  # old publicly-known default
     "change-this-key-on-deployment",  # placeholder shipped in community templates
 }
-if SECRET_KEY in _INSECURE_SECRET_KEYS:
-    _logger.critical(
-        "SECURITY: SECRET_KEY is set to a known insecure or placeholder value. "
-        "This makes your installation vulnerable to session forgery, CSRF bypass, and "
-        "password-reset token forging. Set a unique SECRET_KEY before deploying to production. "
-        "Generate one with: "
-        "python3 -c \"from django.utils.crypto import get_random_secret_key; print(get_random_secret_key())\""
-    )
+
+
+def _check_secret_keys(secret_key, live_server_secret_key):
+    for name, value in (
+        ("SECRET_KEY", secret_key),
+        ("LIVE_SERVER_SECRET_KEY", live_server_secret_key),
+    ):
+        if value in _INSECURE_SECRET_KEYS:
+            raise ImproperlyConfigured(
+                f"SECURITY: {name} is set to a known insecure or placeholder value. "
+                "This makes your installation vulnerable to session forgery, CSRF bypass, and "
+                f"password-reset token forging. Set a unique {name} before starting Plane. "
+                "Generate one with: "
+                "python3 -c \"from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())\""
+            )
+
+
+_check_secret_keys(SECRET_KEY, os.environ.get("LIVE_SERVER_SECRET_KEY"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", "0"))
