@@ -13,8 +13,9 @@ import { useTranslation } from "@plane/i18n";
 import { Badge } from "@makeplane/propel/components/badge";
 import { Button } from "@makeplane/propel/components/button";
 import { Icon } from "@makeplane/propel/components/icon";
+import { IconButton } from "@makeplane/propel/components/icon-button";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { LockOutline, ViewsOutline } from "@makeplane/propel/icons";
+import { AddOutline, LockOutline, ViewsOutline } from "@makeplane/propel/icons";
 import type { IIssueDisplayFilterOptions, IIssueDisplayProperties } from "@plane/types";
 import { EIssuesStoreType, EIssueLayoutTypes } from "@plane/types";
 import type { BreadcrumbNavigationItem } from "@plane/blocks/breadcrumb";
@@ -161,13 +162,25 @@ export const GlobalIssuesHeader = observer(function GlobalIssuesHeader() {
               />
             </FiltersDropdown>
           )}
-          <Button
-            variant="primary"
-            size="md"
-            stretch="auto"
-            label={t("workspace_views.add_view")}
-            onClick={() => setCreateViewModal(true)}
-          />
+          {/* the labelled button needs more room than a phone header has, so it is an icon button below md */}
+          <div className="hidden md:block">
+            <Button
+              variant="primary"
+              size="md"
+              stretch="auto"
+              label={t("workspace_views.add_view")}
+              onClick={() => setCreateViewModal(true)}
+            />
+          </div>
+          <div className="md:hidden">
+            <IconButton
+              variant="primary"
+              size="md"
+              icon={<Icon icon={AddOutline} />}
+              aria-label={t("workspace_views.add_view")}
+              onClick={() => setCreateViewModal(true)}
+            />
+          </div>
           <div className="hidden md:block">
             {viewDetails && <WorkspaceViewQuickActions workspaceSlug={workspaceSlug?.toString()} view={viewDetails} />}
             {isDefaultView && defaultViewDetails && (
