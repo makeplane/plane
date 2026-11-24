@@ -13,7 +13,7 @@ import { INBOX_STATUS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { TInboxIssueStatus } from "@plane/types";
 import { EInboxIssueStatus } from "@plane/types";
-import { findHowManyDaysLeft } from "@plane/utils";
+import { findHowManyDaysLeft, getDate } from "@plane/utils";
 // store
 import type { IInboxIssueStore } from "@/store/inbox/inbox-issue.store";
 import { ICON_PROPERTIES } from "./inbox-status-icon";
@@ -37,11 +37,13 @@ export const InboxIssueStatus = observer(function InboxIssueStatus(props: Props)
   // derived values
   const inboxIssueStatusDetail = INBOX_STATUS.find((s) => s.status === inboxIssue.status);
 
-  const isSnoozedDatePassed = inboxIssue.status === 0 && new Date(inboxIssue.snoozed_till ?? "") < new Date();
+  const snoozedTillDate = getDate(inboxIssue.snoozed_till);
+  const isSnoozedDatePassed =
+    inboxIssue.status === EInboxIssueStatus.SNOOZED && (!snoozedTillDate || snoozedTillDate < new Date());
   if (!inboxIssueStatusDetail || isSnoozedDatePassed) return <></>;
 
   const description = t(inboxIssueStatusDetail.i18n_description(), {
-    days: findHowManyDaysLeft(new Date(inboxIssue.snoozed_till ?? "")),
+    days: findHowManyDaysLeft(inboxIssue.snoozed_till),
   });
   const statusIcon = ICON_PROPERTIES[inboxIssue.status];
 
