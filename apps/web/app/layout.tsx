@@ -28,7 +28,7 @@ export const clientMiddleware: Route.ClientMiddlewareFunction[] = [trailingSlash
 export default function AppShellLayout() {
   return (
     <AppProvider>
-      <div className={cn("relative flex h-screen w-full flex-col overflow-hidden bg-canvas", "desktop-app-container")}>
+      <div className={cn("relative flex h-dvh w-full flex-col overflow-hidden bg-canvas", "desktop-app-container")}>
         <main className="relative h-full w-full overflow-hidden">
           <Outlet />
         </main>
