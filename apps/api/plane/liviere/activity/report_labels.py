@@ -40,6 +40,8 @@ LABELS = {
         "people": "People",
         "days": "Days",
         "summaries": "Day summaries",
+        "no_activity": "No activity in this period.",
+        "empty_days": "Days without activity left out: {count}.",
         "skipped": "Skipped periods",
         "describe_skipped": (
             "Skipped periods are left out of every source; an entry or a series counts only outside them."
@@ -81,6 +83,8 @@ LABELS = {
         "people": "Osoby",
         "days": "Dni",
         "summaries": "Podsumowania dni",
+        "no_activity": "Brak aktywności w tym okresie.",
+        "empty_days": "Pominięto dni bez aktywności: {count}.",
         "skipped": "Okresy pomijane",
         "describe_skipped": (
             "Okresy pomijane nie liczą się w żadnym źródle; wpis albo seria liczy się tylko poza nimi."

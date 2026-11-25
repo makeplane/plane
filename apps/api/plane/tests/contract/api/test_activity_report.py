@@ -305,6 +305,52 @@ class TestReportFiles:
         assert "| tomasz | 99 h |" not in text
 
     @pytest.mark.django_db
+    def test_days_without_activity_are_left_out_of_markdown_and_pdf(
+        self, api_key_client, workspace, project, create_user
+    ):
+        _p5_example(project, create_user)
+        params = {"from": "2026-11-15", "to": "2026-11-17", "lang": "pl"}
+
+        data = api_key_client.get(_v1(workspace, project), params).json()
+        markdown = api_key_client.get(_v1(workspace, project), {**params, "export": "md"}).content.decode("utf-8")
+        pdf = api_key_client.get(_v1(workspace, project), {**params, "export": "pdf"})
+        csv = api_key_client.get(_v1(workspace, project), {**params, "export": "csv"}).content.decode("utf-8-sig")
+
+        # JSON and CSV keep every day
+        assert [day["date"] for day in data["days"]] == ["2026-11-15", "2026-11-16", "2026-11-17"]
+        assert csv.splitlines()[1:] == [
+            "2026-11-15,0,0,0,0",
+            "2026-11-16,60,28,32,73",
+            "2026-11-17,0,0,0,0",
+            "Razem,60,28,32,73",
+        ]
+        # The tables of the files only the 16th, the totals unchanged
+        assert "| 2026-11-16 | 1 h 00 min | 28 min | 32 min | 1 h 13 min |" in markdown
+        assert "| 2026-11-15 |" not in markdown
+        assert "| 2026-11-17 |" not in markdown
+        assert "| **Razem** | **1 h 00 min** | **28 min** | **32 min** | **1 h 13 min** |" in markdown
+        assert "Pominięto dni bez aktywności: 2." in markdown
+        text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf.content)).pages)
+        assert "2026-11-16 1 h 00 min 28 min 32 min 1 h 13 min" in text
+        assert "2026-11-15" not in text.replace("2026-11-15 – 2026-11-17", "")
+        assert "Pominięto dni bez aktywności: 2." in text
+
+    @pytest.mark.django_db
+    def test_a_period_without_activity(self, api_key_client, workspace, project):
+        params = {"from": "2026-11-15", "to": "2026-11-17", "lang": "pl"}
+
+        markdown = api_key_client.get(_v1(workspace, project), {**params, "export": "md"}).content.decode("utf-8")
+        pdf = api_key_client.get(_v1(workspace, project), {**params, "export": "pdf"})
+
+        assert "## Dni\n\nBrak aktywności w tym okresie.\n" in markdown
+        assert "| Data |" not in markdown
+        assert "## Osoby" not in markdown
+        assert "Pominięto" not in markdown
+        text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf.content)).pages)
+        assert "Brak aktywności w tym okresie." in text
+        assert "Razem" not in text
+
+    @pytest.mark.django_db
     def test_csv_has_the_numbers_of_the_view(self, api_key_client, workspace, project, create_user):
         _p5_example(project, create_user)
         _action(project, create_user, "09:00", day="2026-11-17")

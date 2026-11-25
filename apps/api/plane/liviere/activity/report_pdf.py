@@ -139,13 +139,24 @@ def to_pdf(report, language):
         pdf.ln(1)
     pdf.set_text_color(0, 0, 0)
 
-    headers, rows, total = day_table(report, L)
+    headers, rows, total, empty_days = day_table(report, L)
     _heading(pdf, L["days"], 12)
-    _table(pdf, headers, rows, total)
+    if rows:
+        _table(pdf, headers, rows, total)
+        if empty_days:
+            pdf.ln(1)
+            pdf.set_font(FONT, "", 8)
+            pdf.set_text_color(*MUTED)
+            pdf.multi_cell(0, 4, printable(L["empty_days"].format(count=empty_days)), new_x="LMARGIN", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
+            pdf.set_font(FONT, "", 9)
+    else:
+        pdf.multi_cell(0, 5, printable(L["no_activity"]), new_x="LMARGIN", new_y="NEXT")
 
     headers, rows = people_table(report, L)
-    _heading(pdf, L["people"], 12)
-    _table(pdf, headers, rows)
+    if rows:
+        _heading(pdf, L["people"], 12)
+        _table(pdf, headers, rows)
 
     if report.get("skipped"):
         _heading(pdf, L["skipped"], 12)

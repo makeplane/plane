@@ -92,13 +92,19 @@ def skipped_lines(report):
     return lines
 
 
+def is_empty_day(day):
+    """No time from any source: the PDF, Markdown and app tables leave the day out (JSON and CSV keep it)."""
+    return not (day["log_minutes"] or day["grid_minutes"] or day["result_minutes"])
+
+
 def day_table(report, L):
-    """(headers, rows, total row) of the days, minutes as text."""
+    """(headers, rows, total row, number of days left out) of the days with any time, minutes as text."""
     columns = COLUMNS[report["source"]]
     headers = [L["date"]] + [L[COLUMN_LABELS[column]] for column in columns]
-    rows = [[day["date"]] + [format_minutes(day[column], L) for column in columns] for day in report["days"]]
+    days = [day for day in report["days"] if not is_empty_day(day)]
+    rows = [[day["date"]] + [format_minutes(day[column], L) for column in columns] for day in days]
     total = [L["total"]] + [format_minutes(report["totals"][column], L) for column in columns]
-    return headers, rows, total
+    return headers, rows, total, len(report["days"]) - len(days)
 
 
 def people_table(report, L):
@@ -191,15 +197,21 @@ def to_markdown(report, language):
     lines.extend(f"> {sentence}" for sentence in descriptions(report, L))
     lines.append("")
 
-    headers, rows, total = day_table(report, L)
+    headers, rows, total, empty_days = day_table(report, L)
     lines.extend([f"## {L['days']}", ""])
-    lines.extend(_md_table(headers, rows, total))
+    if rows:
+        lines.extend(_md_table(headers, rows, total))
+        if empty_days:
+            lines.extend(["", L["empty_days"].format(count=empty_days)])
+    else:
+        lines.append(L["no_activity"])
     lines.append("")
 
     headers, rows = people_table(report, L)
-    lines.extend([f"## {L['people']}", ""])
-    lines.extend(_md_table(headers, rows))
-    lines.append("")
+    if rows:
+        lines.extend([f"## {L['people']}", ""])
+        lines.extend(_md_table(headers, rows))
+        lines.append("")
 
     if report.get("skipped"):
         lines.extend([f"## {L['skipped']}", ""])

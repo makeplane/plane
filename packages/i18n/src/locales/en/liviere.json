@@ -174,7 +174,9 @@
         "unknown_person": "(deleted user)",
         "summaries": "Day summaries",
         "skipped": "Skipped periods",
-        "describe_skipped": "Skipped periods are left out of every source; an entry or a series counts only outside them."
+        "describe_skipped": "Skipped periods are left out of every source; an entry or a series counts only outside them.",
+        "no_activity": "No activity in this period.",
+        "empty_days": "Days without activity left out: {count}."
       },
       "summaries": {
         "description": "A few sentences on what happened in the project on a day, one per day and person. AI agents write them through the API or plane-log.",

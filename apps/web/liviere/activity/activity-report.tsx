@@ -111,6 +111,11 @@ export function ActivityReport(props: Props) {
   const headings = columns.map((column) => t(`liviere.activity.report.columns.${COLUMN_LABELS[column]}`));
   const listed = report ? report.days.filter((day) => day.entries.length > 0) : [];
   const summarized = report ? report.days.filter((day) => day.summaries.length > 0) : [];
+  // Days without time from any source are left out of the table, as in the PDF and Markdown (not in JSON/CSV)
+  const activeDays = report
+    ? report.days.filter((day) => day.log_minutes || day.grid_minutes || day.result_minutes)
+    : [];
+  const emptyDays = report ? report.days.length - activeDays.length : 0;
 
   return (
     <div className="flex flex-col gap-5">
@@ -185,25 +190,35 @@ export function ActivityReport(props: Props) {
             )}
           </div>
 
-          <ReportTable
-            title={t("liviere.activity.report.days")}
-            first={t("liviere.activity.report.columns.date")}
-            headings={headings}
-            rows={report.days.map((day) => ({ key: day.date, label: day.date, values: day }))}
-            total={{ label: t("liviere.activity.report.total"), values: report.totals }}
-            columns={columns}
-          />
-          <ReportTable
-            title={t("liviere.activity.report.people")}
-            first={t("liviere.activity.report.columns.person")}
-            headings={headings}
-            rows={report.people.map((row) => ({
-              key: row.actor?.id ?? "unknown",
-              label: personName(row.actor),
-              values: row,
-            }))}
-            columns={columns}
-          />
+          {activeDays.length > 0 ? (
+            <ReportTable
+              title={t("liviere.activity.report.days")}
+              first={t("liviere.activity.report.columns.date")}
+              headings={headings}
+              rows={activeDays.map((day) => ({ key: day.date, label: day.date, values: day }))}
+              total={{ label: t("liviere.activity.report.total"), values: report.totals }}
+              columns={columns}
+              note={emptyDays > 0 ? t("liviere.activity.report.empty_days", { count: emptyDays }) : undefined}
+            />
+          ) : (
+            <section className="flex flex-col gap-2">
+              <h3 className="text-14 font-medium text-primary">{t("liviere.activity.report.days")}</h3>
+              <p className="text-13 text-tertiary">{t("liviere.activity.report.no_activity")}</p>
+            </section>
+          )}
+          {report.people.length > 0 && (
+            <ReportTable
+              title={t("liviere.activity.report.people")}
+              first={t("liviere.activity.report.columns.person")}
+              headings={headings}
+              rows={report.people.map((row) => ({
+                key: row.actor?.id ?? "unknown",
+                label: personName(row.actor),
+                values: row,
+              }))}
+              columns={columns}
+            />
+          )}
 
           {report.skipped.length > 0 && (
             <section className="flex flex-col gap-2">
@@ -280,10 +295,12 @@ type TableProps = {
   rows: { key: string; label: string; values: TReportMinutes }[];
   total?: { label: string; values: TReportMinutes };
   columns: TColumn[];
+  // A line under the table
+  note?: string;
 };
 
 function ReportTable(props: TableProps) {
-  const { title, first, headings, rows, total, columns } = props;
+  const { title, first, headings, rows, total, columns, note } = props;
   return (
     <section className="flex flex-col gap-2">
       <h3 className="text-14 font-medium text-primary">{title}</h3>
@@ -325,6 +342,7 @@ function ReportTable(props: TableProps) {
           )}
         </table>
       </div>
+      {note && <p className="text-12 text-tertiary">{note}</p>}
     </section>
   );
 }

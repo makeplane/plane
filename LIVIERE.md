@@ -236,7 +236,9 @@ instead of JSON; not `format`, which Django REST framework keeps for itself) and
 the language of the Plane profile, else English). JSON: the header fields, `totals`, `days` (`date`,
 `log_minutes`, `grid_minutes`, `difference_minutes`, `result_minutes`, `summaries`, `entries`) and `people`.
 PDF (A4, the main format) and Markdown: the header, how the time was counted, the tables of days and people,
-the day summaries and the entries day by day. In Markdown the texts of people and agents are escaped and
+the day summaries and the entries day by day. Their day table (and the *Report* tab) leaves out days without
+time from any source and says how many it left out ("No activity in this period." when all are empty); the totals
+do not change, and JSON and CSV keep every day. In Markdown the texts of people and agents are escaped and
 summaries and entries are quotes (`> ` on every line), so they cannot add headings, tables, lists or HTML. CSV: one row per day and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read
 Polish letters). The app endpoint is `/api/workspaces/.../projects/{id}/liviere/activity/report/`; the
 *Activity* page shows the report in its *Report* tab (`?view=report&source=…`, the period of the toolbar) with

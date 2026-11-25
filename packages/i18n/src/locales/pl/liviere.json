@@ -174,7 +174,9 @@
         "unknown_person": "(usunięty użytkownik)",
         "summaries": "Podsumowania dni",
         "skipped": "Okresy pomijane",
-        "describe_skipped": "Okresy pomijane nie liczą się w żadnym źródle; wpis albo seria liczy się tylko poza nimi."
+        "describe_skipped": "Okresy pomijane nie liczą się w żadnym źródle; wpis albo seria liczy się tylko poza nimi.",
+        "no_activity": "Brak aktywności w tym okresie.",
+        "empty_days": "Pominięto dni bez aktywności: {count}."
       },
       "summaries": {
         "description": "Kilka zdań o tym, co działo się w projekcie danego dnia, jedno na dzień i osobę. Agenci AI piszą je przez API albo plane-log.",
