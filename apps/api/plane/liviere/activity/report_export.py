@@ -74,7 +74,21 @@ def descriptions(report, L):
         SOURCE_LOG: ["describe_log"],
         SOURCE_MIXED: ["describe_mixed", "describe_log", "describe_grid"],
     }[report["source"]]
-    return [L[key].format(**values) for key in keys] + [L["describe_union"]]
+    sentences = [L[key].format(**values) for key in keys] + [L["describe_union"]]
+    if report.get("skipped"):
+        sentences.append(L["describe_skipped"])
+    return sentences
+
+
+def skipped_lines(report):
+    """ "2026-11-16 22:00 – 2026-11-17 06:00: description" for every skipped period of the report."""
+    lines = []
+    for period in report.get("skipped", []):
+        start = datetime.fromisoformat(period["starts_at"])
+        end = datetime.fromisoformat(period["ends_at"])
+        text = f"{start.strftime('%Y-%m-%d %H:%M')} – {end.strftime('%Y-%m-%d %H:%M')}"
+        lines.append(f"{text}: {period['description']}" if period["description"] else text)
+    return lines
 
 
 def day_table(report, L):
@@ -158,6 +172,11 @@ def to_markdown(report, language):
     lines.extend([f"## {L['people']}", ""])
     lines.extend(_md_table(headers, rows))
     lines.append("")
+
+    if report.get("skipped"):
+        lines.extend([f"## {L['skipped']}", ""])
+        lines.extend(f"- {_md_cell(line)}" for line in skipped_lines(report))
+        lines.append("")
 
     summarized = days_with_summaries(report)
     if summarized:

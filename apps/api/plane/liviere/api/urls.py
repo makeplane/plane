@@ -13,6 +13,7 @@ from .activity import (
     ProjectActivityLogDetailAPIEndpoint,
     ProjectActivityLogsAPIEndpoint,
     ProjectActivityReportAPIEndpoint,
+    ProjectActivitySkipPeriodsAPIEndpoint,
     ProjectActivitySummariesAPIEndpoint,
     ProjectActivitySummaryDetailAPIEndpoint,
     ProjectActivitySettingsAPIEndpoint,
@@ -59,6 +60,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/activity/summaries/<int:summary_id>/",
         ProjectActivitySummaryDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="liviere-project-activity-summary-detail-v1",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/activity/skipped-periods/",
+        ProjectActivitySkipPeriodsAPIEndpoint.as_view(http_method_names=["get"]),
+        name="liviere-project-activity-skipped-periods-v1",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/activity/report/",

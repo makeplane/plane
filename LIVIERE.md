@@ -130,8 +130,8 @@ description, comment, link/attachment, relation/sub-item, cycle/module membershi
 page created, edited, renamed, archived/deleted; cycle changed, module changed; view changed; log entry.
 
 **Settings** – Project settings → Features → Activity (project admins): *Enable Activity* (shows the item in
-the project navigation; events are recorded either way), the counted actions and the series thresholds of the
-time report. Stored in
+the project navigation; events are recorded either way), the counted actions, the series thresholds of the
+time report and its skipped periods. Stored in
 `ProjectActivitySettings`; the choice of actions applies at read time, so also to the past.
 
 **API.** Project admins and members (not guests – events name work items a guest may not see):
@@ -243,6 +243,16 @@ Polish letters). The app endpoint is `/api/workspaces/.../projects/{id}/liviere/
 `plane-log report -p ORD --month previous|current` or `--from D --to D`, with `--source`, `--format pdf|md|csv|json`,
 `--lang`, `--mine`, `--no-entries`, `-o file` (a PDF needs `-o`; tests:
 `python3 -m unittest liviere/tools/test_plane_log.py`).
+
+**Skipped periods** (`.../activity/skipped-periods/`, migration `0009`, table `liviere_activity_skip_periods`,
+rules in `activity/skips.py`): single ranges from–to (at most 31 days, may overlap or lie in the future) with an
+optional description, e.g. a night of automated tests. The report leaves them out of every source: actions inside
+them neither start nor extend a series, and what remains of series (with their padding) and of log entries inside
+them is cut, so an entry 21:30–22:30 counts 30 min against a period from 22:00. The report lists the periods it
+touches (`skipped`, PDF, Markdown). The grid hatches their quarters but keeps counting them (the heatmap response
+does not change; the page reads the periods separately). Project admins add, change and delete them in the
+Activity settings (`POST`, `PATCH`/`DELETE .../{id}/` in the app; times without an offset in the project time
+zone); members and `/api/v1/` (`GET`, optional `from`/`to`) only read them.
 
 **PDF** – `fpdf2` 2.9.0 (pure Python, LGPL-3.0, with `Pillow` and `fontTools`, prebuilt wheels for the Alpine
 image: no system packages, no browser, no other service) draws the file in DejaVu Sans 2.37 (regular and bold,

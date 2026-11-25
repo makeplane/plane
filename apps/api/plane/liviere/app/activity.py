@@ -61,6 +61,26 @@ class ActivityEnabledProjectsEndpoint(BaseAPIView):
         return Response({"project_ids": [str(project_id) for project_id in enabled]}, status=status.HTTP_200_OK)
 
 
+class ProjectActivitySkipPeriodsEndpoint(ActivityHandlers, BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id):
+        return self.list_skips(request, project_id)
+
+    @allow_permission([ROLE.ADMIN])
+    def post(self, request, slug, project_id):
+        return self.create_skip(request, project_id)
+
+
+class ProjectActivitySkipPeriodDetailEndpoint(ActivityHandlers, BaseAPIView):
+    @allow_permission([ROLE.ADMIN])
+    def patch(self, request, slug, project_id, skip_id):
+        return self.patch_skip(request, project_id, skip_id)
+
+    @allow_permission([ROLE.ADMIN])
+    def delete(self, request, slug, project_id, skip_id):
+        return self.delete_skip(request, project_id, skip_id)
+
+
 class ProjectActivitySummariesEndpoint(ActivityHandlers, BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def get(self, request, slug, project_id):

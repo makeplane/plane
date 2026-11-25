@@ -41,7 +41,8 @@ import { MAX_RANGE_DAYS, RANGE_PRESETS, parseRange, rangeQueryChange, resolveRan
 import type { TRangeSelection } from "./range";
 import { REPORT_SOURCES } from "./types";
 import type { TActivityEvent, TReportSource } from "./types";
-import { refreshProjectActivity, useActivityHeatmap, useCurrentQuarter } from "./use-activity";
+import { quartersOf } from "./grid";
+import { refreshProjectActivity, useActivityHeatmap, useCurrentQuarter, useSkipPeriods } from "./use-activity";
 
 const VIEW_PARAM = "view";
 const LOG_VIEW = "log";
@@ -129,6 +130,8 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
   const range = resolveRange(rangeSelection, now.date);
   const query = { from: range.from, to: range.to, tz: timeZone, actor };
   const { data: heatmap, error, isLoading } = useActivityHeatmap(workspaceSlug, projectId, query);
+  const { data: skipPeriods } = useSkipPeriods(workspaceSlug, projectId, query);
+  const skippedQuarters = useMemo(() => quartersOf(skipPeriods ?? [], timeZone), [skipPeriods, timeZone]);
 
   return (
     <div ref={containerRef} className="flex h-full w-full flex-col gap-5 overflow-y-auto px-6 py-5">
@@ -283,6 +286,7 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
               now={now}
               selected={selected}
               onSelect={setSelected}
+              skipped={skippedQuarters}
             />
           ) : null}
 

@@ -172,7 +172,9 @@
         "entries": "Wpisy dziennika",
         "no_entries": "Brak wpisów.",
         "unknown_person": "(usunięty użytkownik)",
-        "summaries": "Podsumowania dni"
+        "summaries": "Podsumowania dni",
+        "skipped": "Okresy pomijane",
+        "describe_skipped": "Okresy pomijane nie liczą się w żadnym źródle; wpis albo seria liczy się tylko poza nimi."
       },
       "summaries": {
         "description": "Kilka zdań o tym, co działo się w projekcie danego dnia, jedno na dzień i osobę. Agenci AI piszą je przez API albo plane-log.",
@@ -188,6 +190,24 @@
         "delete_error": "Nie udało się usunąć podsumowania. Spróbuj ponownie.",
         "empty_title": "Brak podsumowań dni w tym okresie",
         "empty_description": "Opisz w kilku zdaniach, co działo się danego dnia, albo pozwól agentom AI zrobić to przez plane-log summary add."
+      },
+      "skipped": {
+        "title": "Okresy pomijane",
+        "description": "Okresy, które raport czasu pomija, np. noc z testami automatów. Siatka je kreskuje, ale dalej liczy. Godziny w strefie {timezone}.",
+        "add": "Dodaj okres",
+        "empty": "Brak okresów pomijanych.",
+        "add_title": "Nowy okres pomijany",
+        "edit_title": "Edytuj okres pomijany",
+        "from": "Od",
+        "to": "Do",
+        "description_label": "Opis (opcjonalnie)",
+        "description_placeholder": "Na przykład: noc z testami automatów",
+        "save_error": "Nie udało się zapisać okresu. Spróbuj ponownie.",
+        "delete_title": "Usuń okres pomijany",
+        "delete_confirm": "Okres znowu będzie się liczył w raportach.",
+        "delete_error": "Nie udało się usunąć okresu. Spróbuj ponownie.",
+        "in_grid": "Okres pomijany: nie liczy się w raporcie",
+        "legend": "Pomijane w raportach"
       }
     },
     "unread": {

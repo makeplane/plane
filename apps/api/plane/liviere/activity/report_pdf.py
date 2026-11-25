@@ -26,6 +26,7 @@ from plane.liviere.activity.report_export import (
     header,
     people_table,
     person_name,
+    skipped_lines,
 )
 from plane.liviere.activity.report_labels import labels
 
@@ -143,6 +144,11 @@ def to_pdf(report, language):
     headers, rows = people_table(report, L)
     _heading(pdf, L["people"], 12)
     _table(pdf, headers, rows)
+
+    if report.get("skipped"):
+        _heading(pdf, L["skipped"], 12)
+        for line in skipped_lines(report):
+            pdf.multi_cell(0, 5, printable(f"• {line}"), new_x="LMARGIN", new_y="NEXT")
 
     summarized = days_with_summaries(report)
     if summarized:

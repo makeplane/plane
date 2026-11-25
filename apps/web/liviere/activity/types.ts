@@ -122,6 +122,7 @@ export type TActivityReport = {
   entries_included: boolean;
   totals: TReportMinutes;
   days: (TReportMinutes & { date: string; summaries: TReportSummary[]; entries: TReportEntry[] })[];
+  skipped: TSkipPeriod[];
   people: (TReportMinutes & { actor: TReportActor })[];
 };
 
@@ -137,3 +138,17 @@ export type TDaySummary = {
   created_at: string;
   updated_at: string;
 };
+
+// Skipped periods (apps/api/plane/liviere/activity/skips.py): left out of the time report, marked on the grid
+
+export type TSkipPeriod = {
+  id: number;
+  starts_at: string; // ISO date-time in the project time zone
+  ends_at: string;
+  description: string;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type TSkipPeriodInput = { starts_at: string; ends_at: string; description: string };

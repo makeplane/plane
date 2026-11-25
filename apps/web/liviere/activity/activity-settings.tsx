@@ -19,7 +19,9 @@ import { setToast } from "@plane/blocks/toast";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsControlItem } from "@/components/settings/control-item";
 import { SettingsHeading } from "@/components/settings/heading";
+import { useProject } from "@/hooks/store/use-project";
 import { projectActivityService } from "./activity.service";
+import { ActivitySkipPeriods } from "./activity-skip-periods";
 import { activitySettingsKey, enabledProjectsKey, useActivitySettings } from "./use-activity";
 import type { TActivitySettings } from "./types";
 
@@ -76,8 +78,10 @@ function MinutesInput(props: {
 
 export const ProjectActivitySettings = observer(function ProjectActivitySettings(props: Props) {
   const { workspaceSlug, projectId } = props;
-  const { t } = useTranslation();
+  const { t, currentLocale } = useTranslation();
   const { data: settings } = useActivitySettings(workspaceSlug, projectId);
+  const { getProjectById } = useProject();
+  const timeZone = getProjectById(projectId)?.timezone || "UTC";
 
   const save = async (change: TSettingsChange) => {
     if (!settings) return;
@@ -185,6 +189,12 @@ export const ProjectActivitySettings = observer(function ProjectActivitySettings
               />
             </div>
           </div>
+          <ActivitySkipPeriods
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            timeZone={timeZone}
+            locale={currentLocale}
+          />
         </div>
       )}
     </section>

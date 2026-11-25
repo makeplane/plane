@@ -113,6 +113,27 @@ class ActivityDaySummary(models.Model):
         indexes = [models.Index(fields=["project", "day"], name="liviere_day_summary_day")]
 
 
+class ActivitySkipPeriod(models.Model):
+    """
+    A period the time report of a project leaves out, e.g. a night of automated tests
+    (plane/liviere/activity/skips.py). The Activity grid only marks it; its numbers do not change.
+    """
+
+    id = models.BigAutoField(primary_key=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField()
+    description = models.CharField(max_length=500, blank=True, default="")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "liviere_activity_skip_periods"
+        indexes = [models.Index(fields=["project", "starts_at"], name="liviere_skip_project_start")]
+
+
 class WorkItemOpen(models.Model):
     """A person opened a work item (peek or full page) for the first time; see plane/liviere/unread."""
 

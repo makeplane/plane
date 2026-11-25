@@ -184,3 +184,39 @@ class TestRanges:
         assert R.subtract([(a, d)], [(b, c)]) == [(a, b), (c, d)]
         assert R.subtract([(a, b)], [(a, d)]) == []
         assert R.clip([(a, d)], b, c) == [(b, c)]
+
+
+@pytest.mark.unit
+class TestSkippedPeriods:
+    def test_the_ls11_example(self):
+        # Skipped 22:00-06:00. Actions 21:50, 23:00, 02:00, 06:10; entries 21:30-22:30 and 23:00-01:00.
+        # Log: only 21:30-22:00 is left, 30. Series: 23:00 and 02:00 are skipped, so 21:50 and 06:10 stay
+        # single actions, 5 + 5 = 10. Mixed: 21:30-22:00 covers 21:50-21:55, plus 06:10-06:15: 35.
+        day2 = DAY + timedelta(days=1)
+        skipped = [(at("22:00"), at("06:00", day=day2))]
+        actions = [(TOMASZ, at("21:50")), (TOMASZ, at("23:00")), (TOMASZ, at("02:00", day=day2))]
+        actions.append((TOMASZ, at("06:10", day=day2)))
+        entries = [(TOMASZ, at("21:30"), at("22:30")), (TOMASZ, at("23:00"), at("01:00", day=day2))]
+
+        days = R.compute(actions, entries, [DAY, day2], WARSAW, GAP, PADDING, skipped)["days"]
+
+        totals = R.sum_rows([R.with_totals(days[day], R.SOURCE_MIXED) for day in (DAY, day2)])
+        assert (totals["log_minutes"], totals["grid_minutes"], totals["result_minutes"]) == (30, 10, 35)
+        assert days[DAY] == {R.SOURCE_LOG: 30, R.SOURCE_GRID: 5, R.SOURCE_MIXED: 30}
+        assert days[day2] == {R.SOURCE_LOG: 0, R.SOURCE_GRID: 5, R.SOURCE_MIXED: 5}
+
+    def test_the_padding_of_a_series_is_cut_at_the_period(self):
+        # 21:58 + 5 would end at 22:03; the skipped period starts at 22:00
+        project, _ = one_day(actions=[(TOMASZ, at("21:58"))], skipped=[(at("22:00"), at("23:00"))])
+        assert project[R.SOURCE_GRID] == 2
+
+    def test_a_skipped_action_does_not_join_two_series(self):
+        # 10:00 and 10:20 are joined only by 10:10, which is skipped: two single actions, 5 + 5
+        actions = [(TOMASZ, at("10:00")), (TOMASZ, at("10:10")), (TOMASZ, at("10:20"))]
+        project, _ = one_day(actions=actions, skipped=[(at("10:08"), at("10:12"))])
+        assert project[R.SOURCE_GRID] == 10
+
+    def test_overlapping_periods_count_once(self):
+        skipped = [(at("10:00"), at("10:40")), (at("10:20"), at("11:00"))]
+        project, _ = one_day(entries=[(TOMASZ, at("09:30"), at("11:30"))], skipped=skipped)
+        assert project[R.SOURCE_LOG] == 60

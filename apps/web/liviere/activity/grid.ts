@@ -127,5 +127,22 @@ export const currentQuarter = (timeZone: string, now: Date = new Date()): TQuart
   };
 };
 
+/**
+ * Keys (bucketKey) of the quarters of the grid that overlap the given ranges (ISO date-times), in a time zone.
+ * Time zone offsets are whole quarters, so UTC quarters are local quarters too.
+ */
+export const quartersOf = (ranges: { starts_at: string; ends_at: string }[], timeZone: string): Set<string> => {
+  const keys = new Set<string>();
+  for (const range of ranges) {
+    const end = Date.parse(range.ends_at);
+    const start = Date.parse(range.starts_at);
+    for (let moment = start - (start % QUARTER_MS); moment < end; moment += QUARTER_MS) {
+      const quarter = currentQuarter(timeZone, new Date(moment));
+      keys.add(bucketKey(quarter.date, quarter.slot));
+    }
+  }
+  return keys;
+};
+
 /** Milliseconds until the next quarter starts; time zone offsets are whole quarters, so this holds in any zone. */
 export const msToNextQuarter = (now: number = Date.now()): number => QUARTER_MS - (now % QUARTER_MS);

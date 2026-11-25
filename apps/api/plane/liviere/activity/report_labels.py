@@ -40,6 +40,10 @@ LABELS = {
         "people": "People",
         "days": "Days",
         "summaries": "Day summaries",
+        "skipped": "Skipped periods",
+        "describe_skipped": (
+            "Skipped periods are left out of every source; an entry or a series counts only outside them."
+        ),
         "entries": "Work log entries",
         "no_entries": "No entries.",
         "page": "Page {page} of {pages}",
@@ -77,6 +81,10 @@ LABELS = {
         "people": "Osoby",
         "days": "Dni",
         "summaries": "Podsumowania dni",
+        "skipped": "Okresy pomijane",
+        "describe_skipped": (
+            "Okresy pomijane nie liczą się w żadnym źródle; wpis albo seria liczy się tylko poza nimi."
+        ),
         "entries": "Wpisy dziennika",
         "no_entries": "Brak wpisów.",
         "page": "Strona {page} z {pages}",

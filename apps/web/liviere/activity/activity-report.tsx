@@ -180,6 +180,9 @@ export function ActivityReport(props: Props) {
               </p>
             ))}
             <p className="text-12 text-tertiary">{t("liviere.activity.report.describe_union")}</p>
+            {report.skipped.length > 0 && (
+              <p className="text-12 text-tertiary">{t("liviere.activity.report.describe_skipped")}</p>
+            )}
           </div>
 
           <ReportTable
@@ -201,6 +204,20 @@ export function ActivityReport(props: Props) {
             }))}
             columns={columns}
           />
+
+          {report.skipped.length > 0 && (
+            <section className="flex flex-col gap-2">
+              <h3 className="text-14 font-medium text-primary">{t("liviere.activity.report.skipped")}</h3>
+              <ul className="flex flex-col gap-1 text-13 text-secondary">
+                {report.skipped.map((period) => (
+                  <li key={period.id}>
+                    {period.starts_at.slice(0, 16).replace("T", " ")} – {period.ends_at.slice(0, 16).replace("T", " ")}
+                    {period.description && `: ${period.description}`}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           {summarized.length > 0 && (
             <section className="flex flex-col gap-3">

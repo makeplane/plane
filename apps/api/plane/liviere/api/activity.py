@@ -44,6 +44,14 @@ class ProjectActivityReportAPIEndpoint(ActivityHandlers, BaseAPIView):
         return self.get_report(request, project_id)
 
 
+class ProjectActivitySkipPeriodsAPIEndpoint(ActivityHandlers, BaseAPIView):
+    use_read_replica = True
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id):
+        return self.list_skips(request, project_id)
+
+
 class ProjectActivitySummariesAPIEndpoint(ActivityHandlers, BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def get(self, request, slug, project_id):

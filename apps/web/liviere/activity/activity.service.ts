@@ -19,6 +19,8 @@ import type {
   TActivitySettings,
   TDaySummary,
   TReportExport,
+  TSkipPeriod,
+  TSkipPeriodInput,
   TReportOptions,
 } from "./types";
 
@@ -149,6 +151,46 @@ export class ProjectActivityService extends APIService {
 
   async deleteSummary(workspaceSlug: string, projectId: string, id: number): Promise<void> {
     return this.delete(`${this.projectUrl(workspaceSlug, projectId, "summaries")}${id}/`)
+      .then(() => undefined)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Skipped periods of the project; with a query only those overlapping its range. */
+  async getSkipPeriods(workspaceSlug: string, projectId: string, query?: TActivityQuery): Promise<TSkipPeriod[]> {
+    return this.get(this.projectUrl(workspaceSlug, projectId, "skipped-periods"), {
+      params: query ? this.queryParams(query) : {},
+    })
+      .then((response) => response?.data?.results ?? [])
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async createSkipPeriod(workspaceSlug: string, projectId: string, data: TSkipPeriodInput): Promise<TSkipPeriod> {
+    return this.post(this.projectUrl(workspaceSlug, projectId, "skipped-periods"), data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateSkipPeriod(
+    workspaceSlug: string,
+    projectId: string,
+    id: number,
+    data: Partial<TSkipPeriodInput>
+  ): Promise<TSkipPeriod> {
+    return this.patch(`${this.projectUrl(workspaceSlug, projectId, "skipped-periods")}${id}/`, data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteSkipPeriod(workspaceSlug: string, projectId: string, id: number): Promise<void> {
+    return this.delete(`${this.projectUrl(workspaceSlug, projectId, "skipped-periods")}${id}/`)
       .then(() => undefined)
       .catch((error) => {
         throw error?.response?.data;

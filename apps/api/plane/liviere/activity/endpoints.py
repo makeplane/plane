@@ -40,9 +40,10 @@ from plane.liviere.activity.report import (
 )
 from plane.liviere.activity.report_export import EXPORTS, filename, render
 from plane.liviere.activity.report_labels import DEFAULT_LANGUAGE, LANGUAGES
+from plane.liviere.activity.skips import InvalidSkipPeriod, serialize_skip, skip_changes, skip_periods
 from plane.liviere.activity.summaries import InvalidSummary, serialize_summary, summary_day, summary_text
 from plane.db.models import Profile, Project
-from plane.liviere.models import ActivityDaySummary, ActivityEvent, ProjectActivitySettings
+from plane.liviere.models import ActivityDaySummary, ActivityEvent, ActivitySkipPeriod, ProjectActivitySettings
 
 SERIES_FIELDS = {"series_gap_minutes": SERIES_GAP_RANGE, "series_padding_minutes": SERIES_PADDING_RANGE}
 
@@ -171,6 +172,56 @@ class ActivityHandlers:
         response = HttpResponse(render(report, export, language), content_type=EXPORTS[export])
         response["Content-Disposition"] = f'attachment; filename="{filename(report, export)}"'
         return response
+
+    # Skipped periods
+
+    def list_skips(self, request, project_id):
+        """All periods of the project, or with `from`/`to` (local dates) those overlapping that range."""
+        zone = ZoneInfo(Project.objects.get(pk=project_id).timezone or "UTC")
+        since = until = None
+        if request.query_params.get("from") or request.query_params.get("to"):
+            try:
+                query = parse_params(request, project_id)
+            except InvalidParams as e:
+                return bad_request(e)
+            zone, since, until = query["zone"], query["since"], query["until"]
+        periods = skip_periods(project_id, since, until)
+        return Response(
+            {"timezone": str(zone), "results": [serialize_skip(period, zone) for period in periods]},
+            status=status.HTTP_200_OK,
+        )
+
+    def create_skip(self, request, project_id):
+        project = Project.objects.get(pk=project_id)
+        zone = ZoneInfo(project.timezone or "UTC")
+        try:
+            changes = skip_changes(request.data, zone)
+        except InvalidSkipPeriod as e:
+            return bad_request(e)
+        period = ActivitySkipPeriod.objects.create(
+            workspace_id=project.workspace_id, project_id=project_id, created_by=request.user, **changes
+        )
+        return Response(serialize_skip(period, zone), status=status.HTTP_201_CREATED)
+
+    def patch_skip(self, request, project_id, skip_id):
+        period = ActivitySkipPeriod.objects.filter(id=skip_id, project_id=project_id).first()
+        if period is None:
+            return Response({"error": "Skipped period not found"}, status=status.HTTP_404_NOT_FOUND)
+        zone = ZoneInfo(Project.objects.get(pk=project_id).timezone or "UTC")
+        try:
+            changes = skip_changes(request.data, zone, current=period)
+        except InvalidSkipPeriod as e:
+            return bad_request(e)
+        for field, value in changes.items():
+            setattr(period, field, value)
+        period.save()
+        return Response(serialize_skip(period, zone), status=status.HTTP_200_OK)
+
+    def delete_skip(self, request, project_id, skip_id):
+        deleted, _ = ActivitySkipPeriod.objects.filter(id=skip_id, project_id=project_id).delete()
+        if not deleted:
+            return Response({"error": "Skipped period not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Day summaries
 

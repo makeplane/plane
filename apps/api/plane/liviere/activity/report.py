@@ -191,13 +191,15 @@ def margin(gap):
     return max(gap, timedelta(minutes=OPEN_ENTRY_MINUTES))
 
 
-def build_report(project, query, source, report_settings, with_entries=True, skipped=()):
+def build_report(project, query, source, report_settings, with_entries=True):
     """
     The report dictionary. `query` comes from queries.parse_params; its kinds count for the series (log
     entries never do: the log is the other source). Log entries count whatever the project settings count.
+    The project's skipped periods are left out of every source.
     """
     # Imported here: the pure functions above are tested without Django
     from plane.liviere.activity.queries import filtered_events, serialize_events
+    from plane.liviere.activity.skips import serialize_skip, skip_periods
     from plane.liviere.activity.summaries import summaries_by_day
     from plane.db.models import User
 
@@ -221,6 +223,8 @@ def build_report(project, query, source, report_settings, with_entries=True, ski
     )
     entries = [(e.actor_id, e.occurred_at, e.ended_at) for e in entry_events]
 
+    periods = skip_periods(project.id, since, until)
+    skipped = [(period.starts_at, period.ends_at) for period in periods]
     result = compute(actions, entries, days, zone, gap, padding, skipped)
 
     actor_ids = {str(actor) for actor in result["people"] if actor is not None}
@@ -294,6 +298,11 @@ def build_report(project, query, source, report_settings, with_entries=True, ski
         "open_entry_minutes": OPEN_ENTRY_MINUTES,
         "kinds": action_kinds,
         "entries_included": with_entries,
+        "skipped": [
+            serialize_skip(period, zone)
+            for period in periods
+            if period.ends_at > query["since"] and period.starts_at < query["until"]
+        ],
         "totals": sum_rows(day_rows),
         "days": day_rows,
         "people": people_rows,

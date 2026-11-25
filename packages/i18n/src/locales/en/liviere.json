@@ -172,7 +172,9 @@
         "entries": "Work log entries",
         "no_entries": "No entries.",
         "unknown_person": "(deleted user)",
-        "summaries": "Day summaries"
+        "summaries": "Day summaries",
+        "skipped": "Skipped periods",
+        "describe_skipped": "Skipped periods are left out of every source; an entry or a series counts only outside them."
       },
       "summaries": {
         "description": "A few sentences on what happened in the project on a day, one per day and person. AI agents write them through the API or plane-log.",
@@ -188,6 +190,24 @@
         "delete_error": "Couldn't delete the summary. Try again.",
         "empty_title": "No day summaries in this range",
         "empty_description": "Write what happened on a day in a few sentences, or let AI agents do it with plane-log summary add."
+      },
+      "skipped": {
+        "title": "Skipped periods",
+        "description": "Periods the time report leaves out, for example a night of automated tests. The grid hatches them but keeps counting. Times in {timezone}.",
+        "add": "Add period",
+        "empty": "No skipped periods.",
+        "add_title": "New skipped period",
+        "edit_title": "Edit skipped period",
+        "from": "From",
+        "to": "To",
+        "description_label": "Description (optional)",
+        "description_placeholder": "For example: night of automated tests",
+        "save_error": "Couldn't save the period. Try again.",
+        "delete_title": "Delete skipped period",
+        "delete_confirm": "The period will count in reports again.",
+        "delete_error": "Couldn't delete the period. Try again.",
+        "in_grid": "Skipped period: left out of the report",
+        "legend": "Skipped in reports"
       }
     },
     "unread": {

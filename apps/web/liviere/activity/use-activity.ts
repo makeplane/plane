@@ -80,6 +80,24 @@ export const useDaySummaries = (workspaceSlug: string, projectId: string, query:
     { revalidateOnFocus: false, keepPreviousData: true }
   );
 
+export const skipPeriodsKey = (projectId: string) => `LIVIERE_ACTIVITY_SKIPS_${projectId}`;
+
+/** Skipped periods of a project; with a query those overlapping its range (the grid marks them). */
+export const useSkipPeriods = (workspaceSlug: string, projectId: string, query?: TActivityQuery) =>
+  useSWR(
+    query ? `${skipPeriodsKey(projectId)}_${query.from}_${query.to}_${query.tz}` : `${skipPeriodsKey(projectId)}_all`,
+    () => projectActivityService.getSkipPeriods(workspaceSlug, projectId, query && { ...query, actor: null }),
+    { revalidateOnFocus: false, keepPreviousData: true }
+  );
+
+/** Reloads the skipped periods and the report of a project after a period changed. */
+export const refreshSkipPeriods = (projectId: string) =>
+  mutate(
+    (key) =>
+      typeof key === "string" &&
+      (key.startsWith(skipPeriodsKey(projectId)) || key.startsWith(`LIVIERE_ACTIVITY_REPORT_${projectId}_`))
+  );
+
 /** Reloads the day summaries and the report of a project after a summary changed. */
 export const refreshDaySummaries = (projectId: string) =>
   mutate(
