@@ -1,4 +1,10 @@
 /**
+ * Copyright (c) 2023-present Plane Software, Inc. and contributors
+ * SPDX-License-Identifier: AGPL-3.0-only
+ * See the LICENSE file for details.
+ */
+
+/**
  * Unit Test Suite: BaseIssuesStore.updateIssueList
  * Target: apps/web/store/issue/helpers/base-issues.store.ts
  * Verifies Issue #9049: Optimistic kanban drag/drop with parent_id and sub_issue=false
