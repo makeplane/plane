@@ -1,0 +1,7 @@
+click stored value "projectName" below "Project" within the context of "sidebar"
+click "Views" below stored value "projectName"
+click button "Add View"
+enter stored value "viewName" into "Title"
+click button "Create View"
+check that page contains stored value "viewName"
+click stored value "projectName" below "Project" within the context of "sidebar"

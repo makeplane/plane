@@ -1,0 +1,7 @@
+click stored value "projectName" below "Project" within the context of "sidebar"
+click "Work items" below stored value "projectName"
+click "ellipsis" on the right of stored value "workItem"
+click "Delete"
+click "Delete"
+check that page does not contain stored value "workItem"
+click stored value "projectName" below "Project" within the context of "sidebar"

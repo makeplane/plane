@@ -1,0 +1,13 @@
+Log stored value "adminUser" to website
+Log stored value "adminUser" to website
+save "Test view for item dragging" as "viewName"
+add view saved value "viewName" to project stored value "projectName"
+quick add work item "first item" with status "Backlog"
+quick add work item "second item" with status "Backlog"
+quick add work item "third item" with status "Backlog"
+drag "third item" to "first item"
+check that page contains "third item" above "first item"
+delete view saved value "viewName" from project stored value "projectName"
+delete work item "first item" from project stored value "projectName"
+delete work item "second item" from project stored value "projectName"
+delete work item "third item" from project stored value "projectName"
