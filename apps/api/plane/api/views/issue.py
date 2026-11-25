@@ -439,6 +439,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
 
         issue_queryset = (
             self.get_queryset()
+            .select_related("type", "product_detail")
             .annotate(
                 cycle_id=Subquery(
                     CycleIssue.objects.filter(issue=OuterRef("id"), deleted_at__isnull=True).values("cycle_id")[:1]

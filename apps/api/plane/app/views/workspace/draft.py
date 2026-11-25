@@ -278,6 +278,7 @@ class WorkspaceDraftIssueViewSet(BaseViewSet):
                 "project_id": draft_issue.project_id,
                 "workspace_id": draft_issue.project.workspace_id,
                 "default_assignee_id": draft_issue.project.default_assignee_id,
+                "tasks_only": True,
             },
         )
 

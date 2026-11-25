@@ -27,6 +27,7 @@ from plane.db.models import (
     IssueSubscriber,
     Label,
     Module,
+    ProductType,
     Project,
     State,
     User,
@@ -586,6 +587,73 @@ def track_closed_to(
         )
 
 
+def track_kind(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    old, new = current_instance.get("kind") or "task", requested_data.get("kind") or "task"
+    if old != new:
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old,
+                new_value=new,
+                field="kind",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="updated the kind to",
+                epoch=epoch,
+            )
+        )
+
+
+def track_product(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    """One entry per changed field of the product part"""
+    current, requested = current_instance.get("product") or {}, requested_data.get("product") or {}
+
+    def label(key, value):
+        # Ids are stored with the name they had at the time.
+        if value in (None, ""):
+            return ""
+        if key == "product_type_id":
+            return ProductType.all_objects.filter(pk=value).values_list("name", flat=True).first() or ""
+        if key == "owner_id":
+            return User.objects.filter(pk=value).values_list("display_name", flat=True).first() or ""
+        return str(value)
+
+    for key, field in (
+        ("product_type_id", "product_type"),
+        ("owner_id", "product_owner"),
+        ("manual_progress", "manual_progress"),
+        ("status_comment", "status_comment"),
+    ):
+        if key not in requested:
+            continue
+        old, new = current.get(key), requested.get(key)
+        if (old if old is not None else "") == (new if new is not None else ""):
+            continue
+        is_id = key.endswith("_id")
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=label(key, old),
+                new_value=label(key, new),
+                old_identifier=old if is_id else None,
+                new_identifier=new if is_id else None,
+                field=field,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"updated the {field} to",
+                epoch=epoch,
+            )
+        )
+
+
 def create_issue_activity(
     requested_data,
     current_instance,
@@ -646,6 +714,8 @@ def update_issue_activity(
         "estimate_point": track_estimate_points,
         "archived_at": track_archive_at,
         "closed_to": track_closed_to,
+        "kind": track_kind,
+        "product": track_product,
         # External endpoint keys
         "parent": track_parent,
         "state": track_state,

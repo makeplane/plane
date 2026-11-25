@@ -44,6 +44,7 @@ from .base import BaseAPIView
 from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
 from plane.utils.host import base_host
+from plane.utils.products import has_products
 from plane.utils.order_queryset import ISSUE_ORDER_BY_ALLOWLIST, MODULE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.openapi import (
     module_docs,
@@ -725,6 +726,9 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         issues = request.data.get("issues", [])
         if not len(issues):
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
+        if has_products(issues, project_id):
+            return Response({"error": "A product cannot be added to a module"}, status=status.HTTP_400_BAD_REQUEST)
+
         module = Module.objects.get(workspace__slug=slug, project_id=project_id, pk=module_id)
 
         issues = Issue.objects.filter(workspace__slug=slug, project_id=project_id, pk__in=issues).values_list(

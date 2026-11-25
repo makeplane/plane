@@ -56,6 +56,8 @@ def archive_old_issues():
                 | Q(issue_intake__status=2)
                 | Q(issue_intake__isnull=True)
             )
+            # Products are closed and archived by people only
+            issues = issues.exclude(type__kind="product")
 
             # Check if Issues
             if issues:
@@ -117,6 +119,8 @@ def close_old_issues():
                 | Q(issue_intake__status=2)
                 | Q(issue_intake__isnull=True)
             )
+            # Products are closed and archived by people only
+            issues = issues.exclude(type__kind="product")
 
             # Check if Issues
             if issues:

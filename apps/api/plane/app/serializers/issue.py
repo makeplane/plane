@@ -6,7 +6,7 @@
 from django.utils import timezone
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 # Third Party imports
 from rest_framework import serializers
@@ -47,6 +47,7 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.products import WorkItemKindMixin, clean_work_item, kind_of, represent_product, save_product
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -79,7 +80,7 @@ class IssueProjectLiteSerializer(BaseSerializer):
 
 ##TODO: Find a better way to write this serializer
 ## Find a better approach to save manytomany?
-class IssueCreateSerializer(BaseSerializer):
+class IssueCreateSerializer(WorkItemKindMixin, BaseSerializer):
     # ids
     state_id = serializers.PrimaryKeyRelatedField(
         source="state", queryset=State.all_state_objects.all(), required=False, allow_null=True
@@ -204,7 +205,12 @@ class IssueCreateSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
-        return attrs
+        return clean_work_item(
+            attrs,
+            self.instance,
+            self.context.get("project_id"),
+            tasks_only=allow_triage or self.context.get("tasks_only", False),
+        )
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignee_ids", None)
@@ -215,7 +221,10 @@ class IssueCreateSerializer(BaseSerializer):
         default_assignee_id = self.context["default_assignee_id"]
 
         # Create Issue
-        issue = Issue.objects.create(**validated_data, project_id=project_id)
+        product = validated_data.pop("product", None)
+        with transaction.atomic():
+            issue = Issue.objects.create(**validated_data, project_id=project_id)
+            save_product(issue, product)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -337,7 +346,11 @@ class IssueCreateSerializer(BaseSerializer):
 
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
-        return super().update(instance, validated_data)
+        product = validated_data.pop("product", None)
+        with transaction.atomic():
+            instance = super().update(instance, validated_data)
+            save_product(instance, product)
+        return instance
 
 
 class IssueActivitySerializer(BaseSerializer):
@@ -778,6 +791,7 @@ class IssueIntakeSerializer(DynamicBaseSerializer):
 
 
 class IssueSerializer(DynamicBaseSerializer):
+    kind = serializers.SerializerMethodField()
     # ids
     cycle_id = serializers.PrimaryKeyRelatedField(read_only=True)
     module_ids = serializers.ListField(child=serializers.UUIDField(), required=False)
@@ -819,8 +833,13 @@ class IssueSerializer(DynamicBaseSerializer):
             "link_count",
             "is_draft",
             "archived_at",
+            "type_id",
+            "kind",
         ]
         read_only_fields = fields
+
+    def get_kind(self, obj):
+        return kind_of(obj)
 
     def validate(self, data):
         if (
@@ -869,6 +888,8 @@ class IssueListDetailSerializer(serializers.Serializer):
             "updated_by": instance.updated_by_id,
             "is_draft": instance.is_draft,
             "archived_at": instance.archived_at,
+            "type_id": instance.type_id,
+            "kind": kind_of(instance),
             # Computed fields
             "cycle_id": instance.cycle_id,
             "module_ids": self.get_module_ids(instance),
@@ -945,9 +966,14 @@ class IssueDetailSerializer(IssueSerializer):
     description_html = serializers.CharField()
     is_subscribed = serializers.BooleanField(read_only=True)
     is_intake = serializers.BooleanField(read_only=True)
+    product = serializers.SerializerMethodField()
+
+    def get_product(self, obj):
+        return represent_product(obj)
 
     class Meta(IssueSerializer.Meta):
         fields = IssueSerializer.Meta.fields + [
+            "product",
             "description_html",
             "is_subscribed",
             "is_intake",

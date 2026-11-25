@@ -83,7 +83,9 @@ from .workspace import (
 
 from .favorite import UserFavorite
 
-from .issue_type import IssueType
+from .issue_type import IssueType, WorkItemKind
+
+from .product import ProductDetail, ProductType
 
 from .recent_visit import UserRecentVisit
 

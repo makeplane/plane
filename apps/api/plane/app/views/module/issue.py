@@ -36,6 +36,7 @@ from plane.utils.grouper import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.products import has_products
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.utils.filters import ComplexFilterBackend
 from plane.utils.filters import IssueFilterSet
@@ -216,6 +217,9 @@ class ModuleIssueViewSet(BaseViewSet):
         project = Project.objects.get(pk=project_id)
         # The URL module must belong to the URL workspace + project (404 otherwise).
         Module.objects.get(pk=module_id, project_id=project_id, workspace__slug=slug)
+        if has_products(issues, project_id):
+            return Response({"error": "A product cannot be added to a module"}, status=status.HTTP_400_BAD_REQUEST)
+
         # Scope to workspace+project to prevent cross-tenant IDOR
         issues = list(
             Issue.issue_objects.filter(
@@ -264,6 +268,9 @@ class ModuleIssueViewSet(BaseViewSet):
         project = Project.objects.get(pk=project_id)
         # The URL issue must belong to the URL workspace + project (404 otherwise).
         Issue.objects.get(pk=issue_id, project_id=project_id, workspace__slug=slug)
+        if has_products([issue_id], project_id):
+            return Response({"error": "A product cannot be added to a module"}, status=status.HTTP_400_BAD_REQUEST)
+
         # Only link body modules that belong to the URL workspace + project.
         modules = [
             str(module_id)

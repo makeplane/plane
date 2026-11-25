@@ -219,7 +219,20 @@ class Issue(ChangeTrackerMixin, ProjectBaseModel):
                 if (self.description_html == "" or self.description_html is None)
                 else strip_tags(self.description_html)
             )
+            state_changed = self.has_changed("state_id")
             super(Issue, self).save(*args, **kwargs)
+            if state_changed:
+                from plane.utils.products import sync_closed_at
+
+                sync_closed_at(self)
+
+    def delete(self, using=None, soft=True, *args, **kwargs):
+        # Children are deleted along with their parent, unless the parent is a product.
+        from plane.utils.products import detach_product_children
+
+        with transaction.atomic(using=using):
+            detach_product_children([self.pk])
+            return super().delete(using, soft, *args, **kwargs)
 
     def __str__(self):
         """Return name of the issue"""

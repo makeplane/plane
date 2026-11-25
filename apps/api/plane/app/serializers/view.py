@@ -8,6 +8,7 @@ from rest_framework import serializers
 # Module imports
 from .base import DynamicBaseSerializer
 from plane.db.models import IssueView
+from plane.utils.products import kind_of
 from plane.utils.issue_filters import issue_filters
 
 
@@ -45,6 +46,8 @@ class ViewIssueListSerializer(serializers.Serializer):
             "link_count": instance.link_count,
             "is_draft": instance.is_draft,
             "archived_at": instance.archived_at,
+            "type_id": instance.type_id,
+            "kind": kind_of(instance),
             "state__group": instance.state.group if instance.state else None,
             "assignee_ids": self.get_assignee_ids(instance),
             "label_ids": self.get_label_ids(instance),

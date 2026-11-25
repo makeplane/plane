@@ -48,6 +48,7 @@ from plane.db.models import (
 from plane.utils.cycle_transfer_issues import transfer_cycle_issues
 from plane.utils.order_queryset import CYCLE_ORDER_BY_ALLOWLIST, ISSUE_ORDER_BY_ALLOWLIST, sanitize_order_by
 from plane.utils.host import base_host
+from plane.utils.products import has_products
 from .base import BaseAPIView
 from .issue import guest_cannot_view_issue, is_restricted_guest
 from plane.bgtasks.webhook_task import model_activity
@@ -973,6 +974,9 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
                 {"error": "Work items are required", "code": "MISSING_WORK_ITEMS"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        if has_products(issues, project_id):
+            return Response({"error": "A product cannot be added to a cycle"}, status=status.HTTP_400_BAD_REQUEST)
 
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=cycle_id)
 

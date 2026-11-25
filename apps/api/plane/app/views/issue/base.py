@@ -10,6 +10,7 @@ import json
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.fields import ArrayField
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import transaction
 from django.db.models import (
     Count,
     Exists,
@@ -69,6 +70,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.host import base_host
+from plane.utils.products import detach_product_children, represent_product
 from plane.utils.serializers import writable_data
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
@@ -116,9 +118,9 @@ class IssueListEndpoint(BaseAPIView):
 
         # Add select_related, prefetch_related if fields or expand is not None
         if self.fields or self.expand:
-            issue_queryset = issue_queryset.select_related("workspace", "project", "state", "parent").prefetch_related(
-                "assignees", "labels", "issue_module__module"
-            )
+            issue_queryset = issue_queryset.select_related(
+                "workspace", "project", "state", "parent", "type"
+            ).prefetch_related("assignees", "labels", "issue_module__module")
 
         # Add annotations
         issue_queryset = (
@@ -200,6 +202,8 @@ class IssueListEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "deleted_at",
+                "type_id",
+                "kind",
             )
             datetime_fields = ["created_at", "updated_at"]
             issues = user_timezone_converter(issues, datetime_fields, request.user.user_timezone)
@@ -465,9 +469,16 @@ class IssueViewSet(BaseViewSet):
                     "is_draft",
                     "archived_at",
                     "deleted_at",
+                    "type_id",
+                    "kind",
                 )
                 .first()
             )
+            # Drafts are not in the queryset
+            if issue and issue["kind"] == "product":
+                issue["product"] = represent_product(
+                    Issue.objects.select_related("type", "state", "product_detail").get(pk=issue["id"])
+                )
             datetime_fields = ["created_at", "updated_at"]
             issue = user_timezone_converter(issue, datetime_fields, request.user.user_timezone)
             # Send the model activity
@@ -784,14 +795,18 @@ class BulkDeleteIssuesEndpoint(BaseAPIView):
 
         total_issues = len(issues)
 
-        # First, delete all related cycle issues
-        CycleIssue.objects.filter(issue__in=issues).delete()
+        with transaction.atomic():
+            # The work items of a deleted product stay
+            detach_product_children([issue.pk for issue in issues])
 
-        # Then, delete all related module issues
-        ModuleIssue.objects.filter(issue__in=issues).delete()
+            # First, delete all related cycle issues
+            CycleIssue.objects.filter(issue__in=issues).delete()
 
-        # Finally, delete the issues themselves
-        issues.delete()
+            # Then, delete all related module issues
+            ModuleIssue.objects.filter(issue__in=issues).delete()
+
+            # Finally, delete the issues themselves
+            issues.delete()
 
         return Response(
             {"message": f"{total_issues} issues were deleted"},
@@ -897,6 +912,8 @@ class IssuePaginatedViewSet(BaseViewSet):
             "link_count",
             "attachment_count",
             "sub_issues_count",
+            "type_id",
+            "type__kind",
         ]
 
         if str(is_description_required).lower() == "true":
@@ -1060,6 +1077,8 @@ class IssueDetailEndpoint(BaseAPIView):
         issue = Issue.issue_objects.filter(workspace__slug=slug, project_id=project_id).filter(
             Exists(permission_subquery)
         )
+
+        issue = issue.select_related("type")
 
         # Add additional prefetch based on expand parameter
         if self.expand:

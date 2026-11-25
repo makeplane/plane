@@ -30,6 +30,7 @@ from plane.utils.grouper import (
 )
 from plane.utils.issue_filters import issue_filters
 from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.products import has_products
 from plane.utils.paginator import GroupedOffsetPaginator, SubGroupedOffsetPaginator
 from plane.app.permissions import allow_permission, ROLE
 from plane.utils.host import base_host
@@ -226,6 +227,9 @@ class CycleIssueViewSet(BaseViewSet):
 
         if not issues:
             return Response({"error": "Issues are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if has_products(issues, project_id):
+            return Response({"error": "A product cannot be added to a cycle"}, status=status.HTTP_400_BAD_REQUEST)
 
         cycle = Cycle.objects.get(workspace__slug=slug, project_id=project_id, pk=cycle_id)
 

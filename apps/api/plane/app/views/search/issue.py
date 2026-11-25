@@ -70,6 +70,8 @@ class IssueSearchEndpoint(BaseAPIView):
         Filter root issues only
         """
         issue = Issue.issue_objects.filter(pk=issue_id).first()
+        # A product cannot have a parent
+        issues = issues.exclude(type__kind="product")
         if issue:
             issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
         if issue.parent:
@@ -81,6 +83,7 @@ class IssueSearchEndpoint(BaseAPIView):
         Exclude issues in cycles
         """
         issues = issues.exclude(Q(issue_cycle__isnull=False) & Q(issue_cycle__deleted_at__isnull=True))
+        issues = issues.exclude(type__kind="product")
         return issues
 
     def exclude_issues_in_module(self, issues: QuerySet, module: str) -> QuerySet:
@@ -88,6 +91,7 @@ class IssueSearchEndpoint(BaseAPIView):
         Exclude issues in a module
         """
         issues = issues.exclude(Q(issue_module__module=module) & Q(issue_module__deleted_at__isnull=True))
+        issues = issues.exclude(type__kind="product")
         return issues
 
     def filter_issues_without_target_date(self, issues: QuerySet) -> QuerySet:
@@ -157,6 +161,8 @@ class IssueSearchEndpoint(BaseAPIView):
                 "state__name",
                 "state__group",
                 "state__color",
+                "type_id",
+                "type__kind",
             )[:100],
             status=status.HTTP_200_OK,
         )

@@ -28,6 +28,7 @@ from plane.utils.timezone_converter import user_timezone_converter
 from collections import defaultdict
 from plane.utils.host import base_host
 from plane.utils.order_queryset import order_issue_queryset
+from plane.utils.products import has_products
 
 
 class SubIssuesEndpoint(BaseAPIView):
@@ -171,6 +172,8 @@ class SubIssuesEndpoint(BaseAPIView):
                 "is_draft",
                 "archived_at",
                 "state_group",
+                "type_id",
+                kind=Coalesce("type__kind", Value("task")),
             )
         )
 
@@ -226,6 +229,9 @@ class SubIssuesEndpoint(BaseAPIView):
                 {"error": "Sub Issue IDs are required"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+        if has_products(sub_issue_ids, project_id):
+            return Response({"error": "A product cannot have a parent"}, status=status.HTTP_400_BAD_REQUEST)
 
         # Scope to workspace + project to prevent cross-project/cross-tenant IDOR
         sub_issues = Issue.issue_objects.filter(
