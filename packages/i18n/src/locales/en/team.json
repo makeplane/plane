@@ -66,7 +66,8 @@
     "kind": "Kind",
     "kinds": {
       "task": "Task",
-      "product": "Product"
+      "product": "Product",
+      "meeting": "Meeting"
     },
     "type": "Product type",
     "types": "Product types",
@@ -132,6 +133,38 @@
       "owner": "The owner must be a member of the project.",
       "type_unavailable": "This product type is not available.",
       "required": "Choose the product type, owner, start date and due date."
+    },
+    "icon": "Icon"
+  },
+  "meeting": {
+    "start": "Start",
+    "end": "End",
+    "participants": "Participants",
+    "organizer": "Organizer",
+    "location": "Place or link",
+    "outcome": "Outcome",
+    "outcome_placeholder": "Write down what was decided",
+    "meetings": "Meetings",
+    "make_meeting": "Make a meeting",
+    "reschedule": "Reschedule",
+    "create_task": "Create a task",
+    "create_task_hint": "The task gets the same product and a link to the meeting.",
+    "task_created": "The task has been created.",
+    "delete_hint": "Participants are not told about a deletion. To tell them, cancel the meeting first.",
+    "invited": "invited you to the meeting",
+    "rescheduled": "rescheduled the meeting",
+    "history": {
+      "participants": "Participants",
+      "meeting_time": "Meeting time",
+      "location": "Place or link",
+      "organizer": "Organizer",
+      "outcome": "Outcome changed"
+    },
+    "errors": {
+      "has_items": "A work item with sub-work items cannot become a meeting.",
+      "parent": "Only a product can be the parent of a meeting.",
+      "time": "The meeting needs a start and an end after it.",
+      "people": "Only people who see the meeting can take part in it."
     }
   }
 }

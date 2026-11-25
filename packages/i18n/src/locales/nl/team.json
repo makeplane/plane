@@ -66,7 +66,8 @@
     "kind": "Soort",
     "kinds": {
       "task": "Taak",
-      "product": "Product"
+      "product": "Product",
+      "meeting": "Vergadering"
     },
     "type": "Producttype",
     "types": "Producttypen",
@@ -132,6 +133,38 @@
       "owner": "De verantwoordelijke moet projectlid zijn.",
       "type_unavailable": "Dit producttype is niet beschikbaar.",
       "required": "Kies het producttype, de verantwoordelijke, de startdatum en de einddatum."
+    },
+    "icon": "Pictogram"
+  },
+  "meeting": {
+    "start": "Begin",
+    "end": "Einde",
+    "participants": "Deelnemers",
+    "organizer": "Organisator",
+    "location": "Plaats of link",
+    "outcome": "Uitkomst",
+    "outcome_placeholder": "Noteer wat er is besloten",
+    "meetings": "Vergaderingen",
+    "make_meeting": "Vergadering van maken",
+    "reschedule": "Verzetten",
+    "create_task": "Taak aanmaken",
+    "create_task_hint": "De taak krijgt hetzelfde product en een link naar de vergadering.",
+    "task_created": "De taak is aangemaakt.",
+    "delete_hint": "Deelnemers krijgen geen bericht over verwijdering. Annuleer de vergadering eerst om ze te informeren.",
+    "invited": "heeft je uitgenodigd voor de vergadering",
+    "rescheduled": "heeft de vergadering verzet",
+    "history": {
+      "participants": "Deelnemers",
+      "meeting_time": "Tijd van de vergadering",
+      "location": "Plaats of link",
+      "organizer": "Organisator",
+      "outcome": "Uitkomst gewijzigd"
+    },
+    "errors": {
+      "has_items": "Een item met subitems kan geen vergadering worden.",
+      "parent": "Alleen een product kan boven een vergadering staan.",
+      "time": "De vergadering heeft een begin en een later einde nodig.",
+      "people": "Alleen wie de vergadering ziet, kan deelnemen."
     }
   }
 }

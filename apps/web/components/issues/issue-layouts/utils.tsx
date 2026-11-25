@@ -282,6 +282,12 @@ const getKindColumns = (): IGroupByColumn[] => [
     payload: {},
   },
   {
+    id: "meeting",
+    name: i18nInstance.t("product.kinds.meeting"),
+    icon: <CalendarOutline className="size-3.5" />,
+    payload: {},
+  },
+  {
     id: "None",
     name: i18nInstance.t("product.kinds.task"),
     icon: <WorkItemsOutline className="size-3.5" />,

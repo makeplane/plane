@@ -66,7 +66,8 @@
     "kind": "Druh",
     "kinds": {
       "task": "Úloha",
-      "product": "Produkt"
+      "product": "Produkt",
+      "meeting": "Stretnutie"
     },
     "type": "Typ produktu",
     "types": "Typy produktov",
@@ -132,6 +133,38 @@
       "owner": "Zodpovedná osoba musí byť členom projektu.",
       "type_unavailable": "Tento typ produktu nie je dostupný.",
       "required": "Vyberte typ produktu, zodpovednú osobu, dátum začiatku a termín."
+    },
+    "icon": "Ikona"
+  },
+  "meeting": {
+    "start": "Začiatok",
+    "end": "Koniec",
+    "participants": "Účastníci",
+    "organizer": "Organizátor",
+    "location": "Miesto alebo odkaz",
+    "outcome": "Závery",
+    "outcome_placeholder": "Zapíšte, čo sa rozhodlo",
+    "meetings": "Stretnutia",
+    "make_meeting": "Zmeniť na stretnutie",
+    "reschedule": "Presunúť",
+    "create_task": "Vytvoriť úlohu",
+    "create_task_hint": "Úloha získa rovnaký produkt a odkaz na stretnutie.",
+    "task_created": "Úloha bola vytvorená.",
+    "delete_hint": "O odstránení sa účastníci nedozvedia. Ak ich chcete upozorniť, najprv stretnutie zrušte.",
+    "invited": "vás pozýva na stretnutie",
+    "rescheduled": "presúva stretnutie",
+    "history": {
+      "participants": "Účastníci",
+      "meeting_time": "Čas stretnutia",
+      "location": "Miesto alebo odkaz",
+      "organizer": "Organizátor",
+      "outcome": "Závery zmenené"
+    },
+    "errors": {
+      "has_items": "Položka s podpoložkami sa nemôže stať stretnutím.",
+      "parent": "Nadradenou položkou stretnutia môže byť iba produkt.",
+      "time": "Stretnutie potrebuje začiatok a neskorší koniec.",
+      "people": "Zúčastniť sa môžu iba ľudia, ktorí stretnutie vidia."
     }
   }
 }

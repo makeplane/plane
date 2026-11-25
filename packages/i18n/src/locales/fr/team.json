@@ -66,7 +66,8 @@
     "kind": "Nature",
     "kinds": {
       "task": "Tâche",
-      "product": "Produit"
+      "product": "Produit",
+      "meeting": "Réunion"
     },
     "type": "Type de produit",
     "types": "Types de produits",
@@ -132,6 +133,38 @@
       "owner": "Le responsable doit être membre du projet.",
       "type_unavailable": "Ce type de produit n’est pas disponible.",
       "required": "Choisissez le type de produit, le responsable, la date de début et la date d’échéance."
+    },
+    "icon": "Icône"
+  },
+  "meeting": {
+    "start": "Début",
+    "end": "Fin",
+    "participants": "Participants",
+    "organizer": "Organisateur",
+    "location": "Lieu ou lien",
+    "outcome": "Compte rendu",
+    "outcome_placeholder": "Notez ce qui a été décidé",
+    "meetings": "Réunions",
+    "make_meeting": "Convertir en réunion",
+    "reschedule": "Reporter",
+    "create_task": "Créer une tâche",
+    "create_task_hint": "La tâche reçoit le même produit et un lien vers la réunion.",
+    "task_created": "La tâche a été créée.",
+    "delete_hint": "Les participants ne sont pas informés d’une suppression. Pour les prévenir, annulez d’abord la réunion.",
+    "invited": "vous a invité à la réunion",
+    "rescheduled": "a reporté la réunion",
+    "history": {
+      "participants": "Participants",
+      "meeting_time": "Heure de la réunion",
+      "location": "Lieu ou lien",
+      "organizer": "Organisateur",
+      "outcome": "Compte rendu modifié"
+    },
+    "errors": {
+      "has_items": "Un élément avec des sous-éléments ne peut pas devenir une réunion.",
+      "parent": "Seul un produit peut être le parent d’une réunion.",
+      "time": "La réunion a besoin d’un début et d’une fin postérieure.",
+      "people": "Seules les personnes qui voient la réunion peuvent y participer."
     }
   }
 }

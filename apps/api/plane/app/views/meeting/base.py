@@ -9,6 +9,7 @@ from datetime import timedelta
 # Django imports
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
@@ -26,6 +27,7 @@ from plane.db.models import Issue, IssueRelation, Project, ProjectMember
 from plane.db.models.issue import IssueRelationChoices
 from plane.utils.host import base_host
 from plane.utils.meetings import list_meetings
+from plane.utils.uuid import is_valid_uuid
 
 MAX_PERIOD = timedelta(days=62)
 
@@ -39,16 +41,23 @@ def parse_moment(value):
 
 
 class ProjectMeetingListEndpoint(BaseAPIView):
-    """Meetings for the calendar of a project."""
+    """Meetings of a project in a period, or about a product."""
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def get(self, request, slug, project_id):
+        product_id = request.GET.get("parent_id")
         start, end = parse_moment(request.GET.get("from")), parse_moment(request.GET.get("to"))
-        if start is None or end is None or not start < end or end - start > MAX_PERIOD:
+        if product_id:
+            if not is_valid_uuid(product_id):
+                return Response({"error": "parent_id is not valid"}, status=status.HTTP_400_BAD_REQUEST)
+            conditions = Q(parent_id=product_id)
+        elif start is None or end is None or not start < end or end - start > MAX_PERIOD:
             return Response(
                 {"error": "from and to must be times with a timezone, at most 62 days apart"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+        else:
+            conditions = Q(meeting_detail__start_at__lt=end, meeting_detail__end_at__gt=start)
         project = get_object_or_404(Project, pk=project_id, workspace__slug=slug)
         restricted_guest = (
             not project.guest_view_all_features
@@ -57,7 +66,7 @@ class ProjectMeetingListEndpoint(BaseAPIView):
             ).exists()
         )
         return Response(
-            list_meetings(project_id, start, end, request.user, restricted_guest), status=status.HTTP_200_OK
+            list_meetings(project_id, conditions, request.user, restricted_guest), status=status.HTTP_200_OK
         )
 
 

@@ -66,7 +66,8 @@
     "kind": "類別",
     "kinds": {
       "task": "任務",
-      "product": "產品"
+      "product": "產品",
+      "meeting": "會議"
     },
     "type": "產品類型",
     "types": "產品類型",
@@ -132,6 +133,38 @@
       "owner": "負責人必須是專案成員。",
       "type_unavailable": "此產品類型無法使用。",
       "required": "請選擇產品類型、負責人、開始日期和截止日期。"
+    },
+    "icon": "圖示"
+  },
+  "meeting": {
+    "start": "開始",
+    "end": "結束",
+    "participants": "參與者",
+    "organizer": "主辦者",
+    "location": "地點或連結",
+    "outcome": "結論",
+    "outcome_placeholder": "記錄會議決定",
+    "meetings": "會議",
+    "make_meeting": "轉為會議",
+    "reschedule": "改期",
+    "create_task": "建立任務",
+    "create_task_hint": "任務將關聯同一產品和該會議。",
+    "task_created": "任務已建立。",
+    "delete_hint": "刪除不會通知參與者。如需通知，請先取消會議。",
+    "invited": "邀請您參加會議",
+    "rescheduled": "更改了會議時間",
+    "history": {
+      "participants": "參與者",
+      "meeting_time": "會議時間",
+      "location": "地點或連結",
+      "organizer": "主辦者",
+      "outcome": "結論已變更"
+    },
+    "errors": {
+      "has_items": "含有子項的工作項不能轉為會議。",
+      "parent": "會議的父級只能是產品。",
+      "time": "會議需要開始時間和晚於它的結束時間。",
+      "people": "只有能看到會議的人才能參加。"
     }
   }
 }

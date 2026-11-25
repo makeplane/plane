@@ -51,6 +51,7 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
   const { t } = useTranslation();
   // store hooks
   const {
+    issue: { getIssueById },
     subIssues: {
       subIssuesByIssueId,
       filters: { getSubIssueFilters, getGroupedSubWorkItems, getFilteredSubWorkItems, resetFilters },
@@ -75,12 +76,12 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
     (groupId: string) => {
       if (isRootLevel) {
         const groupedSubIssues = getGroupedSubWorkItems(rootIssueId);
-        return groupedSubIssues?.[groupId] ?? [];
+        return groupedSubIssues?.[groupId]?.filter((id) => getIssueById(id)?.kind !== "meeting") ?? [];
       }
       const subIssueIds = subIssuesByIssueId(parentIssueId);
       return subIssueIds ?? [];
     },
-    [isRootLevel, subIssuesByIssueId, rootIssueId, getGroupedSubWorkItems, parentIssueId]
+    [getIssueById, isRootLevel, subIssuesByIssueId, rootIssueId, getGroupedSubWorkItems, parentIssueId]
   );
 
   const isSubWorkItems = issueServiceType === EIssueServiceType.ISSUES;

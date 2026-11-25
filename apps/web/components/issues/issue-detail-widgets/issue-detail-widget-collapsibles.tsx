@@ -8,6 +8,8 @@ import React from "react";
 import { observer } from "mobx-react";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+// components
+import { ProductMeetings } from "@/components/meetings/product-meetings";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useTimeLineRelationOptions } from "@/components/relations";
@@ -37,7 +39,9 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
   } = useIssueDetail(issueServiceType);
   // derived values
   const issue = getIssueById(issueId);
-  const subIssues = subIssuesByIssueId(issueId);
+  const isProduct = issue?.kind === "product";
+  // the meetings of a product have a block of their own
+  const subIssues = subIssuesByIssueId(issueId)?.filter((id) => !isProduct || getIssueById(id)?.kind !== "meeting");
   const ISSUE_RELATION_OPTIONS = useTimeLineRelationOptions();
   const issueRelationsCount = getRelationCountByIssueId(issueId, ISSUE_RELATION_OPTIONS);
   // render conditions
@@ -61,6 +65,7 @@ export const IssueDetailWidgetCollapsibles = observer(function IssueDetailWidget
           issueServiceType={issueServiceType}
         />
       )}
+      {isProduct && <ProductMeetings workspaceSlug={workspaceSlug} projectId={projectId} productId={issueId} />}
       {shouldRenderRelations && (
         <RelationsCollapsible
           workspaceSlug={workspaceSlug}

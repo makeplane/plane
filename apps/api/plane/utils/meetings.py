@@ -193,15 +193,13 @@ def represent_meeting(issue, with_participants=True):
     return data
 
 
-def list_meetings(project_id, start, end, user, restricted_guest):
-    """Meetings of a project that overlap the period."""
+def list_meetings(project_id, conditions, user, restricted_guest):
+    """Meetings of a project in the order of their start."""
     meetings = Issue.issue_objects.filter(
         project_id=project_id,
         type__kind="meeting",
         meeting_detail__deleted_at__isnull=True,
-        meeting_detail__start_at__lt=end,
-        meeting_detail__end_at__gt=start,
-    )
+    ).filter(conditions)
     if restricted_guest:
         meetings = meetings.filter(created_by=user)
     rows = meetings.order_by("meeting_detail__start_at", "sequence_id").values(

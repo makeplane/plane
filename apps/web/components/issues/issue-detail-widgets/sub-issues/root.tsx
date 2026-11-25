@@ -39,7 +39,7 @@ export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props
   } = useIssueDetail(issueServiceType);
   // derived values
   const isCollapsibleOpen = openWidgets.includes("sub-work-items");
-  const subIssuesCount = subIssuesByIssueId(issueId)?.length ?? 0;
+  const subIssuesCount = subIssuesByIssueId(issueId)?.filter((id) => getIssueById(id)?.kind !== "meeting").length ?? 0;
 
   return (
     <EntityDetailWidgetSection

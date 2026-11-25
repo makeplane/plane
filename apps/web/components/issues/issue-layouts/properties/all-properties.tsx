@@ -51,6 +51,7 @@ import { MemberSelect } from "@/components/dropdowns/member/member-select";
 import { ModuleSelect } from "@/components/dropdowns/module/module-select";
 import { PrioritySelect } from "@/components/dropdowns/priority/priority-select";
 import { StateSelect } from "@/components/dropdowns/state/state-select";
+import { isTask } from "@/components/products/helper";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useEstimate } from "@/hooks/store/estimates/use-estimate";
@@ -348,7 +349,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   }
 
   // start date
-  if (isShown("start_date") && !isDateRangeEnabled) {
+  if (issue.kind !== "meeting" && isShown("start_date") && !isDateRangeEnabled) {
     const renderStartDate = (extra: TDatePropertyEditorProps) => (
       <DateSelect
         value={getDate(issue.start_date) ?? null}
@@ -379,7 +380,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   }
 
   // target/due date
-  if (isShown("due_date") && !isDateRangeEnabled) {
+  if (issue.kind !== "meeting" && isShown("due_date") && !isDateRangeEnabled) {
     const renderDueDate = (extra: TDatePropertyEditorProps) => (
       <DateSelect
         value={getDate(issue?.target_date) ?? null}
@@ -451,7 +452,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
     });
   }
 
-  if (!isEpic && issue.kind !== "product") {
+  if (!isEpic && isTask(issue)) {
     // modules
     if (projectDetails?.module_view && isShown("modules")) {
       const moduleIds = issue.module_ids ?? [];
@@ -511,12 +512,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   }
 
   // estimates
-  if (
-    issue.kind !== "product" &&
-    projectId &&
-    areEstimateEnabledByProjectId(projectId?.toString()) &&
-    isShown("estimate")
-  ) {
+  if (isTask(issue) && projectId && areEstimateEnabledByProjectId(projectId?.toString()) && isShown("estimate")) {
     const renderEstimate = (extra: TPropertyEditorProps) => (
       <EstimateSelect
         value={issue.estimate_point ?? undefined}

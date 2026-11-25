@@ -323,13 +323,13 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         kinds: [
           { key: "task", title: t("product.kinds.task") },
           { key: "product", title: t("product.kinds.product") },
+          { key: "meeting", title: t("product.kinds.meeting") },
         ],
-        getOptionIcon: (kind) =>
-          kind === "product" ? (
-            <CubeOutline className="size-3.5 flex-shrink-0" />
-          ) : (
-            <WorkItemsOutline className="size-3.5 flex-shrink-0" />
-          ),
+        getOptionIcon: (kind) => {
+          if (kind === "task") return <WorkItemsOutline className="size-3.5 flex-shrink-0" />;
+          const Glyph = kind === "product" ? CubeOutline : CalendarOutline;
+          return <Glyph className="size-3.5 flex-shrink-0" />;
+        },
         ...operatorConfigs,
       }),
     [isFilterEnabled, areProductsEnabled, operatorConfigs, t]

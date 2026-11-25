@@ -5,11 +5,13 @@
  */
 
 import { observer } from "mobx-react";
+import { useParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
 import type { TIssue, TPaginationData } from "@plane/types";
 // components
 import { renderFormattedPayloadDate } from "@plane/utils";
 // helpers
+import { CalendarDayMeetings } from "@/components/meetings/calendar";
 import { useIssuesStore } from "@/hooks/use-issue-layout-store";
 import type { TRenderQuickActions } from "../list/list-view-types";
 import { CalendarIssueBlockRoot } from "./issue-block-root";
@@ -52,6 +54,7 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
   } = props;
   const formattedDatePayload = renderFormattedPayloadDate(date);
   const { t } = useTranslation();
+  const { workspaceSlug } = useParams();
 
   const {
     issues: { getGroupIssueCount, getPaginationData, getIssueLoader },
@@ -70,6 +73,7 @@ export const CalendarIssueBlocks = observer(function CalendarIssueBlocks(props: 
 
   return (
     <>
+      <CalendarDayMeetings workspaceSlug={workspaceSlug?.toString()} date={formattedDatePayload} />
       {issueIdList?.map((issueId) => (
         <div key={issueId} className="relative cursor-pointer p-1 px-2">
           <CalendarIssueBlockRoot

@@ -123,6 +123,9 @@ export const DeleteIssueModal = observer(function DeleteIssueModal(props: Props)
             {projectDetails?.identifier}-{issue?.sequence_id}
           </span>
           {` ? All of the data related to the ${isEpic ? "epic" : "work item"} will be permanently removed. This action cannot be undone.`}
+          {issue && "kind" in issue && issue.kind === "meeting" && (
+            <span className="mt-2 block">{t("meeting.delete_hint")}</span>
+          )}
           {issue && "kind" in issue && issue.kind === "product" && (
             <span className="mt-2 block">{t("product.delete_keeps_items")}</span>
           )}

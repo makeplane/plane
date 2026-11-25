@@ -66,7 +66,8 @@
     "kind": "Druh",
     "kinds": {
       "task": "Úkol",
-      "product": "Produkt"
+      "product": "Produkt",
+      "meeting": "Schůzka"
     },
     "type": "Typ produktu",
     "types": "Typy produktů",
@@ -132,6 +133,38 @@
       "owner": "Odpovědná osoba musí být členem projektu.",
       "type_unavailable": "Tento typ produktu není dostupný.",
       "required": "Vyberte typ produktu, odpovědnou osobu, datum zahájení a termín."
+    },
+    "icon": "Ikona"
+  },
+  "meeting": {
+    "start": "Začátek",
+    "end": "Konec",
+    "participants": "Účastníci",
+    "organizer": "Organizátor",
+    "location": "Místo nebo odkaz",
+    "outcome": "Závěry",
+    "outcome_placeholder": "Zapište, co se rozhodlo",
+    "meetings": "Schůzky",
+    "make_meeting": "Změnit na schůzku",
+    "reschedule": "Přesunout",
+    "create_task": "Vytvořit úkol",
+    "create_task_hint": "Úkol získá stejný produkt a odkaz na schůzku.",
+    "task_created": "Úkol byl vytvořen.",
+    "delete_hint": "O smazání se účastníci nedozví. Chcete-li je upozornit, nejprve schůzku zrušte.",
+    "invited": "vás zve na schůzku",
+    "rescheduled": "přesouvá schůzku",
+    "history": {
+      "participants": "Účastníci",
+      "meeting_time": "Čas schůzky",
+      "location": "Místo nebo odkaz",
+      "organizer": "Organizátor",
+      "outcome": "Závěry změněny"
+    },
+    "errors": {
+      "has_items": "Položka s podpoložkami se nemůže stát schůzkou.",
+      "parent": "Nadřazenou položkou schůzky může být jen produkt.",
+      "time": "Schůzka potřebuje začátek a pozdější konec.",
+      "people": "Účastnit se mohou jen lidé, kteří schůzku vidí."
     }
   }
 }

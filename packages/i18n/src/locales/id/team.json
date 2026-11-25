@@ -66,7 +66,8 @@
     "kind": "Bentuk",
     "kinds": {
       "task": "Tugas",
-      "product": "Produk"
+      "product": "Produk",
+      "meeting": "Rapat"
     },
     "type": "Jenis produk",
     "types": "Jenis produk",
@@ -132,6 +133,38 @@
       "owner": "Penanggung jawab harus anggota proyek.",
       "type_unavailable": "Jenis produk ini tidak tersedia.",
       "required": "Pilih jenis produk, penanggung jawab, tanggal mulai, dan tenggat."
+    },
+    "icon": "Ikon"
+  },
+  "meeting": {
+    "start": "Mulai",
+    "end": "Selesai",
+    "participants": "Peserta",
+    "organizer": "Penyelenggara",
+    "location": "Tempat atau tautan",
+    "outcome": "Hasil",
+    "outcome_placeholder": "Catat apa yang diputuskan",
+    "meetings": "Rapat",
+    "make_meeting": "Jadikan rapat",
+    "reschedule": "Jadwalkan ulang",
+    "create_task": "Buat tugas",
+    "create_task_hint": "Tugas mendapat produk yang sama dan tautan ke rapat.",
+    "task_created": "Tugas telah dibuat.",
+    "delete_hint": "Peserta tidak diberi tahu tentang penghapusan. Untuk memberi tahu mereka, batalkan rapat dahulu.",
+    "invited": "mengundang Anda ke rapat",
+    "rescheduled": "menjadwalkan ulang rapat",
+    "history": {
+      "participants": "Peserta",
+      "meeting_time": "Waktu rapat",
+      "location": "Tempat atau tautan",
+      "organizer": "Penyelenggara",
+      "outcome": "Hasil diubah"
+    },
+    "errors": {
+      "has_items": "Item dengan subitem tidak dapat menjadi rapat.",
+      "parent": "Hanya produk yang dapat menjadi induk rapat.",
+      "time": "Rapat memerlukan waktu mulai dan waktu selesai setelahnya.",
+      "people": "Hanya orang yang melihat rapat yang dapat ikut serta."
     }
   }
 }

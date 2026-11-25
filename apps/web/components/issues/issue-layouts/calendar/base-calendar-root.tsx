@@ -1,3 +1,4 @@
+// oxlint-disable react-hooks/exhaustive-deps
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -13,6 +14,8 @@ import { EIssueGroupByToServerOptions, EUserPermissions, EUserPermissionsLevel }
 import { setToast } from "@plane/blocks/toast";
 import type { TGroupedIssues } from "@plane/types";
 import { EIssuesStoreType } from "@plane/types";
+// components
+import { areMeetingsShown, CalendarMeetingsProvider } from "@/components/meetings/calendar";
 // hooks
 import { useCalendarView } from "@/hooks/store/use-calendar-view";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -53,7 +56,7 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
   } = props;
 
   // router
-  const { workspaceSlug } = useParams();
+  const { workspaceSlug, projectId: routeProjectId } = useParams();
 
   // hooks
   const fallbackStoreType = useIssueStoreType() as CalendarStoreType;
@@ -157,40 +160,50 @@ export const BaseCalendarRoot = observer(function BaseCalendarRoot(props: IBaseC
 
   return (
     <>
-      <div className="h-full w-full overflow-hidden bg-surface-1 pt-4">
-        <CalendarChart
-          issuesFilterStore={issuesFilter}
-          issues={issueMap}
-          groupedIssueIds={groupedIssueIds}
-          layout={displayFilters?.calendar?.layout}
-          showWeekends={displayFilters?.calendar?.show_weekends ?? false}
-          issueCalendarView={issueCalendarView}
-          quickActions={({ issue, parentRef, customActionButton, placement }) => (
-            <QuickActions
-              parentRef={parentRef}
-              customActionButton={customActionButton}
-              issue={issue}
-              handleDelete={async () => removeIssue(issue.project_id, issue.id)}
-              handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
-              handleRemoveFromView={async () => removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)}
-              handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
-              handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
-              readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
-              placements={placement}
-            />
-          )}
-          loadMoreIssues={loadMoreIssues}
-          getPaginationData={getPaginationData}
-          getGroupIssueCount={getGroupIssueCount}
-          addIssuesToView={addIssuesToView}
-          quickAddCallback={quickAddIssue}
-          readOnly={isCompletedCycle}
-          updateFilters={updateFilters}
-          handleDragAndDrop={handleDragAndDrop}
-          canEditProperties={canEditProperties}
-          isEpic={isEpic}
-        />
-      </div>
+      <CalendarMeetingsProvider
+        workspaceSlug={workspaceSlug?.toString()}
+        projectId={routeProjectId?.toString()}
+        startDate={startDate}
+        endDate={endDate}
+        isShown={storeType === EIssuesStoreType.PROJECT && areMeetingsShown(issuesFilter.issueFilters?.richFilters)}
+      >
+        <div className="h-full w-full overflow-hidden bg-surface-1 pt-4">
+          <CalendarChart
+            issuesFilterStore={issuesFilter}
+            issues={issueMap}
+            groupedIssueIds={groupedIssueIds}
+            layout={displayFilters?.calendar?.layout}
+            showWeekends={displayFilters?.calendar?.show_weekends ?? false}
+            issueCalendarView={issueCalendarView}
+            quickActions={({ issue, parentRef, customActionButton, placement }) => (
+              <QuickActions
+                parentRef={parentRef}
+                customActionButton={customActionButton}
+                issue={issue}
+                handleDelete={async () => removeIssue(issue.project_id, issue.id)}
+                handleUpdate={async (data) => updateIssue && updateIssue(issue.project_id, issue.id, data)}
+                handleRemoveFromView={async () =>
+                  removeIssueFromView && removeIssueFromView(issue.project_id, issue.id)
+                }
+                handleArchive={async () => archiveIssue && archiveIssue(issue.project_id, issue.id)}
+                handleRestore={async () => restoreIssue && restoreIssue(issue.project_id, issue.id)}
+                readOnly={!canEditProperties(issue.project_id ?? undefined) || isCompletedCycle}
+                placements={placement}
+              />
+            )}
+            loadMoreIssues={loadMoreIssues}
+            getPaginationData={getPaginationData}
+            getGroupIssueCount={getGroupIssueCount}
+            addIssuesToView={addIssuesToView}
+            quickAddCallback={quickAddIssue}
+            readOnly={isCompletedCycle}
+            updateFilters={updateFilters}
+            handleDragAndDrop={handleDragAndDrop}
+            canEditProperties={canEditProperties}
+            isEpic={isEpic}
+          />
+        </div>
+      </CalendarMeetingsProvider>
     </>
   );
 });

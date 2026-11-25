@@ -14,6 +14,7 @@ import type { TNameDescriptionLoader } from "@plane/types";
 // components
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
+import { MeetingOutcome } from "@/components/meetings/outcome";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -146,6 +147,16 @@ export const PeekOverviewIssueDetails = observer(function PeekOverviewIssueDetai
           workspaceSlug={workspaceSlug}
         />
       </DescriptionOverflow>
+
+      {issue.kind === "meeting" && (
+        <MeetingOutcome
+          key={issueId}
+          workspaceSlug={workspaceSlug}
+          projectId={issue.project_id}
+          issueId={issueId}
+          disabled={disabled || isArchived}
+        />
+      )}
 
       <div className="flex items-center justify-between gap-2">
         {currentUser && (

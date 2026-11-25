@@ -16,7 +16,7 @@ import { CalendarOutline, ParentOutline } from "@makeplane/propel/icons";
 import { ETabIndices } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 // types
-import type { ISearchIssueResponse, TIssue } from "@plane/types";
+import type { ISearchIssueResponse, TIssue, TWorkItemKind } from "@plane/types";
 // ui
 import { DateSelect } from "@plane/blocks/property-select";
 import { getDate, renderFormattedPayloadDate, getTabIndex } from "@plane/utils";
@@ -30,6 +30,8 @@ import { PrioritySelect } from "@/components/dropdowns/priority/priority-select"
 import { StateSelect } from "@/components/dropdowns/state/state-select";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { MeetingFormFields } from "@/components/meetings/form-fields";
+import { MeetingProductSelect } from "@/components/meetings/product-select";
 import { ProductFormFields } from "@/components/products/form-fields";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
@@ -48,7 +50,7 @@ type TIssueDefaultPropertiesProps = {
   targetDate: string | null;
   parentId: string | null;
   isDraft: boolean;
-  isProduct?: boolean;
+  kind?: TWorkItemKind;
   handleFormChange: () => void;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
@@ -64,7 +66,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
     targetDate,
     parentId,
     isDraft,
-    isProduct = false,
+    kind = "task",
     handleFormChange,
     setSelectedParentIssue,
   } = props;
@@ -78,6 +80,8 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
   const { isMobile } = usePlatformOS();
   const { data: userProfile } = useUserProfile();
   // derived values
+  const isProduct = kind === "product";
+  const isMeeting = kind === "meeting";
   const projectDetails = getProjectById(projectId);
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
@@ -90,6 +94,41 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      {isMeeting && !id && (
+        <>
+          <Controller
+            control={control}
+            name="meeting"
+            render={({ field: { value, onChange } }) => (
+              <MeetingFormFields
+                projectId={projectId}
+                value={value ?? {}}
+                onChange={(meeting) => {
+                  onChange(meeting);
+                  handleFormChange();
+                }}
+              />
+            )}
+          />
+          {projectId && (
+            <Controller
+              control={control}
+              name="parent_id"
+              render={({ field: { value, onChange } }) => (
+                <MeetingProductSelect
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  value={value}
+                  onChange={(productId) => {
+                    onChange(productId);
+                    handleFormChange();
+                  }}
+                />
+              )}
+            />
+          )}
+        </>
+      )}
       {isProduct && !id && (
         <Controller
           control={control}
@@ -179,49 +218,53 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           />
         )}
       />
-      <Controller
-        control={control}
-        name="start_date"
-        render={({ field: { value, onChange } }) => (
-          <DateSelect
-            value={getDate(value) ?? null}
-            onChange={(date) => {
-              onChange(date ? renderFormattedPayloadDate(date) : null);
-              handleFormChange();
-            }}
-            maxDate={maxDate ?? undefined}
-            placeholder={t("start_date")}
-            icon={<CalendarOutline />}
-            weekStartsOn={userProfile?.start_of_the_week}
-            clearable
-            tabIndex={getIndex("start_date")}
-            variant="pill-md"
-            testId="create-work-item-start-date-select"
+      {!isMeeting && (
+        <>
+          <Controller
+            control={control}
+            name="start_date"
+            render={({ field: { value, onChange } }) => (
+              <DateSelect
+                value={getDate(value) ?? null}
+                onChange={(date) => {
+                  onChange(date ? renderFormattedPayloadDate(date) : null);
+                  handleFormChange();
+                }}
+                maxDate={maxDate ?? undefined}
+                placeholder={t("start_date")}
+                icon={<CalendarOutline />}
+                weekStartsOn={userProfile?.start_of_the_week}
+                clearable
+                tabIndex={getIndex("start_date")}
+                variant="pill-md"
+                testId="create-work-item-start-date-select"
+              />
+            )}
           />
-        )}
-      />
-      <Controller
-        control={control}
-        name="target_date"
-        render={({ field: { value, onChange } }) => (
-          <DateSelect
-            value={getDate(value) ?? null}
-            onChange={(date) => {
-              onChange(date ? renderFormattedPayloadDate(date) : null);
-              handleFormChange();
-            }}
-            minDate={minDate ?? undefined}
-            placeholder={t("due_date")}
-            icon={<CalendarOutline />}
-            weekStartsOn={userProfile?.start_of_the_week}
-            clearable
-            tabIndex={getIndex("target_date")}
-            variant="pill-md"
-            testId="create-work-item-due-date-select"
+          <Controller
+            control={control}
+            name="target_date"
+            render={({ field: { value, onChange } }) => (
+              <DateSelect
+                value={getDate(value) ?? null}
+                onChange={(date) => {
+                  onChange(date ? renderFormattedPayloadDate(date) : null);
+                  handleFormChange();
+                }}
+                minDate={minDate ?? undefined}
+                placeholder={t("due_date")}
+                icon={<CalendarOutline />}
+                weekStartsOn={userProfile?.start_of_the_week}
+                clearable
+                tabIndex={getIndex("target_date")}
+                variant="pill-md"
+                testId="create-work-item-due-date-select"
+              />
+            )}
           />
-        )}
-      />
-      {!isProduct && projectDetails?.cycle_view && projectId && (
+        </>
+      )}
+      {kind === "task" && projectDetails?.cycle_view && projectId && (
         <Controller
           control={control}
           name="cycle_id"
@@ -241,7 +284,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           )}
         />
       )}
-      {!isProduct && projectDetails?.module_view && workspaceSlug && projectId && (
+      {kind === "task" && projectDetails?.module_view && workspaceSlug && projectId && (
         <Controller
           control={control}
           name="module_ids"
@@ -261,7 +304,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           )}
         />
       )}
-      {!isProduct && projectId && areEstimateEnabledByProjectId(projectId) && (
+      {kind === "task" && projectId && areEstimateEnabledByProjectId(projectId) && (
         <Controller
           control={control}
           name="estimate_point"
@@ -280,7 +323,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           )}
         />
       )}
-      {isProduct ? null : parentId ? (
+      {kind !== "task" ? null : parentId ? (
         <Menu>
           <MenuTrigger
             tabIndex={getIndex("parent_id")}

@@ -43,6 +43,7 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
+import { defaultMeetingTime, isMeetingTimeValid } from "@/components/meetings/time";
 import { isProductComplete } from "@/components/products/helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
@@ -50,6 +51,7 @@ import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
 import { useTeam } from "@/hooks/store/use-team";
+import { useUser } from "@/hooks/store/user";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
@@ -130,6 +132,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     handleTemplateChange,
   } = useIssueModal();
   const { isEnabled: areProductsEnabled } = useTeam();
+  const { data: currentUser } = useUser();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
 
@@ -159,20 +162,39 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
   const isDisabled = isSubmitting || isApplyingTemplate;
 
-  const isProduct = watch("kind") === "product";
+  const kind = watch("kind") ?? "task";
+  const isProduct = kind === "product";
+  const isMeeting = kind === "meeting";
   // the kind of an existing work item is changed on its page
   const canChooseKind = areProductsEnabled && !isDraft && !data?.id;
 
-  const handleKindChange = (kind: TWorkItemKind) => {
-    setValue("kind", kind, { shouldDirty: true });
-    if (kind === "product") {
-      // a product has none of these
-      setValue("parent_id", null);
+  const parentIssueId = watch("parent_id");
+  const isProductParent = !!parentIssueId && getIssueById(parentIssueId)?.kind === "product";
+
+  const handleKindChange = (newKind: TWorkItemKind) => {
+    if (newKind === kind) return;
+    setValue("kind", newKind, { shouldDirty: true });
+    setValue("product", undefined);
+    setValue("meeting", newKind === "meeting" ? { ...defaultMeetingTime(), organizer_id: currentUser?.id } : undefined);
+    if (newKind !== "task") {
+      // neither a product nor a meeting has these
       setValue("cycle_id", null);
       setValue("module_ids", null);
       setValue("estimate_point", null);
+    }
+    if (newKind === "meeting") {
+      setValue("start_date", null);
+      setValue("target_date", null);
+    }
+    // a meeting keeps only a product as the parent, which is chosen anew
+    if (
+      newKind === "product" ||
+      (newKind === "meeting" && !isProductParent) ||
+      (kind === "meeting" && !isProductParent)
+    ) {
+      setValue("parent_id", null);
       setSelectedParentIssue(null);
-    } else setValue("product", undefined);
+    }
     handleFormChange();
   };
 
@@ -241,6 +263,11 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
 
     if (!data?.id && isProduct && !isProductComplete(formData.product, getValues())) {
       setToast({ type: "error", title: t("error"), message: t("product.errors.required") });
+      return;
+    }
+
+    if (!data?.id && isMeeting && !isMeetingTimeValid(formData.meeting)) {
+      setToast({ type: "error", title: t("error"), message: t("meeting.errors.time") });
       return;
     }
 
@@ -399,23 +426,23 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                   />
                   {canChooseKind && (
                     <div role="group" aria-label={t("product.kind")} className="flex items-center gap-1">
-                      {(["task", "product"] as const).map((kind) => (
+                      {(["task", "product", "meeting"] as const).map((option) => (
                         <Button
-                          key={kind}
+                          key={option}
                           type="button"
                           size="sm"
                           stretch="auto"
-                          variant={(kind === "product") === isProduct ? "secondary" : "ghost"}
-                          aria-pressed={(kind === "product") === isProduct}
-                          label={t(`product.kinds.${kind}`)}
-                          onClick={() => handleKindChange(kind)}
+                          variant={option === kind ? "secondary" : "ghost"}
+                          aria-pressed={option === kind}
+                          label={t(`product.kinds.${option}`)}
+                          onClick={() => handleKindChange(option)}
                         />
                       ))}
                     </div>
                   )}
                 </div>
               </div>
-              {watch("parent_id") && selectedParentIssue && (
+              {!isMeeting && watch("parent_id") && selectedParentIssue && (
                 <IssueParentTag
                   control={control}
                   selectedParentIssue={selectedParentIssue}
@@ -465,7 +492,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                 startDate={watch("start_date")}
                 targetDate={watch("target_date")}
                 parentId={watch("parent_id")}
-                isProduct={isProduct}
+                kind={kind}
                 isDraft={isDraft}
                 handleFormChange={handleFormChange}
                 setSelectedParentIssue={setSelectedParentIssue}

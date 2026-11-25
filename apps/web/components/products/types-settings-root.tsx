@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@makeplane/propel/components/button";
 import { Switch } from "@makeplane/propel/components/switch";
 // plane imports
+import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { ConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
@@ -83,6 +84,7 @@ export const ProductTypesSettingsRoot = observer(function ProductTypesSettingsRo
             className="size-2.5 shrink-0 rounded-full"
             style={{ backgroundColor: type.color || "var(--text-color-tertiary)" }}
           />
+          {type.logo_props?.in_use && <Logo logo={type.logo_props} size={16} type="lucide" />}
           {type.name}
         </span>
       ),

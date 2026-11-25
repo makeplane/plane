@@ -11,10 +11,13 @@ import type { IIssueDisplayProperties, TIssue } from "@plane/types";
 // constants
 import { SPREADSHEET_COLUMNS } from "../utils";
 // components
+import { isTask } from "@/components/products/helper";
 import { shouldRenderColumn } from "@/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
 const TASK_ONLY_PROPERTIES = new Set<keyof IIssueDisplayProperties>(["cycle", "modules", "estimate"]);
+
+const DATE_PROPERTIES = new Set<keyof IIssueDisplayProperties>(["start_date", "due_date"]);
 
 type Props = {
   displayProperties: IIssueDisplayProperties;
@@ -54,8 +57,12 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
         <Column
           issue={issueDetail}
           onChange={handleUpdateIssue}
-          // a product has no cycle, modules or estimate
-          disabled={disableUserActions || (issueDetail.kind === "product" && TASK_ONLY_PROPERTIES.has(property))}
+          // only a task has a cycle, modules or estimate, a meeting has no dates
+          disabled={
+            disableUserActions ||
+            (!isTask(issueDetail) && TASK_ONLY_PROPERTIES.has(property)) ||
+            (issueDetail.kind === "meeting" && DATE_PROPERTIES.has(property))
+          }
           onClose={() => tableCellRef?.current?.focus()}
         />
       </td>

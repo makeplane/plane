@@ -66,7 +66,8 @@
     "kind": "类别",
     "kinds": {
       "task": "任务",
-      "product": "产品"
+      "product": "产品",
+      "meeting": "会议"
     },
     "type": "产品类型",
     "types": "产品类型",
@@ -132,6 +133,38 @@
       "owner": "负责人必须是项目成员。",
       "type_unavailable": "此产品类型不可用。",
       "required": "请选择产品类型、负责人、开始日期和截止日期。"
+    },
+    "icon": "图标"
+  },
+  "meeting": {
+    "start": "开始",
+    "end": "结束",
+    "participants": "参与者",
+    "organizer": "组织者",
+    "location": "地点或链接",
+    "outcome": "结论",
+    "outcome_placeholder": "记录会议决定",
+    "meetings": "会议",
+    "make_meeting": "转为会议",
+    "reschedule": "改期",
+    "create_task": "创建任务",
+    "create_task_hint": "任务将关联同一产品和该会议。",
+    "task_created": "任务已创建。",
+    "delete_hint": "删除不会通知参与者。如需通知，请先取消会议。",
+    "invited": "邀请您参加会议",
+    "rescheduled": "更改了会议时间",
+    "history": {
+      "participants": "参与者",
+      "meeting_time": "会议时间",
+      "location": "地点或链接",
+      "organizer": "组织者",
+      "outcome": "结论已更改"
+    },
+    "errors": {
+      "has_items": "含有子项的工作项不能转为会议。",
+      "parent": "会议的父级只能是产品。",
+      "time": "会议需要开始时间和晚于它的结束时间。",
+      "people": "只有能看到会议的人才能参加。"
     }
   }
 }
