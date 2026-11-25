@@ -14,6 +14,7 @@ import { ConfirmDialog } from "@plane/blocks/dialog";
 import { useTranslation } from "@plane/i18n";
 // components
 import { PageHead } from "@/components/core/page-title";
+import { ProductBoardRoot } from "@/components/product-board/root";
 import { TeamProductList } from "@/components/products/product-list";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // hooks
@@ -39,8 +40,16 @@ export const TeamPage = observer(function TeamPage(props: Props) {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   // hooks
-  const { teamMap, getTeamPortfolios, canManageTeam, isWorkspaceAdmin, createPortfolio, deleteTeam, setTeamArchived } =
-    useTeam();
+  const {
+    canSeeProductBoard,
+    teamMap,
+    getTeamPortfolios,
+    canManageTeam,
+    isWorkspaceAdmin,
+    createPortfolio,
+    deleteTeam,
+    setTeamArchived,
+  } = useTeam();
   const router = useAppRouter();
   const run = useTeamAction();
   const { t } = useTranslation();
@@ -51,6 +60,7 @@ export const TeamPage = observer(function TeamPage(props: Props) {
   if (!team) return <p className="text-body-sm-regular text-tertiary">{t("team_structure.not_found")}</p>;
 
   const isManagement = team.kind === "management";
+  const isBoardShown = isManagement && !team.archived_at && canSeeProductBoard;
   const portfolios = getTeamPortfolios(teamId, canManage);
 
   const handleDelete = async () => {
@@ -94,13 +104,21 @@ export const TeamPage = observer(function TeamPage(props: Props) {
           </div>
           {team.description && <p className="text-body-sm-regular text-tertiary">{team.description}</p>}
         </div>
-        <Tabs variant="underline" defaultValue={isManagement ? "members" : "portfolios"}>
+        <Tabs variant="underline" defaultValue={isBoardShown ? "board" : isManagement ? "members" : "portfolios"}>
           <TabsList>
+            {isBoardShown && <Tab value="board" label={t("product_board.title")} />}
             {!isManagement && <Tab value="portfolios" label={t("team_structure.portfolios")} />}
             {!isManagement && <Tab value="products" label={t("product.products")} />}
             <Tab value="members" label={t("members")} />
             {canManage && <Tab value="settings" label={t("settings")} />}
           </TabsList>
+          {isBoardShown && (
+            <TabsPanel value="board">
+              <div className="h-[calc(100vh-15rem)] min-h-96 pt-4">
+                <ProductBoardRoot workspaceSlug={workspaceSlug} isEmbedded />
+              </div>
+            </TabsPanel>
+          )}
           {!isManagement && (
             <TabsPanel value="portfolios">
               <div className="space-y-4 pt-4">

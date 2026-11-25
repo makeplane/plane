@@ -22,6 +22,7 @@ import { useProductTypes } from "@/hooks/use-product-types";
 import { ProductService } from "@/services/product.service";
 // local imports
 import { ProductIndicatorBadge } from "./indicator-badge";
+import { ProductTypeBadge } from "./type-badge";
 
 const productService = new ProductService();
 
@@ -60,7 +61,7 @@ export const TeamProductList = observer(function TeamProductList(props: Props) {
     {
       key: "type",
       content: t("product.type"),
-      tdRender: (product: TProductListItem) => typeMap[product.product_type_id]?.name ?? "",
+      tdRender: (product: TProductListItem) => <ProductTypeBadge type={typeMap[product.product_type_id]} />,
     },
     {
       key: "owner",
@@ -98,7 +99,12 @@ export const TeamProductList = observer(function TeamProductList(props: Props) {
           onOpen={(product) =>
             router.push(`/${workspaceSlug}/browse/${product.project_identifier}-${product.sequence_id}/`)
           }
-          renderLabel={(product) => <span className="truncate text-body-xs-medium text-primary">{product.name}</span>}
+          renderLabel={(product) => (
+            <span className="min-w-0 space-y-1">
+              <span className="block truncate text-body-xs-medium text-primary">{product.name}</span>
+              <ProductTypeBadge type={typeMap[product.product_type_id]} />
+            </span>
+          )}
         />
       )}
       <DataTable columns={columns} data={data ?? []} keyExtractor={(product) => product.id} isLoading={isLoading} />

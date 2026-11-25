@@ -10,7 +10,6 @@ import Link from "next/link";
 import { Button } from "@makeplane/propel/components/button";
 import { Switch } from "@makeplane/propel/components/switch";
 // plane imports
-import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { ConfirmDialog } from "@plane/blocks/dialog";
 import { setToast } from "@plane/blocks/toast";
 import { useTranslation } from "@plane/i18n";
@@ -24,6 +23,7 @@ import { useProductTypes } from "@/hooks/use-product-types";
 import { ProductService } from "@/services/product.service";
 // local imports
 import { getProductErrorKey } from "./helper";
+import { ProductTypeBadge } from "./type-badge";
 import { ProductTypeFormDialog } from "./type-form-dialog";
 
 const productService = new ProductService();
@@ -77,17 +77,7 @@ export const ProductTypesSettingsRoot = observer(function ProductTypesSettingsRo
     {
       key: "name",
       content: t("name"),
-      tdRender: (type: TProductType) => (
-        <span className="flex items-center gap-2">
-          <span
-            aria-hidden
-            className="size-2.5 shrink-0 rounded-full"
-            style={{ backgroundColor: type.color || "var(--text-color-tertiary)" }}
-          />
-          {type.logo_props?.in_use && <Logo logo={type.logo_props} size={16} type="lucide" />}
-          {type.name}
-        </span>
-      ),
+      tdRender: (type: TProductType) => <ProductTypeBadge type={type} />,
     },
     {
       key: "active",

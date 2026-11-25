@@ -140,13 +140,33 @@ const PortfolioNode = observer(function PortfolioNode({ portfolio }: TPortfolioN
   );
 });
 
+const BoardLink = observer(function BoardLink() {
+  const { workspaceSlug } = useParams();
+  const pathname = usePathname();
+  const { t } = useTranslation();
+  const href = `/${workspaceSlug?.toString()}/product-board`;
+
+  return (
+    <ListItem density="comfortable">
+      <ListItemLink
+        href={href}
+        render={<Link href={href} />}
+        aria-current={pathname.replace(/\/$/, "") === href ? "page" : undefined}
+      >
+        <BoardOutline className="size-4 shrink-0" />
+        <ListItemLabel>{t("product_board.title")}</ListItemLabel>
+      </ListItemLink>
+    </ListItem>
+  );
+});
+
 type TTeamNodeProps = { team: TTeam };
 
 const TeamNode = observer(function TeamNode({ team }: TTeamNodeProps) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { workspaceSlug } = useParams();
   const router = useRouter();
-  const { canManageTeam, createPortfolio, getTeamPortfolios } = useTeam();
+  const { canManageTeam, canSeeProductBoard, createPortfolio, getTeamPortfolios } = useTeam();
   const run = useTeamAction();
   const { t } = useTranslation();
   // the user's own teams start open
@@ -173,6 +193,12 @@ const TeamNode = observer(function TeamNode({ team }: TTeamNodeProps) {
         trailing={
           <NodeMenu label={`${t("aria_labels.common.more_actions")}: ${team.name}`}>
             <MenuItem label={t("common.overview")} onClick={() => router.push(`/${workspaceSlug}/teams/${team.id}`)} />
+            {team.kind === "management" && canSeeProductBoard && (
+              <MenuItem
+                label={t("product_board.title")}
+                onClick={() => router.push(`/${workspaceSlug}/product-board`)}
+              />
+            )}
             {team.kind === "regular" && canManageTeam(team.id) && (
               <MenuItem label={t("team_structure.create_portfolio")} onClick={() => setIsCreateOpen(true)} />
             )}
@@ -180,6 +206,7 @@ const TeamNode = observer(function TeamNode({ team }: TTeamNodeProps) {
         }
       >
         <div className="flex w-full flex-col gap-px pl-2">
+          {team.kind === "management" && canSeeProductBoard && <BoardLink />}
           {portfolios.map((portfolio) => (
             <PortfolioNode key={portfolio.id} portfolio={portfolio} />
           ))}
@@ -197,9 +224,7 @@ export const SidebarTeamsTree = observer(function SidebarTeamsTree() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { workspaceSlug } = useParams();
   const { activeTeams, unassignedProjects, canCreateProject, canSeeProductBoard } = useTeam();
-  const pathname = usePathname();
   const { t } = useTranslation();
-  const boardHref = `/${workspaceSlug?.toString()}/product-board`;
   const ownUnassigned = unassignedProjects.filter((project) => !!project.member_role);
 
   return (
@@ -212,18 +237,8 @@ export const SidebarTeamsTree = observer(function SidebarTeamsTree() {
           workspaceSlug={workspaceSlug.toString()}
         />
       )}
-      {canSeeProductBoard && (
-        <ListItem density="comfortable">
-          <ListItemLink
-            href={boardHref}
-            render={<Link href={boardHref} />}
-            aria-current={pathname.replace(/\/$/, "") === boardHref ? "page" : undefined}
-          >
-            <BoardOutline className="size-4 shrink-0" />
-            <ListItemLabel>{t("product_board.title")}</ListItemLabel>
-          </ListItemLink>
-        </ListItem>
-      )}
+      {/* admins see the board before there is a management team to show it in */}
+      {canSeeProductBoard && !activeTeams.some((team) => team.kind === "management") && <BoardLink />}
       <div className="flex items-center justify-between px-2 py-1">
         <span className="text-body-xs-semibold text-tertiary">{t("team_structure.teams")}</span>
         {canCreateProject && (

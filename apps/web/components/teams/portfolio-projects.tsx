@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { useTranslation } from "@plane/i18n";
 // components
+import { ProjectProducts } from "@/components/products/project-products";
 import { ProjectNetworkIcon } from "@/components/project/project-network-icon";
 // hooks
 import { useTeam } from "@/hooks/store/use-team";
@@ -32,16 +33,17 @@ export const PortfolioProjects = observer(function PortfolioProjects(props: Prop
   return (
     <ul className="divide-y divide-subtle">
       {projects.map((project) => (
-        <li key={project.id}>
+        <li key={project.id} className="flex flex-wrap items-center justify-between gap-x-4">
           <Link
             href={`/${workspaceSlug}/projects/${project.id}/issues`}
-            className="flex items-center gap-2 py-2 text-body-sm-regular text-primary hover:text-accent-primary"
+            className="flex min-w-0 items-center gap-2 py-2 text-body-sm-regular text-primary hover:text-accent-primary"
           >
             <Logo logo={project.logo_props} size={16} />
             <span className="truncate">{project.name}</span>
             <span className="text-body-xs-regular text-tertiary">{project.identifier}</span>
             {project.network === 0 && <ProjectNetworkIcon iconKey="Lock" />}
           </Link>
+          <ProjectProducts workspaceSlug={workspaceSlug} projectId={project.id} />
         </li>
       ))}
     </ul>

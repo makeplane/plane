@@ -12,6 +12,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TBoardProduct, TBoardState } from "@plane/types";
 // components
 import { ProductIndicatorBadge } from "@/components/products/indicator-badge";
+import { ProductTypeBadge } from "@/components/products/type-badge";
 import { DataTable } from "@/components/common/data-table";
 // local imports
 import { INDICATORS, STATE_GROUPS } from "./board";
@@ -112,7 +113,7 @@ export const BoardTableView = observer(function BoardTableView(props: Props) {
         {product.name}
       </button>
     ),
-    type: names.type,
+    type: (product) => <ProductTypeBadge type={names.typeOf(product)} />,
     owner: names.owner,
     start_date: (product) => <BoardDateField product={product} save={save} field="start_date" />,
     target_date: (product) => <BoardDateField product={product} save={save} field="target_date" />,

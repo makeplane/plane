@@ -23,6 +23,7 @@ export const useBoardNames = (workspaceSlug: string) => {
     portfolio: (product: TBoardProduct) => (product.portfolio_id && portfolioMap[product.portfolio_id]?.name) || "",
     project: (product: TBoardProduct) => product.project_name ?? "",
     type: (product: TBoardProduct) => typeMap[product.product_type_id]?.name ?? "",
+    typeOf: (product: TBoardProduct) => typeMap[product.product_type_id],
     owner: (product: TBoardProduct) => (product.owner_id && getUserDetails(product.owner_id)?.display_name) || "",
     /** Portfolio and project in one line. */
     path: (product: TBoardProduct) =>

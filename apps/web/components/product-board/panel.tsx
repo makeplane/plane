@@ -23,6 +23,7 @@ import { calculateTimeAgo, renderFormattedDate } from "@plane/utils";
 import { RichTextEditor } from "@/components/editor/rich-text";
 import { formatMeetingTime } from "@/components/meetings/time";
 import { useReaderTimezone } from "@/components/meetings/use-reader-timezone";
+import { ProductTypeBadge } from "@/components/products/type-badge";
 import { ProductIndicatorBadge } from "@/components/products/indicator-badge";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -55,7 +56,7 @@ export const BoardPanel = observer(function BoardPanel(props: Props) {
   const fieldClassName = "border-subtle";
   const author = product.status_comment_by ? getUserDetails(product.status_comment_by)?.display_name : undefined;
   const rows: [string, React.ReactNode][] = [
-    [t("product.type"), names.type(product)],
+    [t("product.type"), <ProductTypeBadge key="type" type={names.typeOf(product)} />],
     ...(product.is_limited ? [] : ([[t("product.owner"), names.owner(product)]] as [string, React.ReactNode][])),
     [
       t("start_date"),

@@ -28,9 +28,9 @@ type Props<T> = {
   onMove?: (item: T, edge: "start_date" | "target_date", date: string) => void;
 };
 
-const LABEL_WIDTH = 300;
+const LABEL_WIDTH = 360;
 const GROUP_HEIGHT = 36;
-const ROW_HEIGHT = 44;
+const ROW_HEIGHT = 56;
 // Rows drawn beyond the visible ones. Hundreds of rows at once take seconds to draw.
 const OVERSCAN = 400;
 type TDrag = { id: string; edge: "start_date" | "target_date"; days: number };
@@ -143,7 +143,7 @@ export function ProductTimeline<T extends TTimelineItem>(props: Props<T>) {
 
     return (
       <div
-        className="group absolute inset-y-1.5"
+        className="group absolute inset-y-3"
         style={{ left: left(start), width: Math.max((daysBetween(start, end) + 1) * dayWidth, 6) }}
       >
         <button

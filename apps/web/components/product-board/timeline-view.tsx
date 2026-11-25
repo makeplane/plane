@@ -8,6 +8,8 @@ import { observer } from "mobx-react";
 // plane imports
 import { useTranslation } from "@plane/i18n";
 import type { TBoardProduct } from "@plane/types";
+// components
+import { ProductTypeBadge } from "@/components/products/type-badge";
 // local imports
 import { groupBy, summarize } from "./board";
 import type { TGrouping, TScale } from "./board";
@@ -71,9 +73,12 @@ export const BoardTimelineView = observer(function BoardTimelineView(props: Prop
       canEdit={(product) => product.can_edit}
       onMove={(product, edge, date) => void save(product, { [edge]: date })}
       renderLabel={(product) => (
-        <button type="button" onClick={() => onOpen(product)} className="min-w-0 text-left">
+        <button type="button" onClick={() => onOpen(product)} className="w-full min-w-0 space-y-1 text-left">
           <span className="block truncate text-body-xs-medium text-primary">{product.name}</span>
-          <span className="block truncate text-caption-sm-regular text-tertiary">{names.path(product)}</span>
+          <span className="flex min-w-0 items-center gap-2">
+            <ProductTypeBadge type={names.typeOf(product)} className="shrink-0" />
+            <span className="truncate text-caption-sm-regular text-tertiary">{names.path(product)}</span>
+          </span>
         </button>
       )}
     />

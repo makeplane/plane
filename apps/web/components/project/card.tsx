@@ -39,6 +39,7 @@ import { ContextMenu, getRenderableItems, resolveItemVariant } from "@plane/bloc
 import { FavoriteStar } from "@plane/blocks/common";
 import { copyUrlToClipboard, cn, getFileURL } from "@plane/utils";
 // components
+import { ProjectProducts } from "@/components/products/project-products";
 import { ProjectStructurePath } from "@/components/teams/project-structure-path";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
@@ -321,6 +322,7 @@ export const ProjectCard = observer(function ProjectCard(props: Props) {
               </div>
             </div>
             <ProjectStructurePath portfolioId={project.portfolio} />
+            <ProjectProducts workspaceSlug={workspaceSlug?.toString()} projectId={project.id} isCompact />
             {/* lead */}
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-1.5">

@@ -10,6 +10,7 @@ import { useSearchParams } from "react-router";
 import { Button } from "@makeplane/propel/components/button";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 // components
 import { NotAuthorizedView } from "@/components/auth-screens/not-authorized-view";
 import { LogoSpinner } from "@/components/common/logo-spinner";
@@ -59,7 +60,13 @@ function OptionSwitch<T extends string>(props: SwitchProps<T>) {
   );
 }
 
-const Board = observer(function Board({ workspaceSlug }: { workspaceSlug: string }) {
+type BoardProps = {
+  workspaceSlug: string;
+  /** Part of a page with a title and paddings of its own. */
+  isEmbedded?: boolean;
+};
+
+const Board = observer(function Board({ workspaceSlug, isEmbedded = false }: BoardProps) {
   const [params, setParams] = useSearchParams();
   const { t } = useTranslation();
   // derived values
@@ -114,8 +121,8 @@ const Board = observer(function Board({ workspaceSlug }: { workspaceSlug: string
   };
 
   return (
-    <div className="flex size-full flex-col gap-3 overflow-hidden px-page-x py-4">
-      <PageHead title={t("product_board.title")} />
+    <div className={cn("flex size-full flex-col gap-3 overflow-hidden", { "px-page-x py-4": !isEmbedded })}>
+      {!isEmbedded && <PageHead title={t("product_board.title")} />}
       <BoardPanel
         workspaceSlug={workspaceSlug}
         product={products.find((product) => product.id === params.get("product"))}
@@ -182,8 +189,8 @@ const Board = observer(function Board({ workspaceSlug }: { workspaceSlug: string
 });
 
 /** Products of all teams for the management team and workspace admins. */
-export const ProductBoardRoot = observer(function ProductBoardRoot({ workspaceSlug }: { workspaceSlug: string }) {
+export const ProductBoardRoot = observer(function ProductBoardRoot(props: BoardProps) {
   const { canSeeProductBoard } = useTeam();
   if (!canSeeProductBoard) return <NotAuthorizedView />;
-  return <Board workspaceSlug={workspaceSlug} />;
+  return <Board {...props} />;
 });
