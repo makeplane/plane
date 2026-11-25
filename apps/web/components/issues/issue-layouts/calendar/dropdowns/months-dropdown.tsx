@@ -106,7 +106,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
               }}
             />
           </div>
-          <div className="grid grid-cols-4 items-stretch justify-items-stretch gap-4 pt-3">
+          <div className="grid grid-cols-3 items-stretch justify-items-stretch gap-2 pt-3">
             {Object.values(MONTHS_LIST).map((month, index) => (
               <Toggle
                 key={month.i18n_short_title}
