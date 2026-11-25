@@ -7,7 +7,7 @@
 import { useCallback } from "react";
 // plane imports
 import type { TFileHandler } from "@plane/editor";
-import { getEditorAssetDownloadSrc, getEditorAssetSrc } from "@plane/utils";
+import { getEditorAssetDownloadSrc, getEditorAssetSrc, isValidAssetId } from "@plane/utils";
 // hooks
 import { useEditorAsset } from "@/hooks/store/use-editor-asset";
 // plane web hooks
@@ -40,13 +40,14 @@ export const useEditorConfig = () => {
         assetsUploadStatus: assetsUploadPercentage,
         cancel: fileService.cancelUpload,
         checkIfAssetExists: async (assetId: string) => {
+          if (!isValidAssetId(assetId)) return false;
           const res = await fileService.checkIfAssetExists(workspaceSlug, assetId);
           return res?.exists ?? false;
         },
         delete: async (src: string) => {
           if (src?.startsWith("http")) {
             await fileService.deleteOldWorkspaceAsset(workspaceId, src);
-          } else {
+          } else if (isValidAssetId(src)) {
             await fileService.deleteNewAsset(
               getEditorAssetSrc({
                 assetId: src,
@@ -87,7 +88,7 @@ export const useEditorConfig = () => {
         restore: async (src: string) => {
           if (src?.startsWith("http")) {
             await fileService.restoreOldEditorAsset(workspaceId, src);
-          } else {
+          } else if (isValidAssetId(src)) {
             await fileService.restoreNewAsset(workspaceSlug, src);
           }
         },

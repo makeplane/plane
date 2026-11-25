@@ -493,7 +493,7 @@
     "project_timezone": "Strefa czasowa projektu",
     "created_on": "Utworzono dnia",
     "updated_on": "Zaktualizowano",
-    "completed_on": "Completed on",
+    "completed_on": "Zakończono dnia",
     "update_project": "Zaktualizuj projekt",
     "identifier_already_exists": "Identyfikator już istnieje",
     "add_more": "Dodaj więcej",
@@ -723,11 +723,11 @@
     "details": "Szczegóły",
     "project_structure": "Struktura projektu",
     "custom_properties": "Właściwości niestandardowe",
-    "your_profile": "Your profile",
-    "developer": "Developer",
-    "work_structure": "Work structure",
-    "execution": "Execution",
-    "administration": "Administration",
+    "your_profile": "Twój profil",
+    "developer": "Deweloper",
+    "work_structure": "Struktura pracy",
+    "execution": "Realizacja",
+    "administration": "Administracja",
     "status": "Status",
     "tooltip": {
       "copy_to_clipboard": "Kopiuj do schowka",
@@ -892,6 +892,19 @@
       "update_view": "Zaktualizuj widok",
       "save_as": "Zapisz jako",
       "hide_filters": "Ukryj filtry"
+    },
+    "filter_item": {
+      "remove": "Usuń filtr",
+      "invalid": "Nieprawidłowy filtr",
+      "invalid_tooltip": "Ten warunek filtra nie jest już prawidłowy. Właściwość mogła zostać usunięta lub dostęp do niej mógł zostać zmieniony."
+    },
+    "operators": {
+      "is": "jest",
+      "is_any_of": "jest jednym z",
+      "between": "między"
+    },
+    "properties": {
+      "subscriber": "Subskrybent"
     }
   }
 }

@@ -387,6 +387,10 @@ class Adapter:
             # Create profile
             Profile.objects.create(user=user)
 
+        elif self.user_data.get("user").get("is_password_autoset"):
+            # A magic code or OAuth sign-in proves control of the mailbox
+            user.is_email_verified = True
+
         # Check if IDP sync is enabled and user is not signing up
         if self.check_sync_enabled() and not is_signup:
             user = self.sync_user_data(user=user)

@@ -83,6 +83,8 @@ class TestUserEmailChangeVerification:
         assert response.status_code == status.HTTP_200_OK
         create_user.refresh_from_db()
         assert create_user.email == NEW_EMAIL
+        # The code was mailed to the new address, so confirming it verifies that address
+        assert create_user.is_email_verified is True
 
     @pytest.mark.django_db
     def test_correct_code_rejected_once_attempts_exhausted(self, session_client, create_user, mock_email_tasks):

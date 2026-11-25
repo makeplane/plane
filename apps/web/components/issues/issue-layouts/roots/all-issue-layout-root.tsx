@@ -134,9 +134,6 @@ export const AllIssueLayoutRoot = observer(function AllIssueLayoutRoot(props: Pr
     <IssuesStoreContext.Provider value={EIssuesStoreType.GLOBAL}>
       <WorkspaceLevelWorkItemFiltersHOC
         enableSaveView
-        saveViewOptions={{
-          label: "Save as",
-        }}
         enableUpdateView
         entityId={globalViewId}
         entityType={EIssuesStoreType.GLOBAL}

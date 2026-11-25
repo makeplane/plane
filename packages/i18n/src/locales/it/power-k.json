@@ -171,7 +171,8 @@
     "search_menu": {
       "no_results": "Nessun risultato trovato",
       "clear_search": "Cancella ricerca",
-      "go_to_advanced_search": "Vai alla ricerca avanzata"
+      "go_to_advanced_search": "Vai alla ricerca avanzata",
+      "search_commands": "Cerca comandi..."
     },
     "footer": {
       "workspace_level": "Livello dello spazio di lavoro"

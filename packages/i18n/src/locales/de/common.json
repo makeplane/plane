@@ -892,6 +892,19 @@
       "update_view": "Ansicht aktualisieren",
       "save_as": "Speichern unter",
       "hide_filters": "Filter ausblenden"
+    },
+    "filter_item": {
+      "remove": "Filter entfernen",
+      "invalid": "Ungültiger Filter",
+      "invalid_tooltip": "Diese Filterbedingung ist nicht mehr gültig. Die Eigenschaft wurde möglicherweise gelöscht oder Ihr Zugriff darauf hat sich geändert."
+    },
+    "operators": {
+      "is": "ist",
+      "is_any_of": "ist eines von",
+      "between": "zwischen"
+    },
+    "properties": {
+      "subscriber": "Abonnent"
     }
   }
 }

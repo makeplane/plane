@@ -72,7 +72,7 @@ class GiteaCallbackEndpoint(View):
             )
             params = exc.get_error_dict()
             if next_path:
-                params["next_path"] = str(next_path)
+                params["next_path"] = str(validate_next_path(next_path))
             url = urljoin(host, "?" + urlencode(params))
             return HttpResponseRedirect(url)
 

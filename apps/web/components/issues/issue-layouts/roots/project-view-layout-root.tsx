@@ -87,9 +87,6 @@ export const ProjectViewLayoutRoot = observer(function ProjectViewLayoutRoot() {
     <IssuesStoreContext.Provider value={EIssuesStoreType.PROJECT_VIEW}>
       <ProjectLevelWorkItemFiltersHOC
         enableSaveView
-        saveViewOptions={{
-          label: "Save as",
-        }}
         enableUpdateView
         entityId={viewId}
         entityType={EIssuesStoreType.PROJECT_VIEW}

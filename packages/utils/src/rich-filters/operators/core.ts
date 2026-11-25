@@ -6,7 +6,13 @@
 
 import { get } from "lodash-es";
 // plane imports
-import { DATE_OPERATOR_LABELS_MAP, EMPTY_OPERATOR_LABEL, OPERATOR_LABELS_MAP } from "@plane/constants";
+import {
+  DATE_OPERATOR_LABEL_I18N_KEYS_MAP,
+  DATE_OPERATOR_LABELS_MAP,
+  EMPTY_OPERATOR_LABEL,
+  OPERATOR_LABEL_I18N_KEYS_MAP,
+  OPERATOR_LABELS_MAP,
+} from "@plane/constants";
 import type {
   TAllAvailableOperatorsForDisplay,
   TFilterValue,
@@ -34,6 +40,23 @@ export const getDateOperatorLabel = (operator: TAllAvailableDateFilterOperatorsF
   if (!operator) return EMPTY_OPERATOR_LABEL;
   return get(DATE_OPERATOR_LABELS_MAP, operator, EMPTY_OPERATOR_LABEL);
 };
+
+/**
+ * Get the translation key for a filter operator's label
+ * @param operator - The operator to get the translation key for
+ * @returns The translation key, or undefined if the operator has none
+ */
+export const getOperatorLabelI18nKey = (operator: TAllAvailableOperatorsForDisplay | undefined): string | undefined =>
+  operator ? OPERATOR_LABEL_I18N_KEYS_MAP[operator] : undefined;
+
+/**
+ * Get the translation key for a date filter operator's label
+ * @param operator - The operator to get the translation key for
+ * @returns The translation key, or undefined if the operator has none
+ */
+export const getDateOperatorLabelI18nKey = (
+  operator: TAllAvailableDateFilterOperatorsForDisplay | undefined
+): string | undefined => (operator ? DATE_OPERATOR_LABEL_I18N_KEYS_MAP[operator] : undefined);
 
 // -------- OPERATOR TYPE GUARDS --------
 

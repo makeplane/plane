@@ -147,6 +147,8 @@ class ResetPasswordSpaceEndpoint(View):
             # set_password also hashes the password that the user will get
             user.set_password(password)
             user.is_password_autoset = False
+            # The reset link is only sent to the account's mailbox
+            user.is_email_verified = True
             user.save()
 
             return HttpResponseRedirect(base_host(request=request, is_space=True))

@@ -229,8 +229,8 @@ catalogs:
       specifier: 16.4.7
       version: 16.4.7
     effect:
-      specifier: 3.20.0
-      version: 3.20.0
+      specifier: 3.22.4
+      version: 3.22.4
     emoji-picker-react:
       specifier: ^4.5.16
       version: 4.12.2
@@ -723,7 +723,7 @@ importers:
         version: 16.4.7
       effect:
         specifier: 'catalog:'
-        version: 3.20.0
+        version: 3.22.4
       express:
         specifier: 4.22.0
         version: 4.22.0
@@ -5121,8 +5121,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  effect@3.20.0:
-    resolution: {integrity: sha512-qMLfDJscrNG8p/aw+IkT9W7fgj50Z4wG5bLBy0Txsxz8iUHjDIkOgO3SV0WZfnQbNG2VJYb0b+rDLMrhM4+Krw==}
+  effect@3.22.4:
+    resolution: {integrity: sha512-RNshu7AXVxxDh6aS4lothhJ+QoZ4xSykbWNaaVdvDN72RMyVwhCGdALkyl1TbEydgAmRIdD1eTyJqBUGwSBGDA==}
 
   electron-to-chromium@1.5.422:
     resolution: {integrity: sha512-UvA/32XqrLDdZSn7Jllo1AYNcWji/G0d5M0GTViE7KoGBiMunw3a34Sb2KO4ZZyrSEhqsxFoVhWWJshdyfKqJA==}
@@ -10876,7 +10876,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  effect@3.20.0:
+  effect@3.22.4:
     dependencies:
       '@standard-schema/spec': 1.1.0
       fast-check: 3.23.2

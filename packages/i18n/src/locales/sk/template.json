@@ -186,7 +186,7 @@
           },
           "privacy_policy_url": {
             "label": "Odkaz na vaše zásady ochrany súkromia",
-            "placeholder": "https://planes.so/privacy-policy",
+            "placeholder": "https://plane.so/privacy-policy",
             "validation": {
               "invalid": "Neplatná URL",
               "maxLength": "URL by nemala presiahnuť 800 znakov"
@@ -194,7 +194,7 @@
           },
           "terms_of_service_url": {
             "label": "Odkaz na vaše podmienky používania",
-            "placeholder": "https://planes.so/terms-of-use",
+            "placeholder": "https://plane.so/terms-of-use",
             "validation": {
               "invalid": "Neplatná URL",
               "maxLength": "URL by nemala presiahnuť 800 znakov"

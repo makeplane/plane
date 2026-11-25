@@ -22,7 +22,7 @@ class GiteaOAuthProvider(OauthAdapter):
     scope = "openid email profile read:user"
 
     def __init__(self, request, code=None, state=None, callback=None):
-        (GITEA_CLIENT_ID, GITEA_CLIENT_SECRET, GITEA_HOST) = get_configuration_value(
+        (GITEA_CLIENT_ID, GITEA_CLIENT_SECRET, GITEA_HOST, IS_GITEA_ENABLED) = get_configuration_value(
             [
                 {
                     "key": "GITEA_CLIENT_ID",
@@ -36,10 +36,14 @@ class GiteaOAuthProvider(OauthAdapter):
                     "key": "GITEA_HOST",
                     "default": os.environ.get("GITEA_HOST"),
                 },
+                {
+                    "key": "IS_GITEA_ENABLED",
+                    "default": os.environ.get("IS_GITEA_ENABLED", "0"),
+                },
             ]
         )
 
-        if not (GITEA_CLIENT_ID and GITEA_CLIENT_SECRET and GITEA_HOST):
+        if not (IS_GITEA_ENABLED == "1" and GITEA_CLIENT_ID and GITEA_CLIENT_SECRET and GITEA_HOST):
             raise AuthenticationException(
                 error_code=AUTHENTICATION_ERROR_CODES["GITEA_NOT_CONFIGURED"],
                 error_message="GITEA_NOT_CONFIGURED",

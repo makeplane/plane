@@ -43,17 +43,19 @@ def recent_visited_task(entity_name, entity_identifier, user_id, project_id, slu
                 )
                 recent_visited.delete()
 
-            recent_activity = UserRecentVisit.objects.create(
+            # Set the audit fields in the INSERT itself: a follow-up save can hit a row
+            # that a concurrent task already evicted (the cap-at-20 delete above).
+            # disable_auto_set_user keeps BaseModel.save from nulling them (no request user here).
+            UserRecentVisit(
                 entity_name=entity_name,
                 entity_identifier=entity_identifier,
                 user_id=user_id,
                 visited_at=timezone.now(),
                 project_id=project_id,
                 workspace_id=workspace.id,
-            )
-            recent_activity.created_by_id = user_id
-            recent_activity.updated_by_id = user_id
-            recent_activity.save(update_fields=["created_by_id", "updated_by_id"])
+                created_by_id=user_id,
+                updated_by_id=user_id,
+            ).save(disable_auto_set_user=True)
 
         return
     except Exception as e:
