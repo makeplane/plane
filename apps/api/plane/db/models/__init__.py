@@ -85,6 +85,8 @@ from .favorite import UserFavorite
 
 from .issue_type import IssueType, WorkItemKind
 
+from .meeting import MeetingDetail, MeetingParticipant
+
 from .product import ProductDetail, ProductType
 
 from .recent_visit import UserRecentVisit

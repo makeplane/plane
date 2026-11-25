@@ -135,6 +135,51 @@
                   </td>
                 </tr>
               </table>
+              {% endif %} {% if update.changes.participants %} <!-- Meeting invitation -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-bottom: 15px">
+                <tr>
+                  <td style="overflow-wrap: anywhere; padding: 0px;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252;">You are invited to the meeting:</span>
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #171717;">{% for name in update.changes.participants.new_value %}{{ name }}{% endfor %}</span>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.meeting_time %} <!-- Meeting time -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-bottom: 15px">
+                <tr>
+                  <td style="overflow-wrap: anywhere; padding: 0px;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252;">Time:</span>
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #171717;">{% if update.changes.meeting_time.old_value.0 %}<s>{{ update.changes.meeting_time.old_value.0 }}</s> {% endif %}{{ update.changes.meeting_time.new_value|last }}</span>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.location %} <!-- Meeting place -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-bottom: 15px">
+                <tr>
+                  <td style="overflow-wrap: anywhere; padding: 0px;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252;">Location:</span>
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #171717;">{{ update.changes.location.new_value|last }}</span>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.organizer %} <!-- Meeting organizer -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-bottom: 15px">
+                <tr>
+                  <td style="overflow-wrap: anywhere; padding: 0px;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252;">Organizer:</span>
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #171717;">{{ update.changes.organizer.new_value|last }}</span>
+                  </td>
+                </tr>
+              </table>
+              {% endif %} {% if update.changes.outcome %} <!-- Meeting outcome -->
+              <table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-bottom: 15px">
+                <tr>
+                  <td style="overflow-wrap: anywhere; padding: 0px;">
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #525252;">Outcome:</span>
+                    <span style="font-size: 0.8rem; font-weight: 500; color: #171717;">Updated</span>
+                  </td>
+                </tr>
+              </table>
               {% endif %} {% if update.changes.link %} <!-- Link Added --> 
               <table role="presentation" style="padding-bottom: 15px; max-width: 100%" >
                 <tr>

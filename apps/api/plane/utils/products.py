@@ -26,10 +26,19 @@ from plane.db.models import (
     ProjectMember,
     WorkItemKind,
 )
-from plane.utils.work_item_types import get_product_work_item_type
+from plane.utils.meetings import (
+    MeetingInputSerializer,
+    clean_meeting,
+    error,
+    represent_meeting,
+    restore_task_dates,
+    save_meeting,
+)
+from plane.utils.work_item_types import get_meeting_work_item_type, get_product_work_item_type
 
 TASK = "task"
 PRODUCT = WorkItemKind.PRODUCT.value
+MEETING = WorkItemKind.MEETING.value
 MEMBER_ROLE = 15
 CLOSED_GROUPS = ("completed", "cancelled")
 
@@ -54,8 +63,12 @@ def is_product(issue):
     return kind_of(issue) == PRODUCT
 
 
-def has_products(issue_ids, project_id):
-    return Issue.objects.filter(pk__in=list(issue_ids), project_id=project_id, type__kind=PRODUCT).exists()
+def has_kind(issue_ids, project_id, *kinds):
+    return Issue.objects.filter(pk__in=list(issue_ids), project_id=project_id, type__kind__in=kinds).exists()
+
+
+def has_non_tasks(issue_ids, project_id):
+    return has_kind(issue_ids, project_id, PRODUCT, MEETING)
 
 
 def sync_closed_at(issue):
@@ -102,10 +115,6 @@ def detach_product_children(issue_ids):
     )
 
 
-def error(field, message):
-    return serializers.ValidationError({field: [message]})
-
-
 def clean_work_item(attrs, instance, project_id, tasks_only=False):
     """
     Check the kind, the parent and the product part of a work item being saved.
@@ -121,8 +130,6 @@ def clean_work_item(attrs, instance, project_id, tasks_only=False):
         workspace_id = Project.objects.values_list("workspace_id", flat=True).get(pk=project_id)
         if requested_type.workspace_id != workspace_id:
             raise error("type_id", "The type does not exist in this workspace.")
-        if requested_type.kind == WorkItemKind.MEETING:
-            raise error("type_id", "Meetings are not available.")
         if requested_type.kind:
             kind = kind or requested_type.kind
         elif current == TASK and kind in (None, TASK):
@@ -130,26 +137,38 @@ def clean_work_item(attrs, instance, project_id, tasks_only=False):
             attrs["type"] = requested_type
 
     target = kind or current
-    if tasks_only and target == PRODUCT:
+    if tasks_only and target != TASK:
         raise error("kind", "Only a task can be created here.")
     if target != current:
         attrs["type"] = None
-        _check_conversion(instance, target, project_id)
-        if target == PRODUCT:
+        _check_conversion(instance, current, target, project_id)
+        if target != TASK:
             workspace_id = Project.objects.values_list("workspace_id", flat=True).get(pk=project_id)
-            attrs["type"] = get_product_work_item_type(workspace_id)
-    elif current == PRODUCT:
-        # "type_id": null would silently turn the product into a task.
+            get_type = get_product_work_item_type if target == PRODUCT else get_meeting_work_item_type
+            attrs["type"] = get_type(workspace_id)
+        elif current == MEETING:
+            restore_task_dates(attrs, instance)
+    elif current != TASK:
+        # "type_id": null would silently turn the product or the meeting into a task.
         attrs.pop("type", None)
 
     parent = attrs.get("parent")
     if instance is not None and parent is not None and parent.pk == instance.pk:
         raise error("parent_id", "A work item cannot be its own parent.")
+    if parent is not None and kind_of(parent) == MEETING:
+        raise error("parent_id", "A meeting cannot be a parent.")
 
+    if target != MEETING:
+        if attrs.get("meeting"):
+            raise error("meeting", "Only a meeting has meeting fields.")
+        attrs.pop("meeting", None)
     if target != PRODUCT:
         if product:
             raise error("product", "Only a product has product fields.")
         attrs.pop("product", None)
+    if target == MEETING:
+        clean_meeting(attrs, instance, project_id, becomes=target != current)
+    if target != PRODUCT:
         return attrs
 
     if parent is not None:
@@ -167,25 +186,29 @@ def clean_work_item(attrs, instance, project_id, tasks_only=False):
     return attrs
 
 
-def _check_conversion(instance, target, project_id):
-    if target == PRODUCT:
-        enabled = Project.objects.filter(pk=project_id, workspace__is_team_structure_enabled=True).exists()
-        if not enabled:
-            raise error("kind", "Products are not enabled in this workspace.")
-        user = get_current_user()
-        # Guests may edit the work items they created, but not make products of them.
-        if not _is_project_writer(project_id, user.pk if user is not None else None):
-            raise error("kind", "Only project members can create products.")
-        if instance is None:
-            return
-        if instance.parent_id:
-            raise error("kind", "A work item with a parent cannot become a product.")
-        if CycleIssue.objects.filter(issue=instance).exists() or ModuleIssue.objects.filter(issue=instance).exists():
-            raise error("kind", "Remove the work item from its cycle and modules first.")
-        if instance.issue_intake.exclude(status=1).exists():
-            raise error("kind", "Accept the work item from intake first.")
-    elif instance is not None and Issue.objects.filter(parent=instance).exists():
-        raise error("kind", "Unlink the work items of the product first.")
+def _check_conversion(instance, current, target, project_id):
+    if TASK not in (current, target):
+        raise error("kind", "Make it a task first.")
+    if target == TASK:
+        if current == PRODUCT and Issue.objects.filter(parent=instance).exists():
+            raise error("kind", "Unlink the work items of the product first.")
+        return
+    if not Project.objects.filter(pk=project_id, workspace__is_team_structure_enabled=True).exists():
+        raise error("kind", "Products and meetings are not enabled in this workspace.")
+    user = get_current_user()
+    # Guests may edit the work items they created, but not change their kind.
+    if not _is_project_writer(project_id, user.pk if user is not None else None):
+        raise error("kind", "Only project members can create products and meetings.")
+    if instance is None:
+        return
+    if target == PRODUCT and instance.parent_id:
+        raise error("kind", "A work item with a parent cannot become a product.")
+    if target == MEETING and Issue.objects.filter(parent=instance).exists():
+        raise error("kind", "A work item with sub-work items cannot become a meeting.")
+    if CycleIssue.objects.filter(issue=instance).exists() or ModuleIssue.objects.filter(issue=instance).exists():
+        raise error("kind", "Remove the work item from its cycle and modules first.")
+    if instance.issue_intake.exclude(status=1).exists():
+        raise error("kind", "Accept the work item from intake first.")
 
 
 def _is_project_writer(project_id, user_id):
@@ -226,6 +249,25 @@ def _check_fields(attrs, instance, project_id, required):
             raise error("owner_id", "The owner must be a member of the project.")
     elif required and (detail is None or detail.owner_id is None):
         raise error("owner_id", "A product needs an owner.")
+
+
+def save_kind_parts(issue, parts, task_dates=None):
+    """Store what pop_kind_parts took out of the validated data."""
+    product, meeting = parts
+    save_product(issue, product)
+    save_meeting(issue, meeting, task_dates)
+
+
+def pop_kind_parts(validated_data):
+    return validated_data.pop("product", None), validated_data.pop("meeting", None)
+
+
+def task_dates_before(instance, validated_data):
+    """Dates to keep for a task that becomes a meeting in this update, None otherwise."""
+    work_item_type = validated_data.get("type")
+    if work_item_type is None or work_item_type.kind != MEETING or kind_of(instance) == MEETING:
+        return None
+    return instance.start_date, instance.target_date
 
 
 def save_product(issue, product):
@@ -294,10 +336,11 @@ def represent_product(issue, with_progress=True):
 
 
 class WorkItemKindMixin(serializers.Serializer):
-    """Adds the kind and the product part to a work item serializer, for reading and writing."""
+    """Adds the kind and the part of that kind to a work item serializer, for reading and writing."""
 
-    kind = serializers.ChoiceField(choices=[TASK, PRODUCT], required=False, write_only=True)
+    kind = serializers.ChoiceField(choices=[TASK, PRODUCT, MEETING], required=False, write_only=True)
     product = ProductInputSerializer(required=False, write_only=True)
+    meeting = MeetingInputSerializer(required=False, write_only=True)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -307,4 +350,6 @@ class WorkItemKindMixin(serializers.Serializer):
             if data["kind"] == PRODUCT:
                 # Progress takes queries of its own, so a list gets the stored fields only.
                 data["product"] = represent_product(instance, with_progress=self.parent is None)
+            elif data["kind"] == MEETING:
+                data["meeting"] = represent_meeting(instance, with_participants=self.parent is None)
         return data

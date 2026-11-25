@@ -58,6 +58,8 @@ def archive_old_issues():
             )
             # Products are closed and archived by people only
             issues = issues.exclude(type__kind="product")
+            # A meeting ahead is not stale, however long ago it was planned
+            issues = issues.exclude(type__kind="meeting", meeting_detail__end_at__gte=timezone.now())
 
             # Check if Issues
             if issues:
@@ -121,6 +123,8 @@ def close_old_issues():
             )
             # Products are closed and archived by people only
             issues = issues.exclude(type__kind="product")
+            # A meeting ahead is not stale, however long ago it was planned
+            issues = issues.exclude(type__kind="meeting", meeting_detail__end_at__gte=timezone.now())
 
             # Check if Issues
             if issues:

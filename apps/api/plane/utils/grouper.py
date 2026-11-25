@@ -198,7 +198,7 @@ def issue_group_values(
 
     if field == "type__kind":
         # Tasks have no kind.
-        return ["None", "product"]
+        return ["None", "product", "meeting"]
 
     if field == "priority":
         return ["low", "medium", "high", "urgent", "none"]

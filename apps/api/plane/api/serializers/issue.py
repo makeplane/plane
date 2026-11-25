@@ -31,7 +31,13 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
-from plane.utils.products import WorkItemKindMixin, clean_work_item, save_product
+from plane.utils.products import (
+    WorkItemKindMixin,
+    clean_work_item,
+    pop_kind_parts,
+    save_kind_parts,
+    task_dates_before,
+)
 
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
@@ -197,10 +203,10 @@ class IssueSerializer(WorkItemKindMixin, BaseSerializer):
             issue_type = IssueType.objects.filter(project_issue_types__project_id=project_id, is_default=True).first()
             issue_type = issue_type
 
-        product = validated_data.pop("product", None)
+        parts = pop_kind_parts(validated_data)
         with transaction.atomic():
             issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
-            save_product(issue, product)
+            save_kind_parts(issue, parts)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -322,10 +328,11 @@ class IssueSerializer(WorkItemKindMixin, BaseSerializer):
 
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
-        product = validated_data.pop("product", None)
+        parts = pop_kind_parts(validated_data)
+        task_dates = task_dates_before(instance, validated_data)
         with transaction.atomic():
             instance = super().update(instance, validated_data)
-            save_product(instance, product)
+            save_kind_parts(instance, parts, task_dates)
         return instance
 
     def to_representation(self, instance):

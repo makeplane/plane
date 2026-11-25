@@ -11,6 +11,19 @@ from plane.db.models import IssueType, ProductType, Workspace, WorkItemKind
 INITIAL_PRODUCT_TYPES = ("Аналитическая презентация", "Аналитическая записка", "Датасет")
 
 
+def get_meeting_work_item_type(workspace_id):
+    """Return the system type of meetings, creating it on first use."""
+    found = IssueType.objects.filter(workspace_id=workspace_id, kind=WorkItemKind.MEETING).first()
+    if found:
+        return found
+    with transaction.atomic():
+        Workspace.objects.select_for_update().get(pk=workspace_id)
+        work_item_type, _ = IssueType.objects.get_or_create(
+            workspace_id=workspace_id, kind=WorkItemKind.MEETING, defaults={"name": "Meeting"}
+        )
+    return work_item_type
+
+
 def get_product_work_item_type(workspace_id):
     """
     Return the system type of products, creating it on first use.

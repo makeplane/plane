@@ -9,11 +9,12 @@
 :3000 {
 	root * /usr/share/caddy/html
 
-	# Per-client-IP rate limiting for static asset requests
+	# Per-client-IP rate limiting for static asset requests. One page load takes hundreds of files,
+	# and people behind one office address share the limit.
 	rate_limit {
 		zone static {
 			key {client_ip}
-			events 300
+			events 3000
 			window 1m
 		}
 	}
