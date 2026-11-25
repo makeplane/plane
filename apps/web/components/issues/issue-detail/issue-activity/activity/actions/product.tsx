@@ -8,17 +8,23 @@ import { observer } from "mobx-react";
 import { CubeOutline } from "@makeplane/propel/icons";
 // plane imports
 import { useTranslation } from "@plane/i18n";
+// components
+import { formatStoredTime } from "@/components/meetings/time";
+import { useReaderTimezone } from "@/components/meetings/use-reader-timezone";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // components
 import { IssueActivityBlockComponent } from "./";
+
+const MEETING_FIELDS = new Set(["participants", "meeting_time", "location", "organizer", "outcome"]);
 
 type Props = { activityId: string; ends: "top" | "bottom" | undefined };
 
 /** Changes of the kind and of the product fields. */
 export const IssueProductActivity = observer(function IssueProductActivity(props: Props) {
   const { activityId, ends } = props;
-  const { t } = useTranslation();
+  const { t, currentLocale } = useTranslation();
+  const timeZone = useReaderTimezone();
   const {
     activity: { getActivityById },
   } = useIssueDetail();
@@ -27,7 +33,8 @@ export const IssueProductActivity = observer(function IssueProductActivity(props
 
   const format = (value: string | null | undefined) => {
     if (!value) return "—";
-    if (activity.field === "kind") return t(value === "product" ? "product.kinds.product" : "product.kinds.task");
+    if (activity.field === "kind") return t(`product.kinds.${value}`);
+    if (activity.field === "meeting_time") return formatStoredTime(value, timeZone, currentLocale);
     return activity.field === "manual_progress" ? `${value}%` : value;
   };
 
@@ -38,8 +45,13 @@ export const IssueProductActivity = observer(function IssueProductActivity(props
       ends={ends}
     >
       <>
-        {t(`product.history.${activity.field}`)}: {format(activity.old_value)} →{" "}
-        <span className="font-medium text-primary">{format(activity.new_value)}</span>
+        {t(`${MEETING_FIELDS.has(activity.field) ? "meeting" : "product"}.history.${activity.field}`)}
+        {activity.field !== "outcome" && (
+          <>
+            : {format(activity.old_value)} →{" "}
+            <span className="font-medium text-primary">{format(activity.new_value)}</span>
+          </>
+        )}
       </>
     </IssueActivityBlockComponent>
   );

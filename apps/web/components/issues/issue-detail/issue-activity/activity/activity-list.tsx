@@ -94,6 +94,11 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
     case "product_owner":
     case "manual_progress":
     case "status_comment":
+    case "participants":
+    case "meeting_time":
+    case "location":
+    case "organizer":
+    case "outcome":
       return <IssueProductActivity {...componentDefaultProps} />;
     case "intake":
     case "inbox":

@@ -4,9 +4,11 @@
  * See the LICENSE file for details.
  */
 
-import React from "react";
+import { observer } from "mobx-react";
 // plane imports
 import type { TIssueServiceType, TWorkItemWidgets } from "@plane/types";
+// hooks
+import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 // local imports
 import { IssueDetailWidgetActionButtons } from "./action-buttons";
 import { IssueDetailWidgetCollapsibles } from "./issue-detail-widget-collapsibles";
@@ -22,7 +24,7 @@ type Props = {
   hideWidgets?: TWorkItemWidgets[];
 };
 
-export function IssueDetailWidgets(props: Props) {
+export const IssueDetailWidgets = observer(function IssueDetailWidgets(props: Props) {
   const {
     workspaceSlug,
     projectId,
@@ -30,8 +32,15 @@ export function IssueDetailWidgets(props: Props) {
     disabled,
     renderWidgetModals = true,
     issueServiceType,
-    hideWidgets,
+    hideWidgets: hiddenByParent,
   } = props;
+  // store hooks
+  const {
+    issue: { getIssueById },
+  } = useIssueDetail(issueServiceType);
+  // a meeting cannot have sub-work items
+  const hideWidgets: TWorkItemWidgets[] | undefined =
+    getIssueById(issueId)?.kind === "meeting" ? [...(hiddenByParent ?? []), "sub-work-items"] : hiddenByParent;
 
   return (
     <>
@@ -64,4 +73,4 @@ export function IssueDetailWidgets(props: Props) {
       )}
     </>
   );
-}
+});

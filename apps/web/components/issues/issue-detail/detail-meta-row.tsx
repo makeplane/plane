@@ -100,52 +100,56 @@ export const IssueDetailMetaRow = observer(function IssueDetailMetaRow(props: Pr
           />
         </div>
 
-        <PropertyDivider />
+        {issue.kind !== "meeting" && (
+          <>
+            <PropertyDivider />
 
-        <div className="flex w-full items-center px-1">
-          <DateSelect
-            testId="work-item-start-date-select"
-            placeholder={t("common.order_by.start_date")}
-            value={getDate(issue.start_date) ?? null}
-            onChange={(val) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                start_date: val ? renderFormattedPayloadDate(val) : null,
-              })
-            }
-            maxDate={maxDate}
-            disabled={disabled}
-            clearable={issue.kind !== "product"}
-            icon={<StartDateOutline />}
-            weekStartsOn={userProfile?.start_of_the_week}
-            variant="select-ghost-lg"
-            showTooltip
-            tooltipHeading={t("common.order_by.start_date")}
-          />
-        </div>
+            <div className="flex w-full items-center px-1">
+              <DateSelect
+                testId="work-item-start-date-select"
+                placeholder={t("common.order_by.start_date")}
+                value={getDate(issue.start_date) ?? null}
+                onChange={(val) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    start_date: val ? renderFormattedPayloadDate(val) : null,
+                  })
+                }
+                maxDate={maxDate}
+                disabled={disabled}
+                clearable={issue.kind !== "product"}
+                icon={<StartDateOutline />}
+                weekStartsOn={userProfile?.start_of_the_week}
+                variant="select-ghost-lg"
+                showTooltip
+                tooltipHeading={t("common.order_by.start_date")}
+              />
+            </div>
 
-        <PropertyDivider />
+            <PropertyDivider />
 
-        <div className="flex w-full items-center px-1">
-          <DateSelect
-            testId="work-item-due-date-select"
-            placeholder={t("common.order_by.due_date")}
-            value={getDate(issue.target_date) ?? null}
-            onChange={(val) =>
-              issueOperations.update(workspaceSlug, projectId, issueId, {
-                target_date: val ? renderFormattedPayloadDate(val) : null,
-              })
-            }
-            minDate={minDate}
-            disabled={disabled}
-            clearable={issue.kind !== "product"}
-            className={getIssueDueDateClassName(issue.target_date, stateDetails?.group)}
-            icon={<DueDateOutline />}
-            weekStartsOn={userProfile?.start_of_the_week}
-            variant="select-ghost-lg"
-            showTooltip
-            tooltipHeading={t("common.order_by.due_date")}
-          />
-        </div>
+            <div className="flex w-full items-center px-1">
+              <DateSelect
+                testId="work-item-due-date-select"
+                placeholder={t("common.order_by.due_date")}
+                value={getDate(issue.target_date) ?? null}
+                onChange={(val) =>
+                  issueOperations.update(workspaceSlug, projectId, issueId, {
+                    target_date: val ? renderFormattedPayloadDate(val) : null,
+                  })
+                }
+                minDate={minDate}
+                disabled={disabled}
+                clearable={issue.kind !== "product"}
+                className={getIssueDueDateClassName(issue.target_date, stateDetails?.group)}
+                icon={<DueDateOutline />}
+                weekStartsOn={userProfile?.start_of_the_week}
+                variant="select-ghost-lg"
+                showTooltip
+                tooltipHeading={t("common.order_by.due_date")}
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

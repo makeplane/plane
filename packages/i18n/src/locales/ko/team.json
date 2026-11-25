@@ -66,7 +66,8 @@
     "kind": "종류",
     "kinds": {
       "task": "작업",
-      "product": "제품"
+      "product": "제품",
+      "meeting": "회의"
     },
     "type": "제품 유형",
     "types": "제품 유형",
@@ -132,6 +133,38 @@
       "owner": "책임자는 프로젝트 멤버여야 합니다.",
       "type_unavailable": "이 제품 유형은 사용할 수 없습니다.",
       "required": "제품 유형, 책임자, 시작일, 마감일을 선택하세요."
+    },
+    "icon": "아이콘"
+  },
+  "meeting": {
+    "start": "시작",
+    "end": "종료",
+    "participants": "참가자",
+    "organizer": "주최자",
+    "location": "장소 또는 링크",
+    "outcome": "결과",
+    "outcome_placeholder": "결정된 내용을 적으세요",
+    "meetings": "회의",
+    "make_meeting": "회의로 전환",
+    "reschedule": "일정 변경",
+    "create_task": "작업 만들기",
+    "create_task_hint": "작업에 같은 제품과 회의 링크가 지정됩니다.",
+    "task_created": "작업을 만들었습니다.",
+    "delete_hint": "삭제는 참가자에게 알려지지 않습니다. 알리려면 먼저 회의를 취소하세요.",
+    "invited": "님이 회의에 초대했습니다",
+    "rescheduled": "님이 회의 일정을 변경했습니다",
+    "history": {
+      "participants": "참가자",
+      "meeting_time": "회의 시간",
+      "location": "장소 또는 링크",
+      "organizer": "주최자",
+      "outcome": "결과 변경됨"
+    },
+    "errors": {
+      "has_items": "하위 항목이 있는 항목은 회의가 될 수 없습니다.",
+      "parent": "제품만 회의의 상위 항목이 될 수 있습니다.",
+      "time": "회의에는 시작 시간과 그 이후의 종료 시간이 필요합니다.",
+      "people": "회의를 볼 수 있는 사람만 참가할 수 있습니다."
     }
   }
 }

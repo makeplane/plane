@@ -66,7 +66,8 @@
     "kind": "Dạng",
     "kinds": {
       "task": "Nhiệm vụ",
-      "product": "Sản phẩm"
+      "product": "Sản phẩm",
+      "meeting": "Cuộc họp"
     },
     "type": "Loại sản phẩm",
     "types": "Các loại sản phẩm",
@@ -132,6 +133,38 @@
       "owner": "Người phụ trách phải là thành viên dự án.",
       "type_unavailable": "Loại sản phẩm này không khả dụng.",
       "required": "Hãy chọn loại sản phẩm, người phụ trách, ngày bắt đầu và ngày đến hạn."
+    },
+    "icon": "Biểu tượng"
+  },
+  "meeting": {
+    "start": "Bắt đầu",
+    "end": "Kết thúc",
+    "participants": "Người tham gia",
+    "organizer": "Người tổ chức",
+    "location": "Địa điểm hoặc liên kết",
+    "outcome": "Kết quả",
+    "outcome_placeholder": "Ghi lại những gì đã quyết định",
+    "meetings": "Cuộc họp",
+    "make_meeting": "Chuyển thành cuộc họp",
+    "reschedule": "Dời lịch",
+    "create_task": "Tạo nhiệm vụ",
+    "create_task_hint": "Nhiệm vụ sẽ có cùng sản phẩm và liên kết đến cuộc họp.",
+    "task_created": "Đã tạo nhiệm vụ.",
+    "delete_hint": "Người tham gia không được báo khi xóa. Để báo cho họ, trước tiên hãy hủy cuộc họp.",
+    "invited": "đã mời bạn tham gia cuộc họp",
+    "rescheduled": "đã dời lịch cuộc họp",
+    "history": {
+      "participants": "Người tham gia",
+      "meeting_time": "Thời gian họp",
+      "location": "Địa điểm hoặc liên kết",
+      "organizer": "Người tổ chức",
+      "outcome": "Kết quả đã thay đổi"
+    },
+    "errors": {
+      "has_items": "Mục có mục con không thể trở thành cuộc họp.",
+      "parent": "Chỉ sản phẩm mới có thể là mục cha của cuộc họp.",
+      "time": "Cuộc họp cần có thời điểm bắt đầu và kết thúc sau đó.",
+      "people": "Chỉ những người thấy cuộc họp mới có thể tham gia."
     }
   }
 }

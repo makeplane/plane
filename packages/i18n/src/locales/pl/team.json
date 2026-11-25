@@ -66,7 +66,8 @@
     "kind": "Rodzaj",
     "kinds": {
       "task": "Zadanie",
-      "product": "Produkt"
+      "product": "Produkt",
+      "meeting": "Spotkanie"
     },
     "type": "Typ produktu",
     "types": "Typy produktów",
@@ -132,6 +133,38 @@
       "owner": "Odpowiedzialny musi być członkiem projektu.",
       "type_unavailable": "Ten typ produktu jest niedostępny.",
       "required": "Wybierz typ produktu, odpowiedzialnego, datę rozpoczęcia i termin."
+    },
+    "icon": "Ikona"
+  },
+  "meeting": {
+    "start": "Początek",
+    "end": "Koniec",
+    "participants": "Uczestnicy",
+    "organizer": "Organizator",
+    "location": "Miejsce lub link",
+    "outcome": "Ustalenia",
+    "outcome_placeholder": "Zapisz, co ustalono",
+    "meetings": "Spotkania",
+    "make_meeting": "Zmień w spotkanie",
+    "reschedule": "Przełóż",
+    "create_task": "Utwórz zadanie",
+    "create_task_hint": "Zadanie otrzyma ten sam produkt i powiązanie ze spotkaniem.",
+    "task_created": "Zadanie zostało utworzone.",
+    "delete_hint": "Uczestnicy nie dowiedzą się o usunięciu. Aby ich powiadomić, najpierw anuluj spotkanie.",
+    "invited": "zaprasza Cię na spotkanie",
+    "rescheduled": "przekłada spotkanie",
+    "history": {
+      "participants": "Uczestnicy",
+      "meeting_time": "Czas spotkania",
+      "location": "Miejsce lub link",
+      "organizer": "Organizator",
+      "outcome": "Zmieniono ustalenia"
+    },
+    "errors": {
+      "has_items": "Element z podelementami nie może stać się spotkaniem.",
+      "parent": "Tylko produkt może być elementem nadrzędnym spotkania.",
+      "time": "Spotkanie wymaga początku i późniejszego końca.",
+      "people": "Uczestniczyć mogą tylko osoby, które widzą spotkanie."
     }
   }
 }

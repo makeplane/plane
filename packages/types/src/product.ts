@@ -7,7 +7,7 @@
 import type { TLogoProps } from "./common";
 import type { TStateGroups } from "./state";
 
-export type TWorkItemKind = "task" | "product";
+export type TWorkItemKind = "task" | "product" | "meeting";
 
 export type TProductIndicator = "completed" | "cancelled" | "overdue" | "at_risk" | "not_started" | "on_track";
 

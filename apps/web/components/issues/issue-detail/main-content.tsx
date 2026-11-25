@@ -18,6 +18,7 @@ import { EFileAssetType, EIssueServiceType } from "@plane/types";
 import { DescriptionVersionsRoot } from "@/components/core/description-versions";
 import { DescriptionInput } from "@/components/editor/rich-text/description-input";
 import { IssueTypeSwitcher } from "@/components/issues/issue-type-switcher";
+import { MeetingOutcome } from "@/components/meetings/outcome";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useMember } from "@/hooks/store/use-member";
@@ -187,6 +188,16 @@ export const IssueMainContent = observer(function IssueMainContent(props: Props)
               workspaceSlug={workspaceSlug}
             />
           </DescriptionOverflow>
+        )}
+
+        {issue.kind === "meeting" && (
+          <MeetingOutcome
+            key={issueId}
+            workspaceSlug={workspaceSlug}
+            projectId={issue.project_id}
+            issueId={issueId}
+            disabled={isArchived || !isEditable}
+          />
         )}
 
         <div className="flex items-center justify-between gap-2">

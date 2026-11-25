@@ -5,6 +5,7 @@
  */
 
 import type { TIssuePriorities } from "../issues";
+import type { TMeetingPayload } from "../meeting";
 import type { TProductPayload, TWorkItemKind } from "../product";
 import type { TStateGroups } from "../state";
 import type { TIssuePublicComment } from "./activity/issue_comment";
@@ -104,6 +105,7 @@ export type TIssue = TBaseIssue & {
   sourceIssueId?: string;
   state__group?: TStateGroups | null;
   product?: TProductPayload | null;
+  meeting?: TMeetingPayload | null;
 };
 
 export type TIssueMap = {

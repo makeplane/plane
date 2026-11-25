@@ -162,6 +162,7 @@ export type TProjectIssuesSearchParams = {
   workspace_search: boolean;
   target_date?: string;
   epic?: boolean;
+  kind?: "product";
 };
 
 export interface ISearchIssueResponse {

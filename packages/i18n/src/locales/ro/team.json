@@ -66,7 +66,8 @@
     "kind": "Fel",
     "kinds": {
       "task": "Sarcină",
-      "product": "Produs"
+      "product": "Produs",
+      "meeting": "Întâlnire"
     },
     "type": "Tip de produs",
     "types": "Tipuri de produse",
@@ -132,6 +133,38 @@
       "owner": "Responsabilul trebuie să fie membru al proiectului.",
       "type_unavailable": "Acest tip de produs nu este disponibil.",
       "required": "Alege tipul de produs, responsabilul, data de început și data limită."
+    },
+    "icon": "Pictogramă"
+  },
+  "meeting": {
+    "start": "Început",
+    "end": "Sfârșit",
+    "participants": "Participanți",
+    "organizer": "Organizator",
+    "location": "Loc sau link",
+    "outcome": "Concluzii",
+    "outcome_placeholder": "Notează ce s-a hotărât",
+    "meetings": "Întâlniri",
+    "make_meeting": "Transformă în întâlnire",
+    "reschedule": "Reprogramează",
+    "create_task": "Creează o sarcină",
+    "create_task_hint": "Sarcina primește același produs și o legătură către întâlnire.",
+    "task_created": "Sarcina a fost creată.",
+    "delete_hint": "Participanții nu află despre ștergere. Pentru a-i anunța, anulează mai întâi întâlnirea.",
+    "invited": "te-a invitat la întâlnire",
+    "rescheduled": "a reprogramat întâlnirea",
+    "history": {
+      "participants": "Participanți",
+      "meeting_time": "Ora întâlnirii",
+      "location": "Loc sau link",
+      "organizer": "Organizator",
+      "outcome": "Concluzii modificate"
+    },
+    "errors": {
+      "has_items": "Un element cu subelemente nu poate deveni întâlnire.",
+      "parent": "Doar un produs poate fi părintele unei întâlniri.",
+      "time": "Întâlnirea are nevoie de un început și de un sfârșit ulterior.",
+      "people": "Pot participa doar cei care văd întâlnirea."
     }
   }
 }

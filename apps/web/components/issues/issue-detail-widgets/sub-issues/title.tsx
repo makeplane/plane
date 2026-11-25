@@ -33,22 +33,26 @@ export const SubIssuesProgressChip = observer(function SubIssuesProgressChip(pro
   const { t } = useTranslation();
   // store hooks
   const {
+    issue: { getIssueById },
     subIssues: { subIssuesByIssueId, stateDistributionByIssueId },
   } = useIssueDetail(issueServiceType);
   // derived values
-  const subIssuesDistribution = stateDistributionByIssueId(parentIssueId);
-  const subIssues = subIssuesByIssueId(parentIssueId);
+  // meetings are not progress
+  const isTaskId = (id: string) => getIssueById(id)?.kind !== "meeting";
+  const distribution = stateDistributionByIssueId(parentIssueId);
+  const countIn = (group: TStateGroups) => distribution?.[group]?.filter(isTaskId).length ?? 0;
+  const subIssues = subIssuesByIssueId(parentIssueId)?.filter(isTaskId);
   // if there are no sub-issues, return null
   if (!subIssues?.length) return null;
 
   // calculate percentage of completed sub-issues
-  const completedCount = subIssuesDistribution?.completed?.length ?? 0;
+  const completedCount = countIn("completed");
   const totalCount = subIssues.length;
   const percentage = completedCount && totalCount ? (completedCount / totalCount) * 100 : 0;
   const stateGroupStats = ORDERED_STATE_GROUPS.map((group) => ({
     id: group,
     name: t(`workspace_projects.state.${group}`),
-    value: subIssuesDistribution?.[group]?.length ?? 0,
+    value: countIn(group),
     color: STATE_GROUPS[group].color,
   }));
 

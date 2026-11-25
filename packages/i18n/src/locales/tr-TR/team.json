@@ -66,7 +66,8 @@
     "kind": "Tür",
     "kinds": {
       "task": "Görev",
-      "product": "Ürün"
+      "product": "Ürün",
+      "meeting": "Toplantı"
     },
     "type": "Ürün türü",
     "types": "Ürün türleri",
@@ -132,6 +133,38 @@
       "owner": "Sorumlu kişi proje üyesi olmalıdır.",
       "type_unavailable": "Bu ürün türü kullanılamıyor.",
       "required": "Ürün türünü, sorumluyu, başlangıç ve bitiş tarihlerini seçin."
+    },
+    "icon": "Simge"
+  },
+  "meeting": {
+    "start": "Başlangıç",
+    "end": "Bitiş",
+    "participants": "Katılımcılar",
+    "organizer": "Düzenleyen",
+    "location": "Yer veya bağlantı",
+    "outcome": "Sonuçlar",
+    "outcome_placeholder": "Alınan kararları yazın",
+    "meetings": "Toplantılar",
+    "make_meeting": "Toplantıya dönüştür",
+    "reschedule": "Ertele",
+    "create_task": "Görev oluştur",
+    "create_task_hint": "Görev aynı ürünü ve toplantı bağlantısını alır.",
+    "task_created": "Görev oluşturuldu.",
+    "delete_hint": "Katılımcılara silme bildirilmez. Haber vermek için önce toplantıyı iptal edin.",
+    "invited": "sizi toplantıya davet etti",
+    "rescheduled": "toplantının zamanını değiştirdi",
+    "history": {
+      "participants": "Katılımcılar",
+      "meeting_time": "Toplantı zamanı",
+      "location": "Yer veya bağlantı",
+      "organizer": "Düzenleyen",
+      "outcome": "Sonuçlar değiştirildi"
+    },
+    "errors": {
+      "has_items": "Alt öğeleri olan bir öğe toplantı olamaz.",
+      "parent": "Yalnızca bir ürün toplantının üst öğesi olabilir.",
+      "time": "Toplantının bir başlangıcı ve daha sonra bir bitişi olmalıdır.",
+      "people": "Yalnızca toplantıyı görenler katılabilir."
     }
   }
 }

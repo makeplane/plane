@@ -1,3 +1,4 @@
+// oxlint-disable no-shadow
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -155,7 +156,9 @@ export const IssueParentSelect = observer(function IssueParentSelect(props: TIss
             onClick={() => toggleParentIssueModal(issue.id)}
             disabled={disabled}
           >
-            <span className="grow text-left text-body-xs-regular text-placeholder">{t("issue.add.parent")}</span>
+            <span className="min-w-0 grow truncate text-left text-body-xs-regular text-placeholder">
+              {t("issue.add.parent")}
+            </span>
             {!disabled && (
               <span className="shrink-0 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100">
                 <Icon icon={EditOutline} />

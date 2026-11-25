@@ -467,6 +467,15 @@ class TestCalendar:
         Project.objects.filter(pk=s.project.pk).update(guest_view_all_features=True)
         assert len(self.get(s, s.guest, *period).data) == 1
 
+    def test_of_a_product(self, s):
+        owner = product(s)
+        meeting = create(s, parent=owner)
+        create(s, name="Other")
+        url = f"{s.url}/meetings/?parent_id={owner.id}"
+        assert [row["id"] for row in call(s.member, "get", url).data] == [meeting.id]
+        assert call(s.guest, "get", url).data == []
+        assert call(s.member, "get", f"{s.url}/meetings/?parent_id=x").status_code == 400
+
     def test_query_count(self, s):
         create(s)
         period = ("2026-12-01T00:00:00Z", "2026-12-02T00:00:00Z")

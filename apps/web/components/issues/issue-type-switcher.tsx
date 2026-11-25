@@ -13,6 +13,7 @@ import { Pill } from "@makeplane/propel/elements/pill";
 import { useTranslation } from "@plane/i18n";
 // components
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { ConvertToMeetingDialog } from "@/components/meetings/convert-dialog";
 import { ConvertToProductDialog } from "@/components/products/convert-dialog";
 import { useProductUpdate } from "@/components/products/use-product";
 // hooks
@@ -27,7 +28,7 @@ export type TIssueTypeSwitcherProps = {
 export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIssueTypeSwitcherProps) {
   const { issueId, disabled } = props;
   // states
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [dialog, setDialog] = useState<"product" | "meeting" | null>(null);
   // router
   const { workspaceSlug } = useParams();
   // store hooks
@@ -43,7 +44,7 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
 
   if (!issue || !issue.project_id) return <></>;
 
-  const isProduct = issue.kind === "product";
+  const kind = issue.kind ?? "task";
 
   return (
     <>
@@ -54,25 +55,29 @@ export const IssueTypeSwitcher = observer(function IssueTypeSwitcher(props: TIss
             <MenuTrigger
               render={
                 <Pill size="sm" variant="outline" aria-label={t("product.kind")}>
-                  {t(isProduct ? "product.kinds.product" : "product.kinds.task")}
+                  {t(`product.kinds.${kind}`)}
                 </Pill>
               }
             />
             <MenuContent side="bottom" align="start">
-              {isProduct ? (
-                <MenuItem label={t("product.make_task")} onClick={() => void update({ kind: "task" })} />
+              {kind === "task" ? (
+                <>
+                  <MenuItem label={t("product.make_product")} onClick={() => setDialog("product")} />
+                  <MenuItem label={t("meeting.make_meeting")} onClick={() => setDialog("meeting")} />
+                </>
               ) : (
-                <MenuItem label={t("product.make_product")} onClick={() => setIsDialogOpen(true)} />
+                <MenuItem label={t("product.make_task")} onClick={() => void update({ kind: "task" })} />
               )}
             </MenuContent>
           </Menu>
           <ConvertToProductDialog
-            isOpen={isDialogOpen}
+            isOpen={dialog === "product"}
             workspaceSlug={slug}
             issue={issue}
-            onClose={() => setIsDialogOpen(false)}
+            onClose={() => setDialog(null)}
             onSubmit={update}
           />
+          <ConvertToMeetingDialog isOpen={dialog === "meeting"} onClose={() => setDialog(null)} onSubmit={update} />
         </>
       )}
     </>

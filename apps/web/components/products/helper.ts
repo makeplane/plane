@@ -5,7 +5,7 @@
  */
 
 // plane imports
-import type { TIssue, TProductIndicator, TProductPayload } from "@plane/types";
+import type { TIssue, TProductIndicator, TProductPayload, TWorkItemKind } from "@plane/types";
 
 type TErrors = Record<string, unknown> | undefined;
 
@@ -21,9 +21,16 @@ export const getProductErrorKey = (error: unknown): string => {
   if (text.includes("cannot have a parent")) return "product.errors.no_parent";
   if (text.includes("owner must be")) return "product.errors.owner";
   if (text.includes("product type is not available")) return "product.errors.type_unavailable";
+  if (text.includes("sub-work items cannot become")) return "meeting.errors.has_items";
+  if (text.includes("Only a product can be the parent")) return "meeting.errors.parent";
+  if (text.includes("needs this time") || text.includes("must end after")) return "meeting.errors.time";
+  if (text.includes("who see the meeting") || text.includes("organizer must be")) return "meeting.errors.people";
   if (text.includes("needs") || text.includes("Start date cannot")) return "product.errors.required";
   return "something_went_wrong_please_try_again";
 };
+
+/** Tasks come without a kind from some places. */
+export const isTask = (issue: { kind?: TWorkItemKind }): boolean => !issue.kind || issue.kind === "task";
 
 /** What the form still lacks to save a product. */
 export const isProductComplete = (

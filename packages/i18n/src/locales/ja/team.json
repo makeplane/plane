@@ -66,7 +66,8 @@
     "kind": "種別",
     "kinds": {
       "task": "タスク",
-      "product": "プロダクト"
+      "product": "プロダクト",
+      "meeting": "会議"
     },
     "type": "プロダクトタイプ",
     "types": "プロダクトタイプ",
@@ -132,6 +133,38 @@
       "owner": "責任者はプロジェクトのメンバーである必要があります。",
       "type_unavailable": "このプロダクトタイプは利用できません。",
       "required": "プロダクトタイプ、責任者、開始日、期限を選択してください。"
+    },
+    "icon": "アイコン"
+  },
+  "meeting": {
+    "start": "開始",
+    "end": "終了",
+    "participants": "参加者",
+    "organizer": "主催者",
+    "location": "場所またはリンク",
+    "outcome": "結果",
+    "outcome_placeholder": "決まったことを書いてください",
+    "meetings": "会議",
+    "make_meeting": "会議に変換",
+    "reschedule": "日時を変更",
+    "create_task": "タスクを作成",
+    "create_task_hint": "タスクには同じプロダクトと会議へのリンクが設定されます。",
+    "task_created": "タスクを作成しました。",
+    "delete_hint": "削除は参加者に通知されません。知らせるには、先に会議をキャンセルしてください。",
+    "invited": "があなたを会議に招待しました",
+    "rescheduled": "が会議の日時を変更しました",
+    "history": {
+      "participants": "参加者",
+      "meeting_time": "会議の日時",
+      "location": "場所またはリンク",
+      "organizer": "主催者",
+      "outcome": "結果が変更されました"
+    },
+    "errors": {
+      "has_items": "サブ項目のある項目は会議にできません。",
+      "parent": "会議の親にできるのはプロダクトのみです。",
+      "time": "会議には開始と、それより後の終了が必要です。",
+      "people": "会議を閲覧できる人のみ参加できます。"
     }
   }
 }

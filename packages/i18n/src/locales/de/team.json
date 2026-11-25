@@ -66,7 +66,8 @@
     "kind": "Art",
     "kinds": {
       "task": "Aufgabe",
-      "product": "Produkt"
+      "product": "Produkt",
+      "meeting": "Besprechung"
     },
     "type": "Produkttyp",
     "types": "Produkttypen",
@@ -132,6 +133,38 @@
       "owner": "Die verantwortliche Person muss Projektmitglied sein.",
       "type_unavailable": "Dieser Produkttyp ist nicht verfügbar.",
       "required": "Wählen Sie Produkttyp, verantwortliche Person, Startdatum und Fälligkeitsdatum."
+    },
+    "icon": "Symbol"
+  },
+  "meeting": {
+    "start": "Beginn",
+    "end": "Ende",
+    "participants": "Teilnehmende",
+    "organizer": "Organisator",
+    "location": "Ort oder Link",
+    "outcome": "Ergebnisse",
+    "outcome_placeholder": "Halten Sie fest, was beschlossen wurde",
+    "meetings": "Besprechungen",
+    "make_meeting": "In Besprechung umwandeln",
+    "reschedule": "Verschieben",
+    "create_task": "Aufgabe erstellen",
+    "create_task_hint": "Die Aufgabe erhält dasselbe Produkt und einen Link zur Besprechung.",
+    "task_created": "Die Aufgabe wurde erstellt.",
+    "delete_hint": "Über eine Löschung werden Teilnehmende nicht informiert. Sagen Sie die Besprechung dazu zuerst ab.",
+    "invited": "hat Sie zur Besprechung eingeladen",
+    "rescheduled": "hat die Besprechung verschoben",
+    "history": {
+      "participants": "Teilnehmende",
+      "meeting_time": "Besprechungszeit",
+      "location": "Ort oder Link",
+      "organizer": "Organisator",
+      "outcome": "Ergebnisse geändert"
+    },
+    "errors": {
+      "has_items": "Ein Element mit Unterelementen kann keine Besprechung werden.",
+      "parent": "Nur ein Produkt kann einer Besprechung übergeordnet sein.",
+      "time": "Die Besprechung braucht einen Beginn und ein späteres Ende.",
+      "people": "Nur wer die Besprechung sieht, kann teilnehmen."
     }
   }
 }

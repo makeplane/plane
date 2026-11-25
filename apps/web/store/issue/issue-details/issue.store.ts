@@ -173,6 +173,7 @@ export class IssueStore implements IIssueStore {
       is_epic: issue?.is_epic,
       kind: issue?.kind,
       product: issue?.product,
+      meeting: issue?.meeting,
     };
 
     this.rootIssueDetailStore.rootIssueStore.issues.addIssue([issuePayload]);

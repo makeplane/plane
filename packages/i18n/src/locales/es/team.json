@@ -66,7 +66,8 @@
     "kind": "Clase",
     "kinds": {
       "task": "Tarea",
-      "product": "Producto"
+      "product": "Producto",
+      "meeting": "Reunión"
     },
     "type": "Tipo de producto",
     "types": "Tipos de producto",
@@ -132,6 +133,38 @@
       "owner": "El responsable debe ser miembro del proyecto.",
       "type_unavailable": "Este tipo de producto no está disponible.",
       "required": "Elige el tipo de producto, el responsable, la fecha de inicio y la fecha de vencimiento."
+    },
+    "icon": "Icono"
+  },
+  "meeting": {
+    "start": "Inicio",
+    "end": "Fin",
+    "participants": "Participantes",
+    "organizer": "Organizador",
+    "location": "Lugar o enlace",
+    "outcome": "Resultados",
+    "outcome_placeholder": "Anota lo que se decidió",
+    "meetings": "Reuniones",
+    "make_meeting": "Convertir en reunión",
+    "reschedule": "Reprogramar",
+    "create_task": "Crear tarea",
+    "create_task_hint": "La tarea recibe el mismo producto y un enlace a la reunión.",
+    "task_created": "La tarea se ha creado.",
+    "delete_hint": "A los participantes no se les avisa de una eliminación. Para avisarles, cancela primero la reunión.",
+    "invited": "te ha invitado a la reunión",
+    "rescheduled": "ha reprogramado la reunión",
+    "history": {
+      "participants": "Participantes",
+      "meeting_time": "Hora de la reunión",
+      "location": "Lugar o enlace",
+      "organizer": "Organizador",
+      "outcome": "Resultados modificados"
+    },
+    "errors": {
+      "has_items": "Un elemento con subelementos no puede convertirse en reunión.",
+      "parent": "Solo un producto puede ser el padre de una reunión.",
+      "time": "La reunión necesita un inicio y un fin posterior.",
+      "people": "Solo quienes ven la reunión pueden participar."
     }
   }
 }

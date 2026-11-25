@@ -1651,7 +1651,7 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
     // if issue object is undefined return empty array
     if (!issueObject) return [];
     // the server groups tasks under None
-    if (groupByKey === "kind") return [issueObject.kind === "product" ? "product" : "None"];
+    if (groupByKey === "kind") return [issueObject.kind && issueObject.kind !== "task" ? issueObject.kind : "None"];
     // if value is not defined, return None value in array
     if (!value || isEmpty(value)) return ["None"];
     // if array return the array

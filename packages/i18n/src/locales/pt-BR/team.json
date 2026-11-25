@@ -66,7 +66,8 @@
     "kind": "Espécie",
     "kinds": {
       "task": "Tarefa",
-      "product": "Produto"
+      "product": "Produto",
+      "meeting": "Reunião"
     },
     "type": "Tipo de produto",
     "types": "Tipos de produto",
@@ -132,6 +133,38 @@
       "owner": "O responsável deve ser membro do projeto.",
       "type_unavailable": "Este tipo de produto não está disponível.",
       "required": "Escolha o tipo de produto, o responsável, a data de início e a data de vencimento."
+    },
+    "icon": "Ícone"
+  },
+  "meeting": {
+    "start": "Início",
+    "end": "Fim",
+    "participants": "Participantes",
+    "organizer": "Organizador",
+    "location": "Local ou link",
+    "outcome": "Resultados",
+    "outcome_placeholder": "Anote o que foi decidido",
+    "meetings": "Reuniões",
+    "make_meeting": "Transformar em reunião",
+    "reschedule": "Reagendar",
+    "create_task": "Criar tarefa",
+    "create_task_hint": "A tarefa recebe o mesmo produto e um link para a reunião.",
+    "task_created": "A tarefa foi criada.",
+    "delete_hint": "Os participantes não são avisados da exclusão. Para avisá-los, cancele a reunião primeiro.",
+    "invited": "convidou você para a reunião",
+    "rescheduled": "reagendou a reunião",
+    "history": {
+      "participants": "Participantes",
+      "meeting_time": "Horário da reunião",
+      "location": "Local ou link",
+      "organizer": "Organizador",
+      "outcome": "Resultados alterados"
+    },
+    "errors": {
+      "has_items": "Um item com subitens não pode virar reunião.",
+      "parent": "Somente um produto pode ser o pai de uma reunião.",
+      "time": "A reunião precisa de um início e de um fim posterior.",
+      "people": "Somente quem vê a reunião pode participar."
     }
   }
 }
