@@ -20,10 +20,12 @@ from fpdf.fonts import FontFace
 from plane.liviere.activity.report_export import (
     day_table,
     days_with_entries,
+    days_with_summaries,
     descriptions,
     entry_heading,
     header,
     people_table,
+    person_name,
 )
 from plane.liviere.activity.report_labels import labels
 
@@ -141,6 +143,19 @@ def to_pdf(report, language):
     headers, rows = people_table(report, L)
     _heading(pdf, L["people"], 12)
     _table(pdf, headers, rows)
+
+    summarized = days_with_summaries(report)
+    if summarized:
+        _heading(pdf, L["summaries"], 12)
+        for day in summarized:
+            _heading(pdf, day["date"], 10)
+            for summary in day["summaries"]:
+                pdf.set_font(FONT, "B", 9)
+                pdf.multi_cell(0, 5, printable(person_name(summary["author"], L)), new_x="LMARGIN", new_y="NEXT")
+                pdf.set_font(FONT, "", 9)
+                pdf.set_x(pdf.l_margin + 4)
+                pdf.multi_cell(0, 4.5, printable(summary["text"]), new_x="LMARGIN", new_y="NEXT")
+                pdf.ln(1.5)
 
     if report["entries_included"]:
         _heading(pdf, L["entries"], 12)

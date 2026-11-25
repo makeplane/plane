@@ -106,6 +106,8 @@ export type TReportEntry = {
   note: string | null;
 };
 
+export type TReportSummary = { id: number; author: TReportActor; text: string };
+
 export type TActivityReport = {
   project: { id: string; name: string; identifier: string };
   from: string;
@@ -119,8 +121,19 @@ export type TActivityReport = {
   open_entry_minutes: number;
   entries_included: boolean;
   totals: TReportMinutes;
-  days: (TReportMinutes & { date: string; entries: TReportEntry[] })[];
+  days: (TReportMinutes & { date: string; summaries: TReportSummary[]; entries: TReportEntry[] })[];
   people: (TReportMinutes & { actor: TReportActor })[];
 };
 
 export type TReportOptions = { source: TReportSource; entries: boolean };
+
+// Day summaries (apps/api/plane/liviere/activity/summaries.py): one per project, day and author
+
+export type TDaySummary = {
+  id: number;
+  date: string; // local date in the project time zone
+  author: { id: string; display_name: string; avatar_url: string | null } | null;
+  text: string;
+  created_at: string;
+  updated_at: string;
+};

@@ -17,6 +17,7 @@ import type {
   TActivityQuery,
   TActivityReport,
   TActivitySettings,
+  TDaySummary,
   TReportExport,
   TReportOptions,
 } from "./types";
@@ -112,6 +113,43 @@ export class ProjectActivityService extends APIService {
       responseType: "blob",
     })
       .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async getSummaries(workspaceSlug: string, projectId: string, query: TActivityQuery): Promise<TDaySummary[]> {
+    return this.get(this.projectUrl(workspaceSlug, projectId, "summaries"), { params: this.queryParams(query) })
+      .then((response) => response?.data?.results ?? [])
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** Your summary of a day: created, or replaced when you already have one. */
+  async saveSummary(
+    workspaceSlug: string,
+    projectId: string,
+    data: { date: string; text: string }
+  ): Promise<TDaySummary & { replaced: boolean }> {
+    return this.post(this.projectUrl(workspaceSlug, projectId, "summaries"), data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async updateSummary(workspaceSlug: string, projectId: string, id: number, text: string): Promise<TDaySummary> {
+    return this.patch(`${this.projectUrl(workspaceSlug, projectId, "summaries")}${id}/`, { text })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  async deleteSummary(workspaceSlug: string, projectId: string, id: number): Promise<void> {
+    return this.delete(`${this.projectUrl(workspaceSlug, projectId, "summaries")}${id}/`)
+      .then(() => undefined)
       .catch((error) => {
         throw error?.response?.data;
       });

@@ -198,6 +198,7 @@ def build_report(project, query, source, report_settings, with_entries=True, ski
     """
     # Imported here: the pure functions above are tested without Django
     from plane.liviere.activity.queries import filtered_events, serialize_events
+    from plane.liviere.activity.summaries import summaries_by_day
     from plane.db.models import User
 
     zone = query["zone"]
@@ -262,8 +263,14 @@ def build_report(project, query, source, report_settings, with_entries=True, ski
                 }
             )
 
+    summaries = summaries_by_day(project.id, query["start"], query["end"], query["actor"])
     day_rows = [
-        {"date": day.isoformat(), **with_totals(result["days"][day], source), "entries": listed.get(day, [])}
+        {
+            "date": day.isoformat(),
+            **with_totals(result["days"][day], source),
+            "summaries": summaries.get(day, []),
+            "entries": listed.get(day, []),
+        }
         for day in days
     ]
     people_rows = []

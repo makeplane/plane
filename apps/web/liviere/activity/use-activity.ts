@@ -73,6 +73,22 @@ export const useActivityReport = (
     { revalidateOnFocus: false, keepPreviousData: true }
   );
 
+export const useDaySummaries = (workspaceSlug: string, projectId: string, query: TActivityQuery) =>
+  useSWR(
+    `LIVIERE_ACTIVITY_SUMMARIES_${projectId}_${query.from}_${query.to}_${query.tz}_${query.actor ?? ""}`,
+    () => projectActivityService.getSummaries(workspaceSlug, projectId, query),
+    { revalidateOnFocus: false, keepPreviousData: true }
+  );
+
+/** Reloads the day summaries and the report of a project after a summary changed. */
+export const refreshDaySummaries = (projectId: string) =>
+  mutate(
+    (key) =>
+      typeof key === "string" &&
+      (key.startsWith(`LIVIERE_ACTIVITY_SUMMARIES_${projectId}_`) ||
+        key.startsWith(`LIVIERE_ACTIVITY_REPORT_${projectId}_`))
+  );
+
 /** Reloads the heatmap, the event lists and the report of a project, e.g. after a log entry changed. */
 export const refreshProjectActivity = (projectId: string) =>
   mutate(

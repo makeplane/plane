@@ -181,6 +181,28 @@ task): `docker compose exec api python manage.py shell -c "from django_celery_be
 PeriodicTask.objects.filter(name__startswith='liviere:').update(enabled=False)"`.
 
 
+### Day summaries (`/api/v1/.../projects/{id}/activity/summaries/`)
+
+A few sentences on what happened in a project on one day, mostly written by AI agents at the end of their
+work: easier to read than every action or log entry. `ActivityDaySummary` (table
+`liviere_activity_day_summaries`, migration `0008`): project, local day in the project time zone, author, text
+(≤ 8000 characters); one per project, day and author. Not an activity event, so it adds no time. Rules in
+`activity/summaries.py`.
+
+| Endpoint | |
+|---|---|
+| `GET .../activity/summaries/` | summaries of `from`–`to` (default the last 30 days), optionally of one `actor`, newest day first |
+| `POST .../activity/summaries/` | `{date, text}` (`date` default today, not in the future) → 201 new, or 200 with `"replaced": true` when the author already has one for that day |
+| `GET/PATCH/DELETE .../activity/summaries/{id}/` | one summary; `PATCH {text}` |
+
+Admins and members write; the author or a project admin changes and deletes. All agents of one account share
+an author, so a `POST` of a second session replaces the first one's summary: `plane-log summary add` therefore
+asks first and refuses without `--replace` (overwrite) or `--append` (add a paragraph);
+`plane-log summary show|edit|rm` do the rest. The same endpoints exist for the app under
+`/api/workspaces/.../projects/{id}/liviere/activity/summaries/`; the *Summaries* tab of the *Activity* page
+(`?view=summaries`) lists them by day with add, edit and delete (your summary of a day opens for editing). The
+time report shows the summaries of its days (JSON `days[].summaries`, PDF and Markdown; not CSV).
+
 ### Time report (`/api/v1/.../projects/{id}/activity/report/`)
 
 How much time went into one project in a period, for weekly and monthly reports. The grid of the page keeps
@@ -212,9 +234,9 @@ and `plane/tests/contract/api/test_activity_report.py`.
 `kinds`) plus `source=grid|log|mixed`, `entries=0` (leave the list of log entries out), `export=pdf|md|csv` (a file
 instead of JSON; not `format`, which Django REST framework keeps for itself) and `lang=en|pl` (files; default
 the language of the Plane profile, else English). JSON: the header fields, `totals`, `days` (`date`,
-`log_minutes`, `grid_minutes`, `difference_minutes`, `result_minutes`, `entries`) and `people`. PDF (A4, the
-main format) and Markdown: the header, how the time was counted, the tables of days and people and the entries
-day by day. CSV: one row per day and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read
+`log_minutes`, `grid_minutes`, `difference_minutes`, `result_minutes`, `summaries`, `entries`) and `people`.
+PDF (A4, the main format) and Markdown: the header, how the time was counted, the tables of days and people,
+the day summaries and the entries day by day. CSV: one row per day and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read
 Polish letters). The app endpoint is `/api/workspaces/.../projects/{id}/liviere/activity/report/`; the
 *Activity* page shows the report in its *Report* tab (`?view=report&source=…`, the period of the toolbar) with
 *PDF*, *Markdown* and *CSV* buttons, and the Activity settings have the two thresholds.

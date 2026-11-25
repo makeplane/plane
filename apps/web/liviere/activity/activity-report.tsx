@@ -110,6 +110,7 @@ export function ActivityReport(props: Props) {
     : [];
   const headings = columns.map((column) => t(`liviere.activity.report.columns.${COLUMN_LABELS[column]}`));
   const listed = report ? report.days.filter((day) => day.entries.length > 0) : [];
+  const summarized = report ? report.days.filter((day) => day.summaries.length > 0) : [];
 
   return (
     <div className="flex flex-col gap-5">
@@ -200,6 +201,23 @@ export function ActivityReport(props: Props) {
             }))}
             columns={columns}
           />
+
+          {summarized.length > 0 && (
+            <section className="flex flex-col gap-3">
+              <h3 className="text-14 font-medium text-primary">{t("liviere.activity.report.summaries")}</h3>
+              {summarized.map((day) => (
+                <div key={day.date} className="flex flex-col gap-2">
+                  <h4 className="text-13 font-medium text-secondary">{day.date}</h4>
+                  {day.summaries.map((summary) => (
+                    <div key={summary.id} className="text-13">
+                      <div className="font-medium text-primary">{personName(summary.author)}</div>
+                      <p className="pl-4 whitespace-pre-wrap text-secondary">{summary.text}</p>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </section>
+          )}
 
           {report.entries_included && (
             <section className="flex flex-col gap-3">

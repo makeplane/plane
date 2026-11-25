@@ -84,6 +84,35 @@ class ProjectActivitySettings(models.Model):
         db_table = "liviere_project_activity_settings"
 
 
+class ActivityDaySummary(models.Model):
+    """
+    What happened in a project on one day, in a few sentences by a person or an AI agent
+    (plane/liviere/activity/summaries.py). One per project, day and author; shown on the Activity page and
+    in the time report. Not an activity event: writing it adds no time.
+    """
+
+    id = models.BigAutoField(primary_key=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+    # Local date in the project time zone
+    day = models.DateField()
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "liviere_activity_day_summaries"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "day", "author"],
+                condition=models.Q(author__isnull=False),
+                name="liviere_day_summary_unique_author",
+            )
+        ]
+        indexes = [models.Index(fields=["project", "day"], name="liviere_day_summary_day")]
+
+
 class WorkItemOpen(models.Model):
     """A person opened a work item (peek or full page) for the first time; see plane/liviere/unread."""
 

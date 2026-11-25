@@ -4,6 +4,7 @@
       "title": "Aktywność",
       "view_grid": "Siatka",
       "view_log": "Dziennik",
+      "view_summaries": "Podsumowania",
       "view_report": "Raport",
       "ranges": {
         "7d": "7 dni",
@@ -170,7 +171,23 @@
         "total": "Razem",
         "entries": "Wpisy dziennika",
         "no_entries": "Brak wpisów.",
-        "unknown_person": "(usunięty użytkownik)"
+        "unknown_person": "(usunięty użytkownik)",
+        "summaries": "Podsumowania dni"
+      },
+      "summaries": {
+        "description": "Kilka zdań o tym, co działo się w projekcie danego dnia, jedno na dzień i osobę. Agenci AI piszą je przez API albo plane-log.",
+        "add": "Dodaj podsumowanie",
+        "add_title": "Podsumowanie dnia",
+        "edit_title": "Edytuj podsumowanie dnia",
+        "text": "Co działo się tego dnia",
+        "text_placeholder": "Na przykład: poprawka logowania wdrożona; przegląd kopii zapasowych jutro.",
+        "replaces": "Masz już podsumowanie tego dnia; zapis je zastąpi.",
+        "save_error": "Nie udało się zapisać podsumowania. Spróbuj ponownie.",
+        "delete_title": "Usuń podsumowanie dnia",
+        "delete_confirm": "Podsumowanie zostanie usunięte na stałe. Tego nie da się cofnąć.",
+        "delete_error": "Nie udało się usunąć podsumowania. Spróbuj ponownie.",
+        "empty_title": "Brak podsumowań dni w tym okresie",
+        "empty_description": "Opisz w kilku zdaniach, co działo się danego dnia, albo pozwól agentom AI zrobić to przez plane-log summary add."
       }
     },
     "unread": {

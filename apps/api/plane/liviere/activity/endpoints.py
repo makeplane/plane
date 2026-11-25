@@ -11,6 +11,7 @@
 from zoneinfo import ZoneInfo
 
 # Django imports
+from django.db import IntegrityError, transaction
 from django.http import HttpResponse
 from django.utils import timezone
 
@@ -39,8 +40,9 @@ from plane.liviere.activity.report import (
 )
 from plane.liviere.activity.report_export import EXPORTS, filename, render
 from plane.liviere.activity.report_labels import DEFAULT_LANGUAGE, LANGUAGES
+from plane.liviere.activity.summaries import InvalidSummary, serialize_summary, summary_day, summary_text
 from plane.db.models import Profile, Project
-from plane.liviere.models import ActivityEvent, ProjectActivitySettings
+from plane.liviere.models import ActivityDaySummary, ActivityEvent, ProjectActivitySettings
 
 SERIES_FIELDS = {"series_gap_minutes": SERIES_GAP_RANGE, "series_padding_minutes": SERIES_PADDING_RANGE}
 
@@ -169,6 +171,86 @@ class ActivityHandlers:
         response = HttpResponse(render(report, export, language), content_type=EXPORTS[export])
         response["Content-Disposition"] = f'attachment; filename="{filename(report, export)}"'
         return response
+
+    # Day summaries
+
+    def list_summaries(self, request, project_id):
+        """Summaries of the period (`from`, `to`, `actor` as for the heatmap), newest day first."""
+        try:
+            query = parse_params(request, project_id)
+        except InvalidParams as e:
+            return bad_request(e)
+        rows = ActivityDaySummary.objects.filter(
+            project_id=project_id, day__gte=query["start"], day__lte=query["end"]
+        ).select_related("author")
+        if query["actor"]:
+            rows = rows.filter(author_id=query["actor"])
+        rows = rows.order_by("-day", "author__display_name", "id")
+        return Response({"results": [serialize_summary(row) for row in rows]}, status=status.HTTP_200_OK)
+
+    def upsert_summary(self, request, project_id):
+        """New summary of a day (201), or the author's summary of that day replaced (200, "replaced": true)."""
+        project = Project.objects.get(pk=project_id)
+        try:
+            text = summary_text(request.data.get("text"))
+            day = summary_day(request.data.get("date"), ZoneInfo(project.timezone or "UTC"))
+        except InvalidSummary as e:
+            return bad_request(e)
+        lookup = {"project_id": project_id, "day": day, "author": request.user}
+        for _ in range(2):
+            existing = ActivityDaySummary.objects.filter(**lookup).first()
+            if existing is not None:
+                existing.text = text
+                existing.save(update_fields=["text", "updated_at"])
+                return Response(serialize_summary(existing, replaced=True), status=status.HTTP_200_OK)
+            try:
+                # Two writers of the same day: the unique constraint stops the second, which then replaces
+                with transaction.atomic():
+                    summary = ActivityDaySummary.objects.create(workspace_id=project.workspace_id, text=text, **lookup)
+                return Response(serialize_summary(summary, replaced=False), status=status.HTTP_201_CREATED)
+            except IntegrityError:
+                continue
+        return Response({"error": "The summary could not be saved, try again"}, status=status.HTTP_409_CONFLICT)
+
+    def _summary(self, project_id, summary_id):
+        return ActivityDaySummary.objects.filter(id=summary_id, project_id=project_id).select_related("author").first()
+
+    def get_summary(self, request, project_id, summary_id):
+        summary = self._summary(project_id, summary_id)
+        if summary is None:
+            return Response({"error": "Summary not found"}, status=status.HTTP_404_NOT_FOUND)
+        return Response(serialize_summary(summary), status=status.HTTP_200_OK)
+
+    def _check_summary_author(self, request, slug, project_id, summary):
+        if summary.author_id == request.user.id or is_project_admin(request.user, slug, project_id):
+            return None
+        return Response(
+            {"error": "Only the author or a project admin can change this summary"}, status=status.HTTP_403_FORBIDDEN
+        )
+
+    def patch_summary(self, request, slug, project_id, summary_id):
+        summary = self._summary(project_id, summary_id)
+        if summary is None:
+            return Response({"error": "Summary not found"}, status=status.HTTP_404_NOT_FOUND)
+        denied = self._check_summary_author(request, slug, project_id, summary)
+        if denied:
+            return denied
+        try:
+            summary.text = summary_text(request.data.get("text"))
+        except InvalidSummary as e:
+            return bad_request(e)
+        summary.save(update_fields=["text", "updated_at"])
+        return Response(serialize_summary(summary), status=status.HTTP_200_OK)
+
+    def delete_summary(self, request, slug, project_id, summary_id):
+        summary = self._summary(project_id, summary_id)
+        if summary is None:
+            return Response({"error": "Summary not found"}, status=status.HTTP_404_NOT_FOUND)
+        denied = self._check_summary_author(request, slug, project_id, summary)
+        if denied:
+            return denied
+        summary.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Log entries
 

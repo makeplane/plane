@@ -7,7 +7,8 @@
 plane-log: activity log entries of the Liviere/plane fork from the command line, for people and AI agents.
 
 An entry says what was done in a project and when (a time range); it shows up in the project's "Activity"
-heatmap. `report` downloads the project's time report of a period. Only the Python standard library is needed.
+heatmap. `summary` keeps one short summary of a day per author; `report` downloads the project's time report of
+a period. Only the Python standard library is needed.
 
 Configuration (the same file as the Plane MCP server; variables set in the environment win):
     ~/.config/plane-mcp/env (or $PLANE_LOG_ENV) with PLANE_API_KEY, PLANE_WORKSPACE_SLUG, PLANE_BASE_URL
@@ -19,6 +20,9 @@ Examples:
     plane-log list -p ORD --date 2026-10-27 --at 14:30 --events   # everything in that quarter
     plane-log edit -p ORD 123 --text "Better description"
     plane-log rm -p ORD 123
+    plane-log summary add -p ORD "Login fixed and deployed; backups checked."   # today's summary
+    plane-log summary add -p ORD --append "Also reviewed the backup script."     # adds a paragraph
+    plane-log summary show -p ORD --days 7
     plane-log report -p ORD --month previous -o ORD-october.pdf         # last month, PDF
     plane-log report -p ORD --from 2026-11-01 --to 2026-11-07 --format csv --source log -o week.csv
 """
@@ -228,6 +232,65 @@ def command_list(plane, args):
     return events if args.json else print_events(events)
 
 
+def print_summaries(summaries):
+    for summary in summaries:
+        author = (summary.get("author") or {}).get("display_name") or "-"
+        print(f"#{summary['id']}  {summary['date']}  {author}")
+        for text_line in summary["text"].splitlines():
+            print(f"      {text_line}")
+    if not summaries:
+        print("No summaries.")
+
+
+def my_summary(plane, project, day):
+    """Your summary of the day, or None."""
+    params = {"from": day, "to": day, "actor": plane.request("GET", f"{plane.root}/users/me/")["id"]}
+    results = plane.request("GET", plane.activity(project, "summaries/"), params)["results"]
+    return results[0] if results else None
+
+
+def command_summary(plane, args):
+    project = plane.project(args.project)
+    if args.action == "add":
+        if args.replace and args.append:
+            raise Failure("Use --replace or --append, not both")
+        text = read_text(args.text)
+        day = args.date or None
+        # The API replaces an existing summary of the day; ask first, so parallel sessions don't overwrite
+        # each other unnoticed. Without --date the day is today in the project time zone.
+        if not day:
+            try:
+                zone = ZoneInfo(project.get("timezone") or "UTC")
+            except (ZoneInfoNotFoundError, ValueError):
+                zone = None
+            day = (datetime.now(zone).date() if zone else date.today()).isoformat()
+        existing = my_summary(plane, project, day)
+        if existing and not (args.replace or args.append):
+            raise Failure(
+                f"You already have a summary of {day} (#{existing['id']}): "
+                "add --replace to overwrite it or --append to add a paragraph"
+            )
+        if existing and args.append:
+            text = existing["text"].rstrip() + "\n\n" + text.strip()
+        summary = plane.request("POST", plane.activity(project, "summaries/"), body={"date": day, "text": text})
+        return summary if args.json else print_summaries([summary])
+    if args.action == "show":
+        day = date.fromisoformat(args.date) if args.date else date.today()
+        start = day - timedelta(days=args.days - 1)
+        params = {"from": start.isoformat(), "to": day.isoformat()}
+        if args.mine:
+            params["actor"] = plane.request("GET", f"{plane.root}/users/me/")["id"]
+        summaries = plane.request("GET", plane.activity(project, "summaries/"), params)["results"]
+        return summaries if args.json else print_summaries(summaries)
+    if args.action == "edit":
+        body = {"text": read_text(args.text)}
+        summary = plane.request("PATCH", plane.activity(project, f"summaries/{args.id}/"), body=body)
+        return summary if args.json else print_summaries([summary])
+    plane.request("DELETE", plane.activity(project, f"summaries/{args.id}/"))
+    if not args.json:
+        print(f"Deleted summary #{args.id}")
+
+
 def month_range(today, which):
     """(first day, last day) of the current month up to today, or of the whole previous month."""
     first = today.replace(day=1)
@@ -319,6 +382,23 @@ def main(argv=None):
     show.add_argument("--events", action="store_true", help="all counted actions, not only log entries")
     show.add_argument("--mine", action="store_true", help="only your own")
 
+    summary = commands.add_parser("summary", help="day summaries: add, show, edit, rm")
+    summary_actions = summary.add_subparsers(dest="action", required=True)
+    summary_add = summary_actions.add_parser("add", parents=[common], help="your summary of a day")
+    summary_add.add_argument("text", help='the summary ("-" reads standard input)')
+    summary_add.add_argument("--date", help="YYYY-MM-DD (default: today in the project time zone)")
+    summary_add.add_argument("--replace", action="store_true", help="overwrite your summary of that day")
+    summary_add.add_argument("--append", action="store_true", help="add a paragraph to your summary of that day")
+    summary_show = summary_actions.add_parser("show", parents=[common], help="summaries of a day or a few days")
+    summary_show.add_argument("--date", help="last day, YYYY-MM-DD (default: today)")
+    summary_show.add_argument("--days", type=int, default=1, help="number of days up to --date (default: 1)")
+    summary_show.add_argument("--mine", action="store_true", help="only your own")
+    summary_edit = summary_actions.add_parser("edit", parents=[common], help="change a summary")
+    summary_edit.add_argument("id", type=int)
+    summary_edit.add_argument("--text", required=True, help='new text ("-" reads standard input)')
+    summary_rm = summary_actions.add_parser("rm", parents=[common], help="delete a summary")
+    summary_rm.add_argument("id", type=int)
+
     report = commands.add_parser("report", parents=[common], help="time report of a period (one project)")
     report.add_argument("--from", dest="start", help="first day, YYYY-MM-DD")
     report.add_argument("--to", dest="end", help="last day, YYYY-MM-DD")
@@ -340,6 +420,7 @@ def main(argv=None):
         "edit": command_edit,
         "rm": command_rm,
         "list": command_list,
+        "summary": command_summary,
         "report": command_report,
     }
     try:

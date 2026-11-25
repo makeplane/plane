@@ -8,7 +8,8 @@
 // 96 quarters of the day; the colour says how many actions happened in that quarter. Admins and members
 // add log entries here (what they did, from when to when); agents do it through the API. The "Work log" view
 // (?view=log) lists the entries by day instead of the grid; the "Report" view (?view=report, ?source=) counts
-// the time of the period and downloads it as PDF, Markdown or CSV. Days and quarters are in the project's time
+// the time of the period and downloads it as PDF, Markdown or CSV; "Summaries" (?view=summaries) lists the day
+// summaries. Days and quarters are in the project's time
 // zone; the period is in the URL (range.ts).
 
 import { useMemo, useRef, useState } from "react";
@@ -35,6 +36,7 @@ import { ActivityGrid } from "./activity-grid";
 import { ActivityLogList } from "./activity-log-list";
 import { ActivityLogModal } from "./activity-log-modal";
 import { ActivityReport } from "./activity-report";
+import { ActivitySummaries } from "./activity-summaries";
 import { MAX_RANGE_DAYS, RANGE_PRESETS, parseRange, rangeQueryChange, resolveRange, validCustomRange } from "./range";
 import type { TRangeSelection } from "./range";
 import { REPORT_SOURCES } from "./types";
@@ -44,6 +46,8 @@ import { refreshProjectActivity, useActivityHeatmap, useCurrentQuarter } from ".
 const VIEW_PARAM = "view";
 const LOG_VIEW = "log";
 const REPORT_VIEW = "report";
+const SUMMARIES_VIEW = "summaries";
+const VIEWS = new Set([LOG_VIEW, REPORT_VIEW, SUMMARIES_VIEW]);
 const SOURCE_PARAM = "source";
 
 type Props = {
@@ -75,11 +79,11 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
   const searchParams = useSearchParams();
   const { updateQueryParams } = useQueryParams();
   const viewParam = searchParams.get(VIEW_PARAM);
-  const view = viewParam === LOG_VIEW || viewParam === REPORT_VIEW ? viewParam : "grid";
+  const view = viewParam && VIEWS.has(viewParam) ? viewParam : "grid";
   const setView = (value: string) => {
     setSelected(null);
     router.replace(
-      value === LOG_VIEW || value === REPORT_VIEW
+      VIEWS.has(value)
         ? updateQueryParams({ paramsToAdd: { [VIEW_PARAM]: value } })
         : updateQueryParams({ paramsToRemove: [VIEW_PARAM] })
     );
@@ -135,6 +139,7 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
             <TabsList aria-label={t("liviere.activity.title")}>
               <Tab value="grid" label={t("liviere.activity.view_grid")} />
               <Tab value={LOG_VIEW} label={t("liviere.activity.view_log")} />
+              <Tab value={SUMMARIES_VIEW} label={t("liviere.activity.view_summaries")} />
               <Tab value={REPORT_VIEW} label={t("liviere.activity.view_report")} />
             </TabsList>
           </Tabs>
@@ -228,7 +233,17 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
         )}
       </div>
 
-      {view === REPORT_VIEW ? (
+      {view === SUMMARIES_VIEW ? (
+        <ActivitySummaries
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          query={query}
+          locale={currentLocale}
+          today={now.date}
+          currentUserId={currentUser?.id}
+          isAdmin={isAdmin}
+        />
+      ) : view === REPORT_VIEW ? (
         <ActivityReport
           workspaceSlug={workspaceSlug}
           projectId={projectId}

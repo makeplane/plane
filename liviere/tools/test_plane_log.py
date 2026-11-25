@@ -76,6 +76,39 @@ class FakePlane(BaseHTTPRequestHandler):
         return self.route(url.path, params, body)
 
     def route(self, path, params, body):
+        """Day summaries kept in `stored` ({id: summary}), one per day (the fake has one author)."""
+        if path.endswith("/activity/summaries/") and self.command == "GET":
+            results = [
+                s
+                for s in FakePlane.stored.values()
+                if params["from"] <= s["date"] <= params["to"] and params.get("actor", ME["id"]) == ME["id"]
+            ]
+            return self._json(200, {"results": results})
+        if path.endswith("/activity/summaries/") and self.command == "POST":
+            existing = next((s for s in FakePlane.stored.values() if s["date"] == body["date"]), None)
+            if existing:
+                existing["text"] = body["text"]
+                return self._json(200, {**existing, "replaced": True})
+            summary = {
+                "id": len(FakePlane.stored) + 1,
+                "date": body["date"],
+                "text": body["text"],
+                "author": {"id": ME["id"], "display_name": "ai"},
+            }
+            FakePlane.stored[summary["id"]] = summary
+            return self._json(201, {**summary, "replaced": False})
+        if "/activity/summaries/" in path:
+            summary_id = int(path.rstrip("/").rsplit("/", 1)[1])
+            if summary_id not in FakePlane.stored:
+                return self._json(404, {"error": "Summary not found"})
+            if self.command == "PATCH":
+                FakePlane.stored[summary_id]["text"] = body["text"]
+                return self._json(200, FakePlane.stored[summary_id])
+            if self.command == "DELETE":
+                del FakePlane.stored[summary_id]
+                self.send_response(204)
+                self.end_headers()
+                return None
         return self._json(404, {"error": "Not found"})
 
     do_GET = do_POST = do_PATCH = do_DELETE = _handle
@@ -189,6 +222,56 @@ class TestReport(PlaneLogTestCase):
         code, _, err = self.run_tool("report", "-p", "LS", "--month", "current", "--from", "2026-11-01")
         self.assertEqual(code, 1)
         self.assertEqual(self.report_requests(), [])
+
+
+class TestSummary(PlaneLogTestCase):
+    def posts(self):
+        return [r for r in FakePlane.requests if r["method"] == "POST"]
+
+    def test_add_show_edit_and_remove(self):
+        code, out, err = self.run_tool("summary", "add", "-p", "LS", "--date", "2026-11-16", "Zrobione: raport.")
+        self.assertEqual(code, 0, err)
+        self.assertIn("#1  2026-11-16  ai", out)
+        self.assertEqual(self.posts()[0]["body"], {"date": "2026-11-16", "text": "Zrobione: raport."})
+
+        code, out, _ = self.run_tool("summary", "show", "-p", "LS", "--date", "2026-11-17", "--days", "2")
+        self.assertEqual(code, 0)
+        self.assertIn("Zrobione: raport.", out)
+
+        code, _, err = self.run_tool("summary", "edit", "-p", "LS", "1", "--text", "-", stdin="Poprawione.")
+        self.assertEqual(code, 0, err)
+        self.assertEqual(FakePlane.stored[1]["text"], "Poprawione.")
+
+        code, out, _ = self.run_tool("summary", "rm", "-p", "LS", "1")
+        self.assertEqual((code, out.strip()), (0, "Deleted summary #1"))
+        self.assertEqual(FakePlane.stored, {})
+
+    def test_a_second_summary_of_the_day_needs_replace_or_append(self):
+        self.run_tool("summary", "add", "-p", "LS", "--date", "2026-11-16", "Pierwsza sesja.")
+
+        code, _, err = self.run_tool("summary", "add", "-p", "LS", "--date", "2026-11-16", "Druga sesja.")
+        self.assertEqual(code, 1)
+        self.assertIn("--replace", err)
+        self.assertIn("--append", err)
+        self.assertEqual(len(self.posts()), 1)
+
+        code, _, err = self.run_tool("summary", "add", "-p", "LS", "--date", "2026-11-16", "--append", "Druga sesja.")
+        self.assertEqual(code, 0, err)
+        self.assertEqual(FakePlane.stored[1]["text"], "Pierwsza sesja.\n\nDruga sesja.")
+
+        code, _, err = self.run_tool("summary", "add", "-p", "LS", "--date", "2026-11-16", "--replace", "Całość.")
+        self.assertEqual(code, 0, err)
+        self.assertEqual(FakePlane.stored[1]["text"], "Całość.")
+
+    def test_the_day_defaults_to_today_in_the_project_time_zone(self):
+        code, _, err = self.run_tool("summary", "add", "-p", "LS", "Dzisiaj.")
+        self.assertEqual(code, 0, err)
+        self.assertRegex(self.posts()[0]["body"]["date"], r"^\d{4}-\d{2}-\d{2}$")
+
+    def test_empty_text_is_refused(self):
+        code, _, err = self.run_tool("summary", "add", "-p", "LS", "-", stdin="  ")
+        self.assertEqual(code, 1)
+        self.assertEqual(self.posts(), [])
 
 
 if __name__ == "__main__":

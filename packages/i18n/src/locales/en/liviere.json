@@ -4,6 +4,7 @@
       "title": "Activity",
       "view_grid": "Grid",
       "view_log": "Work log",
+      "view_summaries": "Summaries",
       "view_report": "Report",
       "ranges": {
         "7d": "7 days",
@@ -170,7 +171,23 @@
         "total": "Total",
         "entries": "Work log entries",
         "no_entries": "No entries.",
-        "unknown_person": "(deleted user)"
+        "unknown_person": "(deleted user)",
+        "summaries": "Day summaries"
+      },
+      "summaries": {
+        "description": "A few sentences on what happened in the project on a day, one per day and person. AI agents write them through the API or plane-log.",
+        "add": "Add summary",
+        "add_title": "Day summary",
+        "edit_title": "Edit day summary",
+        "text": "What happened that day",
+        "text_placeholder": "For example: the login fix is deployed; the backup review continues tomorrow.",
+        "replaces": "You already have a summary of this day; saving replaces it.",
+        "save_error": "Couldn't save the summary. Try again.",
+        "delete_title": "Delete day summary",
+        "delete_confirm": "The summary will be deleted permanently. This can't be undone.",
+        "delete_error": "Couldn't delete the summary. Try again.",
+        "empty_title": "No day summaries in this range",
+        "empty_description": "Write what happened on a day in a few sentences, or let AI agents do it with plane-log summary add."
       }
     },
     "unread": {

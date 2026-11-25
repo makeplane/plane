@@ -119,6 +119,10 @@ def days_with_entries(report):
     return [day for day in report["days"] if day["entries"]]
 
 
+def days_with_summaries(report):
+    return [day for day in report["days"] if day.get("summaries")]
+
+
 def filename(report, export):
     return f"{report['project']['identifier']}-activity-{report['from']}_{report['to']}.{export}"
 
@@ -154,6 +158,16 @@ def to_markdown(report, language):
     lines.extend([f"## {L['people']}", ""])
     lines.extend(_md_table(headers, rows))
     lines.append("")
+
+    summarized = days_with_summaries(report)
+    if summarized:
+        lines.extend([f"## {L['summaries']}", ""])
+        for day in summarized:
+            lines.extend([f"### {day['date']}", ""])
+            for summary in day["summaries"]:
+                lines.extend([f"**{person_name(summary['author'], L)}**", ""])
+                lines.extend(summary["text"].splitlines())
+                lines.append("")
 
     if report["entries_included"]:
         lines.extend([f"## {L['entries']}", ""])
