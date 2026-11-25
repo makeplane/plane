@@ -13,8 +13,10 @@ import type { TProductListItem } from "@plane/types";
 import { renderFormattedDate } from "@plane/utils";
 // components
 import { DataTable } from "@/components/common/data-table";
+import { ProductTimeline } from "@/components/product-board/timeline";
 // hooks
 import { useMember } from "@/hooks/store/use-member";
+import { useAppRouter } from "@/hooks/use-app-router";
 import { useProductTypes } from "@/hooks/use-product-types";
 // services
 import { ProductService } from "@/services/product.service";
@@ -34,6 +36,7 @@ type Props = { workspaceSlug: string; teamId: string };
 export const TeamProductList = observer(function TeamProductList(props: Props) {
   const { workspaceSlug, teamId } = props;
   const { t } = useTranslation();
+  const router = useAppRouter();
   const { getUserDetails } = useMember();
   const { typeMap } = useProductTypes(workspaceSlug);
   const { data, isLoading } = useProductList(workspaceSlug, { team_id: teamId });
@@ -84,7 +87,23 @@ export const TeamProductList = observer(function TeamProductList(props: Props) {
     },
   ];
 
-  return <DataTable columns={columns} data={data ?? []} keyExtractor={(product) => product.id} isLoading={isLoading} />;
+  return (
+    <div className="space-y-4">
+      {!!data?.length && (
+        <ProductTimeline
+          groups={[{ id: teamId, name: "", items: data }]}
+          scale="month"
+          isFlat
+          className="max-h-96"
+          onOpen={(product) =>
+            router.push(`/${workspaceSlug}/browse/${product.project_identifier}-${product.sequence_id}/`)
+          }
+          renderLabel={(product) => <span className="truncate text-body-xs-medium text-primary">{product.name}</span>}
+        />
+      )}
+      <DataTable columns={columns} data={data ?? []} keyExtractor={(product) => product.id} isLoading={isLoading} />
+    </div>
+  );
 });
 
 /** Total, in progress, overdue and completed products of a portfolio. */

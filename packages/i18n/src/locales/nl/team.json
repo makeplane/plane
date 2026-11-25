@@ -166,5 +166,37 @@
       "time": "De vergadering heeft een begin en een later einde nodig.",
       "people": "Alleen wie de vergadering ziet, kan deelnemen."
     }
+  },
+  "product_board": {
+    "title": "Productbord",
+    "view": "Weergave",
+    "views": {
+      "timeline": "Tijdlijn",
+      "table": "Tabel",
+      "kanban": "Kanban"
+    },
+    "scale": "Schaal",
+    "scales": {
+      "week": "Week",
+      "month": "Maand",
+      "quarter": "Kwartaal"
+    },
+    "team": "Team",
+    "period_from": "Periode van",
+    "period_to": "Periode tot",
+    "show_closed": "Gesloten projecten tonen",
+    "show_old": "Meer dan 90 dagen geleden afgeronde tonen",
+    "reset": "Herstellen",
+    "shown": "Getoond: {shown} van {total}",
+    "closed_project": "Gesloten project",
+    "limited": "Het project is gesloten. Alleen de leden zien de details.",
+    "conflict": "Dit veld is intussen gewijzigd. De huidige waarde wordt getoond.",
+    "no_access": "Je kunt dit product niet wijzigen.",
+    "gone": "Het product staat niet meer op het bord.",
+    "choose_state": "Kies een status",
+    "open_in_project": "Openen in het project",
+    "move_start": "Begin verschuiven",
+    "move_end": "Einde verschuiven",
+    "today": "Vandaag"
   }
 }

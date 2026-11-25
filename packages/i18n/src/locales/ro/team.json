@@ -166,5 +166,37 @@
       "time": "Întâlnirea are nevoie de un început și de un sfârșit ulterior.",
       "people": "Pot participa doar cei care văd întâlnirea."
     }
+  },
+  "product_board": {
+    "title": "Panoul produselor",
+    "view": "Vizualizare",
+    "views": {
+      "timeline": "Cronologie",
+      "table": "Tabel",
+      "kanban": "Kanban"
+    },
+    "scale": "Scară",
+    "scales": {
+      "week": "Săptămână",
+      "month": "Lună",
+      "quarter": "Trimestru"
+    },
+    "team": "Echipă",
+    "period_from": "Perioada de la",
+    "period_to": "Perioada până la",
+    "show_closed": "Afișează proiectele închise",
+    "show_old": "Afișează cele încheiate de peste 90 de zile",
+    "reset": "Resetează",
+    "shown": "Afișate: {shown} din {total}",
+    "closed_project": "Proiect închis",
+    "limited": "Proiectul este închis. Doar membrii lui văd detaliile.",
+    "conflict": "Câmpul a fost modificat între timp. Este afișată valoarea actuală.",
+    "no_access": "Nu poți modifica acest produs.",
+    "gone": "Produsul nu mai este pe panou.",
+    "choose_state": "Alege o stare",
+    "open_in_project": "Deschide în proiect",
+    "move_start": "Mută începutul",
+    "move_end": "Mută sfârșitul",
+    "today": "Astăzi"
   }
 }

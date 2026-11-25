@@ -166,5 +166,37 @@
       "time": "Spotkanie wymaga początku i późniejszego końca.",
       "people": "Uczestniczyć mogą tylko osoby, które widzą spotkanie."
     }
+  },
+  "product_board": {
+    "title": "Tablica produktów",
+    "view": "Widok",
+    "views": {
+      "timeline": "Oś czasu",
+      "table": "Tabela",
+      "kanban": "Kanban"
+    },
+    "scale": "Skala",
+    "scales": {
+      "week": "Tydzień",
+      "month": "Miesiąc",
+      "quarter": "Kwartał"
+    },
+    "team": "Zespół",
+    "period_from": "Okres od",
+    "period_to": "Okres do",
+    "show_closed": "Pokaż zamknięte projekty",
+    "show_old": "Pokaż zakończone ponad 90 dni temu",
+    "reset": "Resetuj",
+    "shown": "Pokazano: {shown} z {total}",
+    "closed_project": "Zamknięty projekt",
+    "limited": "Projekt jest zamknięty. Szczegóły widzą tylko jego członkowie.",
+    "conflict": "To pole zostało w międzyczasie zmienione. Pokazano bieżącą wartość.",
+    "no_access": "Nie możesz zmienić tego produktu.",
+    "gone": "Produktu nie ma już na tablicy.",
+    "choose_state": "Wybierz stan",
+    "open_in_project": "Otwórz w projekcie",
+    "move_start": "Przesuń początek",
+    "move_end": "Przesuń koniec",
+    "today": "Dzisiaj"
   }
 }

@@ -42,6 +42,7 @@ export * from "./project";
 export * from "./team";
 export * from "./product";
 export * from "./meeting";
+export * from "./product-board";
 export * from "./publish";
 export * from "./reaction";
 export * from "./intake";

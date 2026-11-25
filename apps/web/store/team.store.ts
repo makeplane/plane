@@ -24,6 +24,7 @@ export interface ITeamStore {
   // computed
   isEnabled: boolean;
   isWorkspaceAdmin: boolean;
+  canSeeProductBoard: boolean;
   teams: TTeam[];
   activeTeams: TTeam[];
   manageablePortfolios: TPortfolio[];
@@ -66,6 +67,7 @@ export class TeamStore implements ITeamStore {
       teamMemberMap: observable,
       isEnabled: computed,
       isWorkspaceAdmin: computed,
+      canSeeProductBoard: computed,
       teams: computed,
       activeTeams: computed,
       manageablePortfolios: computed,
@@ -103,6 +105,14 @@ export class TeamStore implements ITeamStore {
 
   get activeTeams() {
     return this.teams.filter((team) => !team.archived_at);
+  }
+
+  /** The management team and workspace admins; the server checks the same. */
+  get canSeeProductBoard() {
+    return (
+      this.isEnabled &&
+      (this.isWorkspaceAdmin || this.activeTeams.some((team) => team.kind === "management" && !!team.member_role))
+    );
   }
 
   canManageTeam = computedFn(

@@ -166,5 +166,37 @@
       "time": "Toplantının bir başlangıcı ve daha sonra bir bitişi olmalıdır.",
       "people": "Yalnızca toplantıyı görenler katılabilir."
     }
+  },
+  "product_board": {
+    "title": "Ürün panosu",
+    "view": "Görünüm",
+    "views": {
+      "timeline": "Zaman çizelgesi",
+      "table": "Tablo",
+      "kanban": "Kanban"
+    },
+    "scale": "Ölçek",
+    "scales": {
+      "week": "Hafta",
+      "month": "Ay",
+      "quarter": "Çeyrek"
+    },
+    "team": "Takım",
+    "period_from": "Dönem başlangıcı",
+    "period_to": "Dönem bitişi",
+    "show_closed": "Kapalı projeleri göster",
+    "show_old": "90 günden önce bitenleri göster",
+    "reset": "Sıfırla",
+    "shown": "Gösterilen: {shown}/{total}",
+    "closed_project": "Kapalı proje",
+    "limited": "Proje kapalı. Ayrıntıları yalnızca üyeleri görür.",
+    "conflict": "Bu alan bu arada değiştirildi. Güncel değer gösteriliyor.",
+    "no_access": "Bu ürünü değiştiremezsiniz.",
+    "gone": "Ürün artık panoda değil.",
+    "choose_state": "Bir durum seçin",
+    "open_in_project": "Projede aç",
+    "move_start": "Başlangıcı taşı",
+    "move_end": "Bitişi taşı",
+    "today": "Bugün"
   }
 }

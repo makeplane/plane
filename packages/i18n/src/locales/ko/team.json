@@ -166,5 +166,37 @@
       "time": "회의에는 시작 시간과 그 이후의 종료 시간이 필요합니다.",
       "people": "회의를 볼 수 있는 사람만 참가할 수 있습니다."
     }
+  },
+  "product_board": {
+    "title": "제품 보드",
+    "view": "보기",
+    "views": {
+      "timeline": "타임라인",
+      "table": "표",
+      "kanban": "칸반"
+    },
+    "scale": "배율",
+    "scales": {
+      "week": "주",
+      "month": "월",
+      "quarter": "분기"
+    },
+    "team": "팀",
+    "period_from": "기간 시작",
+    "period_to": "기간 종료",
+    "show_closed": "비공개 프로젝트 표시",
+    "show_old": "90일 이전에 끝난 항목 표시",
+    "reset": "초기화",
+    "shown": "표시: {shown}/{total}",
+    "closed_project": "비공개 프로젝트",
+    "limited": "비공개 프로젝트입니다. 멤버만 세부 정보를 볼 수 있습니다.",
+    "conflict": "그사이 이 필드가 변경되었습니다. 현재 값을 표시합니다.",
+    "no_access": "이 제품을 변경할 수 없습니다.",
+    "gone": "제품이 더 이상 보드에 없습니다.",
+    "choose_state": "상태 선택",
+    "open_in_project": "프로젝트에서 열기",
+    "move_start": "시작일 이동",
+    "move_end": "종료일 이동",
+    "today": "오늘"
   }
 }

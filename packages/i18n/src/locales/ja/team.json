@@ -166,5 +166,37 @@
       "time": "会議には開始と、それより後の終了が必要です。",
       "people": "会議を閲覧できる人のみ参加できます。"
     }
+  },
+  "product_board": {
+    "title": "プロダクトボード",
+    "view": "表示",
+    "views": {
+      "timeline": "タイムライン",
+      "table": "テーブル",
+      "kanban": "カンバン"
+    },
+    "scale": "縮尺",
+    "scales": {
+      "week": "週",
+      "month": "月",
+      "quarter": "四半期"
+    },
+    "team": "チーム",
+    "period_from": "期間の開始",
+    "period_to": "期間の終了",
+    "show_closed": "非公開プロジェクトを表示",
+    "show_old": "90日以上前に完了したものを表示",
+    "reset": "リセット",
+    "shown": "表示：{shown}/{total}",
+    "closed_project": "非公開プロジェクト",
+    "limited": "プロジェクトは非公開です。詳細はメンバーのみ閲覧できます。",
+    "conflict": "この項目は他の人によって変更されました。現在の値を表示しています。",
+    "no_access": "このプロダクトは変更できません。",
+    "gone": "プロダクトはボードにありません。",
+    "choose_state": "ステータスを選択",
+    "open_in_project": "プロジェクトで開く",
+    "move_start": "開始日を移動",
+    "move_end": "終了日を移動",
+    "today": "今日"
   }
 }
