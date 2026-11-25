@@ -8,6 +8,7 @@ import pytest
 import requests
 from unittest.mock import patch, MagicMock
 from plane.bgtasks.work_item_link_task import safe_get, validate_url_ip
+from plane.bgtasks.work_item_link_task import crawl_work_item_link_title_and_favicon
 from plane.utils.ip_address import validate_url
 
 
@@ -228,3 +229,29 @@ class TestSafeGet:
         response, final_url = safe_get("https://example.com/start")
 
         assert response.status_code == 200
+
+
+@pytest.mark.unit
+class TestCrawlWorkItemLinkTitleAndFavicon:
+    @pytest.mark.parametrize(
+        "url",
+        [
+            "obsidian://open?vault=docs",
+            "OBSIDIAN://open?vault=docs",
+            "vscode://file/path/file.ts",
+            "javascript:alert(1)",
+            "data:text/html,hi",
+            "file:///etc/passwd",
+            "ftp://files.example.com/x",
+            "vbscript:msgbox(1)",
+        ],
+    )
+    def test_non_http_scheme_bypasses_http_crawl(self, url):
+        with patch("plane.bgtasks.work_item_link_task.safe_get") as mock_safe_get:
+            result = crawl_work_item_link_title_and_favicon(url)
+            mock_safe_get.assert_not_called()
+            assert result["url"] == url
+            assert result["title"] is None
+            assert result["favicon_url"] is None
+            assert result["favicon"].startswith("data:image/svg+xml;base64,")
+            assert "error" not in result

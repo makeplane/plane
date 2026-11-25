@@ -7,6 +7,10 @@ import re
 from typing import Optional
 from urllib.parse import urlparse, urlunparse
 
+# Django imports
+from django.core.exceptions import ValidationError
+from django.core.validators import URLValidator
+
 # Compiled regex pattern for better performance and ReDoS protection
 # Using atomic groups and length limits to prevent excessive backtracking
 URL_PATTERN = re.compile(
@@ -21,6 +25,47 @@ URL_PATTERN = re.compile(
     r"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"  # noqa: E501
     r")"
 )
+
+# Keep in sync with packages/utils/src/string.ts :: ALLOWED_CUSTOM_URL_SCHEMES
+ALLOWED_CUSTOM_URL_SCHEMES = (
+    "obsidian",
+    "vscode",
+    "vscode-insiders",
+    "cursor",
+    "slack",
+    "linear",
+    "figma",
+    "notion",
+)
+
+
+def is_valid_link_url(url: str) -> bool:
+    """
+    Validates whether the given string is a valid web URL (http/https) or an allowed custom protocol URI.
+    """
+    if not url or not isinstance(url, str):
+        return False
+
+    url = url.strip()
+    try:
+        parsed = urlparse(url)
+    except Exception:
+        return False
+
+    scheme = parsed.scheme.lower()
+    if scheme in ("http", "https"):
+        try:
+            URLValidator()(url)
+            return True
+        except ValidationError:
+            return False
+
+    if scheme in ALLOWED_CUSTOM_URL_SCHEMES:
+        return url.lower().startswith(f"{scheme}://") and bool(
+            parsed.netloc or parsed.path or parsed.query or parsed.fragment
+        )
+
+    return False
 
 
 def contains_url(value: str) -> bool:
