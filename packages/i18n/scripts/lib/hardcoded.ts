@@ -149,41 +149,9 @@ export function scanSource(file: string, source: string): Hit[] {
   return hits;
 }
 
-export type Counts = Record<string, number>;
-
-export interface Regression {
-  file: string;
-  baseline: number;
-  current: number;
-}
-
-/** Files whose hit count is above their baseline count (a missing baseline entry counts as 0). */
-export function findRegressions(baseline: Counts, current: Counts): Regression[] {
-  return Object.entries(current)
-    .filter(([file, n]) => n > (baseline[file] ?? 0))
-    .map(([file, n]) => ({ file, baseline: baseline[file] ?? 0, current: n }))
-    .toSorted((a, b) => a.file.localeCompare(b.file));
-}
-
-/**
- * What `--ci` enforces: files above their baseline, and files below it (a stale baseline).
- * When `changed` is given, only those files count; `null` means every file.
- */
-export function compareToBaseline(
-  baseline: Counts,
-  current: Counts,
-  changed: Set<string> | null
-): { regressions: Regression[]; stale: string[] } {
-  const inScope = (file: string) => changed === null || changed.has(file);
-  return {
-    regressions: findRegressions(baseline, current).filter((r) => inScope(r.file)),
-    stale: Object.keys(baseline).filter((f) => inScope(f) && (current[f] ?? 0) < baseline[f]),
-  };
-}
-
 /**
  * Hits in `current` that have no matching text in `base`. Matching by text (as a multiset)
- * rather than by line keeps strings that only moved within the file out of the result.
+ * rather than by file and line keeps strings that only moved, within or across files, out of the result.
  */
 export function findNewHits(base: Hit[], current: Hit[]): Hit[] {
   const remaining = new Map<string, number>();
@@ -194,17 +162,4 @@ export function findNewHits(base: Hit[], current: Hit[]): Hit[] {
     remaining.set(hit.text, left - 1);
     return false;
   });
-}
-
-function total(counts: Counts): number {
-  return Object.values(counts).reduce((a, b) => a + b, 0);
-}
-
-/**
- * Regressions `--update` must refuse. A renamed or moved file shows up as a new path,
- * so new paths are allowed as long as the repo total doesn't grow.
- */
-export function findBlockedIncreases(baseline: Counts, current: Counts): Regression[] {
-  const grew = total(current) > total(baseline);
-  return findRegressions(baseline, current).filter((r) => r.baseline > 0 || grew);
 }

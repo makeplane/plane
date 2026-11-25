@@ -7,14 +7,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import {
-  compareToBaseline,
-  findBlockedIncreases,
-  findNewHits,
-  findRegressions,
-  isHumanText,
-  scanSource,
-} from "./hardcoded.js";
+import { findNewHits, isHumanText, scanSource } from "./hardcoded.js";
 
 const hit = (line: number, text: string) => ({ file: "a.tsx", line, text });
 
@@ -69,38 +62,21 @@ test("scanSource honours i18n-ignore on the same or previous line", () => {
   );
 });
 
-test("findRegressions flags increases and new files only", () => {
-  const baseline = { "a.tsx": 3, "b.tsx": 2, "gone.tsx": 1 };
-  const current = { "a.tsx": 3, "b.tsx": 1, "c.tsx": 1, "d.tsx": 0 };
-  assert.deepEqual(findRegressions(baseline, current), [{ file: "c.tsx", baseline: 0, current: 1 }]);
-  assert.deepEqual(findRegressions(baseline, { "a.tsx": 4 }), [{ file: "a.tsx", baseline: 3, current: 4 }]);
-});
-
-test("findBlockedIncreases allows a renamed file but not new strings", () => {
-  const baseline = { "old.tsx": 2, "a.tsx": 1 };
-  assert.deepEqual(findBlockedIncreases(baseline, { "new.tsx": 2, "a.tsx": 1 }), []);
-  assert.deepEqual(findBlockedIncreases(baseline, { "new.tsx": 3, "a.tsx": 1 }), [
-    { file: "new.tsx", baseline: 0, current: 3 },
-  ]);
-  assert.deepEqual(findBlockedIncreases(baseline, { "old.tsx": 1, "a.tsx": 2 }), [
-    { file: "a.tsx", baseline: 1, current: 2 },
-  ]);
-});
-
 test("findNewHits reports only strings missing from the base, ignoring moves", () => {
   const base = [hit(1, "Save"), hit(2, "Cancel"), hit(3, "Cancel")];
   const current = [hit(1, "Cancel"), hit(5, "Save"), hit(6, "Cancel"), hit(7, "Cancel"), hit(9, "Delete page")];
   assert.deepEqual(findNewHits(base, current), [hit(7, "Cancel"), hit(9, "Delete page")]);
 });
 
-test("compareToBaseline only enforces changed files when a change set is given", () => {
-  const baseline = { "drifted.tsx": 3, "touched.tsx": 2, "deleted.tsx": 1 };
-  const current = { "drifted.tsx": 2, "touched.tsx": 3, "new.tsx": 1 };
-  assert.deepEqual(compareToBaseline(baseline, current, new Set(["other.tsx"])), { regressions: [], stale: [] });
-  assert.deepEqual(compareToBaseline(baseline, current, new Set(["touched.tsx", "deleted.tsx"])), {
-    regressions: [{ file: "touched.tsx", baseline: 2, current: 3 }],
-    stale: ["deleted.tsx"],
-  });
-  assert.deepEqual(compareToBaseline(baseline, current, null).stale, ["drifted.tsx", "deleted.tsx"]);
-  assert.equal(compareToBaseline(baseline, current, null).regressions.length, 2);
+test("findNewHits cancels strings that moved to another file", () => {
+  const base = [
+    { file: "old.tsx", line: 4, text: "Save" },
+    { file: "old.tsx", line: 9, text: "Cancel" },
+  ];
+  const current = [
+    { file: "new/a.tsx", line: 1, text: "Cancel" },
+    { file: "new/b.tsx", line: 2, text: "Save" },
+    { file: "new/b.tsx", line: 3, text: "Delete page" },
+  ];
+  assert.deepEqual(findNewHits(base, current), [{ file: "new/b.tsx", line: 3, text: "Delete page" }]);
 });

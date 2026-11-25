@@ -34,9 +34,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          # 2 so HEAD^1 (the base side of the PR merge commit) is available for --base.
+          # 2 so HEAD^1 (the base side of the PR merge commit) and its file contents are available
+          # locally for --base; no blob filter, so reading base files never needs a network fetch.
           fetch-depth: 2
-          filter: blob:none
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
