@@ -93,7 +93,7 @@ from .module import (
     ModuleUserPropertiesSerializer,
 )
 
-from .api import APITokenSerializer, APITokenReadSerializer
+from .api import APITokenSerializer, APITokenReadSerializer, APITokenCreateSerializer
 
 from .importer import ImporterSerializer
 
