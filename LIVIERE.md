@@ -251,7 +251,7 @@ it is unavailable, subscribing answers 503 and nothing is queued):
 | `LIVIERE_VAPID_PUBLIC_KEY` | base64url of the uncompressed P-256 public point (65 bytes) |
 | `LIVIERE_VAPID_PRIVATE_KEY` | base64url of the 32-byte private scalar (must match the public key) |
 | `LIVIERE_VAPID_SUBJECT` | `mailto:…` or `https://…` contact for the push services |
-| `LIVIERE_PUSH_COALESCE_SECONDS` | optional: window collecting a project's new work items into one push (empty or invalid = 15, `0` = one push per work item, at most 3600) |
+| `LIVIERE_PUSH_COALESCE_SECONDS` | optional: window collecting a project's new work items into one push (empty or invalid = 15, `0` = one push per work item, at most 300: a waiting countdown task holds an unacknowledged RabbitMQ message) |
 
 `api` and `worker` both need them (`x-app-env` in `deployments/cli/community/docker-compose.yml` passes them; the
 local `docker-compose-local.yml` reads `apps/api/.env`). The web app gets the public key from the API.
@@ -267,7 +267,7 @@ by `bulk_create` (imports) and intake items accepted later.
 **One notification per project and window.** The tag is `liviere-new-<project id>`, so a newer notification
 replaces the older one and the notification centre keeps one entry per project. That alone does not stop the
 pop-ups: on Windows the toast pops up again on every replacement (live test: a parent and two sub-items 3 s apart
-gave 3 pop-ups), with or without `renotify`. So the server coalesces: the first work item of a project committed
+gave 3 pop-ups), even without `renotify`. So the server coalesces: the first work item of a project committed
 after a quiet spell takes the cache key `liviere-push-pending-<project id>` (`cache.add`, two windows long) and
 queues `plane.liviere.tasks.notify_project_work_items` with a countdown of `LIVIERE_PUSH_COALESCE_SECONDS`
 (default 15 s); later work items queue nothing while the key exists. The task deletes the key before it reads

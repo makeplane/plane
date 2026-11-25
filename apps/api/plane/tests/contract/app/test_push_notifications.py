@@ -635,7 +635,7 @@ class TestCoalescing:
         send.assert_not_called()
 
     @pytest.mark.parametrize(
-        "value, expected", [("", 15), ("abc", 15), ("-1", 15), ("0", 0), ("30", 30), ("99999", 3600)]
+        "value, expected", [("", 15), ("abc", 15), ("-1", 15), ("0", 0), ("30", 30), ("99999", 300)]
     )
     def test_window_from_the_environment(self, value, expected):
         with mock.patch.dict(os.environ, {"LIVIERE_PUSH_COALESCE_SECONDS": value}):

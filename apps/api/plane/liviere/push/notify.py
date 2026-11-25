@@ -13,7 +13,7 @@
 #   LIVIERE_PUSH_COALESCE_SECONDS (default 15 s) are sent by one task, notify_project_work_items.
 # - In the browser: the tag is per project, so a newer notification replaces the older one. That alone is not
 #   enough: Windows keeps one entry in the notification centre, but pops the toast up again on every replacement
-#   (live test: 3 work items in 6 s gave 3 pop-ups), with or without `renotify`. Hence the coalescing on the server.
+#   (live test: 3 work items in 6 s gave 3 pop-ups), even without `renotify`. Hence the coalescing on the server.
 # The title counts the recipient's new work items of the project at sending time; with one it names the work item
 # and a click opens it, with more a click opens "New" filtered to the project.
 # Python imports

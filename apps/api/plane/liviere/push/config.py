@@ -66,7 +66,9 @@ def vapid_config():
 
 
 DEFAULT_COALESCE_SECONDS = 15
-MAX_COALESCE_SECONDS = 3600
+# A task waiting for its countdown holds an unacknowledged RabbitMQ message (consumer_timeout, 30 min by
+# default); a few minutes is plenty for a series of work items
+MAX_COALESCE_SECONDS = 300
 
 
 def coalesce_seconds():
