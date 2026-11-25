@@ -2,57 +2,27 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Python imports
-import logging
-from urllib.parse import urlparse
-
 # Third party imports
 from rest_framework import serializers
-
-# Django imports
-from django.conf import settings
 
 # Module imports
 from .base import DynamicBaseSerializer
 from plane.db.models import Webhook, WebhookLog
 from plane.db.models.webhook import validate_domain, validate_schema
-from plane.utils.ip_address import validate_url
-
-logger = logging.getLogger(__name__)
+from plane.utils.webhook import validate_webhook_url
 
 
 class WebhookSerializer(DynamicBaseSerializer):
     url = serializers.URLField(validators=[validate_schema, validate_domain])
 
     def _validate_webhook_url(self, url):
-        """Validate a webhook URL against SSRF and disallowed domain rules."""
-        try:
-            validate_url(
-                url,
-                allowed_ips=settings.WEBHOOK_ALLOWED_IPS,
-                allowed_hosts=settings.WEBHOOK_ALLOWED_HOSTS,
-            )
-        except ValueError as e:
-            logger.warning("Webhook URL validation failed for %s: %s", url, e)
-            raise serializers.ValidationError({"url": "Invalid or disallowed webhook URL."})
+        """Validate a webhook URL against SSRF and disallowed-domain rules.
 
-        hostname = (urlparse(url).hostname or "").rstrip(".").lower()
-
-        # Hosts explicitly trusted via WEBHOOK_ALLOWED_HOSTS bypass the
-        # disallowed-domain check — they're already trusted for SSRF, so
-        # the loop-back guard would only get in the way of legitimate
-        # sibling services that share a parent domain with Plane.
-        if hostname in settings.WEBHOOK_ALLOWED_HOSTS:
-            return
-
-        request = self.context.get("request")
-        disallowed_domains = list(settings.WEBHOOK_DISALLOWED_DOMAINS)
-        if request:
-            request_host = request.get_host().split(":")[0].rstrip(".").lower()
-            disallowed_domains.append(request_host)
-
-        if any(hostname == domain or hostname.endswith("." + domain) for domain in disallowed_domains):
-            raise serializers.ValidationError({"url": "URL domain or its subdomain is not allowed."})
+        Thin adapter binding the serializer's request context to the shared
+        ``validate_webhook_url`` guard so the SSRF/URL checks live in a single
+        place shared with the public token API.
+        """
+        validate_webhook_url(url, self.context.get("request"))
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
