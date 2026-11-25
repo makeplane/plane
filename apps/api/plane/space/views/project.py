@@ -52,11 +52,17 @@ class WorkspaceProjectDeployBoardEndpoint(BaseAPIView):
 
 
 class WorkspaceProjectAnchorEndpoint(BaseAPIView):
-    permission_classes = [AllowAny]
-
     def get(self, request, slug, project_id):
+        # The anchor is the board's share link: only active project members may look it up
+        # by project id; anyone else gets the same 404 as an unpublished project.
         project_deploy_board = DeployBoard.objects.get(
-            workspace__slug=slug, project_id=project_id, entity_identifier=project_id, entity_name="project"
+            workspace__slug=slug,
+            project_id=project_id,
+            entity_identifier=project_id,
+            entity_name="project",
+            project_id__in=ProjectMember.objects.filter(
+                member=request.user, workspace__slug=slug, is_active=True
+            ).values("project_id"),
         )
         serializer = DeployBoardSerializer(project_deploy_board)
         return Response(serializer.data, status=status.HTTP_200_OK)
