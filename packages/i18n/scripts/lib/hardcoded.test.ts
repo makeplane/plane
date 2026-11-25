@@ -7,7 +7,14 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
-import { findBlockedIncreases, findNewHits, findRegressions, isHumanText, scanSource } from "./hardcoded.js";
+import {
+  compareToBaseline,
+  findBlockedIncreases,
+  findNewHits,
+  findRegressions,
+  isHumanText,
+  scanSource,
+} from "./hardcoded.js";
 
 const hit = (line: number, text: string) => ({ file: "a.tsx", line, text });
 
@@ -84,4 +91,16 @@ test("findNewHits reports only strings missing from the base, ignoring moves", (
   const base = [hit(1, "Save"), hit(2, "Cancel"), hit(3, "Cancel")];
   const current = [hit(1, "Cancel"), hit(5, "Save"), hit(6, "Cancel"), hit(7, "Cancel"), hit(9, "Delete page")];
   assert.deepEqual(findNewHits(base, current), [hit(7, "Cancel"), hit(9, "Delete page")]);
+});
+
+test("compareToBaseline only enforces changed files when a change set is given", () => {
+  const baseline = { "drifted.tsx": 3, "touched.tsx": 2, "deleted.tsx": 1 };
+  const current = { "drifted.tsx": 2, "touched.tsx": 3, "new.tsx": 1 };
+  assert.deepEqual(compareToBaseline(baseline, current, new Set(["other.tsx"])), { regressions: [], stale: [] });
+  assert.deepEqual(compareToBaseline(baseline, current, new Set(["touched.tsx", "deleted.tsx"])), {
+    regressions: [{ file: "touched.tsx", baseline: 2, current: 3 }],
+    stale: ["deleted.tsx"],
+  });
+  assert.deepEqual(compareToBaseline(baseline, current, null).stale, ["drifted.tsx", "deleted.tsx"]);
+  assert.equal(compareToBaseline(baseline, current, null).regressions.length, 2);
 });

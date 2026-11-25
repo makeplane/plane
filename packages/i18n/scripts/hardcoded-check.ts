@@ -16,7 +16,14 @@ import fs from "node:fs";
 import path from "node:path";
 
 import type { Counts, Hit } from "./lib/hardcoded.js";
-import { findBlockedIncreases, findNewHits, findRegressions, isScannedFile, scanSource } from "./lib/hardcoded.js";
+import {
+  compareToBaseline,
+  findBlockedIncreases,
+  findNewHits,
+  findRegressions,
+  isScannedFile,
+  scanSource,
+} from "./lib/hardcoded.js";
 
 const REPO_ROOT = path.resolve(import.meta.dirname, "../../..");
 const BASELINE_PATH = path.resolve(import.meta.dirname, "../hardcoded-baseline.json");
@@ -86,24 +93,29 @@ function main(): void {
   }
 
   if (args.has("--ci")) {
-    // A stale baseline would let removed strings come back, so it must be lowered in the same PR.
-    const stale = Object.keys(baseline).filter((f) => (current[f] ?? 0) < baseline[f]);
-    if (regressions.length === 0 && stale.length === 0) {
-      console.log(`Hardcoded string check passed: ${fmt(hits.length)} hits, none above baseline.`);
+    const baseIndex = argv.indexOf("--base");
+    const baseRef = (baseIndex >= 0 ? argv[baseIndex + 1] : undefined) ?? "origin/preview";
+    const mergeBase = gitOrNull(["merge-base", baseRef, "HEAD"])?.trim();
+    // Only files this change touches are enforced, so drift elsewhere on the base branch never fails
+    // unrelated PRs. --no-renames lists both sides of a rename. Without a base, every file is enforced.
+    const changedOutput = mergeBase ? gitOrNull(["diff", "--name-only", "--no-renames", "-z", mergeBase]) : null;
+    const changed = changedOutput === null ? null : new Set(changedOutput.split("\0").filter(Boolean));
+    if (!changed) console.error(`Could not diff against ${baseRef}; checking every file.\n`);
+    const { regressions: scoped, stale } = compareToBaseline(baseline, current, changed);
+    if (scoped.length === 0 && stale.length === 0) {
+      const scope = changed ? `${fmt(changed.size)} changed file(s)` : "all files";
+      console.log(`Hardcoded string check passed for ${scope}: none above baseline.`);
       return;
     }
-    if (regressions.length === 0) {
+    if (scoped.length === 0) {
+      // A stale baseline would let removed strings come back, so it must be lowered in the same PR.
       console.error(`${stale.length} file(s) are below their baseline:`);
       for (const f of stale) console.error(`  ${f}: ${baseline[f]} -> ${current[f] ?? 0}`);
       console.error("Run `pnpm --filter=@plane/i18n hardcoded:update` and commit the baseline.");
       process.exit(1);
     }
-    console.error(`New hardcoded user-facing strings in ${regressions.length} file(s).\n`);
-    const baseIndex = argv.indexOf("--base");
-    const baseRef = (baseIndex >= 0 ? argv[baseIndex + 1] : undefined) ?? "origin/preview";
-    const mergeBase = gitOrNull(["merge-base", baseRef, "HEAD"])?.trim();
-    if (!mergeBase) console.error(`Could not find ${baseRef}; listing every string in each file.\n`);
-    for (const r of regressions) {
+    console.error(`New hardcoded user-facing strings in ${scoped.length} file(s).\n`);
+    for (const r of scoped) {
       const fileHits = hits.filter((h) => h.file === r.file);
       const baseSource = mergeBase ? gitOrNull(["show", `${mergeBase}:${r.file}`]) : null;
       const newHits = mergeBase ? findNewHits(baseSource ? scanSource(r.file, baseSource) : [], fileHits) : [];

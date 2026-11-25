@@ -166,6 +166,22 @@ export function findRegressions(baseline: Counts, current: Counts): Regression[]
 }
 
 /**
+ * What `--ci` enforces: files above their baseline, and files below it (a stale baseline).
+ * When `changed` is given, only those files count; `null` means every file.
+ */
+export function compareToBaseline(
+  baseline: Counts,
+  current: Counts,
+  changed: Set<string> | null
+): { regressions: Regression[]; stale: string[] } {
+  const inScope = (file: string) => changed === null || changed.has(file);
+  return {
+    regressions: findRegressions(baseline, current).filter((r) => inScope(r.file)),
+    stale: Object.keys(baseline).filter((f) => inScope(f) && (current[f] ?? 0) < baseline[f]),
+  };
+}
+
+/**
  * Hits in `current` that have no matching text in `base`. Matching by text (as a multiset)
  * rather than by line keeps strings that only moved within the file out of the result.
  */
