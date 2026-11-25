@@ -242,6 +242,14 @@ def print_summaries(summaries):
         print("No summaries.")
 
 
+def project_today(project):
+    """Today in the project time zone (the computer's day when the zone is unknown)."""
+    try:
+        return datetime.now(ZoneInfo(project.get("timezone") or "UTC")).date()
+    except (ZoneInfoNotFoundError, ValueError):
+        return date.today()
+
+
 def my_summary(plane, project, day):
     """Your summary of the day, or None."""
     params = {"from": day, "to": day, "actor": plane.request("GET", f"{plane.root}/users/me/")["id"]}
@@ -259,11 +267,7 @@ def command_summary(plane, args):
         # The API replaces an existing summary of the day; ask first, so parallel sessions don't overwrite
         # each other unnoticed. Without --date the day is today in the project time zone.
         if not day:
-            try:
-                zone = ZoneInfo(project.get("timezone") or "UTC")
-            except (ZoneInfoNotFoundError, ValueError):
-                zone = None
-            day = (datetime.now(zone).date() if zone else date.today()).isoformat()
+            day = project_today(project).isoformat()
         existing = my_summary(plane, project, day)
         if existing and not (args.replace or args.append):
             raise Failure(
@@ -275,7 +279,7 @@ def command_summary(plane, args):
         summary = plane.request("POST", plane.activity(project, "summaries/"), body={"date": day, "text": text})
         return summary if args.json else print_summaries([summary])
     if args.action == "show":
-        day = date.fromisoformat(args.date) if args.date else date.today()
+        day = date.fromisoformat(args.date) if args.date else project_today(project)
         start = day - timedelta(days=args.days - 1)
         params = {"from": start.isoformat(), "to": day.isoformat()}
         if args.mine:
@@ -390,7 +394,7 @@ def main(argv=None):
     summary_add.add_argument("--replace", action="store_true", help="overwrite your summary of that day")
     summary_add.add_argument("--append", action="store_true", help="add a paragraph to your summary of that day")
     summary_show = summary_actions.add_parser("show", parents=[common], help="summaries of a day or a few days")
-    summary_show.add_argument("--date", help="last day, YYYY-MM-DD (default: today)")
+    summary_show.add_argument("--date", help="last day, YYYY-MM-DD (default: today in the project time zone)")
     summary_show.add_argument("--days", type=int, default=1, help="number of days up to --date (default: 1)")
     summary_show.add_argument("--mine", action="store_true", help="only your own")
     summary_edit = summary_actions.add_parser("edit", parents=[common], help="change a summary")

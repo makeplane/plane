@@ -160,6 +160,17 @@ class TestDaySummaries:
         assert client.patch(detail, {"text": "Zmiana"}, format="json").json()["text"] == "Zmiana"
 
     @pytest.mark.django_db
+    def test_a_body_that_is_not_an_object(self, api_key_client, session_client, workspace, project):
+        created = api_key_client.post(_v1(workspace, project), {"date": DAY, "text": TEXT}, format="json")
+        detail = f"{_v1(workspace, project)}{created.json()['id']}/"
+
+        assert api_key_client.post(_v1(workspace, project), ["text"], format="json").status_code == 400
+        assert api_key_client.patch(detail, ["text"], format="json").status_code == 400
+        # The same for the log entries and the settings
+        assert api_key_client.post(_v1(workspace, project, "logs"), ["text"], format="json").status_code == 400
+        assert session_client.patch(_app(workspace, project, "settings"), ["enabled"], format="json").status_code == 400
+
+    @pytest.mark.django_db
     def test_a_summary_is_not_activity(self, api_key_client, workspace, project):
         api_key_client.post(_v1(workspace, project), {"date": DAY, "text": TEXT}, format="json")
         assert ActivityEvent.objects.filter(project=project).count() == 0
@@ -195,7 +206,7 @@ class TestSummariesInTheReport:
         assert [(s["author"]["display_name"], s["text"]) for s in days[DAY]] == [("tomasz", TEXT)]
         # A summary adds no time: only the one action, 5 minutes
         assert data["totals"]["grid_minutes"] == 5
-        assert "## Podsumowania dni\n\n### 2026-11-16\n\n**tomasz**\n\n" + TEXT in markdown
+        assert "## Podsumowania dni\n\n### 2026-11-16\n\n**tomasz**\n\n> " + TEXT in markdown
         assert "Poza okresem" not in markdown
         text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf.content)).pages)
         assert "Podsumowania dni" in text

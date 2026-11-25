@@ -17,7 +17,7 @@ from pypdf import PdfReader
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import Issue, Project, ProjectMember, User
+from plane.db.models import Issue, Project, ProjectMember, User, WorkspaceMember
 from plane.db.models.api import APIToken
 from plane.liviere.activity import kinds as K
 from plane.liviere.models import ActivityEvent, ProjectActivitySettings
@@ -156,11 +156,16 @@ class TestReportSources:
         _action(project, create_user, "00:02")
 
         alone = api_key_client.get(_v1(workspace, project), {"from": DAY, "to": DAY, "source": "grid"})
+        # The 15th alone still sees 00:02 on the 16th, which extends its series to midnight
+        day_before = api_key_client.get(
+            _v1(workspace, project), {"from": "2026-11-15", "to": "2026-11-15", "source": "grid"}
+        )
         month = api_key_client.get(
             _v1(workspace, project), {"from": "2026-11-01", "to": "2026-11-30", "source": "grid"}
         )
 
         assert _day(alone)["grid_minutes"] == 7
+        assert _day(day_before, "2026-11-15")["grid_minutes"] == 10
         assert _day(month)["grid_minutes"] == 7
         assert _day(month, "2026-11-15")["grid_minutes"] == 10
         assert month.json()["totals"]["grid_minutes"] == 17
@@ -197,6 +202,20 @@ class TestReportSources:
         ]
         assert mine["totals"]["log_minutes"] == 60
         assert mine["actor"] == {"id": str(agent.id), "display_name": "agent"}
+
+    @pytest.mark.django_db
+    def test_the_actor_filter_names_only_members_of_the_workspace(self, api_key_client, workspace, project):
+        outsider = User.objects.create(email=f"out-{uuid4().hex[:8]}@plane.so", username=f"out_{uuid4().hex[:8]}")
+        outsider.display_name = "outsider"
+        outsider.save(update_fields=["display_name"])
+        member = _member(project, 15, "quiet")
+        WorkspaceMember.objects.get_or_create(workspace=workspace, member=member, defaults={"role": 15})
+
+        unknown = api_key_client.get(_v1(workspace, project), {"from": DAY, "to": DAY, "actor": str(outsider.id)})
+        quiet = api_key_client.get(_v1(workspace, project), {"from": DAY, "to": DAY, "actor": str(member.id)})
+
+        assert unknown.json()["actor"] == {"id": str(outsider.id), "display_name": None}
+        assert quiet.json()["actor"] == {"id": str(member.id), "display_name": "quiet"}
 
     @pytest.mark.django_db
     def test_entries_are_listed_under_their_day(self, api_key_client, workspace, project, create_user):
@@ -248,8 +267,7 @@ class TestReportFiles:
         assert "| tomasz | 1 h 00 min | 28 min | 32 min | 1 h 13 min |" in text
         assert "Mieszane: dziennik + akcje poza dziennikiem" in text
         assert "nie z kwadransów" in text
-        assert "- **10:00–11:00 · tomasz**" in text
-        assert POLISH_NOTE in text
+        assert "- **10:00–11:00 · tomasz**\n  > " + POLISH_NOTE in text
 
     @pytest.mark.django_db
     def test_markdown_in_english_for_one_source(self, api_key_client, workspace, project, create_user):
@@ -263,6 +281,28 @@ class TestReportFiles:
         assert "| 2026-11-16 | 28 min |" in text
         assert "not from quarter-hours" in text
         assert "Work log |" not in text
+
+    @pytest.mark.django_db
+    def test_markdown_texts_cannot_add_sections_tables_or_html(self, api_key_client, workspace, project, create_user):
+        project.name = "Projekt <b>|x|</b>"
+        project.save(update_fields=["name"])
+        forged = "Zrobione.\n\n## People\n| tomasz | 99 h |\n<script>alert(1)</script>\n- lista\n1. punkt"
+        _entry(project, create_user, "10:00", "11:00", note=forged)
+
+        text = api_key_client.get(
+            _v1(workspace, project), {"from": DAY, "to": DAY, "export": "md", "lang": "en"}
+        ).content.decode("utf-8")
+
+        assert "# Activity report: Projekt &lt;b&gt;\\|x\\|&lt;/b&gt;\n" in text
+        assert [line for line in text.splitlines() if line.startswith("## ")] == [
+            "## Days",
+            "## People",
+            "## Work log entries",
+        ]
+        assert "  > Zrobione.\n  >\n  > \\## People\n  > \\| tomasz \\| 99 h \\|\n" in text
+        assert "  > &lt;script&gt;alert(1)&lt;/script&gt;\n  > \\- lista\n  > 1\\. punkt" in text
+        assert "<script>" not in text
+        assert "| tomasz | 99 h |" not in text
 
     @pytest.mark.django_db
     def test_csv_has_the_numbers_of_the_view(self, api_key_client, workspace, project, create_user):

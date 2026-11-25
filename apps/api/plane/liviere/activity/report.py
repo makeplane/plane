@@ -187,7 +187,10 @@ def sum_rows(rows):
 
 
 def margin(gap):
-    """How far before the window actions and entries still reach into it."""
+    """
+    How far around the window actions, entries and skipped periods still change what lies in it: an action
+    before it starts a series that reaches in, an action after it extends a series that ends in it.
+    """
     return max(gap, timedelta(minutes=OPEN_ENTRY_MINUTES))
 
 
@@ -201,14 +204,14 @@ def build_report(project, query, source, report_settings, with_entries=True):
     from plane.liviere.activity.queries import filtered_events, serialize_events
     from plane.liviere.activity.skips import serialize_skip, skip_periods
     from plane.liviere.activity.summaries import summaries_by_day
-    from plane.db.models import User
+    from plane.db.models import User, WorkspaceMember
 
     zone = query["zone"]
     gap = timedelta(minutes=report_settings["series_gap_minutes"])
     padding = timedelta(minutes=report_settings["series_padding_minutes"])
     days = [query["start"] + timedelta(days=i) for i in range((query["end"] - query["start"]).days + 1)]
     since = query["since"] - margin(gap)
-    until = query["until"]
+    until = query["until"] + margin(gap)
 
     action_kinds = [kind for kind in query["kinds"] if kind != LOG_ENTRY]
     actions = list(
@@ -227,13 +230,21 @@ def build_report(project, query, source, report_settings, with_entries=True):
     skipped = [(period.starts_at, period.ends_at) for period in periods]
     result = compute(actions, entries, days, zone, gap, padding, skipped)
 
+    # Names of people who acted in the project, and of the `actor` filter only when it is a member of the
+    # project's workspace: an arbitrary user id must not reveal a name
     actor_ids = {str(actor) for actor in result["people"] if actor is not None}
-    if query["actor"]:
-        actor_ids.add(str(query["actor"]))
     names = {
         str(user["id"]): user["display_name"]
         for user in User.objects.filter(id__in=actor_ids).values("id", "display_name")
     }
+    if query["actor"] and str(query["actor"]) not in names:
+        member = (
+            WorkspaceMember.objects.filter(workspace_id=project.workspace_id, member_id=query["actor"])
+            .values_list("member__display_name", flat=True)
+            .first()
+        )
+        if member is not None:
+            names[str(query["actor"])] = member
 
     def actor_ref(actor):
         if actor is None:
@@ -243,7 +254,7 @@ def build_report(project, query, source, report_settings, with_entries=True):
     # Entries listed under the local day they start on, only those that start in the period
     listed = defaultdict(list)
     if with_entries:
-        in_period = [e for e in entry_events if query["since"] <= e.occurred_at < until]
+        in_period = [e for e in entry_events if query["since"] <= e.occurred_at < query["until"]]
         for entry in serialize_events(in_period):
             start = datetime.fromisoformat(entry["occurred_at"]).astimezone(zone)
             end = datetime.fromisoformat(entry["ended_at"]).astimezone(zone) if entry["ended_at"] else None

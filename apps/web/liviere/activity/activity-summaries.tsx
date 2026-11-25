@@ -8,7 +8,7 @@
 // period, newest day first: one per day and author, written here or by AI agents (API, plane-log). Saving
 // your summary of a day that already has one replaces it, as the API does.
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@makeplane/propel/components/button";
 import {
   Dialog,
@@ -188,22 +188,23 @@ function SummaryModal(props: ModalProps) {
   const { t } = useTranslation();
   const [date, setDate] = useState(summary?.date ?? today);
   const [text, setText] = useState(summary?.text ?? "");
+  // The text was typed (or changed) by the person: a summary read from the API never replaces it
+  const dirty = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   // A new summary: your own summary of the chosen day, read from the API whatever the page shows, since
-  // saving would replace it. Undefined while it is being read.
+  // saving would replace it. Undefined while it is being read or when reading failed: saving waits for it.
   const [existing, setExisting] = useState<TDaySummary | null | undefined>(summary ? null : undefined);
+  const [readFailed, setReadFailed] = useState(false);
   const replaces = !summary && !!existing;
 
   useEffect(() => {
-    if (summary || !date || !currentUserId) {
-      setExisting(null);
-      return;
-    }
-    let current = true;
+    if (summary) return;
     setExisting(undefined);
+    setReadFailed(false);
+    if (!date || !currentUserId) return;
+    let current = true;
     const read = async () => {
-      let found: TDaySummary | null = null;
       try {
         const results = await projectActivityService.getSummaries(workspaceSlug, projectId, {
           from: date,
@@ -211,14 +212,15 @@ function SummaryModal(props: ModalProps) {
           tz: timeZone,
           actor: currentUserId,
         });
-        found = results[0] ?? null;
+        if (!current) return;
+        const found = results[0] ?? null;
+        setExisting(found);
+        // Your summary of that day opens for editing; a field holding a loaded summary of another day is
+        // cleared. Typed text stays.
+        if (!dirty.current) setText(found?.text ?? "");
       } catch {
-        found = null;
+        if (current) setReadFailed(true);
       }
-      if (!current) return;
-      setExisting(found);
-      // It opens for editing
-      if (found) setText(found.text);
     };
     void read();
     return () => {
@@ -281,7 +283,10 @@ function SummaryModal(props: ModalProps) {
                   name="text"
                   label={t("liviere.activity.summaries.text")}
                   value={text}
-                  onChange={(event) => setText(event.target.value)}
+                  onChange={(event) => {
+                    setText(event.target.value);
+                    dirty.current = true;
+                  }}
                   placeholder={t("liviere.activity.summaries.text_placeholder")}
                   maxLength={MAX_TEXT_LENGTH}
                   required
@@ -289,6 +294,9 @@ function SummaryModal(props: ModalProps) {
                   rows={8}
                 />
                 {replaces && <p className="text-12 text-tertiary">{t("liviere.activity.summaries.replaces")}</p>}
+                {readFailed && (
+                  <p className="text-13 text-danger-primary">{t("liviere.activity.summaries.read_error")}</p>
+                )}
                 {error && <p className="text-13 text-danger-primary">{error}</p>}
               </div>
             </DialogBody>

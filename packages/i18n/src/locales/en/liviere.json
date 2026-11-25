@@ -189,7 +189,8 @@
         "delete_confirm": "The summary will be deleted permanently. This can't be undone.",
         "delete_error": "Couldn't delete the summary. Try again.",
         "empty_title": "No day summaries in this range",
-        "empty_description": "Write what happened on a day in a few sentences, or let AI agents do it with plane-log summary add."
+        "empty_description": "Write what happened on a day in a few sentences, or let AI agents do it with plane-log summary add.",
+        "read_error": "Couldn't check your summary of this day, so saving is blocked. Pick the date again or try later."
       },
       "skipped": {
         "title": "Skipped periods",

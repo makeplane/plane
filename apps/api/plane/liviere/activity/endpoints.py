@@ -52,6 +52,13 @@ def bad_request(error):
     return Response({"error": str(error)}, status=status.HTTP_400_BAD_REQUEST)
 
 
+def not_an_object(request):
+    """A 400 response when the body is not a JSON object (e.g. a list), else None."""
+    if isinstance(request.data, dict):
+        return None
+    return bad_request("The body must be a JSON object")
+
+
 def settings_payload(project_settings_obj):
     return {
         "enabled": project_settings_obj.enabled,
@@ -96,6 +103,9 @@ class ActivityHandlers:
         return Response(settings_payload(project_settings(project_id)), status=status.HTTP_200_OK)
 
     def patch_settings(self, request, project_id):
+        invalid = not_an_object(request)
+        if invalid:
+            return invalid
         data = request.data
         changes = {}
         if "enabled" in data:
@@ -194,6 +204,9 @@ class ActivityHandlers:
     def create_skip(self, request, project_id):
         project = Project.objects.get(pk=project_id)
         zone = ZoneInfo(project.timezone or "UTC")
+        invalid = not_an_object(request)
+        if invalid:
+            return invalid
         try:
             changes = skip_changes(request.data, zone)
         except InvalidSkipPeriod as e:
@@ -208,6 +221,9 @@ class ActivityHandlers:
         if period is None:
             return Response({"error": "Skipped period not found"}, status=status.HTTP_404_NOT_FOUND)
         zone = ZoneInfo(Project.objects.get(pk=project_id).timezone or "UTC")
+        invalid = not_an_object(request)
+        if invalid:
+            return invalid
         try:
             changes = skip_changes(request.data, zone, current=period)
         except InvalidSkipPeriod as e:
@@ -242,6 +258,9 @@ class ActivityHandlers:
     def upsert_summary(self, request, project_id):
         """New summary of a day (201), or the author's summary of that day replaced (200, "replaced": true)."""
         project = Project.objects.get(pk=project_id)
+        invalid = not_an_object(request)
+        if invalid:
+            return invalid
         try:
             text = summary_text(request.data.get("text"))
             day = summary_day(request.data.get("date"), ZoneInfo(project.timezone or "UTC"))
@@ -286,6 +305,9 @@ class ActivityHandlers:
         denied = self._check_summary_author(request, slug, project_id, summary)
         if denied:
             return denied
+        invalid = not_an_object(request)
+        if invalid:
+            return invalid
         try:
             summary.text = summary_text(request.data.get("text"))
         except InvalidSummary as e:

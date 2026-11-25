@@ -224,8 +224,8 @@ or two agent sessions of one account) counts once, and the people table gives ea
 split at local midnights of the project time zone (`tz`) and counted in real time, so the day clocks go back
 has 25 hours. Every cell (a day of one source, for the project or one person) is rounded to whole minutes, half
 up; the difference and totals add up rounded cells, so every format shows the same numbers. Actions just before
-the period still start series that reach into it: a day counts the same in a report of that day and of its
-month. Code: `activity/report.py` (counting, pure functions), `report_export.py` (Markdown, CSV),
+and just after the period still shape the series that reach into it (the report reads a margin of the series gap
+on both sides): a day counts the same in a report of that day and of its month. Code: `activity/report.py` (counting, pure functions), `report_export.py` (Markdown, CSV),
 `report_pdf.py` (PDF), `report_labels.py` (texts of the files in `en`/`pl`; the app has its own in the i18n
 namespace, `liviere.activity.report.*` – keep the descriptions of the sources in step); tests `plane/tests/unit/liviere/test_activity_report.py` (hand-counted examples)
 and `plane/tests/contract/api/test_activity_report.py`.
@@ -236,7 +236,8 @@ instead of JSON; not `format`, which Django REST framework keeps for itself) and
 the language of the Plane profile, else English). JSON: the header fields, `totals`, `days` (`date`,
 `log_minutes`, `grid_minutes`, `difference_minutes`, `result_minutes`, `summaries`, `entries`) and `people`.
 PDF (A4, the main format) and Markdown: the header, how the time was counted, the tables of days and people,
-the day summaries and the entries day by day. CSV: one row per day and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read
+the day summaries and the entries day by day. In Markdown the texts of people and agents are escaped and
+summaries and entries are quotes (`> ` on every line), so they cannot add headings, tables, lists or HTML. CSV: one row per day and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read
 Polish letters). The app endpoint is `/api/workspaces/.../projects/{id}/liviere/activity/report/`; the
 *Activity* page shows the report in its *Report* tab (`?view=report&source=…`, the period of the toolbar) with
 *PDF*, *Markdown* and *CSV* buttons, and the Activity settings have the two thresholds.

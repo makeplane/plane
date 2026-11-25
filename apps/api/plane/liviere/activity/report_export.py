@@ -8,6 +8,7 @@
 # Python imports
 import csv
 import io
+import re
 from datetime import datetime
 
 # Module imports
@@ -144,28 +145,55 @@ def filename(report, export):
 # Markdown
 
 
+# Texts of people and agents (project name, names, summaries, entries) must not add headings, tables, quotes,
+# lists, links or HTML to the file: a summary with "## People" and a table would otherwise forge a section
+_MD_INLINE = re.compile(r"([\\`*_\[\]|~])")
+_MD_LINE_START = re.compile(r"^(\s*)([#+=-])")
+_MD_NUMBERED = re.compile(r"^(\s*\d+)([.)])")
+
+
+def _md_text(text):
+    """One line of text: Markdown characters escaped, HTML as entities, no line breaks."""
+    text = str(text).replace("\r", " ").replace("\n", " ")
+    text = _MD_INLINE.sub(r"\\\1", text)
+    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _md_line(text):
+    """A line of a longer text that also cannot start a heading, a list or a setext underline."""
+    return _MD_NUMBERED.sub(r"\1\\\2", _MD_LINE_START.sub(r"\1\\\2", _md_text(text)))
+
+
+def _md_quote(text, indent=""):
+    """A text of several lines as a quote: every line starts with "> ", so nothing in it leaves the quote."""
+    return [f"{indent}> {_md_line(line)}".rstrip() for line in (str(text).splitlines() or [""])]
+
+
 def _md_cell(text):
-    return str(text).replace("\\", "\\\\").replace("|", "\\|").replace("\n", " ")
+    return _md_text(text)
 
 
-def _md_table(headers, rows):
+def _md_table(headers, rows, total=None):
+    """A table; the cells are escaped, the total row is bold."""
     lines = ["| " + " | ".join(_md_cell(h) for h in headers) + " |"]
     lines.append("|" + "|".join(["---"] + ["---:"] * (len(headers) - 1)) + "|")
     lines.extend("| " + " | ".join(_md_cell(cell) for cell in row) + " |" for row in rows)
+    if total:
+        lines.append("| " + " | ".join(f"**{_md_cell(cell)}**" for cell in total) + " |")
     return lines
 
 
 def to_markdown(report, language):
     L = labels(language)
-    lines = [f"# {L['title']}: {report['project']['name']}", ""]
-    lines.extend(f"- **{label}:** {value}" for label, value in header(report, L))
+    lines = [f"# {L['title']}: {_md_text(report['project']['name'])}", ""]
+    lines.extend(f"- **{label}:** {_md_text(value)}" for label, value in header(report, L))
     lines.append("")
     lines.extend(f"> {sentence}" for sentence in descriptions(report, L))
     lines.append("")
 
     headers, rows, total = day_table(report, L)
     lines.extend([f"## {L['days']}", ""])
-    lines.extend(_md_table(headers, rows + [[f"**{cell}**" for cell in total]]))
+    lines.extend(_md_table(headers, rows, total))
     lines.append("")
 
     headers, rows = people_table(report, L)
@@ -175,7 +203,7 @@ def to_markdown(report, language):
 
     if report.get("skipped"):
         lines.extend([f"## {L['skipped']}", ""])
-        lines.extend(f"- {_md_cell(line)}" for line in skipped_lines(report))
+        lines.extend(f"- {_md_text(line)}" for line in skipped_lines(report))
         lines.append("")
 
     summarized = days_with_summaries(report)
@@ -184,8 +212,8 @@ def to_markdown(report, language):
         for day in summarized:
             lines.extend([f"### {day['date']}", ""])
             for summary in day["summaries"]:
-                lines.extend([f"**{person_name(summary['author'], L)}**", ""])
-                lines.extend(summary["text"].splitlines())
+                lines.extend([f"**{_md_text(person_name(summary['author'], L))}**", ""])
+                lines.extend(_md_quote(summary["text"]))
                 lines.append("")
 
     if report["entries_included"]:
@@ -196,9 +224,9 @@ def to_markdown(report, language):
         for day in listed:
             lines.extend([f"### {day['date']}", ""])
             for entry in day["entries"]:
-                lines.append(f"- **{entry_heading(entry, L)}**")
-                for text_line in (entry["note"] or "").splitlines():
-                    lines.append(f"  {text_line}" if text_line.strip() else "")
+                lines.append(f"- **{_md_text(entry_heading(entry, L))}**")
+                if entry["note"]:
+                    lines.extend(_md_quote(entry["note"], indent="  "))
             lines.append("")
     return "\n".join(lines).rstrip("\n") + "\n"
 

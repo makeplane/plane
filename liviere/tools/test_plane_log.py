@@ -17,7 +17,7 @@ import tempfile
 import threading
 import unittest
 import urllib.parse
-from datetime import date
+from datetime import date, datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest import mock
@@ -267,6 +267,18 @@ class TestSummary(PlaneLogTestCase):
         code, _, err = self.run_tool("summary", "add", "-p", "LS", "Dzisiaj.")
         self.assertEqual(code, 0, err)
         self.assertRegex(self.posts()[0]["body"]["date"], r"^\d{4}-\d{2}-\d{2}$")
+
+    def test_show_defaults_to_today_in_the_project_time_zone(self):
+        # 23:30 UTC on 16 November is already the 17th in Warsaw
+        warsaw = {**PROJECT, "timezone": "Europe/Warsaw"}
+        frozen = datetime(2026, 11, 16, 23, 30, tzinfo=timezone.utc)
+        clock = mock.Mock(wraps=datetime)
+        clock.now.side_effect = lambda tz=None: frozen.astimezone(tz) if tz else frozen
+        with mock.patch.object(plane_log, "datetime", clock), mock.patch.dict(PROJECT, warsaw):
+            code, _, err = self.run_tool("summary", "show", "-p", "LS")
+        self.assertEqual(code, 0, err)
+        request = [r for r in FakePlane.requests if r["path"].endswith("/activity/summaries/")][0]
+        self.assertEqual((request["params"]["from"], request["params"]["to"]), ("2026-11-17", "2026-11-17"))
 
     def test_empty_text_is_refused(self):
         code, _, err = self.run_tool("summary", "add", "-p", "LS", "-", stdin="  ")

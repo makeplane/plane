@@ -189,7 +189,8 @@
         "delete_confirm": "Podsumowanie zostanie usunięte na stałe. Tego nie da się cofnąć.",
         "delete_error": "Nie udało się usunąć podsumowania. Spróbuj ponownie.",
         "empty_title": "Brak podsumowań dni w tym okresie",
-        "empty_description": "Opisz w kilku zdaniach, co działo się danego dnia, albo pozwól agentom AI zrobić to przez plane-log summary add."
+        "empty_description": "Opisz w kilku zdaniach, co działo się danego dnia, albo pozwól agentom AI zrobić to przez plane-log summary add.",
+        "read_error": "Nie udało się sprawdzić Twojego podsumowania tego dnia, więc zapis jest zablokowany. Wybierz datę ponownie albo spróbuj później."
       },
       "skipped": {
         "title": "Okresy pomijane",

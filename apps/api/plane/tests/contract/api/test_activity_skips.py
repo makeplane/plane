@@ -139,6 +139,13 @@ class TestSkippedPeriods:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.django_db
+    def test_a_body_that_is_not_an_object(self, session_client, workspace, project):
+        created = session_client.post(_app(workspace, project), NIGHT, format="json")
+        detail = f"{_app(workspace, project)}{created.json()['id']}/"
+        assert session_client.post(_app(workspace, project), ["starts_at"], format="json").status_code == 400
+        assert session_client.patch(detail, ["ends_at"], format="json").status_code == 400
+
+    @pytest.mark.django_db
     def test_members_and_the_api_only_read(self, session_client, workspace, project):
         session_client.post(_app(workspace, project), NIGHT, format="json")
         member = _member(project, 15, "member")
