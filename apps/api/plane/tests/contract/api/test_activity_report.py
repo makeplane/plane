@@ -355,7 +355,7 @@ class TestReportFiles:
         text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf.content)).pages)
         assert "Brak aktywności w tym okresie." in text
         assert "Razem" not in text
-        assert "Siatka aktywności" not in text
+        assert "Podgląd aktywności" not in text
 
     @pytest.mark.django_db
     def test_csv_has_the_numbers_of_the_view(self, api_key_client, workspace, project, create_user):
@@ -403,7 +403,7 @@ class TestReportFiles:
         # A character the font lacks becomes "?"
         assert "Emoji ? i tabulator w tekście" in text
         # The grid under the table
-        assert "Siatka aktywności" in text
+        assert "Podgląd aktywności" in text
         assert "pon., 16.11" in text
         assert "Mniej" in text and "Więcej" in text
         assert "Strona 1 z 1" in text
@@ -419,7 +419,7 @@ class TestReportFiles:
         text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(response.content)).pages)
         assert "Activity report: Raporty Łódź" in text
         assert "Date Log entry Work" in text
-        assert "Activity grid" in text
+        assert "Activity overview" in text
         assert "Mon, 16.11" in text
         assert "Page 1 of 1" in text
         assert POLISH_NOTE not in text
@@ -523,7 +523,7 @@ class TestReportFiles:
         assert response.status_code == status.HTTP_200_OK
         reader = PdfReader(io.BytesIO(response.content))
         text = "\n".join(page.extract_text() for page in reader.pages)
-        assert "Siatka aktywności" in text
+        assert "Podgląd aktywności" in text
         assert label in text
         assert text.count("Mniej") == 1
 
