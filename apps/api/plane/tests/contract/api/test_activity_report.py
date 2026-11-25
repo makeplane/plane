@@ -8,7 +8,7 @@
 
 import io
 import logging
-from datetime import datetime, timezone as dt_timezone
+from datetime import datetime, timedelta, timezone as dt_timezone
 from uuid import uuid4
 from zoneinfo import ZoneInfo
 
@@ -261,13 +261,15 @@ class TestReportFiles:
         assert response["Content-Type"] == "text/markdown; charset=utf-8"
         assert response["Content-Disposition"] == f'attachment; filename="RP-activity-{DAY}_{DAY}.md"'
         text = response.content.decode("utf-8")
-        assert text.startswith("# Raport aktywności: Raporty Łódź\n")
-        assert "| 2026-11-16 | 1 h 00 min | 28 min | 32 min | 1 h 13 min |" in text
-        assert "| **Razem** | **1 h 00 min** | **28 min** | **32 min** | **1 h 13 min** |" in text
-        assert "| tomasz | 1 h 00 min | 28 min | 32 min | 1 h 13 min |" in text
-        assert "Mieszane: dziennik + akcje poza dziennikiem" in text
-        assert "nie z kwadransów" in text
-        assert "- **10:00–11:00 · tomasz**\n  > " + POLISH_NOTE in text
+        # The period under the title, then one table: date, the day's log entries, the time of the source
+        assert text == (
+            "# Raport aktywności: Raporty Łódź\n\n"
+            "- **Okres:** 2026-11-16\n\n"
+            "| Data | Wpis z dziennika | Praca |\n"
+            "|---|---|---:|\n"
+            f"| 2026-11-16 | {POLISH_NOTE} | 1 h 13 min |\n"
+            "| **Razem** | | **1 h 13 min** |\n"
+        )
 
     @pytest.mark.django_db
     def test_markdown_in_english_for_one_source(self, api_key_client, workspace, project, create_user):
@@ -277,10 +279,10 @@ class TestReportFiles:
             _v1(workspace, project), {"from": DAY, "to": DAY, "export": "md", "lang": "en", "source": "grid"}
         ).content.decode("utf-8")
 
-        assert "| Date | Series |" in text
-        assert "| 2026-11-16 | 28 min |" in text
-        assert "not from quarter-hours" in text
-        assert "Work log |" not in text
+        assert "| Date | Log entry | Work |" in text
+        assert f"| 2026-11-16 | {POLISH_NOTE} | 28 min |" in text
+        assert "| **Total** | | **28 min** |" in text
+        assert "not from quarter-hours" not in text
 
     @pytest.mark.django_db
     def test_markdown_texts_cannot_add_sections_tables_or_html(self, api_key_client, workspace, project, create_user):
@@ -294,15 +296,16 @@ class TestReportFiles:
         ).content.decode("utf-8")
 
         assert "# Activity report: Projekt &lt;b&gt;\\|x\\|&lt;/b&gt;\n" in text
-        assert [line for line in text.splitlines() if line.startswith("## ")] == [
-            "## Days",
-            "## People",
-            "## Work log entries",
+        # The whole note stays in its cell: no section, no row, no HTML of its own
+        assert [line for line in text.splitlines() if line.startswith("## ")] == []
+        assert [line for line in text.splitlines() if line.startswith("|")] == [
+            "| Date | Log entry | Work |",
+            "|---|---|---:|",
+            "| 2026-11-16 | Zrobione.<br>## People<br>\\| tomasz \\| 99 h \\|<br>&lt;script&gt;alert(1)&lt;/script&gt;"
+            "<br>- lista<br>1. punkt | 1 h 00 min |",
+            "| **Total** | | **1 h 00 min** |",
         ]
-        assert "  > Zrobione.\n  >\n  > \\## People\n  > \\| tomasz \\| 99 h \\|\n" in text
-        assert "  > &lt;script&gt;alert(1)&lt;/script&gt;\n  > \\- lista\n  > 1\\. punkt" in text
         assert "<script>" not in text
-        assert "| tomasz | 99 h |" not in text
 
     @pytest.mark.django_db
     def test_days_without_activity_are_left_out_of_markdown_and_pdf(
@@ -324,16 +327,20 @@ class TestReportFiles:
             "2026-11-17,0,0,0,0",
             "Razem,60,28,32,73",
         ]
-        # The tables of the files only the 16th, the totals unchanged
-        assert "| 2026-11-16 | 1 h 00 min | 28 min | 32 min | 1 h 13 min |" in markdown
+        # The table of the files only the 16th, the total unchanged
+        assert f"| 2026-11-16 | {POLISH_NOTE} | 1 h 13 min |" in markdown
         assert "| 2026-11-15 |" not in markdown
         assert "| 2026-11-17 |" not in markdown
-        assert "| **Razem** | **1 h 00 min** | **28 min** | **32 min** | **1 h 13 min** |" in markdown
+        assert "| **Razem** | | **1 h 13 min** |" in markdown
         assert "Pominięto dni bez aktywności: 2." in markdown
         text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf.content)).pages)
-        assert "2026-11-16 1 h 00 min 28 min 32 min 1 h 13 min" in text
+        assert "1 h 13 min" in text
         assert "2026-11-15" not in text.replace("2026-11-15 – 2026-11-17", "")
         assert "Pominięto dni bez aktywności: 2." in text
+        # The grid has the days of the table
+        assert "pon., 16.11" in text
+        assert "niedz., 15.11" not in text
+        assert "wt., 17.11" not in text
 
     @pytest.mark.django_db
     def test_a_period_without_activity(self, api_key_client, workspace, project):
@@ -342,13 +349,13 @@ class TestReportFiles:
         markdown = api_key_client.get(_v1(workspace, project), {**params, "export": "md"}).content.decode("utf-8")
         pdf = api_key_client.get(_v1(workspace, project), {**params, "export": "pdf"})
 
-        assert "## Dni\n\nBrak aktywności w tym okresie.\n" in markdown
+        assert markdown.endswith("- **Okres:** 2026-11-15 – 2026-11-17\n\nBrak aktywności w tym okresie.\n")
         assert "| Data |" not in markdown
-        assert "## Osoby" not in markdown
         assert "Pominięto" not in markdown
         text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf.content)).pages)
         assert "Brak aktywności w tym okresie." in text
         assert "Razem" not in text
+        assert "Siatka aktywności" not in text
 
     @pytest.mark.django_db
     def test_csv_has_the_numbers_of_the_view(self, api_key_client, workspace, project, create_user):
@@ -384,14 +391,21 @@ class TestReportFiles:
         reader = PdfReader(io.BytesIO(response.content))
         text = "\n".join(page.extract_text() for page in reader.pages)
         assert "Raport aktywności: Raporty Łódź" in text
-        assert "Mieszane: dziennik + akcje poza dziennikiem" in text
-        assert "nie z kwadransów" in text
-        # Log 60 + 30, series 28, mixed 73 + 30
-        assert "2026-11-16 1 h 30 min 28 min 1 h 02 min 1 h 43 min" in text
-        assert "10:00–11:00 · tomasz" in text
+        assert "Okres 2026-11-16" in text
+        # Under the title only the period: no project, time zone, source, person or description of the counting
+        for left_out in ("Projekt", "Strefa czasowa", "Źródło czasu", "Osoba", "Mieszane", "nie z kwadransów"):
+            assert left_out not in text
+        assert "Data Wpis z dziennika Praca" in text
+        # Mixed 73 + 30; the notes of the day without their times
+        assert "1 h 43 min" in text
         assert POLISH_NOTE in text
+        assert "10:00–11:00" not in text
         # A character the font lacks becomes "?"
         assert "Emoji ? i tabulator w tekście" in text
+        # The grid under the table
+        assert "Siatka aktywności" in text
+        assert "pon., 16.11" in text
+        assert "Mniej" in text and "Więcej" in text
         assert "Strona 1 z 1" in text
 
     @pytest.mark.django_db
@@ -404,9 +418,114 @@ class TestReportFiles:
 
         text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(response.content)).pages)
         assert "Activity report: Raporty Łódź" in text
-        assert "not from quarter-hours" in text
+        assert "Date Log entry Work" in text
+        assert "Activity grid" in text
+        assert "Mon, 16.11" in text
         assert "Page 1 of 1" in text
         assert POLISH_NOTE not in text
+
+    @pytest.mark.django_db
+    def test_the_person_only_when_the_report_is_narrowed_to_one(self, api_key_client, workspace, project, create_user):
+        _p5_example(project, create_user)
+        params = {"from": DAY, "to": DAY, "export": "pdf", "lang": "pl"}
+
+        everybody = api_key_client.get(_v1(workspace, project), params)
+        mine = api_key_client.get(_v1(workspace, project), {**params, "actor": str(create_user.id)})
+        markdown = api_key_client.get(
+            _v1(workspace, project), {**params, "export": "md", "actor": str(create_user.id)}
+        ).content.decode("utf-8")
+
+        assert "Osoba" not in "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(everybody.content)).pages)
+        assert "Osoba tomasz" in "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(mine.content)).pages)
+        assert "- **Okres:** 2026-11-16\n- **Osoba:** tomasz\n" in markdown
+
+    @pytest.mark.django_db
+    def test_a_summary_comes_before_the_notes_and_names_mark_several_people(
+        self, api_key_client, workspace, project, create_user
+    ):
+        ola = _member(project, 15, "ola")
+        _entry(project, create_user, "10:00", "11:00", note="Notatka Tomasza")
+        _entry(project, ola, "12:00", "12:30", note="Pierwsza notatka Oli")
+        _entry(project, ola, "13:00", "13:30", note="Druga notatka Oli")
+        api_key_client.post(_v1(workspace, project, "summaries"), {"date": DAY, "text": "Dzień Tomasza"}, format="json")
+        params = {"from": DAY, "to": DAY, "export": "md", "lang": "pl"}
+
+        everybody = api_key_client.get(_v1(workspace, project), params).content.decode("utf-8")
+        tomasz = api_key_client.get(_v1(workspace, project), {**params, "actor": str(create_user.id)}).content.decode(
+            "utf-8"
+        )
+        just_ola = api_key_client.get(_v1(workspace, project), {**params, "actor": str(ola.id)}).content.decode("utf-8")
+
+        # Tomasz's summary instead of his note; Ola has no summary, so her notes, each on its own line
+        assert (
+            "| 2026-11-16 | tomasz: Dzień Tomasza<br>ola: Pierwsza notatka Oli<br>ola: Druga notatka Oli | 2 h 00 min |"
+            in everybody
+        )
+        assert "Notatka Tomasza" not in everybody
+        # One person: no names
+        assert "| 2026-11-16 | Dzień Tomasza | 1 h 00 min |" in tomasz
+        assert "| 2026-11-16 | Pierwsza notatka Oli<br>Druga notatka Oli | 1 h 00 min |" in just_ola
+
+    @pytest.mark.django_db
+    def test_a_summary_of_a_day_without_activity_keeps_its_row(self, api_key_client, workspace, project, create_user):
+        _p5_example(project, create_user)
+        api_key_client.post(
+            _v1(workspace, project, "summaries"), {"date": "2026-11-17", "text": "Planowanie"}, format="json"
+        )
+
+        markdown = api_key_client.get(
+            _v1(workspace, project), {"from": "2026-11-15", "to": "2026-11-17", "export": "md", "lang": "pl"}
+        ).content.decode("utf-8")
+
+        assert "| 2026-11-17 | Planowanie | 0 min |" in markdown
+        assert "Pominięto dni bez aktywności: 1." in markdown
+
+    @pytest.mark.django_db
+    def test_a_long_summary_goes_on_over_pages(self, api_key_client, workspace, project, create_user):
+        ola = _member(project, 15, "ola")
+        _p5_example(project, create_user)
+        _entry(project, ola, "12:00", "12:30", note="Notatka Oli na końcu")
+        lines = [f"Akapit {number}: " + "opis pracy dnia z wieloma szczegółami " * 3 for number in range(60)]
+        text = "\n".join(lines)[:8000]
+        api_key_client.post(_v1(workspace, project, "summaries"), {"date": DAY, "text": text}, format="json")
+
+        response = api_key_client.get(_v1(workspace, project), {"from": DAY, "to": DAY, "export": "pdf", "lang": "pl"})
+
+        assert response.status_code == status.HTTP_200_OK
+        reader = PdfReader(io.BytesIO(response.content))
+        assert len(reader.pages) >= 2
+        whole = "\n".join(page.extract_text() for page in reader.pages)
+        assert "Akapit 0:" in whole
+        assert "Akapit 50:" in whole
+        assert "ola: Notatka Oli na końcu" in whole
+        # The row goes on under the repeated heading, its date in grey
+        assert "Data Wpis z dziennika Praca" in reader.pages[1].extract_text()
+
+    @pytest.mark.django_db
+    @pytest.mark.parametrize(
+        "first, last, label", [("2026-11-01", "2026-12-01", "wt., 01.12"), ("2025-11-17", "2026-11-17", "wt., 17.11")]
+    )
+    def test_the_grid_of_a_month_and_of_a_year(
+        self, api_key_client, workspace, project, create_user, first, last, label
+    ):
+        start = datetime.fromisoformat(first).date()
+        end = datetime.fromisoformat(last).date()
+        day = start
+        while day <= end:
+            for clock in ("09:00", "09:10", "14:00"):
+                _action(project, create_user, clock, day=day.isoformat())
+            day += timedelta(days=1)
+
+        response = api_key_client.get(
+            _v1(workspace, project), {"from": first, "to": last, "export": "pdf", "lang": "pl"}
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        reader = PdfReader(io.BytesIO(response.content))
+        text = "\n".join(page.extract_text() for page in reader.pages)
+        assert "Siatka aktywności" in text
+        assert label in text
+        assert text.count("Mniej") == 1
 
     @pytest.mark.django_db
     def test_the_app_endpoint_gives_the_same_report(self, session_client, workspace, project, create_user):

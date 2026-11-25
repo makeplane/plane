@@ -3,7 +3,8 @@
 # See the LICENSE file for details.
 
 # Files of the activity time report: Markdown and CSV here, PDF in report_pdf.py. All of them render the
-# dictionary of report.build_report through the same tables below, so they show the numbers of the app view.
+# dictionary of report.build_report: the PDF and the Markdown through the same table (day_rows), the CSV as
+# minutes per source, so they show the numbers of the app view.
 
 # Python imports
 import csv
@@ -15,8 +16,8 @@ from datetime import datetime
 from plane.liviere.activity.report import SOURCE_GRID, SOURCE_LOG, SOURCE_MIXED
 from plane.liviere.activity.report_labels import labels
 
-# Columns of the tables for each source: one source shows its own time; "mixed" both, the difference
-# and the result
+# Columns of the CSV for each source: one source shows its own time; "mixed" both, the difference and the
+# result
 COLUMNS = {
     SOURCE_GRID: ["grid_minutes"],
     SOURCE_LOG: ["log_minutes"],
@@ -51,34 +52,12 @@ def person_name(actor, L):
 
 
 def header(report, L):
-    """(label, value) lines on top of every file."""
-    project = report["project"]
+    """(label, value) lines under the title: the period, and the person when the report is narrowed to one."""
     period = report["from"] if report["from"] == report["to"] else f"{report['from']} – {report['to']}"
-    return [
-        (L["project"], f"{project['name']} ({project['identifier']})"),
-        (L["period"], period),
-        (L["timezone"], report["timezone"]),
-        (L["source"], L[f"source_{report['source']}"]),
-        (L["person"], person_name(report["actor"], L) if report["actor"] else L["everybody"]),
-    ]
-
-
-def descriptions(report, L):
-    """How the time was counted, in sentences; the series sentence names the thresholds."""
-    values = {
-        "gap": report["series_gap_minutes"],
-        "padding": report["series_padding_minutes"],
-        "open": report["open_entry_minutes"],
-    }
-    keys = {
-        SOURCE_GRID: ["describe_grid"],
-        SOURCE_LOG: ["describe_log"],
-        SOURCE_MIXED: ["describe_mixed", "describe_log", "describe_grid"],
-    }[report["source"]]
-    sentences = [L[key].format(**values) for key in keys] + [L["describe_union"]]
-    if report.get("skipped"):
-        sentences.append(L["describe_skipped"])
-    return sentences
+    lines = [(L["period"], period)]
+    if report["actor"]:
+        lines.append((L["person"], person_name(report["actor"], L)))
+    return lines
 
 
 def skipped_lines(report):
@@ -93,55 +72,69 @@ def skipped_lines(report):
 
 
 def is_empty_day(day):
-    """No time from any source: the PDF, Markdown and app tables leave the day out (JSON and CSV keep it)."""
+    """No time from any source."""
     return not (day["log_minutes"] or day["grid_minutes"] or day["result_minutes"])
 
 
-def day_table(report, L):
-    """(headers, rows, total row, number of days left out) of the days with any time, minutes as text."""
-    columns = COLUMNS[report["source"]]
-    headers = [L["date"]] + [L[COLUMN_LABELS[column]] for column in columns]
-    days = [day for day in report["days"] if not is_empty_day(day)]
-    rows = [[day["date"]] + [format_minutes(day[column], L) for column in columns] for day in days]
-    total = [L["total"]] + [format_minutes(report["totals"][column], L) for column in columns]
-    return headers, rows, total, len(report["days"]) - len(days)
+def _author_key(actor):
+    return actor["id"] if actor else None
 
 
-def people_table(report, L):
-    columns = COLUMNS[report["source"]]
-    headers = [L["person"]] + [L[COLUMN_LABELS[column]] for column in columns]
-    rows = [
-        [person_name(row["actor"], L)] + [format_minutes(row[column], L) for column in columns]
-        for row in report["people"]
-    ]
-    return headers, rows
+def names_texts(report):
+    """
+    Whether the texts of the "log entry" column start with the name of their author: when the report is not
+    narrowed to one person and its texts come from more than one.
+    """
+    if report["actor"]:
+        return False
+    authors = set()
+    for day in report["days"]:
+        authors.update(_author_key(summary["author"]) for summary in day.get("summaries", []))
+        authors.update(_author_key(entry["actor"]) for entry in day["entries"] if (entry["note"] or "").strip())
+    return len(authors) > 1
 
 
-def entry_time(entry):
-    start = datetime.fromisoformat(entry["start"])
-    if not entry["end"]:
-        return start.strftime("%H:%M")
-    end = datetime.fromisoformat(entry["end"])
-    end_text = end.strftime("%H:%M") if end.date() == start.date() else end.strftime("%Y-%m-%d %H:%M")
-    return f"{start.strftime('%H:%M')}–{end_text}"
+def day_texts(day, L, with_names):
+    """
+    Texts of the "log entry" column of a day, each of them possibly several lines: for every person their
+    summary of the day, or without one the notes of their log entries of that day (no times).
+    """
+    authors = {}
+    summaries = {}
+    notes = {}
+    for summary in day.get("summaries", []):
+        key = _author_key(summary["author"])
+        authors.setdefault(key, summary["author"])
+        summaries[key] = summary["text"]
+    for entry in day["entries"]:
+        note = (entry["note"] or "").strip()
+        if note:
+            key = _author_key(entry["actor"])
+            authors.setdefault(key, entry["actor"])
+            notes.setdefault(key, []).append(note)
+    texts = []
+    for key, actor in authors.items():
+        for text in [summaries[key]] if key in summaries else notes[key]:
+            text = text.strip()
+            if text:
+                texts.append(f"{person_name(actor, L)}: {text}" if with_names else text)
+    return texts
 
 
-def entry_heading(entry, L):
-    """ "10:00–11:00 · Tomasz · LS-9 Name": the line above the text of an entry."""
-    parts = [entry_time(entry), person_name(entry["actor"], L)]
-    if entry["issue"]:
-        identifier = entry["issue"]["identifier"]
-        name = entry["issue"]["name"]
-        parts.append(" ".join(part for part in (identifier, name) if part))
-    return " · ".join(parts)
-
-
-def days_with_entries(report):
-    return [day for day in report["days"] if day["entries"]]
-
-
-def days_with_summaries(report):
-    return [day for day in report["days"] if day.get("summaries")]
+def day_rows(report, L):
+    """
+    (rows, total, number of days left out) of the report table. A row is {"date", "texts", "work"}, the work
+    being the time of the chosen source as text. A day without time and without texts is left out (the JSON
+    and the CSV keep it); a day with a summary but no time stays.
+    """
+    with_names = names_texts(report)
+    rows = []
+    for day in report["days"]:
+        texts = day_texts(day, L, with_names)
+        if texts or not is_empty_day(day):
+            rows.append({"date": day["date"], "texts": texts, "work": format_minutes(day["result_minutes"], L)})
+    total = format_minutes(report["totals"]["result_minutes"], L)
+    return rows, total, len(report["days"]) - len(rows)
 
 
 def filename(report, export):
@@ -151,11 +144,9 @@ def filename(report, export):
 # Markdown
 
 
-# Texts of people and agents (project name, names, summaries, entries) must not add headings, tables, quotes,
+# Texts of people and agents (project name, names, summaries, entries) must not add headings, rows, quotes,
 # lists, links or HTML to the file: a summary with "## People" and a table would otherwise forge a section
 _MD_INLINE = re.compile(r"([\\`*_\[\]|~])")
-_MD_LINE_START = re.compile(r"^(\s*)([#+=-])")
-_MD_NUMBERED = re.compile(r"^(\s*\d+)([.)])")
 
 
 def _md_text(text):
@@ -165,28 +156,9 @@ def _md_text(text):
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def _md_line(text):
-    """A line of a longer text that also cannot start a heading, a list or a setext underline."""
-    return _MD_NUMBERED.sub(r"\1\\\2", _MD_LINE_START.sub(r"\1\\\2", _md_text(text)))
-
-
-def _md_quote(text, indent=""):
-    """A text of several lines as a quote: every line starts with "> ", so nothing in it leaves the quote."""
-    return [f"{indent}> {_md_line(line)}".rstrip() for line in (str(text).splitlines() or [""])]
-
-
-def _md_cell(text):
-    return _md_text(text)
-
-
-def _md_table(headers, rows, total=None):
-    """A table; the cells are escaped, the total row is bold."""
-    lines = ["| " + " | ".join(_md_cell(h) for h in headers) + " |"]
-    lines.append("|" + "|".join(["---"] + ["---:"] * (len(headers) - 1)) + "|")
-    lines.extend("| " + " | ".join(_md_cell(cell) for cell in row) + " |" for row in rows)
-    if total:
-        lines.append("| " + " | ".join(f"**{_md_cell(cell)}**" for cell in total) + " |")
-    return lines
+def _md_cell_lines(texts):
+    """Texts of several lines in one table cell: every line escaped, then joined with <br>."""
+    return "<br>".join(_md_text(line) for text in texts for line in str(text).splitlines() if line.strip())
 
 
 def to_markdown(report, language):
@@ -194,52 +166,23 @@ def to_markdown(report, language):
     lines = [f"# {L['title']}: {_md_text(report['project']['name'])}", ""]
     lines.extend(f"- **{label}:** {_md_text(value)}" for label, value in header(report, L))
     lines.append("")
-    lines.extend(f"> {sentence}" for sentence in descriptions(report, L))
-    lines.append("")
 
-    headers, rows, total, empty_days = day_table(report, L)
-    lines.extend([f"## {L['days']}", ""])
+    rows, total, empty_days = day_rows(report, L)
     if rows:
-        lines.extend(_md_table(headers, rows, total))
+        lines.append(f"| {L['date']} | {L['notes']} | {L['work']} |")
+        lines.append("|---|---|---:|")
+        lines.extend(f"| {row['date']} | {_md_cell_lines(row['texts'])} | {row['work']} |" for row in rows)
+        lines.append(f"| **{L['total']}** | | **{total}** |")
         if empty_days:
             lines.extend(["", L["empty_days"].format(count=empty_days)])
     else:
         lines.append(L["no_activity"])
     lines.append("")
 
-    headers, rows = people_table(report, L)
-    if rows:
-        lines.extend([f"## {L['people']}", ""])
-        lines.extend(_md_table(headers, rows))
-        lines.append("")
-
     if report.get("skipped"):
         lines.extend([f"## {L['skipped']}", ""])
         lines.extend(f"- {_md_text(line)}" for line in skipped_lines(report))
         lines.append("")
-
-    summarized = days_with_summaries(report)
-    if summarized:
-        lines.extend([f"## {L['summaries']}", ""])
-        for day in summarized:
-            lines.extend([f"### {day['date']}", ""])
-            for summary in day["summaries"]:
-                lines.extend([f"**{_md_text(person_name(summary['author'], L))}**", ""])
-                lines.extend(_md_quote(summary["text"]))
-                lines.append("")
-
-    if report["entries_included"]:
-        lines.extend([f"## {L['entries']}", ""])
-        listed = days_with_entries(report)
-        if not listed:
-            lines.extend([L["no_entries"], ""])
-        for day in listed:
-            lines.extend([f"### {day['date']}", ""])
-            for entry in day["entries"]:
-                lines.append(f"- **{_md_text(entry_heading(entry, L))}**")
-                if entry["note"]:
-                    lines.extend(_md_quote(entry["note"], indent="  "))
-            lines.append("")
     return "\n".join(lines).rstrip("\n") + "\n"
 
 
@@ -259,8 +202,8 @@ def to_csv(report, language):
     return ("\ufeff" + buffer.getvalue()).encode("utf-8")
 
 
-def render(report, export, language):
-    """The file as bytes."""
+def render(report, export, language, grid=None):
+    """The file as bytes; `grid` (queries.heatmap of the same query) draws the activity grid of the PDF."""
     if export == "md":
         return to_markdown(report, language).encode("utf-8")
     if export == "csv":
@@ -269,5 +212,5 @@ def render(report, export, language):
         # Imported here: fpdf2 loads only for PDFs
         from plane.liviere.activity.report_pdf import to_pdf
 
-        return to_pdf(report, language)
+        return to_pdf(report, language, grid)
     raise ValueError(f"Unknown export: {export}")

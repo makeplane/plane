@@ -146,7 +146,7 @@ class ActivityHandlers:
 
     def get_report(self, request, project_id):
         """
-        The time report of a period as JSON, or as a file with ?export=md|csv. `source` (grid, log, mixed),
+        The time report of a period as JSON, or as a file with ?export=pdf|md|csv. `source` (grid, log, mixed),
         `entries` (0 leaves the list of log entries out) and `lang` (en, pl; files only) come on top of the
         heatmap parameters. Not `format`: Django REST framework reads it to choose a renderer.
         """
@@ -179,7 +179,9 @@ class ActivityHandlers:
         report = build_report(project, query, source, report_settings, with_entries=entries)
         if export is None:
             return Response({**report, "lang": language}, status=status.HTTP_200_OK)
-        response = HttpResponse(render(report, export, language), content_type=EXPORTS[export])
+        # The PDF draws the activity grid of the same query under its table
+        grid = heatmap(project_id, query) if export == "pdf" else None
+        response = HttpResponse(render(report, export, language, grid), content_type=EXPORTS[export])
         response["Content-Disposition"] = f'attachment; filename="{filename(report, export)}"'
         return response
 

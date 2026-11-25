@@ -160,19 +160,11 @@
         "mixed_summary": "Dziennik {log} · serie {grid} · różnica {difference}",
         "columns": {
           "date": "Data",
-          "person": "Osoba",
-          "log": "Dziennik",
-          "grid": "Serie",
-          "difference": "Różnica (dziennik − serie)",
-          "result": "Wynik"
+          "notes": "Wpis z dziennika",
+          "work": "Praca"
         },
-        "days": "Dni",
-        "people": "Osoby",
         "total": "Razem",
-        "entries": "Wpisy dziennika",
-        "no_entries": "Brak wpisów.",
         "unknown_person": "(usunięty użytkownik)",
-        "summaries": "Podsumowania dni",
         "skipped": "Okresy pomijane",
         "describe_skipped": "Okresy pomijane nie liczą się w żadnym źródle; wpis albo seria liczy się tylko poza nimi.",
         "no_activity": "Brak aktywności w tym okresie.",

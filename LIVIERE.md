@@ -201,7 +201,8 @@ asks first and refuses without `--replace` (overwrite) or `--append` (add a para
 `plane-log summary show|edit|rm` do the rest. The same endpoints exist for the app under
 `/api/workspaces/.../projects/{id}/liviere/activity/summaries/`; the *Summaries* tab of the *Activity* page
 (`?view=summaries`) lists them by day with add, edit and delete (your summary of a day opens for editing). The
-time report shows the summaries of its days (JSON `days[].summaries`, PDF and Markdown; not CSV).
+time report shows the summaries of its days (JSON `days[].summaries`, the *Log entry* column of the PDF, Markdown
+and *Report* tab; not CSV).
 
 ### Time report (`/api/v1/.../projects/{id}/activity/report/`)
 
@@ -217,29 +218,38 @@ counting quarters; the report counts real time from one of three sources (`sourc
 - `mixed` (default) – both of them per day, the difference (log − series) and as the result the rule
   **"work log + actions outside the log"** (`mixed_rule: "log_plus_actions"`): the time covered by an entry or
   by a series, counted once. Actions outside entries add to it, also those of AI agents (work items created by
-  an agent at night count 5 min each unless an entry covers them). The files say so in a sentence.
+  an agent at night count 5 min each unless an entry covers them).
 
 Series are built per person; the project time is the union of everybody's ranges, so parallel work (two people,
-or two agent sessions of one account) counts once, and the people table gives each person's own time. Ranges are
+or two agent sessions of one account) counts once, and JSON `people` gives each person's own time. Ranges are
 split at local midnights of the project time zone (`tz`) and counted in real time, so the day clocks go back
 has 25 hours. Every cell (a day of one source, for the project or one person) is rounded to whole minutes, half
 up; the difference and totals add up rounded cells, so every format shows the same numbers. Actions just before
 and just after the period still shape the series that reach into it (the report reads a margin of the series gap
-on both sides): a day counts the same in a report of that day and of its month. Code: `activity/report.py` (counting, pure functions), `report_export.py` (Markdown, CSV),
-`report_pdf.py` (PDF), `report_labels.py` (texts of the files in `en`/`pl`; the app has its own in the i18n
-namespace, `liviere.activity.report.*` – keep the descriptions of the sources in step); tests `plane/tests/unit/liviere/test_activity_report.py` (hand-counted examples)
+on both sides): a day counts the same in a report of that day and of its month. Code: `activity/report.py` (counting, pure functions), `report_export.py` (Markdown, CSV, the table rows),
+`report_pdf.py` (PDF), `report_grid.py` (levels of the PDF grid), `report_labels.py` (texts of the files in
+`en`/`pl`; the app has its own in the i18n namespace, `liviere.activity.report.*` – keep the column names in step); tests `plane/tests/unit/liviere/test_activity_report.py` (hand-counted examples)
 and `plane/tests/contract/api/test_activity_report.py`.
 
 `GET .../activity/report/` (admins and members, the same parameters as `heatmap/`: `from`, `to`, `tz`, `actor`,
-`kinds`) plus `source=grid|log|mixed`, `entries=0` (leave the list of log entries out), `export=pdf|md|csv` (a file
+`kinds`) plus `source=grid|log|mixed`, `entries=0` (leave log entries and their notes out; summaries stay), `export=pdf|md|csv` (a file
 instead of JSON; not `format`, which Django REST framework keeps for itself) and `lang=en|pl` (files; default
 the language of the Plane profile, else English). JSON: the header fields, `totals`, `days` (`date`,
 `log_minutes`, `grid_minutes`, `difference_minutes`, `result_minutes`, `summaries`, `entries`) and `people`.
-PDF (A4, the main format) and Markdown: the header, how the time was counted, the tables of days and people,
-the day summaries and the entries day by day. Their day table (and the *Report* tab) leaves out days without
-time from any source and says how many it left out ("No activity in this period." when all are empty); the totals
-do not change, and JSON and CSV keep every day. In Markdown the texts of people and agents are escaped and
-summaries and entries are quotes (`> ` on every line), so they cannot add headings, tables, lists or HTML. CSV: one row per day and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read
+PDF (A4, the main format) and Markdown: the title, the period (and the person, only with `actor`), then one
+table *Date | Log entry | Work* with a *Total* row. *Work* is the time of the chosen source (the source itself is
+not printed). *Log entry* is, for every person, their summary of the day, or without one the notes of their log
+entries of that day, each on its own line and without times (none with `entries=0`); when the report is not
+narrowed to one person and its texts come from several, every text starts with "name: ". The table (and the
+*Report* tab) leaves out days without time and without texts and says how many it left out ("No activity in this
+period." when nothing is left); a day with a summary but no time stays. The totals do not change, and JSON and
+CSV keep every day. The PDF draws the table line by line, so a long summary goes on over pages (the heading and,
+in grey, the date repeat), and under it the activity grid of the Activity page for the days of the table, oldest
+first: 96 quarters a day, the heatmap of the same query (`actor`, `kinds`; computed only for the PDF), levels as in
+`grid.ts` (quartiles of the non-empty quarters of the period), Plane's blue on white with empty quarters light
+grey, skipped quarters hatched, hours every 3 h repeated on every page, legend *Less … More* bottom right; up to
+366 days take a few pages. In Markdown the texts of people and agents are escaped line by line and joined with
+`<br>` in their cell, so they cannot add rows, headings, lists or HTML. CSV: one row per day and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read
 Polish letters). The app endpoint is `/api/workspaces/.../projects/{id}/liviere/activity/report/`; the
 *Activity* page shows the report in its *Report* tab (`?view=report&source=…`, the period of the toolbar) with
 *PDF*, *Markdown* and *CSV* buttons, and the Activity settings have the two thresholds.
@@ -252,7 +262,7 @@ rules in `activity/skips.py`): single ranges from–to (at most 31 days, may ove
 optional description, e.g. a night of automated tests. The report leaves them out of every source: actions inside
 them neither start nor extend a series, and what remains of series (with their padding) and of log entries inside
 them is cut, so an entry 21:30–22:30 counts 30 min against a period from 22:00. The report lists the periods it
-touches (`skipped`, PDF, Markdown). The grid hatches their quarters but keeps counting them (the heatmap response
+touches (`skipped`, PDF, Markdown). The grid (of the page and of the PDF) hatches their quarters but keeps counting them (the heatmap response
 does not change; the page reads the periods separately). Project admins add, change and delete them in the
 Activity settings (`POST`, `PATCH`/`DELETE .../{id}/` in the app; times without an offset in the project time
 zone); members and `/api/v1/` (`GET`, optional `from`/`to`) only read them.

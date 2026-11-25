@@ -206,9 +206,10 @@ class TestSummariesInTheReport:
         assert [(s["author"]["display_name"], s["text"]) for s in days[DAY]] == [("tomasz", TEXT)]
         # A summary adds no time: only the one action, 5 minutes
         assert data["totals"]["grid_minutes"] == 5
-        assert "## Podsumowania dni\n\n### 2026-11-16\n\n**tomasz**\n\n> " + TEXT in markdown
+        # In the "log entry" column of its day
+        assert f"| 2026-11-16 | {TEXT} | 5 min |" in markdown
         assert "Poza okresem" not in markdown
         text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf.content)).pages)
-        assert "Podsumowania dni" in text
+        assert "Wpis z dziennika" in text
         assert TEXT in text
         assert TEXT.encode() not in csv

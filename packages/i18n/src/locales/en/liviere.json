@@ -160,19 +160,11 @@
         "mixed_summary": "Work log {log} · series {grid} · difference {difference}",
         "columns": {
           "date": "Date",
-          "person": "Person",
-          "log": "Work log",
-          "grid": "Series",
-          "difference": "Difference (log − series)",
-          "result": "Result"
+          "notes": "Log entry",
+          "work": "Work"
         },
-        "days": "Days",
-        "people": "People",
         "total": "Total",
-        "entries": "Work log entries",
-        "no_entries": "No entries.",
         "unknown_person": "(deleted user)",
-        "summaries": "Day summaries",
         "skipped": "Skipped periods",
         "describe_skipped": "Skipped periods are left out of every source; an entry or a series counts only outside them.",
         "no_activity": "No activity in this period.",

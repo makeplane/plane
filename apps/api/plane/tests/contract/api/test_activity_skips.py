@@ -199,11 +199,12 @@ class TestSkippedPeriodsInTheReport:
             _v1(workspace, project, "report"), {**params, "export": "md", "lang": "pl"}
         ).content.decode("utf-8")
         assert "## Okresy pomijane\n\n- 2026-11-16 22:00 – 2026-11-17 06:00: Nocne testy automatów" in markdown
-        assert "wpis albo seria liczy się tylko poza nimi" in markdown
         pdf = api_key_client.get(_v1(workspace, project, "report"), {**params, "export": "pdf", "lang": "pl"})
         text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(pdf.content)).pages)
         assert "Okresy pomijane" in text
         assert "Nocne testy automatów" in text
+        # The grid hatches the skipped quarters; its legend says so
+        assert "Okres pomijany" in text
 
     @pytest.mark.django_db
     def test_a_period_outside_the_report_is_not_listed(self, api_key_client, workspace, project):

@@ -5,9 +5,9 @@
  */
 
 // Liviere/plane fork: the "Report" view of the Activity page (?view=report). The time of the chosen period
-// from series of actions, from the work log, or both, per day and per person, with the PDF, Markdown and CSV
-// files of the same report. The numbers come from the API (apps/api/plane/liviere/activity/report.py), so
-// the view and the files always agree.
+// from series of actions, from the work log, or both, in the table of the PDF and Markdown files (date, log
+// entry, work), with the PDF, Markdown and CSV files of the same report. The numbers come from the API
+// (apps/api/plane/liviere/activity/report.py), so the view and the files always agree.
 
 import { useState } from "react";
 import { Button } from "@makeplane/propel/components/button";
@@ -18,14 +18,7 @@ import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { projectActivityService } from "./activity.service";
 import { REPORT_EXPORTS, REPORT_SOURCES } from "./types";
-import type {
-  TActivityQuery,
-  TActivityReport,
-  TReportActor,
-  TReportExport,
-  TReportMinutes,
-  TReportSource,
-} from "./types";
+import type { TActivityQuery, TActivityReport, TReportActor, TReportExport, TReportSource } from "./types";
 import { useActivityReport } from "./use-activity";
 
 type Props = {
@@ -35,21 +28,6 @@ type Props = {
   locale: string;
   source: TReportSource;
   onSourceChange: (source: TReportSource) => void;
-};
-
-type TColumn = keyof TReportMinutes;
-
-// Columns of the tables per source, as in the files (report_export.py COLUMNS)
-const COLUMNS: Record<TReportSource, TColumn[]> = {
-  grid: ["grid_minutes"],
-  log: ["log_minutes"],
-  mixed: ["log_minutes", "grid_minutes", "difference_minutes", "result_minutes"],
-};
-const COLUMN_LABELS: Record<TColumn, string> = {
-  log_minutes: "log",
-  grid_minutes: "grid",
-  difference_minutes: "difference",
-  result_minutes: "result",
 };
 
 /** 73 -> "1 h 13 min", like the files. */
@@ -63,6 +41,53 @@ export const formatReportMinutes = (minutes: number): string => {
 const fileName = (report: TActivityReport, format: TReportExport) =>
   `${report.project.identifier}-activity-${report.from}_${report.to}.${format}`;
 
+type TReportDay = TActivityReport["days"][number];
+type TReportRow = { date: string; texts: string[]; minutes: number };
+
+const authorKey = (actor: TReportActor) => actor?.id ?? "";
+
+/** The texts start with their author's name when the report is not narrowed to one person and has several. */
+const namesTexts = (report: TActivityReport): boolean => {
+  if (report.actor) return false;
+  const authors = new Set<string>();
+  for (const day of report.days) {
+    for (const summary of day.summaries) authors.add(authorKey(summary.author));
+    for (const entry of day.entries) if (entry.note?.trim()) authors.add(authorKey(entry.actor));
+  }
+  return authors.size > 1;
+};
+
+/**
+ * Texts of the "log entry" column of a day, as in the files (report_export.py day_texts): for every person
+ * their summary of the day, or without one the notes of their log entries of that day.
+ */
+const dayTexts = (day: TReportDay, withNames: boolean, personName: (actor: TReportActor) => string): string[] => {
+  const authors = new Map<string, TReportActor>();
+  const summaries = new Map<string, string>();
+  const notes = new Map<string, string[]>();
+  for (const summary of day.summaries) {
+    const key = authorKey(summary.author);
+    if (!authors.has(key)) authors.set(key, summary.author);
+    summaries.set(key, summary.text);
+  }
+  for (const entry of day.entries) {
+    const note = entry.note?.trim();
+    if (!note) continue;
+    const key = authorKey(entry.actor);
+    if (!authors.has(key)) authors.set(key, entry.actor);
+    notes.set(key, [...(notes.get(key) ?? []), note]);
+  }
+  const texts: string[] = [];
+  for (const [key, actor] of authors) {
+    const summary = summaries.get(key);
+    for (const text of summary !== undefined ? [summary] : (notes.get(key) ?? [])) {
+      const trimmed = text.trim();
+      if (trimmed) texts.push(withNames ? `${personName(actor)}: ${trimmed}` : trimmed);
+    }
+  }
+  return texts;
+};
+
 export function ActivityReport(props: Props) {
   const { workspaceSlug, projectId, query, locale, source, onSourceChange } = props;
   const { t } = useTranslation();
@@ -70,16 +95,8 @@ export function ActivityReport(props: Props) {
   const [downloading, setDownloading] = useState<TReportExport | null>(null);
   const options = { source, entries };
   const { data: report, error, isLoading } = useActivityReport(workspaceSlug, projectId, query, options);
-  const columns = COLUMNS[source];
   const personName = (actor: TReportActor) =>
     actor ? actor.display_name || actor.id : t("liviere.activity.report.unknown_person");
-  const time = new Intl.DateTimeFormat(locale, {
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-    timeZone: query.tz,
-  });
-
   const download = async (format: TReportExport) => {
     if (!report) return;
     setDownloading(format);
@@ -108,14 +125,17 @@ export function ActivityReport(props: Props) {
         })
       )
     : [];
-  const headings = columns.map((column) => t(`liviere.activity.report.columns.${COLUMN_LABELS[column]}`));
-  const listed = report ? report.days.filter((day) => day.entries.length > 0) : [];
-  const summarized = report ? report.days.filter((day) => day.summaries.length > 0) : [];
-  // Days without time from any source are left out of the table, as in the PDF and Markdown (not in JSON/CSV)
-  const activeDays = report
-    ? report.days.filter((day) => day.log_minutes || day.grid_minutes || day.result_minutes)
-    : [];
-  const emptyDays = report ? report.days.length - activeDays.length : 0;
+  // Days without time and without texts are left out of the table, as in the PDF and Markdown (not JSON/CSV)
+  const rows: TReportRow[] = [];
+  if (report) {
+    const withNames = namesTexts(report);
+    for (const day of report.days) {
+      const texts = dayTexts(day, withNames, personName);
+      if (texts.length > 0 || day.log_minutes || day.grid_minutes || day.result_minutes)
+        rows.push({ date: day.date, texts, minutes: day.result_minutes });
+    }
+  }
+  const emptyDays = report ? report.days.length - rows.length : 0;
 
   return (
     <div className="flex flex-col gap-5">
@@ -190,34 +210,14 @@ export function ActivityReport(props: Props) {
             )}
           </div>
 
-          {activeDays.length > 0 ? (
+          {rows.length > 0 ? (
             <ReportTable
-              title={t("liviere.activity.report.days")}
-              first={t("liviere.activity.report.columns.date")}
-              headings={headings}
-              rows={activeDays.map((day) => ({ key: day.date, label: day.date, values: day }))}
-              total={{ label: t("liviere.activity.report.total"), values: report.totals }}
-              columns={columns}
+              rows={rows}
+              total={report.totals.result_minutes}
               note={emptyDays > 0 ? t("liviere.activity.report.empty_days", { count: emptyDays }) : undefined}
             />
           ) : (
-            <section className="flex flex-col gap-2">
-              <h3 className="text-14 font-medium text-primary">{t("liviere.activity.report.days")}</h3>
-              <p className="text-13 text-tertiary">{t("liviere.activity.report.no_activity")}</p>
-            </section>
-          )}
-          {report.people.length > 0 && (
-            <ReportTable
-              title={t("liviere.activity.report.people")}
-              first={t("liviere.activity.report.columns.person")}
-              headings={headings}
-              rows={report.people.map((row) => ({
-                key: row.actor?.id ?? "unknown",
-                label: personName(row.actor),
-                values: row,
-              }))}
-              columns={columns}
-            />
+            <p className="text-13 text-tertiary">{t("liviere.activity.report.no_activity")}</p>
           )}
 
           {report.skipped.length > 0 && (
@@ -233,55 +233,6 @@ export function ActivityReport(props: Props) {
               </ul>
             </section>
           )}
-
-          {summarized.length > 0 && (
-            <section className="flex flex-col gap-3">
-              <h3 className="text-14 font-medium text-primary">{t("liviere.activity.report.summaries")}</h3>
-              {summarized.map((day) => (
-                <div key={day.date} className="flex flex-col gap-2">
-                  <h4 className="text-13 font-medium text-secondary">{day.date}</h4>
-                  {day.summaries.map((summary) => (
-                    <div key={summary.id} className="text-13">
-                      <div className="font-medium text-primary">{personName(summary.author)}</div>
-                      <p className="pl-4 whitespace-pre-wrap text-secondary">{summary.text}</p>
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </section>
-          )}
-
-          {report.entries_included && (
-            <section className="flex flex-col gap-3">
-              <h3 className="text-14 font-medium text-primary">{t("liviere.activity.report.entries")}</h3>
-              {listed.length === 0 && (
-                <p className="text-13 text-tertiary">{t("liviere.activity.report.no_entries")}</p>
-              )}
-              {listed.map((day) => (
-                <div key={day.date} className="flex flex-col gap-2">
-                  <h4 className="text-13 font-medium text-secondary">{day.date}</h4>
-                  <ul className="flex flex-col gap-2">
-                    {day.entries.map((entry) => (
-                      <li key={entry.id} className="text-13">
-                        <div className="font-medium text-primary">
-                          {[
-                            entry.end
-                              ? `${time.format(new Date(entry.start))}–${time.format(new Date(entry.end))}`
-                              : time.format(new Date(entry.start)),
-                            personName(entry.actor),
-                            entry.issue && [entry.issue.identifier, entry.issue.name].filter(Boolean).join(" "),
-                          ]
-                            .filter(Boolean)
-                            .join(" · ")}
-                        </div>
-                        {entry.note && <p className="pl-4 whitespace-pre-wrap text-secondary">{entry.note}</p>}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </section>
-          )}
         </>
       ) : null}
     </div>
@@ -289,57 +240,46 @@ export function ActivityReport(props: Props) {
 }
 
 type TableProps = {
-  title: string;
-  first: string;
-  headings: string[];
-  rows: { key: string; label: string; values: TReportMinutes }[];
-  total?: { label: string; values: TReportMinutes };
-  columns: TColumn[];
+  rows: TReportRow[];
+  total: number;
   // A line under the table
   note?: string;
 };
 
 function ReportTable(props: TableProps) {
-  const { title, first, headings, rows, total, columns, note } = props;
+  const { rows, total, note } = props;
+  const { t } = useTranslation();
   return (
     <section className="flex flex-col gap-2">
-      <h3 className="text-14 font-medium text-primary">{title}</h3>
-      <div className="max-w-4xl overflow-x-auto">
+      <div className="max-w-5xl overflow-x-auto">
         <table className="w-full text-13">
           <thead>
             <tr className="border-b border-subtle text-left text-tertiary">
-              <th className="py-2 pr-4 font-medium">{first}</th>
-              {headings.map((heading) => (
-                <th key={heading} className="py-2 pl-4 text-right font-medium">
-                  {heading}
-                </th>
-              ))}
+              <th className="py-2 pr-4 font-medium whitespace-nowrap">{t("liviere.activity.report.columns.date")}</th>
+              <th className="w-full py-2 pr-4 font-medium">{t("liviere.activity.report.columns.notes")}</th>
+              <th className="py-2 pl-4 text-right font-medium whitespace-nowrap">
+                {t("liviere.activity.report.columns.work")}
+              </th>
             </tr>
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.key} className="border-b border-subtle">
-                <td className="py-1.5 pr-4 text-primary">{row.label}</td>
-                {columns.map((column) => (
-                  <td key={column} className="py-1.5 pl-4 text-right text-secondary tabular-nums">
-                    {formatReportMinutes(row.values[column])}
-                  </td>
-                ))}
+              <tr key={row.date} className="border-b border-subtle align-top">
+                <td className="py-1.5 pr-4 whitespace-nowrap text-primary tabular-nums">{row.date}</td>
+                <td className="py-1.5 pr-4 whitespace-pre-wrap text-secondary">{row.texts.join("\n")}</td>
+                <td className="py-1.5 pl-4 text-right whitespace-nowrap text-secondary tabular-nums">
+                  {formatReportMinutes(row.minutes)}
+                </td>
               </tr>
             ))}
           </tbody>
-          {total && (
-            <tfoot>
-              <tr className="font-medium text-primary">
-                <td className="py-2 pr-4">{total.label}</td>
-                {columns.map((column) => (
-                  <td key={column} className="py-2 pl-4 text-right tabular-nums">
-                    {formatReportMinutes(total.values[column])}
-                  </td>
-                ))}
-              </tr>
-            </tfoot>
-          )}
+          <tfoot>
+            <tr className="font-medium text-primary">
+              <td className="py-2 pr-4">{t("liviere.activity.report.total")}</td>
+              <td />
+              <td className="py-2 pl-4 text-right whitespace-nowrap tabular-nums">{formatReportMinutes(total)}</td>
+            </tr>
+          </tfoot>
         </table>
       </div>
       {note && <p className="text-12 text-tertiary">{note}</p>}

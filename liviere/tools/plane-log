@@ -415,7 +415,9 @@ def main(argv=None):
     )
     report.add_argument("--lang", choices=["pl", "en"], help="language of the file (default: your Plane profile)")
     report.add_argument("--mine", action="store_true", help="only your own time")
-    report.add_argument("--no-entries", action="store_true", help="leave the list of log entries out")
+    report.add_argument(
+        "--no-entries", action="store_true", help="leave the notes of log entries out of the report (day summaries stay)"
+    )
     report.add_argument("-o", "--output", help="file to write (default: standard output)")
 
     args = parser.parse_args(argv)

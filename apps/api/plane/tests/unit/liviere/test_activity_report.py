@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 import pytest
 
 from plane.liviere.activity import report as R
+from plane.liviere.activity import report_grid as G
 
 WARSAW = ZoneInfo("Europe/Warsaw")
 GAP = timedelta(minutes=15)
@@ -220,3 +221,23 @@ class TestSkippedPeriods:
         skipped = [(at("10:00"), at("10:40")), (at("10:20"), at("11:00"))]
         project, _ = one_day(entries=[(TOMASZ, at("09:30"), at("11:30"))], skipped=skipped)
         assert project[R.SOURCE_LOG] == 60
+
+
+@pytest.mark.unit
+class TestReportGrid:
+    def test_levels_as_on_the_activity_page(self):
+        # grid.ts levelThresholds: quartiles of the non-empty counts (sorted 1, 2, 3, 4, 10, 20, 30, 40)
+        thresholds = G.level_thresholds([0, 40, 1, 3, 2, 20, 4, 30, 10])
+        assert thresholds == (3, 10, 30)
+        assert [G.level_of(count, thresholds) for count in (0, 1, 3, 4, 10, 11, 30, 31)] == [0, 1, 1, 2, 2, 3, 3, 4]
+        assert G.level_thresholds([0, 0]) == (1, 1, 1)
+        assert G.level_of(1, (1, 1, 1)) == 1
+
+    def test_quarters_of_a_skipped_period(self):
+        # 22:10-00:20 local: quarters from 22:00 of the 16th to 00:15 of the 17th
+        period = {"starts_at": "2026-11-16T22:10:00+01:00", "ends_at": "2026-11-17T00:20:00+01:00"}
+        quarters = G.skipped_quarters([period], WARSAW)
+        assert sorted(quarters) == [("2026-11-16", slot) for slot in range(88, 96)] + [
+            ("2026-11-17", 0),
+            ("2026-11-17", 1),
+        ]
