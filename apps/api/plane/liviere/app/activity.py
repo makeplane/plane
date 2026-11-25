@@ -39,6 +39,12 @@ class ProjectActivitySettingsEndpoint(ActivityHandlers, BaseAPIView):
         return self.patch_settings(request, project_id)
 
 
+class ProjectActivityReportEndpoint(ActivityHandlers, BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id):
+        return self.get_report(request, project_id)
+
+
 class ActivityEnabledProjectsEndpoint(BaseAPIView):
     """Projects of the workspace where the user may open "Activity" (sidebar item)."""
 

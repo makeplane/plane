@@ -7,7 +7,7 @@
 plane-log: activity log entries of the Liviere/plane fork from the command line, for people and AI agents.
 
 An entry says what was done in a project and when (a time range); it shows up in the project's "Activity"
-heatmap. Only the Python standard library is needed.
+heatmap. `report` downloads the project's time report of a period. Only the Python standard library is needed.
 
 Configuration (the same file as the Plane MCP server; variables set in the environment win):
     ~/.config/plane-mcp/env (or $PLANE_LOG_ENV) with PLANE_API_KEY, PLANE_WORKSPACE_SLUG, PLANE_BASE_URL
@@ -19,6 +19,8 @@ Examples:
     plane-log list -p ORD --date 2026-10-27 --at 14:30 --events   # everything in that quarter
     plane-log edit -p ORD 123 --text "Better description"
     plane-log rm -p ORD 123
+    plane-log report -p ORD --month previous -o ORD-october.md          # last month, Markdown
+    plane-log report -p ORD --from 2026-11-01 --to 2026-11-07 --format csv --source log -o week.csv
 """
 
 import argparse
@@ -29,6 +31,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 ENV_FILE = os.path.expanduser(os.environ.get("PLANE_LOG_ENV", "~/.config/plane-mcp/env"))
 QUARTER = timedelta(minutes=15)
@@ -63,19 +66,20 @@ class Plane:
         self.root = config["PLANE_BASE_URL"].rstrip("/") + "/api/v1"
         self.key = config["PLANE_API_KEY"]
 
-    def request(self, method, url, params=None, body=None):
+    def request(self, method, url, params=None, body=None, raw=False):
+        """The JSON response, or with `raw` the response body as bytes (report files)."""
         if params:
             url += "?" + urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
         data = json.dumps(body).encode() if body is not None else None
         request = urllib.request.Request(url, data=data, method=method)
         request.add_header("X-Api-Key", self.key)
-        request.add_header("Accept", "application/json")
+        request.add_header("Accept", "*/*" if raw else "application/json")
         request.add_header("User-Agent", "plane-log")
         if data is not None:
             request.add_header("Content-Type", "application/json")
         try:
-            with urllib.request.urlopen(request, timeout=30) as response:
-                raw = response.read()
+            with urllib.request.urlopen(request, timeout=60) as response:
+                body_bytes = response.read()
         except urllib.error.HTTPError as e:
             detail = e.read().decode(errors="replace")
             try:
@@ -86,7 +90,9 @@ class Plane:
             raise Failure(f"HTTP {e.code}: {detail}")
         except urllib.error.URLError as e:
             raise Failure(f"Cannot reach Plane: {e.reason}")
-        return json.loads(raw) if raw else None
+        if raw:
+            return body_bytes
+        return json.loads(body_bytes) if body_bytes else None
 
     def project(self, ref):
         """Project by identifier (ORD), id or name."""
@@ -222,6 +228,52 @@ def command_list(plane, args):
     return events if args.json else print_events(events)
 
 
+def month_range(today, which):
+    """(first day, last day) of the current month up to today, or of the whole previous month."""
+    first = today.replace(day=1)
+    if which == "current":
+        return first, today
+    last = first - timedelta(days=1)
+    return last.replace(day=1), last
+
+
+def command_report(plane, args):
+    project = plane.project(args.project)
+    if args.month:
+        if args.start or args.end:
+            raise Failure("Use --month or --from/--to, not both")
+        try:
+            zone = ZoneInfo(project.get("timezone") or "UTC")
+        except (ZoneInfoNotFoundError, ValueError):
+            zone = None
+        today = datetime.now(zone).date() if zone else date.today()
+        start, end = month_range(today, args.month)
+    else:
+        if not (args.start and args.end):
+            raise Failure("Give --from and --to (YYYY-MM-DD) or --month current|previous")
+        try:
+            start, end = date.fromisoformat(args.start), date.fromisoformat(args.end)
+        except ValueError:
+            raise Failure("--from and --to must be dates in the YYYY-MM-DD format")
+    params = {"from": start.isoformat(), "to": end.isoformat(), "source": args.source, "lang": args.lang}
+    if args.no_entries:
+        params["entries"] = "0"
+    if args.mine:
+        params["actor"] = plane.request("GET", f"{plane.root}/users/me/")["id"]
+    url = plane.activity(project, "report/")
+    if args.format == "json" or args.json:
+        content = (json.dumps(plane.request("GET", url, params), ensure_ascii=False, indent=2) + "\n").encode()
+    else:
+        content = plane.request("GET", url, {**params, "export": args.format}, raw=True)
+    if args.output and args.output != "-":
+        with open(args.output, "wb") as output:
+            output.write(content)
+        print(f"Saved {args.output} ({len(content)} bytes, {start}–{end})", file=sys.stderr)
+    else:
+        sys.stdout.buffer.write(content)
+        sys.stdout.flush()
+
+
 def add_time_options(parser):
     parser.add_argument("--from", dest="start", help="start: HH:MM (on --date, local time) or ISO date-time")
     parser.add_argument("--to", help="end: HH:MM or ISO date-time")
@@ -261,14 +313,33 @@ def main(argv=None):
     show.add_argument("--events", action="store_true", help="all counted actions, not only log entries")
     show.add_argument("--mine", action="store_true", help="only your own")
 
+    report = commands.add_parser("report", parents=[common], help="time report of a period (one project)")
+    report.add_argument("--from", dest="start", help="first day, YYYY-MM-DD")
+    report.add_argument("--to", dest="end", help="last day, YYYY-MM-DD")
+    report.add_argument("--month", choices=["current", "previous"], help="a month in the project time zone")
+    report.add_argument(
+        "--source", choices=["mixed", "log", "grid"], default="mixed", help="time source (default: mixed)"
+    )
+    report.add_argument("--format", choices=["md", "csv", "json"], default="md", help="file format (default: md)")
+    report.add_argument("--lang", choices=["pl", "en"], help="language of the file (default: your Plane profile)")
+    report.add_argument("--mine", action="store_true", help="only your own time")
+    report.add_argument("--no-entries", action="store_true", help="leave the list of log entries out")
+    report.add_argument("-o", "--output", help="file to write (default: standard output)")
+
     args = parser.parse_args(argv)
-    handlers = {"add": command_add, "edit": command_edit, "rm": command_rm, "list": command_list}
+    handlers = {
+        "add": command_add,
+        "edit": command_edit,
+        "rm": command_rm,
+        "list": command_list,
+        "report": command_report,
+    }
     try:
         result = handlers[args.command](Plane(load_config()), args)
     except Failure as e:
         print(f"plane-log: {e}", file=sys.stderr)
         return 1
-    if args.json and result is not None:
+    if args.json and result is not None and args.command != "report":
         print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 

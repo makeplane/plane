@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Project activity heatmap in the public API (/api/v1, X-Api-Key). The heatmap and settings are read
-# only (the settings change in the app); log entries can be written. See plane/liviere/activity.
+# Project activity heatmap in the public API (/api/v1, X-Api-Key). The heatmap, the time report and the
+# settings are read only (the settings change in the app); log entries can be written. See
+# plane/liviere/activity.
 
 # Module imports
 from plane.api.views.base import BaseAPIView
@@ -33,6 +34,14 @@ class ProjectActivitySettingsAPIEndpoint(ActivityHandlers, BaseAPIView):
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
     def get(self, request, slug, project_id):
         return self.get_settings(request, project_id)
+
+
+class ProjectActivityReportAPIEndpoint(ActivityHandlers, BaseAPIView):
+    use_read_replica = True
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id):
+        return self.get_report(request, project_id)
 
 
 class ProjectActivityLogsAPIEndpoint(ActivityHandlers, BaseAPIView):

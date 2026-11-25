@@ -12,6 +12,7 @@ from .activity import (
     ProjectActivityHeatmapEndpoint,
     ProjectActivityLogDetailEndpoint,
     ProjectActivityLogsEndpoint,
+    ProjectActivityReportEndpoint,
     ProjectActivitySettingsEndpoint,
 )
 from .push import PushProjectsEndpoint, PushSettingsEndpoint, PushSubscriptionsEndpoint, PushTestEndpoint
@@ -53,6 +54,11 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/activity/logs/<int:log_id>/",
         ProjectActivityLogDetailEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="liviere-project-activity-log-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/activity/report/",
+        ProjectActivityReportEndpoint.as_view(http_method_names=["get"]),
+        name="liviere-project-activity-report",
     ),
     path(
         "workspaces/<str:slug>/liviere/activity/enabled-projects/",

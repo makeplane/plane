@@ -73,6 +73,10 @@ class ProjectActivitySettings(models.Model):
     project = models.OneToOneField("db.Project", on_delete=models.CASCADE, related_name="+", primary_key=True)
     enabled = models.BooleanField(default=False)
     kinds = models.JSONField(default=default_activity_kinds)
+    # Time report (plane/liviere/activity/report.py): actions closer than the gap join a series, which lasts
+    # from its first action to its last one plus the padding
+    series_gap_minutes = models.PositiveSmallIntegerField(default=15)
+    series_padding_minutes = models.PositiveSmallIntegerField(default=5)
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
 

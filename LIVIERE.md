@@ -139,7 +139,7 @@ the project navigation; events are recorded either way) and the counted actions.
 |---|---|
 | `GET .../activity/heatmap/` | sparse buckets `[{date, slot (0-95), start, count, by_kind}]` + `summary` (`events`, `active_buckets`, `active_hours`, `by_kind`) |
 | `GET .../activity/events/` | the actions, newest first, with actor and referenced work item/page/cycle/module/view (paginated like other v1 lists) |
-| `GET .../activity/settings/` | `enabled`, counted `kinds`, `catalog` |
+| `GET .../activity/settings/` | `enabled`, counted `kinds`, `series_gap_minutes`, `series_padding_minutes` (time report), `catalog` |
 
 Parameters: `from`, `to` (local dates, default the last 30 days, at most 366), `tz` (IANA name, default the
 project time zone), `actor` (user id), `kinds` (comma-separated, default the project setting); `events` also
@@ -179,6 +179,43 @@ token from `~/.config/plane-mcp/env`, like the Plane MCP setup, and takes projec
 task): `docker compose exec api python manage.py shell -c "from django_celery_beat.models import PeriodicTask;
 PeriodicTask.objects.filter(name__startswith='liviere:').update(enabled=False)"`.
 
+
+### Time report (`/api/v1/.../projects/{id}/activity/report/`)
+
+How much time went into one project in a period, for weekly and monthly reports. The grid of the page keeps
+counting quarters; the report counts real time from one of three sources (`source`):
+
+- `grid` – **series of actions**, not quarter-hours: actions (not log entries; the kinds the project counts) less
+  than *gap* minutes apart form a series that lasts from the first to the last action plus *padding* minutes, so
+  a single action counts *padding*. Defaults 15 and 5, per project in the Activity settings (gap 1–120,
+  padding 0–60 and not above the gap). Example: actions at 10:13 and 10:16 are 8 min (two quarters: 30).
+- `log` – work log entries; an entry without an end counts 15 min, as in the *Work log* tab. Entries count
+  whatever kinds the project counts.
+- `mixed` (default) – both of them per day, the difference (log − series) and as the result the rule
+  **"work log + actions outside the log"** (`mixed_rule: "log_plus_actions"`): the time covered by an entry or
+  by a series, counted once. Actions outside entries add to it, also those of AI agents (work items created by
+  an agent at night count 5 min each unless an entry covers them). The files say so in a sentence.
+
+Series are built per person; the project time is the union of everybody's ranges, so parallel work (two people,
+or two agent sessions of one account) counts once, and the people table gives each person's own time. Ranges are
+split at local midnights of the project time zone (`tz`) and counted in real time, so the day clocks go back
+has 25 hours. Every cell (a day of one source, for the project or one person) is rounded to whole minutes, half
+up; the difference and totals add up rounded cells, so every format shows the same numbers. Actions just before
+the period still start series that reach into it: a day counts the same in a report of that day and of its
+month. Code: `activity/report.py` (counting, pure functions), `report_export.py` (files), `report_labels.py`
+(their texts in `en`/`pl`); tests `plane/tests/unit/liviere/test_activity_report.py` (hand-counted examples)
+and `plane/tests/contract/api/test_activity_report.py`.
+
+`GET .../activity/report/` (admins and members, the same parameters as `heatmap/`: `from`, `to`, `tz`, `actor`,
+`kinds`) plus `source=grid|log|mixed`, `entries=0` (leave the list of log entries out), `export=md|csv` (a file
+instead of JSON; not `format`, which Django REST framework keeps for itself) and `lang=en|pl` (files; default
+the language of the Plane profile, else English). JSON: the header fields, `totals`, `days` (`date`,
+`log_minutes`, `grid_minutes`, `difference_minutes`, `result_minutes`, `entries`) and `people`. Markdown: the
+header, how the time was counted, the tables of days and people and the entries day by day. CSV: one row per day
+and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read Polish letters). The app endpoint
+is `/api/workspaces/.../projects/{id}/liviere/activity/report/`.
+`plane-log report -p ORD --month previous|current` or `--from D --to D`, with `--source`, `--format md|csv|json`,
+`--lang`, `--mine`, `--no-entries`, `-o file` (tests: `python3 -m unittest liviere/tools/test_plane_log.py`).
 
 ## New work items (`/:workspace/new-work-items`)
 
