@@ -5,7 +5,7 @@
  */
 
 // Liviere/plane fork: adds or changes an activity log entry (what was done, from when to when). Times are
-// entered on the viewer's clock, like the heatmap shows them.
+// entered in the page's time zone (the project's), like the heatmap shows them.
 
 import { useState } from "react";
 import { Button } from "@makeplane/propel/components/button";
@@ -24,7 +24,7 @@ import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { useTranslation } from "@plane/i18n";
 import { projectActivityService } from "./activity.service";
 import type { TSelectedBucket } from "./activity-root";
-import { SLOTS_PER_DAY, slotTime } from "./grid";
+import { SLOTS_PER_DAY, shiftDate, slotTime, zonedDateTime, zonedMoment } from "./grid";
 import type { TActivityEvent } from "./types";
 import { refreshProjectActivity } from "./use-activity";
 
@@ -34,21 +34,19 @@ type Props = {
   // The entry to change; a new one starts in the selected quarter, or ends now
   entry?: TActivityEvent;
   bucket?: TSelectedBucket | null;
+  // IANA name; the date and times of the form are read in it
+  timeZone: string;
   onSaved?: () => void;
   onClose: () => void;
 };
 
-const pad = (value: number) => value.toString().padStart(2, "0");
-const localDate = (date: Date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-const localTime = (date: Date) => `${pad(date.getHours())}:${pad(date.getMinutes())}`;
-
-function initialForm(entry?: TActivityEvent, bucket?: TSelectedBucket | null) {
+function initialForm(timeZone: string, entry?: TActivityEvent, bucket?: TSelectedBucket | null) {
   if (entry) {
-    const start = new Date(entry.occurred_at);
+    const start = zonedDateTime(new Date(entry.occurred_at), timeZone);
     return {
-      date: localDate(start),
-      from: localTime(start),
-      to: entry.ended_at ? localTime(new Date(entry.ended_at)) : "",
+      date: start.date,
+      from: start.time,
+      to: entry.ended_at ? zonedDateTime(new Date(entry.ended_at), timeZone).time : "",
       text: entry.note ?? "",
       issue: entry.issue?.identifier ?? "",
     };
@@ -63,14 +61,14 @@ function initialForm(entry?: TActivityEvent, bucket?: TSelectedBucket | null) {
     };
   }
   const now = new Date();
-  const start = new Date(now.getTime() - 15 * 60_000);
-  return { date: localDate(start), from: localTime(start), to: localTime(now), text: "", issue: "" };
+  const start = zonedDateTime(new Date(now.getTime() - 15 * 60_000), timeZone);
+  return { date: start.date, from: start.time, to: zonedDateTime(now, timeZone).time, text: "", issue: "" };
 }
 
 export function ActivityLogModal(props: Props) {
-  const { workspaceSlug, projectId, entry, bucket, onSaved, onClose } = props;
+  const { workspaceSlug, projectId, entry, bucket, timeZone, onSaved, onClose } = props;
   const { t } = useTranslation();
-  const [form, setForm] = useState(() => initialForm(entry, bucket));
+  const [form, setForm] = useState(() => initialForm(timeZone, entry, bucket));
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const set = (field: keyof typeof form) => (event: { target: { value: string } }) =>
@@ -79,10 +77,10 @@ export function ActivityLogModal(props: Props) {
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!form.text.trim() || !form.date || !form.from) return;
-    const start = new Date(`${form.date}T${form.from}`);
-    let end = form.to ? new Date(`${form.date}T${form.to}`) : null;
+    const start = zonedMoment(form.date, form.from, timeZone);
+    let end = form.to ? zonedMoment(form.date, form.to, timeZone) : null;
     // An end before the start is on the next day (work past midnight)
-    if (end && end <= start) end = new Date(end.getTime() + 24 * 60 * 60_000);
+    if (end && end <= start) end = zonedMoment(shiftDate(form.date, 1), form.to, timeZone);
     const data = {
       text: form.text,
       started_at: start.toISOString(),

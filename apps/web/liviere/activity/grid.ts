@@ -82,9 +82,8 @@ export type TQuarter = { date: string; slot: number };
 
 const QUARTER_MS = 15 * 60_000;
 
-/** Local date (YYYY-MM-DD) and quarter of the day (0-95) of a moment in a time zone. */
-export const currentQuarter = (timeZone: string, now: Date = new Date()): TQuarter => {
-  const parts = Object.fromEntries(
+const zonedParts = (moment: Date, timeZone: string): Record<string, string> =>
+  Object.fromEntries(
     new Intl.DateTimeFormat("en-CA", {
       year: "numeric",
       month: "2-digit",
@@ -94,13 +93,55 @@ export const currentQuarter = (timeZone: string, now: Date = new Date()): TQuart
       hourCycle: "h23",
       timeZone,
     })
-      .formatToParts(now)
+      .formatToParts(moment)
       .map((part) => [part.type, part.value])
   );
+
+/** Local date (YYYY-MM-DD) and time (HH:MM) of a moment in a time zone. */
+export const zonedDateTime = (moment: Date, timeZone: string): { date: string; time: string } => {
+  const parts = zonedParts(moment, timeZone);
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` };
+};
+
+/**
+ * The moment when the clocks of a time zone show `date` and `time` (HH:MM). In the hour repeated when clocks
+ * go back this is one of the two moments; a time skipped when clocks go forward lands next to the gap.
+ */
+export const zonedMoment = (date: string, time: string, timeZone: string): Date => {
+  const [hours, minutes] = time.split(":").map(Number);
+  // The wall-clock time read as if it were UTC
+  const wall = Date.parse(`${date}T00:00:00Z`) + (hours * 60 + minutes) * 60_000;
+  const offsetAt = (moment: number) => {
+    const local = zonedDateTime(new Date(moment), timeZone);
+    return Date.parse(`${local.date}T${local.time}:00Z`) - (moment - (moment % 60_000));
+  };
+  return new Date(wall - offsetAt(wall - offsetAt(wall)));
+};
+
+/** Local date (YYYY-MM-DD) and quarter of the day (0-95) of a moment in a time zone. */
+export const currentQuarter = (timeZone: string, now: Date = new Date()): TQuarter => {
+  const parts = zonedParts(now, timeZone);
   return {
     date: `${parts.year}-${parts.month}-${parts.day}`,
     slot: Number(parts.hour) * 4 + Math.floor(Number(parts.minute) / 15),
   };
+};
+
+/**
+ * Keys (bucketKey) of the quarters of the grid that overlap the given ranges (ISO date-times), in a time zone.
+ * Time zone offsets are whole quarters, so UTC quarters are local quarters too.
+ */
+export const quartersOf = (ranges: { starts_at: string; ends_at: string }[], timeZone: string): Set<string> => {
+  const keys = new Set<string>();
+  for (const range of ranges) {
+    const end = Date.parse(range.ends_at);
+    const start = Date.parse(range.starts_at);
+    for (let moment = start - (start % QUARTER_MS); moment < end; moment += QUARTER_MS) {
+      const quarter = currentQuarter(timeZone, new Date(moment));
+      keys.add(bucketKey(quarter.date, quarter.slot));
+    }
+  }
+  return keys;
 };
 
 /** Milliseconds until the next quarter starts; time zone offsets are whole quarters, so this holds in any zone. */

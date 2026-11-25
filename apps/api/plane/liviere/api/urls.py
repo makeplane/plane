@@ -12,6 +12,10 @@ from .activity import (
     ProjectActivityHeatmapAPIEndpoint,
     ProjectActivityLogDetailAPIEndpoint,
     ProjectActivityLogsAPIEndpoint,
+    ProjectActivityReportAPIEndpoint,
+    ProjectActivitySkipPeriodsAPIEndpoint,
+    ProjectActivitySummariesAPIEndpoint,
+    ProjectActivitySummaryDetailAPIEndpoint,
     ProjectActivitySettingsAPIEndpoint,
 )
 from .views import PageArchiveUnarchiveAPIEndpoint, PageDetailAPIEndpoint, PageListCreateAPIEndpoint
@@ -46,6 +50,26 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/activity/settings/",
         ProjectActivitySettingsAPIEndpoint.as_view(http_method_names=["get"]),
         name="liviere-project-activity-settings-v1",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/activity/summaries/",
+        ProjectActivitySummariesAPIEndpoint.as_view(http_method_names=["get", "post"]),
+        name="liviere-project-activity-summaries-v1",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/activity/summaries/<int:summary_id>/",
+        ProjectActivitySummaryDetailAPIEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="liviere-project-activity-summary-detail-v1",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/activity/skipped-periods/",
+        ProjectActivitySkipPeriodsAPIEndpoint.as_view(http_method_names=["get"]),
+        name="liviere-project-activity-skipped-periods-v1",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/activity/report/",
+        ProjectActivityReportAPIEndpoint.as_view(http_method_names=["get"]),
+        name="liviere-project-activity-report-v1",
     ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/activity/logs/",

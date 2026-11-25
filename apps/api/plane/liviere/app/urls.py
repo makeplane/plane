@@ -12,6 +12,11 @@ from .activity import (
     ProjectActivityHeatmapEndpoint,
     ProjectActivityLogDetailEndpoint,
     ProjectActivityLogsEndpoint,
+    ProjectActivityReportEndpoint,
+    ProjectActivitySkipPeriodsEndpoint,
+    ProjectActivitySkipPeriodDetailEndpoint,
+    ProjectActivitySummariesEndpoint,
+    ProjectActivitySummaryDetailEndpoint,
     ProjectActivitySettingsEndpoint,
 )
 from .push import PushProjectsEndpoint, PushSettingsEndpoint, PushSubscriptionsEndpoint, PushTestEndpoint
@@ -53,6 +58,31 @@ urlpatterns = [
         "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/activity/logs/<int:log_id>/",
         ProjectActivityLogDetailEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
         name="liviere-project-activity-log-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/activity/summaries/",
+        ProjectActivitySummariesEndpoint.as_view(http_method_names=["get", "post"]),
+        name="liviere-project-activity-summaries",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/activity/summaries/<int:summary_id>/",
+        ProjectActivitySummaryDetailEndpoint.as_view(http_method_names=["get", "patch", "delete"]),
+        name="liviere-project-activity-summary-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/activity/skipped-periods/",
+        ProjectActivitySkipPeriodsEndpoint.as_view(http_method_names=["get", "post"]),
+        name="liviere-project-activity-skipped-periods",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/activity/skipped-periods/<int:skip_id>/",
+        ProjectActivitySkipPeriodDetailEndpoint.as_view(http_method_names=["patch", "delete"]),
+        name="liviere-project-activity-skipped-period-detail",
+    ),
+    path(
+        "workspaces/<str:slug>/projects/<uuid:project_id>/liviere/activity/report/",
+        ProjectActivityReportEndpoint.as_view(http_method_names=["get"]),
+        name="liviere-project-activity-report",
     ),
     path(
         "workspaces/<str:slug>/liviere/activity/enabled-projects/",

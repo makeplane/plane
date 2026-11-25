@@ -5,18 +5,23 @@
  */
 
 // Liviere/plane fork: Project settings → Features → Activity. Turns the feature on and picks the actions
-// the heatmap counts; the choice applies to past events too. Project admins only.
+// the heatmap counts; the choice applies to past events too. Also the thresholds of the series of actions
+// the time report counts. Project admins only.
 
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react";
 import { mutate } from "swr";
 import { useTranslation } from "@plane/i18n";
+import { Input, InputGroup } from "@makeplane/propel/components/input";
 import { Switch } from "@makeplane/propel/components/switch";
 import { Loader } from "@plane/blocks/skeleton";
 import { setToast } from "@plane/blocks/toast";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 import { SettingsControlItem } from "@/components/settings/control-item";
 import { SettingsHeading } from "@/components/settings/heading";
+import { useProject } from "@/hooks/store/use-project";
 import { projectActivityService } from "./activity.service";
+import { ActivitySkipPeriods } from "./activity-skip-periods";
 import { activitySettingsKey, enabledProjectsKey, useActivitySettings } from "./use-activity";
 import type { TActivitySettings } from "./types";
 
@@ -25,12 +30,60 @@ type Props = {
   projectId: string;
 };
 
+type TSettingsChange = Partial<
+  Pick<TActivitySettings, "enabled" | "kinds" | "series_gap_minutes" | "series_padding_minutes">
+>;
+
+// The API accepts (apps/api/plane/liviere/activity/report.py); the padding also must not exceed the gap
+const SERIES_LIMITS = { series_gap_minutes: [1, 120], series_padding_minutes: [0, 60] } as const;
+type TSeriesField = keyof typeof SERIES_LIMITS;
+
+/** Whole minutes; saved when the field loses focus with a valid value. */
+function MinutesInput(props: {
+  value: number;
+  field: TSeriesField;
+  label: string;
+  isValid: (value: number) => boolean;
+  onSave: (value: number) => void;
+}) {
+  const { value, field, label, isValid, onSave } = props;
+  const [text, setText] = useState(String(value));
+  useEffect(() => setText(String(value)), [value]);
+  const [min, max] = SERIES_LIMITS[field];
+  const parsed = Number(text);
+  const valid = /^\d+$/.test(text) && parsed >= min && parsed <= max && isValid(parsed);
+  return (
+    <div className="w-24">
+      <InputGroup size="md">
+        <Input
+          size="md"
+          type="number"
+          min={min}
+          max={max}
+          step="1"
+          value={text}
+          aria-label={label}
+          aria-invalid={valid ? undefined : true}
+          data-invalid={valid ? undefined : ""}
+          onChange={(event) => setText(event.target.value)}
+          onBlur={() => {
+            if (!valid) setText(String(value));
+            else if (parsed !== value) onSave(parsed);
+          }}
+        />
+      </InputGroup>
+    </div>
+  );
+}
+
 export const ProjectActivitySettings = observer(function ProjectActivitySettings(props: Props) {
   const { workspaceSlug, projectId } = props;
-  const { t } = useTranslation();
+  const { t, currentLocale } = useTranslation();
   const { data: settings } = useActivitySettings(workspaceSlug, projectId);
+  const { getProjectById } = useProject();
+  const timeZone = getProjectById(projectId)?.timezone || "UTC";
 
-  const save = async (change: Partial<Pick<TActivitySettings, "enabled" | "kinds">>) => {
+  const save = async (change: TSettingsChange) => {
     if (!settings) return;
     const key = activitySettingsKey(projectId);
     // Optimistic: show the change at once, roll back if the server refuses it
@@ -104,6 +157,44 @@ export const ProjectActivitySettings = observer(function ProjectActivitySettings
               </div>
             ))}
           </div>
+          <div className="flex flex-col gap-2">
+            <h3 className="text-body-sm-medium text-primary">{t("liviere.activity.settings.report_title")}</h3>
+            <p className="text-caption-md-regular text-tertiary">{t("liviere.activity.settings.report_description")}</p>
+            <div className="divide-y divide-subtle">
+              <SettingsControlItem
+                title={t("liviere.activity.settings.series_gap")}
+                description={t("liviere.activity.settings.series_gap_description")}
+                control={
+                  <MinutesInput
+                    field="series_gap_minutes"
+                    value={settings.series_gap_minutes}
+                    label={t("liviere.activity.settings.series_gap")}
+                    isValid={(gap) => gap >= settings.series_padding_minutes}
+                    onSave={(gap) => void save({ series_gap_minutes: gap })}
+                  />
+                }
+              />
+              <SettingsControlItem
+                title={t("liviere.activity.settings.series_padding")}
+                description={t("liviere.activity.settings.series_padding_description")}
+                control={
+                  <MinutesInput
+                    field="series_padding_minutes"
+                    value={settings.series_padding_minutes}
+                    label={t("liviere.activity.settings.series_padding")}
+                    isValid={(padding) => padding <= settings.series_gap_minutes}
+                    onSave={(padding) => void save({ series_padding_minutes: padding })}
+                  />
+                }
+              />
+            </div>
+          </div>
+          <ActivitySkipPeriods
+            workspaceSlug={workspaceSlug}
+            projectId={projectId}
+            timeZone={timeZone}
+            locale={currentLocale}
+          />
         </div>
       )}
     </section>

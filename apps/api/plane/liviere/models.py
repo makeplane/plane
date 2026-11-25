@@ -73,11 +73,65 @@ class ProjectActivitySettings(models.Model):
     project = models.OneToOneField("db.Project", on_delete=models.CASCADE, related_name="+", primary_key=True)
     enabled = models.BooleanField(default=False)
     kinds = models.JSONField(default=default_activity_kinds)
+    # Time report (plane/liviere/activity/report.py): actions closer than the gap join a series, which lasts
+    # from its first action to its last one plus the padding
+    series_gap_minutes = models.PositiveSmallIntegerField(default=15)
+    series_padding_minutes = models.PositiveSmallIntegerField(default=5)
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
 
     class Meta:
         db_table = "liviere_project_activity_settings"
+
+
+class ActivityDaySummary(models.Model):
+    """
+    What happened in a project on one day, in a few sentences by a person or an AI agent
+    (plane/liviere/activity/summaries.py). One per project, day and author; shown on the Activity page and
+    in the time report. Not an activity event: writing it adds no time.
+    """
+
+    id = models.BigAutoField(primary_key=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+    # Local date in the project time zone
+    day = models.DateField()
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "liviere_activity_day_summaries"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "day", "author"],
+                condition=models.Q(author__isnull=False),
+                name="liviere_day_summary_unique_author",
+            )
+        ]
+        indexes = [models.Index(fields=["project", "day"], name="liviere_day_summary_day")]
+
+
+class ActivitySkipPeriod(models.Model):
+    """
+    A period the time report of a project leaves out, e.g. a night of automated tests
+    (plane/liviere/activity/skips.py). The Activity grid only marks it; its numbers do not change.
+    """
+
+    id = models.BigAutoField(primary_key=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField()
+    description = models.CharField(max_length=500, blank=True, default="")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "liviere_activity_skip_periods"
+        indexes = [models.Index(fields=["project", "starts_at"], name="liviere_skip_project_start")]
 
 
 class WorkItemOpen(models.Model):

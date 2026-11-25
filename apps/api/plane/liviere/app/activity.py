@@ -39,6 +39,12 @@ class ProjectActivitySettingsEndpoint(ActivityHandlers, BaseAPIView):
         return self.patch_settings(request, project_id)
 
 
+class ProjectActivityReportEndpoint(ActivityHandlers, BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id):
+        return self.get_report(request, project_id)
+
+
 class ActivityEnabledProjectsEndpoint(BaseAPIView):
     """Projects of the workspace where the user may open "Activity" (sidebar item)."""
 
@@ -53,6 +59,50 @@ class ActivityEnabledProjectsEndpoint(BaseAPIView):
             "project_id", flat=True
         )
         return Response({"project_ids": [str(project_id) for project_id in enabled]}, status=status.HTTP_200_OK)
+
+
+class ProjectActivitySkipPeriodsEndpoint(ActivityHandlers, BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id):
+        return self.list_skips(request, project_id)
+
+    @allow_permission([ROLE.ADMIN])
+    def post(self, request, slug, project_id):
+        return self.create_skip(request, project_id)
+
+
+class ProjectActivitySkipPeriodDetailEndpoint(ActivityHandlers, BaseAPIView):
+    @allow_permission([ROLE.ADMIN])
+    def patch(self, request, slug, project_id, skip_id):
+        return self.patch_skip(request, project_id, skip_id)
+
+    @allow_permission([ROLE.ADMIN])
+    def delete(self, request, slug, project_id, skip_id):
+        return self.delete_skip(request, project_id, skip_id)
+
+
+class ProjectActivitySummariesEndpoint(ActivityHandlers, BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id):
+        return self.list_summaries(request, project_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def post(self, request, slug, project_id):
+        return self.upsert_summary(request, project_id)
+
+
+class ProjectActivitySummaryDetailEndpoint(ActivityHandlers, BaseAPIView):
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def get(self, request, slug, project_id, summary_id):
+        return self.get_summary(request, project_id, summary_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def patch(self, request, slug, project_id, summary_id):
+        return self.patch_summary(request, slug, project_id, summary_id)
+
+    @allow_permission([ROLE.ADMIN, ROLE.MEMBER])
+    def delete(self, request, slug, project_id, summary_id):
+        return self.delete_summary(request, slug, project_id, summary_id)
 
 
 class ProjectActivityLogsEndpoint(ActivityHandlers, BaseAPIView):

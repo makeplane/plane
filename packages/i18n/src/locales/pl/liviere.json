@@ -4,7 +4,17 @@
       "title": "Aktywność",
       "view_grid": "Siatka",
       "view_log": "Dziennik",
-      "range_days": "{days} dni",
+      "view_summaries": "Podsumowania",
+      "view_report": "Raport",
+      "ranges": {
+        "7d": "7 dni",
+        "30d": "30 dni",
+        "90d": "90 dni",
+        "month": "Bieżący miesiąc",
+        "prev_month": "Poprzedni miesiąc"
+      },
+      "range_custom": "Okres: wybierz pierwszy i ostatni dzień",
+      "range_too_long": "Okres może mieć najwyżej {days} dni.",
       "all_members": "Wszyscy członkowie",
       "summary": "Aktywne kwadranse: {active} ≈ {hours} h · akcje: {events}",
       "footnote": "Jeden kwadracik to 15 minut ({timezone}). Przybliżony czas liczy kwadranse z jakąkolwiek aktywnością; to nie jest zalogowany czas pracy.",
@@ -31,7 +41,13 @@
         "toggle_description": "Pokazuje Aktywność w nawigacji projektu. Akcje są zapisywane niezależnie od tego, więc po późniejszym włączeniu widać też przeszłość.",
         "kinds_title": "Liczone akcje",
         "kinds_description": "Wybierz akcje, które liczą się jako aktywność. Wybór dotyczy też akcji z przeszłości.",
-        "save_error": "Nie udało się zapisać ustawienia. Spróbuj ponownie."
+        "save_error": "Nie udało się zapisać ustawienia. Spróbuj ponownie.",
+        "report_title": "Raport czasu",
+        "report_description": "Raport na stronie Aktywność liczy rzeczywisty czas z serii akcji, nie z kwadransów. Siatka nadal pokazuje kwadranse.",
+        "series_gap": "Przerwa między seriami (min)",
+        "series_gap_description": "Akcje bliżej siebie niż ta wartość łączą się w jedną serię (1–120).",
+        "series_padding": "Czas dodawany do serii (min)",
+        "series_padding_description": "Seria trwa od pierwszej do ostatniej akcji plus ten czas, więc pojedyncza akcja liczy się tyle (0–60, nie więcej niż przerwa)."
       },
       "groups": {
         "issues": "Elementy pracy",
@@ -123,6 +139,70 @@
         "day_summary": "{count, plural, one {# wpis} few {# wpisy} many {# wpisów} other {# wpisu}} · {duration}",
         "empty_title": "Brak wpisów dziennika w tym zakresie",
         "empty_description": "Wpisy mówią, co i kiedy zostało zrobione. Dodaj je tutaj albo pozwól agentom AI zapisywać je przez API lub skrypt plane-log."
+      },
+      "report": {
+        "sources": {
+          "mixed": "Mieszane",
+          "log": "Dziennik",
+          "grid": "Akcje"
+        },
+        "include_entries": "Pokaż wpisy dziennika",
+        "download": {
+          "pdf": "PDF",
+          "md": "Markdown",
+          "csv": "CSV"
+        },
+        "download_error": "Nie udało się pobrać raportu. Spróbuj ponownie.",
+        "describe_grid": "Czas z serii akcji, nie z kwadransów: akcje oddalone o mniej niż {gap} min tworzą serię od pierwszej do ostatniej akcji plus {padding} min, więc pojedyncza akcja to {padding} min.",
+        "describe_log": "Czas z wpisów dziennika pracy; wpis bez końca liczy się jako {open} min.",
+        "describe_mixed": "Wynik (dziennik + akcje poza dziennikiem): czas, w którym był wpis dziennika albo seria akcji, liczony raz. Akcje poza wpisami dziennika też się doliczają, również akcje agentów AI (np. tickety zakładane w nocy).",
+        "describe_union": "Czas projektu to czas, w którym ktokolwiek pracował; praca równoległa liczy się raz.",
+        "mixed_summary": "Dziennik {log} · serie {grid} · różnica {difference}",
+        "columns": {
+          "date": "Data",
+          "notes": "Wpis z dziennika",
+          "work": "Praca"
+        },
+        "total": "Razem",
+        "unknown_person": "(usunięty użytkownik)",
+        "skipped": "Okresy pomijane",
+        "describe_skipped": "Okresy pomijane nie liczą się w żadnym źródle; wpis albo seria liczy się tylko poza nimi.",
+        "no_activity": "Brak aktywności w tym okresie.",
+        "empty_days": "Pominięto dni bez aktywności: {count}."
+      },
+      "summaries": {
+        "description": "Kilka zdań o tym, co działo się w projekcie danego dnia, jedno na dzień i osobę. Agenci AI piszą je przez API albo plane-log.",
+        "add": "Dodaj podsumowanie",
+        "add_title": "Podsumowanie dnia",
+        "edit_title": "Edytuj podsumowanie dnia",
+        "text": "Co działo się tego dnia",
+        "text_placeholder": "Na przykład: poprawka logowania wdrożona; przegląd kopii zapasowych jutro.",
+        "replaces": "Masz już podsumowanie tego dnia; zapis je zastąpi.",
+        "save_error": "Nie udało się zapisać podsumowania. Spróbuj ponownie.",
+        "delete_title": "Usuń podsumowanie dnia",
+        "delete_confirm": "Podsumowanie zostanie usunięte na stałe. Tego nie da się cofnąć.",
+        "delete_error": "Nie udało się usunąć podsumowania. Spróbuj ponownie.",
+        "empty_title": "Brak podsumowań dni w tym okresie",
+        "empty_description": "Opisz w kilku zdaniach, co działo się danego dnia, albo pozwól agentom AI zrobić to przez plane-log summary add.",
+        "read_error": "Nie udało się sprawdzić Twojego podsumowania tego dnia, więc zapis jest zablokowany. Wybierz datę ponownie albo spróbuj później."
+      },
+      "skipped": {
+        "title": "Okresy pomijane",
+        "description": "Okresy, które raport czasu pomija, np. noc z testami automatów. Siatka je kreskuje, ale dalej liczy. Godziny w strefie {timezone}.",
+        "add": "Dodaj okres",
+        "empty": "Brak okresów pomijanych.",
+        "add_title": "Nowy okres pomijany",
+        "edit_title": "Edytuj okres pomijany",
+        "from": "Od",
+        "to": "Do",
+        "description_label": "Opis (opcjonalnie)",
+        "description_placeholder": "Na przykład: noc z testami automatów",
+        "save_error": "Nie udało się zapisać okresu. Spróbuj ponownie.",
+        "delete_title": "Usuń okres pomijany",
+        "delete_confirm": "Okres znowu będzie się liczył w raportach.",
+        "delete_error": "Nie udało się usunąć okresu. Spróbuj ponownie.",
+        "in_grid": "Okres pomijany: nie liczy się w raporcie",
+        "legend": "Pomijane w raportach"
       }
     },
     "unread": {

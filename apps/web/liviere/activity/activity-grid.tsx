@@ -6,7 +6,7 @@
 
 // Liviere/plane fork: the heatmap itself. Up to 90 × 96 cells, so a single hover card follows the pointer
 // instead of a tooltip component per cell. The current quarter has an amber outline; later quarters of today
-// are dimmed.
+// are dimmed; quarters of skipped periods are hatched (the time report leaves them out, the grid still counts).
 
 import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "@plane/i18n";
@@ -24,6 +24,10 @@ const LEVEL_CLASSES = [
   "bg-accent-primary",
 ];
 const NOW_CLASS = "outline-2 outline-offset-1 outline-warning-strong";
+// Diagonal hatching over the colour of the quarter
+const SKIPPED_STYLE: React.CSSProperties = {
+  backgroundImage: "repeating-linear-gradient(135deg, transparent 0 2px, rgb(127 127 127 / 0.6) 2px 3px)",
+};
 const HOUR_LABEL_EVERY = 3;
 // Day label, then the 96 quarters; the quarters share the width, so the whole day fits on screen
 const GRID_STYLE: React.CSSProperties = {
@@ -37,6 +41,8 @@ type Props = {
   now: TQuarter;
   selected: TSelectedBucket | null;
   onSelect: (bucket: TSelectedBucket | null) => void;
+  // bucketKey of the quarters in skipped periods
+  skipped?: Set<string>;
 };
 
 type THover = { date: string; slot: number; x: number; y: number };
@@ -48,7 +54,7 @@ const cellFromEvent = (event: React.MouseEvent): { date: string; slot: number } 
 };
 
 export function ActivityGrid(props: Props) {
-  const { heatmap, locale, now, selected, onSelect } = props;
+  const { heatmap, locale, now, selected, onSelect, skipped } = props;
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<THover | null>(null);
@@ -113,6 +119,7 @@ export function ActivityGrid(props: Props) {
                   const level = levelOf(bucket?.count ?? 0, thresholds);
                   const isSelected = selected?.date === date && selected.slot === slot;
                   const isNow = date === now.date && slot === now.slot;
+                  const isSkipped = !!skipped?.has(bucketKey(date, slot));
                   return (
                     <span
                       key={slot}
@@ -120,6 +127,7 @@ export function ActivityGrid(props: Props) {
                       aria-current={isNow ? "time" : undefined}
                       data-date={date}
                       data-slot={slot}
+                      style={isSkipped ? SKIPPED_STYLE : undefined}
                       className={cn(
                         "aspect-square w-full rounded-[2px]",
                         LEVEL_CLASSES[level],
@@ -144,6 +152,9 @@ export function ActivityGrid(props: Props) {
               {dayLabel(hover.date)}, {slotRange(hover.slot)}
               {hover.date === now.date && hover.slot === now.slot && ` · ${t("liviere.activity.now")}`}
             </div>
+            {skipped?.has(bucketKey(hover.date, hover.slot)) && (
+              <div className="text-tertiary">{t("liviere.activity.skipped.in_grid")}</div>
+            )}
             {hovered ? (
               <>
                 <div className="text-secondary">{t("liviere.activity.actions", { count: hovered.count })}</div>
@@ -172,6 +183,12 @@ export function ActivityGrid(props: Props) {
         <span className="ml-1">{t("liviere.activity.more")}</span>
         <span className={cn("ml-3 size-[10px] rounded-[2px] bg-layer-3", NOW_CLASS)} />
         <span className="ml-1">{t("liviere.activity.now")}</span>
+        {!!skipped?.size && (
+          <>
+            <span className="ml-3 size-[10px] rounded-[2px] bg-layer-3" style={SKIPPED_STYLE} />
+            <span className="ml-1">{t("liviere.activity.skipped.legend")}</span>
+          </>
+        )}
       </div>
     </div>
   );
