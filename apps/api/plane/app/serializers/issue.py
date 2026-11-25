@@ -47,7 +47,16 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
-from plane.utils.products import WorkItemKindMixin, clean_work_item, kind_of, represent_product, save_product
+from plane.utils.meetings import represent_meeting
+from plane.utils.products import (
+    WorkItemKindMixin,
+    clean_work_item,
+    kind_of,
+    represent_product,
+    pop_kind_parts,
+    save_kind_parts,
+    task_dates_before,
+)
 
 
 class IssueFlatSerializer(BaseSerializer):
@@ -221,10 +230,10 @@ class IssueCreateSerializer(WorkItemKindMixin, BaseSerializer):
         default_assignee_id = self.context["default_assignee_id"]
 
         # Create Issue
-        product = validated_data.pop("product", None)
+        parts = pop_kind_parts(validated_data)
         with transaction.atomic():
             issue = Issue.objects.create(**validated_data, project_id=project_id)
-            save_product(issue, product)
+            save_kind_parts(issue, parts)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -346,10 +355,11 @@ class IssueCreateSerializer(WorkItemKindMixin, BaseSerializer):
 
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
-        product = validated_data.pop("product", None)
+        parts = pop_kind_parts(validated_data)
+        task_dates = task_dates_before(instance, validated_data)
         with transaction.atomic():
             instance = super().update(instance, validated_data)
-            save_product(instance, product)
+            save_kind_parts(instance, parts, task_dates)
         return instance
 
 
@@ -968,12 +978,18 @@ class IssueDetailSerializer(IssueSerializer):
     is_intake = serializers.BooleanField(read_only=True)
     product = serializers.SerializerMethodField()
 
+    meeting = serializers.SerializerMethodField()
+
     def get_product(self, obj):
         return represent_product(obj)
+
+    def get_meeting(self, obj):
+        return represent_meeting(obj) if kind_of(obj) == "meeting" else None
 
     class Meta(IssueSerializer.Meta):
         fields = IssueSerializer.Meta.fields + [
             "product",
+            "meeting",
             "description_html",
             "is_subscribed",
             "is_intake",

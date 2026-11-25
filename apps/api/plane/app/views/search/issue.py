@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from .base import BaseAPIView
 from plane.app.permissions import ROLE
 from plane.db.models import Issue, IssueRelation
+from plane.utils.products import kind_of
 from plane.utils.issue_search import search_issues
 
 
@@ -41,6 +42,9 @@ class IssueSearchEndpoint(BaseAPIView):
         """
 
         issue = Issue.issue_objects.filter(pk=issue_id).first()
+        issues = issues.exclude(type__kind="meeting")
+        if issue and kind_of(issue) == "meeting":
+            issues = issues.filter(type__kind="product")
         if issue:
             issues = issues.filter(~Q(pk=issue_id), ~Q(pk=issue.parent_id), ~Q(parent_id=issue_id))
         return issues
@@ -70,8 +74,10 @@ class IssueSearchEndpoint(BaseAPIView):
         Filter root issues only
         """
         issue = Issue.issue_objects.filter(pk=issue_id).first()
-        # A product cannot have a parent
+        # A product cannot have a parent, a meeting only a product
         issues = issues.exclude(type__kind="product")
+        if issue and kind_of(issue) != "product":
+            issues = issues.exclude(type__kind="meeting")
         if issue:
             issues = issues.filter(~Q(pk=issue_id), parent__isnull=True)
         if issue.parent:
@@ -83,7 +89,7 @@ class IssueSearchEndpoint(BaseAPIView):
         Exclude issues in cycles
         """
         issues = issues.exclude(Q(issue_cycle__isnull=False) & Q(issue_cycle__deleted_at__isnull=True))
-        issues = issues.exclude(type__kind="product")
+        issues = issues.exclude(type__kind__in=["product", "meeting"])
         return issues
 
     def exclude_issues_in_module(self, issues: QuerySet, module: str) -> QuerySet:
@@ -91,14 +97,15 @@ class IssueSearchEndpoint(BaseAPIView):
         Exclude issues in a module
         """
         issues = issues.exclude(Q(issue_module__module=module) & Q(issue_module__deleted_at__isnull=True))
-        issues = issues.exclude(type__kind="product")
+        issues = issues.exclude(type__kind__in=["product", "meeting"])
         return issues
 
     def filter_issues_without_target_date(self, issues: QuerySet) -> QuerySet:
         """
         Filter issues without a target date
         """
-        issues = issues.filter(target_date__isnull=True)
+        # A meeting never has a due date
+        issues = issues.filter(target_date__isnull=True).exclude(type__kind="meeting")
         return issues
 
     def get(self, request, slug, project_id):
@@ -110,6 +117,7 @@ class IssueSearchEndpoint(BaseAPIView):
         module = request.query_params.get("module", False)
         sub_issue = request.query_params.get("sub_issue", "false")
         target_date = request.query_params.get("target_date", True)
+        kind = request.query_params.get("kind", False)
         issue_id = request.query_params.get("issue_id", False)
 
         # Guests only see issues they created unless guest_view_all_features
@@ -147,6 +155,10 @@ class IssueSearchEndpoint(BaseAPIView):
 
         if target_date == "none":
             issues = self.filter_issues_without_target_date(issues)
+
+        # Products to choose from before the work item exists
+        if kind == "product":
+            issues = issues.filter(type__kind="product")
 
         return Response(
             issues.values(

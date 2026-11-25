@@ -4,6 +4,8 @@
 
 # Python imports
 import json
+from datetime import datetime
+from datetime import timezone as timezone_utc
 
 
 # Third Party imports
@@ -654,6 +656,94 @@ def track_product(
         )
 
 
+def _moment(value):
+    """A time in UTC from what a client sent or the API answered."""
+    if not value:
+        return None
+    try:
+        moment = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return moment.astimezone(timezone_utc.utc) if moment.tzinfo else None
+
+
+def track_participants(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    """One entry per person, so that only this person is told about the invitation"""
+    requested = (requested_data.get("meeting") or {}).get("participant_ids")
+    if requested is None:
+        return
+    current = set(((current_instance or {}).get("meeting") or {}).get("participant_ids") or [])
+    requested = {str(member_id) for member_id in requested}
+    names = {
+        str(pk): name
+        for pk, name in User.objects.filter(pk__in=current ^ requested).values_list("pk", "display_name")
+    }
+    for member_id, name in names.items():
+        added = member_id in requested
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value="" if added else name,
+                new_value=name if added else "",
+                old_identifier=None if added else member_id,
+                new_identifier=member_id if added else None,
+                field="participants",
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment="added participant " if added else "removed participant ",
+                epoch=epoch,
+            )
+        )
+
+
+def track_meeting(
+    requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+):
+    current, requested = (current_instance or {}).get("meeting") or {}, requested_data.get("meeting") or {}
+    track_participants(
+        requested_data, current_instance, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+    )
+
+    def add(field, old, new, old_identifier=None, new_identifier=None):
+        issue_activities.append(
+            IssueActivity(
+                issue_id=issue_id,
+                actor_id=actor_id,
+                verb="updated",
+                old_value=old,
+                new_value=new,
+                old_identifier=old_identifier,
+                new_identifier=new_identifier,
+                field=field,
+                project_id=project_id,
+                workspace_id=workspace_id,
+                comment=f"updated the {field} to",
+                epoch=epoch,
+            )
+        )
+
+    old_time = [_moment(current.get(key)) for key in ("start_at", "end_at")]
+    new_time = [_moment(requested.get(key, current.get(key))) for key in ("start_at", "end_at")]
+    if None not in new_time and old_time != new_time:
+        # Both ends in one entry: a change of the time is one event for the participants
+        render = lambda times: "/".join(time.isoformat() for time in times) if None not in times else ""  # noqa: E731
+        add("meeting_time", render(old_time), render(new_time))
+    if "location" in requested and (current.get("location") or "") != requested["location"]:
+        add("location", current.get("location") or "", requested["location"])
+    if "outcome_html" in requested and (current.get("outcome_html") or "<p></p>") != requested["outcome_html"]:
+        # The text itself stays in the meeting
+        add("outcome", "", "")
+    if "organizer_id" in requested and current.get("organizer_id") != requested["organizer_id"]:
+        ids = [value for value in (current.get("organizer_id"), requested["organizer_id"]) if value]
+        names = {str(pk): name for pk, name in User.objects.filter(pk__in=ids).values_list("pk", "display_name")}
+        old, new = current.get("organizer_id"), requested["organizer_id"]
+        add("organizer", names.get(str(old), ""), names.get(str(new), ""), old, new)
+
+
 def create_issue_activity(
     requested_data,
     current_instance,
@@ -689,6 +779,11 @@ def create_issue_activity(
             issue_activities,
             epoch,
         )
+    if requested_data.get("meeting"):
+        # The people invited right away
+        track_participants(
+            requested_data, None, issue_id, project_id, workspace_id, actor_id, issue_activities, epoch
+        )
 
 
 def update_issue_activity(
@@ -716,6 +811,7 @@ def update_issue_activity(
         "closed_to": track_closed_to,
         "kind": track_kind,
         "product": track_product,
+        "meeting": track_meeting,
         # External endpoint keys
         "parent": track_parent,
         "state": track_state,

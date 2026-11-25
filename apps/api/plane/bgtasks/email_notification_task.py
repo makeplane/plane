@@ -5,6 +5,7 @@
 import logging
 import re
 from datetime import datetime
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from bs4 import BeautifulSoup
 
@@ -82,6 +83,20 @@ def stack_email_notification():
 
     # Update the email notification log
     EmailNotificationLog.objects.filter(pk__in=processed_notifications).update(processed_at=timezone.now())
+
+
+def format_meeting_time(value, timezone_name):
+    """"start/end" in UTC as the reader of the email sees it."""
+    try:
+        zone = ZoneInfo(timezone_name or "UTC")
+    except (ZoneInfoNotFoundError, ValueError):
+        zone = ZoneInfo("UTC")
+    try:
+        start, end = (datetime.fromisoformat(part).astimezone(zone) for part in value.split("/"))
+    except ValueError:
+        return value
+    last = end.strftime("%H:%M" if start.date() == end.date() else "%Y-%m-%d %H:%M")
+    return f"{start.strftime('%Y-%m-%d %H:%M')} – {last} ({zone.key})"
 
 
 def create_payload(notification_data):
@@ -216,6 +231,12 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                             },
                         }
                     )
+                if "meeting_time" in changes:
+                    for key in ("old_value", "new_value"):
+                        changes["meeting_time"][key] = [
+                            format_meeting_time(value, receiver.user_timezone)
+                            for value in changes["meeting_time"].get(key, [])
+                        ]
                 activity_time = changes.pop("activity_time")
                 # Parse the input string into a datetime object
                 formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")

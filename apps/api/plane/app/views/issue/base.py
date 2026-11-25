@@ -70,6 +70,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.host import base_host
+from plane.utils.meetings import represent_meeting
 from plane.utils.products import detach_product_children, represent_product
 from plane.utils.serializers import writable_data
 from plane.utils.issue_filters import issue_filters
@@ -479,6 +480,8 @@ class IssueViewSet(BaseViewSet):
                 issue["product"] = represent_product(
                     Issue.objects.select_related("type", "state", "product_detail").get(pk=issue["id"])
                 )
+            elif issue and issue["kind"] == "meeting":
+                issue["meeting"] = represent_meeting(Issue.objects.select_related("meeting_detail").get(pk=issue["id"]))
             datetime_fields = ["created_at", "updated_at"]
             issue = user_timezone_converter(issue, datetime_fields, request.user.user_timezone)
             # Send the model activity
@@ -1152,7 +1155,9 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
         epoch = int(timezone.now().timestamp())
 
         # Fetch all relevant issues in a single query
-        issues = list(Issue.objects.filter(id__in=issue_ids, workspace__slug=slug, project_id=project_id))
+        issues = list(
+            Issue.objects.filter(id__in=issue_ids, workspace__slug=slug, project_id=project_id).select_related("type")
+        )
         issues_dict = {str(issue.id): issue for issue in issues}
         issues_to_update = []
 
@@ -1160,7 +1165,8 @@ class IssueBulkUpdateDateEndpoint(BaseAPIView):
             issue_id = update["id"]
             issue = issues_dict.get(issue_id)
 
-            if not issue:
+            # A meeting has a time instead of dates
+            if not issue or (issue.type and issue.type.kind == "meeting"):
                 continue
 
             start_date = update.get("start_date")

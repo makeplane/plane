@@ -323,6 +323,12 @@ def notifications(
                     if issue_activity.get("issue_detail").get("id") != issue_id:
                         continue
 
+                    # An invitation concerns the invited person only
+                    if issue_activity.get("field") == "participants" and str(
+                        issue_activity.get("new_identifier")
+                    ) != str(subscriber):
+                        continue
+
                     # Do not send notification for description update
                     if issue_activity.get("field") == "description":
                         continue
