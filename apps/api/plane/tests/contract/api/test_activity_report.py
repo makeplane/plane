@@ -342,6 +342,8 @@ class TestReportFiles:
 
         assert POLISH_NOTE not in caplog.text
         assert "Zażółć" not in caplog.text
+        # Not even the glyphs of the PDF
+        assert not [record for record in caplog.records if record.name.startswith(("fpdf", "fontTools"))]
 
 
 @pytest.mark.contract

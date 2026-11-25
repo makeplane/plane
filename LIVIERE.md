@@ -257,11 +257,13 @@ zone); members and `/api/v1/` (`GET`, optional `from`/`to`) only read them.
 **PDF** – `fpdf2` 2.9.0 (pure Python, LGPL-3.0, with `Pillow` and `fontTools`, prebuilt wheels for the Alpine
 image: no system packages, no browser, no other service) draws the file in DejaVu Sans 2.37 (regular and bold,
 `activity/fonts/` with its licence: Bitstream Vera / Arev, free to use, embed and redistribute; the PDF embeds
-only the used glyphs). Characters the font lacks (emoji) print as "?"; the `fpdf` logger is set to errors only,
-so texts of entries never reach the server logs. Tests read the PDF text with `pypdf` (test group only).
-`APITokenLogMiddleware` (upstream) stores response bodies of `/api/v1/` requests in `api_activity_logs` for 14
-days (`API_ACTIVITY_LOG_RETENTION_DAYS`): the PDF as `[Binary Content]`, but JSON, Markdown and CSV reports – like
-the `logs/` endpoints already do – with the texts of the entries.
+only the used glyphs). Characters the font lacks (emoji) print as "?"; the `fpdf` and `fontTools` loggers are
+set to errors only (fpdf would name missing characters, fontTools the kept glyphs), so nothing of the texts reaches
+the server logs. Tests read the PDF text with `pypdf` (test group only).
+`APITokenLogMiddleware` (upstream, `plane/middleware/logger.py`) stores request and response bodies of
+`/api/v1/` requests in `api_activity_logs` for 14 days (`API_ACTIVITY_LOG_RETENTION_DAYS`): the PDF as
+`[Binary Content]`, but JSON, Markdown and CSV reports and the `logs/` and `summaries/` requests with the texts
+of entries and summaries – as the `logs/` endpoints already did before the report.
 
 ## New work items (`/:workspace/new-work-items`)
 

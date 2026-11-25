@@ -37,8 +37,10 @@ BOLD = FONTS / "DejaVuSans-Bold.ttf"
 MUTED = (90, 90, 90)
 HEADINGS = FontFace(emphasis="BOLD", fill_color=(235, 235, 235))
 TOTAL = FontFace(emphasis="BOLD")
-# fpdf2 logs the characters a font lacks; they would be texts of log entries
+# fpdf2 logs the characters a font lacks, fontTools the glyphs it keeps when subsetting the font (INFO): both
+# would hint at the texts of entries and summaries, which never go to the server logs
 logging.getLogger("fpdf").setLevel(logging.ERROR)
+logging.getLogger("fontTools").setLevel(logging.ERROR)
 
 
 @lru_cache(maxsize=1)

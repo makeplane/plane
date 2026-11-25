@@ -8,7 +8,7 @@
 // period, newest day first: one per day and author, written here or by AI agents (API, plane-log). Saving
 // your summary of a day that already has one replaces it, as the API does.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@makeplane/propel/components/button";
 import {
   Dialog,
@@ -56,9 +56,6 @@ export function ActivitySummaries(props: Props) {
   const [isDeleting, setIsDeleting] = useState(false);
   const dayTitle = new Intl.DateTimeFormat(locale, { dateStyle: "full", timeZone: "UTC" });
   const canChange = (summary: TDaySummary) => isAdmin || (!!currentUserId && summary.author?.id === currentUserId);
-  // Your own summary of a day, if it is among the loaded ones
-  const mine = (date: string) =>
-    summaries?.find((summary) => summary.date === date && !!currentUserId && summary.author?.id === currentUserId);
 
   const days: { date: string; summaries: TDaySummary[] }[] = [];
   for (const summary of summaries ?? []) {
@@ -156,7 +153,8 @@ export function ActivitySummaries(props: Props) {
           projectId={projectId}
           summary={dialog.summary}
           today={today}
-          mine={mine}
+          timeZone={query.tz}
+          currentUserId={currentUserId}
           onClose={() => setDialog(null)}
         />
       )}
@@ -180,25 +178,53 @@ type ModalProps = {
   // The summary to change (its day stays); without it, your summary of the chosen day
   summary?: TDaySummary;
   today: string;
-  mine: (date: string) => TDaySummary | undefined;
+  timeZone: string;
+  currentUserId: string | undefined;
   onClose: () => void;
 };
 
 function SummaryModal(props: ModalProps) {
-  const { workspaceSlug, projectId, summary, today, mine, onClose } = props;
+  const { workspaceSlug, projectId, summary, today, timeZone, currentUserId, onClose } = props;
   const { t } = useTranslation();
   const [date, setDate] = useState(summary?.date ?? today);
-  const [text, setText] = useState(summary?.text ?? mine(today)?.text ?? "");
+  const [text, setText] = useState(summary?.text ?? "");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const replaces = !summary && !!mine(date);
+  // A new summary: your own summary of the chosen day, read from the API whatever the page shows, since
+  // saving would replace it. Undefined while it is being read.
+  const [existing, setExisting] = useState<TDaySummary | null | undefined>(summary ? null : undefined);
+  const replaces = !summary && !!existing;
 
-  const changeDate = (value: string) => {
-    setDate(value);
-    // Your summary of that day opens for editing, as saving would replace it anyway
-    const existing = mine(value);
-    if (existing) setText(existing.text);
-  };
+  useEffect(() => {
+    if (summary || !date || !currentUserId) {
+      setExisting(null);
+      return;
+    }
+    let current = true;
+    setExisting(undefined);
+    const read = async () => {
+      let found: TDaySummary | null = null;
+      try {
+        const results = await projectActivityService.getSummaries(workspaceSlug, projectId, {
+          from: date,
+          to: date,
+          tz: timeZone,
+          actor: currentUserId,
+        });
+        found = results[0] ?? null;
+      } catch {
+        found = null;
+      }
+      if (!current) return;
+      setExisting(found);
+      // It opens for editing
+      if (found) setText(found.text);
+    };
+    void read();
+    return () => {
+      current = false;
+    };
+  }, [summary, date, currentUserId, workspaceSlug, projectId, timeZone]);
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -246,7 +272,7 @@ function SummaryModal(props: ModalProps) {
                     value={date}
                     max={today}
                     disabled={!!summary}
-                    onChange={(event) => changeDate(event.target.value)}
+                    onChange={(event) => setDate(event.target.value)}
                     required
                   />
                 </div>
@@ -275,7 +301,7 @@ function SummaryModal(props: ModalProps) {
               stretch="auto"
               type="submit"
               loading={isSubmitting}
-              disabled={!text.trim() || !date}
+              disabled={!text.trim() || !date || existing === undefined}
               label={t("save")}
             />
           </DialogActions>
