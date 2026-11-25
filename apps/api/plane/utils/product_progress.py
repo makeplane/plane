@@ -104,8 +104,12 @@ def indicator(state_group, start_date, target_date, progress, has_overdue_tasks,
     return "on_track"
 
 
-def list_products(products):
-    """Rows for lists and summaries. The queryset is expected to hold readable products only."""
+def product_rows(products, *extra):
+    """
+    Pairs of a database row and the item built from it. `extra` names more columns for the row.
+
+    Everything a list of products shows is computed here, so that all the lists agree.
+    """
     rows = annotate_task_counts(
         products.filter(type__kind=WorkItemKind.PRODUCT, product_detail__deleted_at__isnull=True)
     ).values(
@@ -128,6 +132,7 @@ def list_products(products):
         "total_tasks",
         "completed_tasks",
         "earliest_open_target",
+        *extra,
     )
     result = []
     for row in rows:
@@ -136,35 +141,39 @@ def list_products(products):
         manual = row["product_detail__manual_progress"]
         progress = manual if manual is not None else calculated
         earliest = row["earliest_open_target"]
-        result.append(
-            {
-                "id": row["id"],
-                "name": row["name"],
-                "sequence_id": row["sequence_id"],
-                "project_id": row["project_id"],
-                "project_identifier": row["project__identifier"],
-                "portfolio_id": row["project__portfolio_id"],
-                "state_id": row["state_id"],
-                "state_name": row["state__name"],
-                "state_group": row["state__group"],
-                "start_date": row["start_date"],
-                "target_date": row["target_date"],
-                "product_type_id": row["product_detail__product_type_id"],
-                "owner_id": row["product_detail__owner_id"],
-                "manual_progress": manual,
-                "status_comment": row["product_detail__status_comment"],
-                "total_tasks": row["total_tasks"],
-                "completed_tasks": row["completed_tasks"],
-                "calculated_progress": calculated,
-                "progress": progress,
-                "indicator": indicator(
-                    state_group=row["state__group"],
-                    start_date=row["start_date"],
-                    target_date=row["target_date"],
-                    progress=progress,
-                    has_overdue_tasks=earliest is not None and earliest < today,
-                    today=today,
-                ),
-            }
-        )
+        item = {
+            "id": row["id"],
+            "name": row["name"],
+            "sequence_id": row["sequence_id"],
+            "project_id": row["project_id"],
+            "project_identifier": row["project__identifier"],
+            "portfolio_id": row["project__portfolio_id"],
+            "state_id": row["state_id"],
+            "state_name": row["state__name"],
+            "state_group": row["state__group"],
+            "start_date": row["start_date"],
+            "target_date": row["target_date"],
+            "product_type_id": row["product_detail__product_type_id"],
+            "owner_id": row["product_detail__owner_id"],
+            "manual_progress": manual,
+            "status_comment": row["product_detail__status_comment"],
+            "total_tasks": row["total_tasks"],
+            "completed_tasks": row["completed_tasks"],
+            "calculated_progress": calculated,
+            "progress": progress,
+            "indicator": indicator(
+                state_group=row["state__group"],
+                start_date=row["start_date"],
+                target_date=row["target_date"],
+                progress=progress,
+                has_overdue_tasks=earliest is not None and earliest < today,
+                today=today,
+            ),
+        }
+        result.append((row, item))
     return result
+
+
+def list_products(products):
+    """Items for lists and summaries. The queryset is expected to hold readable products only."""
+    return [item for _, item in product_rows(products)]

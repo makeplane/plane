@@ -6,7 +6,7 @@
 from django.core.exceptions import ValidationError
 
 # Module imports
-from plane.db.models import Portfolio, TeamMember, WorkspaceMember
+from plane.db.models import Portfolio, TeamKind, TeamMember, Workspace, WorkspaceMember
 from plane.utils.team_access import TEAM_ADMIN
 
 from .base import ROLE
@@ -30,6 +30,26 @@ def is_team_admin(user, slug, team_id):
 
 def can_manage_team(user, slug, team_id):
     return is_workspace_admin(user, slug) or is_team_admin(user, slug, team_id)
+
+
+def can_see_product_board(user, slug):
+    """Members of the active management team and workspace admins, while the structure is in use."""
+    if not Workspace.objects.filter(slug=slug, is_team_structure_enabled=True).exists():
+        return False
+    if is_workspace_admin(user, slug):
+        return True
+    return (
+        TeamMember.objects.filter(
+            team__workspace__slug=slug,
+            team__kind=TeamKind.MANAGEMENT,
+            team__archived_at__isnull=True,
+            team__deleted_at__isnull=True,
+            member=user,
+        ).exists()
+        and WorkspaceMember.objects.filter(
+            workspace__slug=slug, member=user, role__gt=ROLE.GUEST.value, is_active=True
+        ).exists()
+    )
 
 
 class PortfolioChoiceError(Exception):

@@ -70,6 +70,7 @@ from plane.utils.grouper import (
     issue_queryset_grouper,
 )
 from plane.utils.host import base_host
+from plane.utils.issue_updates import record_issue_update
 from plane.utils.meetings import represent_meeting
 from plane.utils.products import detach_product_children, represent_product
 from plane.utils.serializers import writable_data
@@ -700,26 +701,7 @@ class IssueViewSet(BaseViewSet):
             is_migration_description_update = skip_activity and is_description_update
             # Log all the updates
             if not is_migration_description_update:
-                issue_activity.delay(
-                    type="issue.activity.updated",
-                    requested_data=json.dumps(accepted_data, cls=DjangoJSONEncoder),
-                    actor_id=str(request.user.id),
-                    issue_id=str(pk),
-                    project_id=str(project_id),
-                    current_instance=current_instance,
-                    epoch=int(timezone.now().timestamp()),
-                    notification=True,
-                    origin=base_host(request=request, is_app=True),
-                )
-                model_activity.delay(
-                    model_name="issue",
-                    model_id=str(serializer.data.get("id", None)),
-                    requested_data=accepted_data,
-                    current_instance=current_instance,
-                    actor_id=request.user.id,
-                    slug=slug,
-                    origin=base_host(request=request, is_app=True),
-                )
+                record_issue_update(request, slug, project_id, pk, accepted_data, current_instance)
                 # updated issue description version
                 issue_description_version_task.delay(
                     updated_issue=current_instance,

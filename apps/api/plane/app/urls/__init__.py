@@ -22,6 +22,7 @@ from .webhook import urlpatterns as webhook_urls
 from .workspace import urlpatterns as workspace_urls
 from .meeting import urlpatterns as meeting_urls
 from .product import urlpatterns as product_urls
+from .product_board import urlpatterns as product_board_urls
 from .team import urlpatterns as team_urls
 from .timezone import urlpatterns as timezone_urls
 from .exporter import urlpatterns as exporter_urls
@@ -47,6 +48,7 @@ urlpatterns = [
     *webhook_urls,
     *meeting_urls,
     *product_urls,
+    *product_board_urls,
     *team_urls,
     *timezone_urls,
     *exporter_urls,
