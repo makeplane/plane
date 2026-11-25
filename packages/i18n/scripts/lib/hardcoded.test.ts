@@ -47,10 +47,18 @@ test("scanSource honours i18n-ignore on the same or previous line", () => {
     'const c = { title: "Not ignored" };',
     'const b = { title: "Plane Cloud" }; // i18n-ignore: brand name',
     'const d = { title: "Also not ignored" };',
+    "const e = (<div>",
+    "{/* i18n-ignore: brand name */}<span>Plane Cloud</span>",
+    "<button>Save changes</button>",
+    "{/* i18n-ignore: brand name */}",
+    "<span>Plane Cloud</span>",
+    "/* i18n-ignore: a */ <i>Plane</i> {/* b */}",
+    "<button>Delete page</button>",
+    "</div>);",
   ].join("\n");
   assert.deepEqual(
     scanSource("x.tsx", src).map((h) => h.line),
-    [3, 5]
+    [3, 5, 8, 12]
   );
 });
 

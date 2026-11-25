@@ -55,6 +55,8 @@ const OBJECT_KEYS = new Set([
 ]);
 
 const IGNORE_MARKER = "i18n-ignore:";
+/** A trimmed line holding nothing but one `//`, `/* *\/` or `{/* *\/}` comment. */
+const COMMENT_ONLY_LINE = /^(\/\/.*|\/\*((?!\*\/).)*\*\/|\{\/\*((?!\*\/).)*\*\/\})$/;
 
 /** Repo-relative paths the scan covers: frontend `.ts`/`.tsx` minus tests, stories, scripts and non-UI packages. */
 export function isScannedFile(file: string): boolean {
@@ -96,7 +98,7 @@ export function scanSource(file: string, source: string): Hit[] {
     const line = sf.getLineAndCharacterOfPosition(node.getStart()).line + 1;
     // Escape hatch: marker on the same line, or on a comment-only line directly above.
     const prev = lines[line - 2]?.trim() ?? "";
-    const prevIsComment = prev.startsWith("//") || prev.startsWith("{/*") || prev.startsWith("/*");
+    const prevIsComment = COMMENT_ONLY_LINE.test(prev);
     if (lines[line - 1]?.includes(IGNORE_MARKER) || (prevIsComment && prev.includes(IGNORE_MARKER))) return;
     hits.push({ file, line, text: text.trim().replace(/\s+/g, " ") });
   };
