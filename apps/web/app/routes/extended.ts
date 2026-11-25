@@ -13,6 +13,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
   layout("./(all)/layout.tsx", [
     layout("./(all)/[workspaceSlug]/layout.tsx", [
       layout("./(all)/[workspaceSlug]/(projects)/layout.tsx", [
+        // "New" work items of the workspace (liviere/unread)
+        layout("./(all)/[workspaceSlug]/(projects)/new-work-items/layout.tsx", [
+          route(":workspaceSlug/new-work-items", "./(all)/[workspaceSlug]/(projects)/new-work-items/page.tsx"),
+        ]),
         layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/layout.tsx", [
           // Project activity heatmap (core/liviere/activity)
           layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/activity/layout.tsx", [

@@ -25,6 +25,7 @@ import { ProjectAuthWrapper } from "@/layouts/auth-layout/project-wrapper";
 // plane web imports
 import { useWorkItemProperties } from "@/hooks/use-issue-properties";
 import { WorkItemDetailRoot } from "@/components/browse/workItem-detail";
+import { markWorkItemOpened } from "@/liviere/unread/mark-opened"; // Liviere/plane fork
 
 import type { Route } from "./+types/page";
 
@@ -47,6 +48,12 @@ export const IssueDetailsPage = observer(function IssueDetailsPage({ params }: R
   const { data, isLoading, error } = useSWR<TIssue, Error & { status?: number }>(
     `ISSUE_DETAIL_${workspaceSlug}_${projectIdentifier}_${sequence_id}`,
     () => fetchIssueWithIdentifier(workspaceSlug.toString(), projectIdentifier, sequence_id)
+  );
+
+  // Liviere/plane fork: opening the full page removes the work item from "New"
+  useEffect(
+    () => markWorkItemOpened(workspaceSlug, data?.project_id ?? undefined, data?.id),
+    [workspaceSlug, data?.project_id, data?.id]
   );
 
   // derived values

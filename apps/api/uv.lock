@@ -618,6 +618,15 @@ wheels = [
 ]
 
 [[package]]
+name = "http-ece"
+version = "1.2.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cryptography" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/7c/af/249d1576653b69c20b9ac30e284b63bd94af6a175d72d87813235caf2482/http_ece-1.2.1.tar.gz", hash = "sha256:8c6ab23116bbf6affda894acfd5f2ca0fb8facbcbb72121c11c75c33e7ce8cff", size = 8830, upload-time = "2024-08-08T00:10:47.301Z" }
+
+[[package]]
 name = "httpcore"
 version = "1.0.9"
 source = { registry = "https://pypi.org/simple" }
@@ -1072,6 +1081,7 @@ dependencies = [
     { name = "djangorestframework" },
     { name = "drf-spectacular" },
     { name = "faker" },
+    { name = "http-ece" },
     { name = "jsonmodels" },
     { name = "lxml" },
     { name = "nh3" },
@@ -1139,6 +1149,7 @@ requires-dist = [
     { name = "djangorestframework", specifier = "==3.18.3" },
     { name = "drf-spectacular", specifier = "==0.29.0" },
     { name = "faker", specifier = "==25.0.0" },
+    { name = "http-ece", specifier = "==1.2.1" },
     { name = "jsonmodels", specifier = "==2.7.0" },
     { name = "lxml", specifier = "==6.1.0" },
     { name = "nh3", specifier = "==0.2.18" },

@@ -171,3 +171,148 @@ token from `~/.config/plane-mcp/env`, like the Plane MCP setup, and takes projec
 task): `docker compose exec api python manage.py shell -c "from django_celery_beat.models import PeriodicTask;
 PeriodicTask.objects.filter(name__startswith='liviere:').update(enabled=False)"`.
 
+
+## New work items (`/:workspace/new-work-items`)
+
+Most work items here are created by AI agents (API key, MCP). *New* lists the work items somebody else created in
+my projects that I have not opened yet, with a counter in the workspace sidebar.
+
+Code: `apps/api/plane/liviere/unread/queries.py` (rules), `liviere/models.py` (`WorkItemOpen`,
+`UnreadWorkspaceCutoff`, `UnreadProjectCutoff`), `liviere/app/unread.py` (endpoints), `apps/web/liviere/unread/`
+(page, sidebar item, `markWorkItemOpened`), i18n namespace `liviere` (`liviere.unread.*`). Tests:
+`apps/api/plane/tests/contract/app/test_unread_work_items.py`.
+
+**Rules.** A work item is new for a person when all of these hold:
+
+- it is listed normally (`Issue.issue_objects`: no drafts, triage/intake, archived or deleted items, no archived
+  projects), in any state;
+- the person is an active member of its project and may see others' work items (guests only with
+  `guest_view_all_features`; a restricted guest sees only their own, which never count);
+- somebody else created it (a work item without an author counts too);
+- it was created after the person's cutoff of the project and there is no `WorkItemOpen` row for it.
+
+The cutoff is the latest of three times: the workspace cutoff (`UnreadWorkspaceCutoff`, set to the migration time
+for every existing workspace by migration `0004`, so nothing that existed at deployment is new), the time the
+person joined the project (`ProjectMember.created_at`, so a newcomer does not inherit the project's history) and
+the person's *Mark all as read* time for the project (`UnreadProjectCutoff`). No rows are written per work item
+except when one is opened.
+
+Plane adds a person to a project again by re-activating the old `ProjectMember` row (`bulk_update`, no signal,
+old `created_at`). The periodic task `plane.liviere.tasks.sync_unread_memberships` (every minute,
+django_celery_beat row `liviere: sync memberships for new work items`, migration `0006`) compares memberships with
+`UnreadMembershipState`; a membership seen inactive and active again moves the person's cutoff of the project to
+the last check that saw it inactive, so the time away does not show up as new (at most the last minute before the
+re-activation does). It is one cutoff per project, so work items not opened before leaving count as read too.
+
+**Opened = peek or full page.** The web app calls
+`POST /api/workspaces/{slug}/projects/{id}/liviere/work-items/{id}/opened/` (session only, idempotent, 204; 404 when
+the person may not see the work item) from two hooks: the peek overview (`components/issues/peek-overview/root.tsx`,
+after `fetchIssue`; every peek – layouts, *Your work*, Home, Inbox, pages – renders this component) and the full
+page (`app/(all)/[workspaceSlug]/(projects)/browse/[workItem]/page.tsx`). The upstream `retrieve` endpoints are not
+used: `fetchIssue` also retrieves the parent of the opened item and the edit modal retrieves its item, which would
+mark items nobody opened. Reading a work item through `/api/v1/` never marks it, also with the person's own key.
+Opening from the edit modal or the intake view does not count.
+
+**Endpoints** (session; any workspace role):
+
+| Endpoint | |
+|---|---|
+| `GET /api/workspaces/{slug}/liviere/new-work-items/` | newest first: `{results, has_more, as_of}`; `projects` (comma-separated ids), `per_page` (≤ 200, default 50), `older_than` + `older_than_id` (`created_at` and `id` of the last item – keyset paging, so items opened meanwhile do not shift the next page) |
+| `GET .../new-work-items/count/` | `{total, by_project, as_of}` |
+| `POST .../new-work-items/mark-read/` | `{before, project_ids?}` → `{cleared}`; moves the person's cutoff of the projects (all or the given ones) to `before`, never back |
+
+`before` must be the `as_of` the server returned (400 when missing or in the future), so the browser clock never
+decides what is marked and items created after the list was loaded stay new. Known gap: `created_at` is set before
+the creating transaction commits, so a work item committed a few milliseconds after `as_of` with an earlier
+`created_at` can be marked read without having been listed.
+
+**Web.** Sidebar item *New* with the count (hook in `components/workspace/sidebar/sidebar-menu-items.tsx`; always
+shown, not part of *Customize navigation*, which would need the upstream `UserPreferenceKeys` enum), refreshed
+every minute, on focus and after every change. The page (route in `app/routes/extended.ts`) has a project filter
+(`?projects=`) and *Mark all as read*; a row opens the peek (the full page on phones) and disappears once opened.
+
+**Going back** to images without our code: nothing to disable; the tables stay unused. `migrate liviere 0003` on a
+fork image removes them.
+
+### Push notifications
+
+A system notification (Web Push, e.g. Firefox on Windows) when somebody else creates a work item in a project I
+chose. Code: `apps/api/plane/liviere/push/` (`config.py` VAPID keys, `webpush.py` sending, `notify.py`
+recipients and texts, `messages.py`, `signals.py`), `liviere/app/push.py` (endpoints), `liviere/models.py`
+(`PushSubscription`, `PushProject`, migration `0005`), `apps/web/liviere/push/` and the service worker
+`apps/web/public/liviere/push-sw.js`. Tests: `apps/api/plane/tests/contract/app/test_push_notifications.py`,
+`apps/api/plane/tests/unit/liviere/test_webpush.py`.
+
+**Keys** – environment only, never in the repository; all three or push stays off (the profile section then says
+it is unavailable, subscribing answers 503 and nothing is queued):
+
+| Variable | |
+|---|---|
+| `LIVIERE_VAPID_PUBLIC_KEY` | base64url of the uncompressed P-256 public point (65 bytes) |
+| `LIVIERE_VAPID_PRIVATE_KEY` | base64url of the 32-byte private scalar (must match the public key) |
+| `LIVIERE_VAPID_SUBJECT` | `mailto:…` or `https://…` contact for the push services |
+| `LIVIERE_PUSH_COALESCE_SECONDS` | optional: window collecting a project's new work items into one push (empty or invalid = 15, `0` = one push per work item, at most 300: a waiting countdown task holds an unacknowledged RabbitMQ message) |
+
+`api` and `worker` both need them (`x-app-env` in `deployments/cli/community/docker-compose.yml` passes them; the
+local `docker-compose-local.yml` reads `apps/api/.env`). The web app gets the public key from the API.
+
+**Flow.** `post_save` of a new `Issue` (app, `/api/v1/` with an API key, MCP) does its work with
+`transaction.on_commit`; nothing happens in the request when the keys are missing or the item is a draft, and
+neither the receiver nor a broker failure breaks creating the work item. Work items are read from
+`Issue.issue_objects` (no drafts, triage, archived, deleted) and sent to every browser of every recipient: people
+who chose the project (`PushProject`, per account) who are active members allowed to see others' work items – the
+rules of *New*. Own work items are never new, so their author gets nothing about them. Not notified: items created
+by `bulk_create` (imports) and intake items accepted later.
+
+**One notification per project and window.** The tag is `liviere-new-<project id>`, so a newer notification
+replaces the older one and the notification centre keeps one entry per project. That alone does not stop the
+pop-ups: on Windows the toast pops up again on every replacement (live test: a parent and two sub-items 3 s apart
+gave 3 pop-ups), even without `renotify`. So the server coalesces: the first work item of a project committed
+after a quiet spell takes the cache key `liviere-push-pending-<project id>` (`cache.add`, two windows long) and
+queues `plane.liviere.tasks.notify_project_work_items` with a countdown of `LIVIERE_PUSH_COALESCE_SECONDS`
+(default 15 s); later work items queue nothing while the key exists. The task deletes the key before it reads
+anything, so a work item committed after that queues the next window (never lost; one committed right at the
+boundary may give one extra notification). A recipient gets the push only when at least one of their new work
+items was created in the window (from 5 s before its first work item), so an older unread item never pops up
+again because of somebody's – or their own – new work item. If the cache fails, every work item queues the
+project task (no coalescing, nothing lost); with the window `0` every work item queues
+`plane.liviere.tasks.notify_new_work_item` at once, as before. The title counts the recipient's
+new work items of the project at sending time: with one, `LS-7 · Project name` and a click opens the work item
+(which marks it as read); with more, `LS: 4 new work items` (Polish for a `pl` profile language: `nowe elementy
+pracy` / `nowych elementów pracy`) and a click opens *New* filtered to the project. The body is the title of the
+newest one. Nothing else of the work item is sent. Notifications come up to one window late.
+
+**Sending** (`webpush.py`): aes128gcm (RFC 8291, `http-ece`) and a VAPID JWT (RFC 8292, ES256 with `PyJWT`), TTL
+24 h. The endpoint comes from the browser, so it must be `https://` on a known push service
+(`updates.push.services.mozilla.com`, `fcm.googleapis.com`, `*.notify.windows.com`, `*.push.apple.com`; checked when
+subscribing and when sending) and the request goes through `pinned_fetch` like webhooks. 404/410 removes the
+subscription, and so do 400/403 (the subscription does not match our keys, e.g. after they changed) and five
+failures in a row; a failure is never retried. An error with one subscription never stops the others. Titles and
+bodies are cut to 150/500 characters (payload well under the ~4 KB push services accept). A person keeps at most 10
+browsers (subscribing another drops the oldest); an endpoint already stored with other keys is refused (409); the
+test notification is limited to 5 a minute. All pushes share the default Celery queue; at our volume (tens of work
+items a day) a separate queue is not needed.
+
+**Signing out** (`user_logged_out`) removes all push subscriptions of the person – the browser cannot be told apart
+from their other browsers. After the next sign-in the web app registers the subscription this browser still has
+again, but only for the account that turned push on in it (remembered in `localStorage`); for another account the
+profile shows push as off until they turn it on themselves. A subscription made with old VAPID keys is replaced.
+
+**Endpoints** (session, user-level – the profile page is outside a workspace):
+
+| Endpoint | |
+|---|---|
+| `GET /api/users/me/liviere/push/` | `available`, `public_key`, workspaces with the projects one may choose (`selected`) |
+| `PUT .../push/projects/` | `{project_ids}` – the whole choice |
+| `POST`/`DELETE .../push/subscriptions/` | `{endpoint, keys: {p256dh, auth}}`; the same browser signed in with another account takes the subscription over |
+| `POST .../push/test/` | a test notification to my browsers (queued task) |
+
+**Web.** Profile settings → Notifications → *Push notifications* (hook in
+`components/settings/profile/content/pages/notifications/root.tsx`): *Enable in this browser* asks for the browser
+permission only on that click, then project switches, *Send a test* and *Turn off*. The service worker is registered
+with the scope `/liviere/push/`, so it controls no page and cannot clash with an app worker at `/` (the old unused
+`public/sw.js` is left alone). A click focuses a tab already showing the target or opens a new one.
+
+**Going back** to images without our code: nothing queues the push task there; disable the membership sync first
+(the `liviere:` periodic tasks, see *Disabling the sync* above). To stop pushes while staying on a fork image,
+remove one of the three variables.

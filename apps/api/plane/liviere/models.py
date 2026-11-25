@@ -78,3 +78,103 @@ class ProjectActivitySettings(models.Model):
 
     class Meta:
         db_table = "liviere_project_activity_settings"
+
+
+class WorkItemOpen(models.Model):
+    """A person opened a work item (peek or full page) for the first time; see plane/liviere/unread."""
+
+    id = models.BigAutoField(primary_key=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="+")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    opened_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "liviere_work_item_opens"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "issue"], name="liviere_work_item_open_unique"),
+        ]
+        indexes = [
+            models.Index(fields=["user", "project"], name="liviere_open_user_project"),
+        ]
+
+
+class UnreadWorkspaceCutoff(models.Model):
+    """Work items created up to `since` are read for everybody (set to the deployment time by a migration)."""
+
+    workspace = models.OneToOneField("db.Workspace", on_delete=models.CASCADE, related_name="+", primary_key=True)
+    since = models.DateTimeField()
+
+    class Meta:
+        db_table = "liviere_unread_workspace_cutoffs"
+
+
+class UnreadProjectCutoff(models.Model):
+    """Work items of a project created up to `since` are read for one person ("Mark all as read")."""
+
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    since = models.DateTimeField()
+
+    class Meta:
+        db_table = "liviere_unread_project_cutoffs"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "project"], name="liviere_unread_project_cutoff_unique"),
+        ]
+
+
+class UnreadMembershipState(models.Model):
+    """Last seen state of a project membership, kept by plane.liviere.tasks.sync_unread_memberships.
+
+    Plane re-activates an old ProjectMember row (bulk_update, no signal, old created_at) when a person is added to
+    a project again; the task notices the change and moves the person's cutoff of the project, so the time they
+    were away does not show up as "New"."""
+
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    is_active = models.BooleanField()
+    # Last time the membership was seen in this state (moved forward only while it is inactive)
+    checked_at = models.DateTimeField()
+
+    class Meta:
+        db_table = "liviere_unread_membership_states"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "project"], name="liviere_unread_membership_unique"),
+        ]
+
+
+class PushSubscription(models.Model):
+    """Web push subscription of one browser (plane/liviere/push); removed when the push service answers 404/410."""
+
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    endpoint = models.TextField(unique=True)
+    p256dh = models.CharField(max_length=128)
+    auth = models.CharField(max_length=64)
+    user_agent = models.CharField(max_length=255, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_success_at = models.DateTimeField(null=True)
+    failure_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = "liviere_push_subscriptions"
+        indexes = [models.Index(fields=["user"], name="liviere_push_sub_user")]
+
+
+class PushProject(models.Model):
+    """A project the person wants push notifications about (for all their browsers)."""
+
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+
+    class Meta:
+        db_table = "liviere_push_projects"
+        constraints = [
+            models.UniqueConstraint(fields=["user", "project"], name="liviere_push_project_unique"),
+        ]
+        indexes = [models.Index(fields=["project"], name="liviere_push_project_project")]

@@ -124,6 +124,47 @@
         "empty_title": "No log entries in this range",
         "empty_description": "Log entries say what was done and when. Add them here, or let AI agents write them through the API or the plane-log script."
       }
+    },
+    "unread": {
+      "title": "New",
+      "description": "Work items created by others in your projects that you have not opened yet.",
+      "all_projects": "All projects",
+      "load_error": "Could not load new work items.",
+      "empty_title": "Nothing new",
+      "empty_description": "You have opened every work item others created in your projects.",
+      "mark_all": {
+        "button": "Mark all as read",
+        "title": "Mark all as read?",
+        "confirm": "{count, plural, one {# new work item} other {# new work items}} in all projects will no longer be new.",
+        "confirm_filtered": "{count, plural, one {# new work item} other {# new work items}} in the selected projects will no longer be new.",
+        "marking": "Marking",
+        "done": "{count, plural, one {# work item marked as read} other {# work items marked as read}}",
+        "error": "Could not mark the work items as read."
+      }
+    },
+    "push": {
+      "heading": "Push notifications",
+      "description": "A system notification about new work items others create in the projects you choose. Turn them on in every browser where you want them.",
+      "unavailable": "Push notifications are not available on this server.",
+      "browser": {
+        "title": "This browser",
+        "loading": "Checking this browser…",
+        "unsupported": "This browser does not support push notifications.",
+        "denied": "Notifications are blocked for this site. Allow them in the browser settings, then reload the page.",
+        "off": "Notifications are off in this browser.",
+        "on": "Notifications are on in this browser."
+      },
+      "enable": "Enable in this browser",
+      "disable": "Turn off",
+      "send_test": "Send a test",
+      "test_sent": "Test notification sent",
+      "projects": "Projects in {workspace}",
+      "errors": {
+        "enable": "Could not turn on notifications in this browser.",
+        "disable": "Could not turn off notifications in this browser.",
+        "projects": "Could not save the projects.",
+        "test": "Could not send a test notification."
+      }
     }
   }
 }
