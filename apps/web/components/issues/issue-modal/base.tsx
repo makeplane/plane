@@ -410,7 +410,10 @@ export const CreateUpdateIssueModalBase = observer(function CreateUpdateIssueMod
   return (
     /* The modal it replaces passed no `handleClose`, so only its own form dismisses it. */
     <Dialog open={isOpen} disablePointerDismissal onOpenChange={() => {}}>
-      <DialogContent size="lg">
+      {/* The modal is often rendered inside a clickable host, such as a list row's quick actions
+          wrapper that calls `preventDefault()` on click. React events bubble through the portal, so
+          stop clicks here or the host cancels the form submit. The replaced modal's panel did the same. */}
+      <DialogContent size="lg" onClick={(e) => e.stopPropagation()}>
         {withDraftIssueWrapper ? (
           <DraftIssueLayout {...commonIssueModalProps} changesMade={changesMade} onChange={handleFormChange} />
         ) : (
