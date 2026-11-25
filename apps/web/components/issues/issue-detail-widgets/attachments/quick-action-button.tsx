@@ -63,13 +63,8 @@ export const IssueAttachmentActionButton = observer(function IssueAttachmentActi
         setIsLoading(true);
         attachmentOperations
           .create(currentFile)
-          .catch(() => {
-            setToast({
-              type: "error",
-              title: "Error!",
-              message: "File could not be attached. Try uploading again.",
-            });
-          })
+          // create() already shows the error toast
+          .catch(() => {})
           .finally(() => {
             handleFetchPropertyActivities();
             setLastWidgetAction("attachments");

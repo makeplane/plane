@@ -132,7 +132,11 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
-                {"error": "Invalid file type.", "status": False},
+                {
+                    "error": "This file type isn't supported. You can attach images, documents, spreadsheets, "
+                    "presentations, text files, audio, video, archives, 3D models and fonts.",
+                    "status": False,
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

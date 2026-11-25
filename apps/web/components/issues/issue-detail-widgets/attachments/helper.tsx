@@ -50,7 +50,9 @@ export const useAttachmentOperations = (
           },
           error: {
             title: "Attachment not uploaded",
-            message: () => "The attachment could not be uploaded",
+            // the upload service rejects with the API's response body, e.g. an unsupported file type
+            message: (error) =>
+              (error as { error?: string } | undefined)?.error ?? "The attachment could not be uploaded",
           },
         });
 
