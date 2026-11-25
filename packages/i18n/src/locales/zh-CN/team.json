@@ -61,5 +61,77 @@
       "orphaned_project": "会有项目没有管理员。",
       "archived": "项目组合或其团队已归档。"
     }
+  },
+  "product": {
+    "kind": "类别",
+    "kinds": {
+      "task": "任务",
+      "product": "产品"
+    },
+    "type": "产品类型",
+    "types": "产品类型",
+    "types_description": "产品类型及其各自的要求。",
+    "select_type": "选择产品类型",
+    "owner": "负责人",
+    "requirements": "产品要求",
+    "open_requirements": "打开",
+    "no_requirements": "暂无要求",
+    "requirements_placeholder": "描述此类型的产品必须包含的内容",
+    "progress": "进度",
+    "manual_progress": "手动进度（%）",
+    "manual_progress_hint": "留空则使用计算得出的进度。",
+    "calculated": "按任务：{progress}（{completed}/{total}）",
+    "completed_with_open_tasks": "产品已完成，但仍有未完成的任务。",
+    "status_comment": "状态备注",
+    "products": "产品",
+    "no_products": "暂无产品",
+    "dates": "日期",
+    "indicator": "期限状态",
+    "active": "启用",
+    "move_up": "上移",
+    "move_down": "下移",
+    "color": "颜色",
+    "create_type": "创建类型",
+    "edit_type": "编辑类型",
+    "delete_type": {
+      "title": "删除产品类型",
+      "description": "类型“{name}”将被删除。"
+    },
+    "make_product": "转为产品",
+    "make_task": "转为任务",
+    "outside_dates": "日期超出了产品的日期范围。",
+    "delete_keeps_items": "产品的任务将保留在项目中。",
+    "items": "任务",
+    "indicators": {
+      "completed": "已完成",
+      "cancelled": "已取消",
+      "overdue": "已逾期",
+      "at_risk": "有风险",
+      "not_started": "未开始",
+      "on_track": "按期"
+    },
+    "summary": {
+      "total": "总计",
+      "in_progress": "进行中",
+      "overdue": "已逾期",
+      "completed": "已完成"
+    },
+    "history": {
+      "kind": "类别",
+      "product_type": "产品类型",
+      "product_owner": "负责人",
+      "manual_progress": "手动进度",
+      "status_comment": "状态备注"
+    },
+    "errors": {
+      "type_in_use": "该类型正在使用中，只能停用。",
+      "has_items": "请先取消关联产品的任务。",
+      "has_parent": "请先移除父级。",
+      "in_cycle": "请先将其移出周期和模块。",
+      "no_parent": "产品不能有父级。",
+      "owner": "负责人必须是项目成员。",
+      "type_unavailable": "此产品类型不可用。",
+      "required": "请选择产品类型、负责人、开始日期和截止日期。"
+    }
   }
 }

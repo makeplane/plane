@@ -1,3 +1,4 @@
+// oxlint-disable typescript/no-duplicate-enum-values
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -35,6 +36,7 @@ export enum EIssueGroupByToServerOptions {
   "target_date" = "target_date",
   "project" = "project_id",
   "created_by" = "created_by",
+  "kind" = "type__kind",
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "team_project" = "project_id",
 }
@@ -50,6 +52,7 @@ export enum EIssueGroupBYServerToProperty {
   "target_date" = "target_date",
   "project_id" = "project_id",
   "created_by" = "created_by",
+  "type__kind" = "kind",
 }
 
 export enum EIssueCommentAccessSpecifier {
@@ -124,6 +127,7 @@ export const ISSUE_GROUP_BY_OPTIONS: {
   { key: "labels", titleTranslationKey: "common.labels" },
   { key: "assignees", titleTranslationKey: "common.assignees" },
   { key: "created_by", titleTranslationKey: "common.created_by" },
+  { key: "kind", titleTranslationKey: "product.kind" },
   { key: null, titleTranslationKey: "common.none" },
 ];
 

@@ -10,7 +10,14 @@ import type { EUserWorkspaceRoles } from "./workspace";
 
 export type TProfileSettingsTabs = "general" | "preferences" | "notifications" | "security" | "api-tokens";
 
-export type TWorkspaceSettingsTabs = "general" | "members" | "teams" | "billing-and-plans" | "export" | "webhooks";
+export type TWorkspaceSettingsTabs =
+  | "general"
+  | "members"
+  | "teams"
+  | "product-types"
+  | "billing-and-plans"
+  | "export"
+  | "webhooks";
 export type TWorkspaceSettingsItem = {
   key: TWorkspaceSettingsTabs;
   i18n_label: string;

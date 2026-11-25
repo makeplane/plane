@@ -8,6 +8,7 @@ import type { IconGlyph } from "@makeplane/propel/components/icon";
 import {
   BillingsOutline,
   BuildingOutline,
+  CubeOutline,
   ExportOutline,
   MembersOutline,
   TeamspacesOutline,
@@ -21,6 +22,7 @@ export const WORKSPACE_SETTINGS_ICONS: Record<TWorkspaceSettingsTabs, IconGlyph 
   general: BuildingOutline,
   members: MembersOutline,
   teams: TeamspacesOutline,
+  "product-types": CubeOutline,
   export: ExportOutline,
   "billing-and-plans": BillingsOutline,
   webhooks: WebhooksOutline,

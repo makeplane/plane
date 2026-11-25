@@ -116,6 +116,7 @@ class GlobalSearchEndpoint(BaseAPIView):
             "project__identifier",
             "project_id",
             "workspace__slug",
+            "type__kind",
         )[:100]
 
     def filter_cycles(self, query, slug, project_id, workspace_search):

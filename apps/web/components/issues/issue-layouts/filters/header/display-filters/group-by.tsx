@@ -14,6 +14,8 @@ import {
 } from "@makeplane/propel/components/menu";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
+// hooks
+import { useTeam } from "@/hooks/store/use-team";
 // helpers
 import { useGroupByOptions } from "../../../utils";
 // local imports
@@ -30,6 +32,7 @@ export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
   const { displayFilters, groupByOptions, handleUpdate, ignoreGroupedFilters } = props;
   // hooks
   const { t } = useTranslation();
+  const { isEnabled: areProductsEnabled } = useTeam();
 
   const selectedGroupBy = displayFilters?.group_by ?? null;
   const selectedSubGroupBy = displayFilters?.sub_group_by ?? null;
@@ -38,6 +41,7 @@ export const FilterGroupBy = observer(function FilterGroupBy(props: Props) {
     // a board can't group and sub-group by the same property
     if (displayFilters?.layout === "kanban" && selectedSubGroupBy !== null && groupBy.key === selectedSubGroupBy)
       return false;
+    if (groupBy.key === "kind" && !areProductsEnabled) return false;
     return !ignoreGroupedFilters.includes(groupBy?.key);
   });
   const selectedOption = options.find((option) => option.key === selectedGroupBy);

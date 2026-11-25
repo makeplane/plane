@@ -61,5 +61,77 @@
       "orphaned_project": "Bir proje yöneticisiz kalacak.",
       "archived": "Portföy veya ekibi arşivlenmiş."
     }
+  },
+  "product": {
+    "kind": "Tür",
+    "kinds": {
+      "task": "Görev",
+      "product": "Ürün"
+    },
+    "type": "Ürün türü",
+    "types": "Ürün türleri",
+    "types_description": "Ürün türleri ve her birinin gereksinimleri.",
+    "select_type": "Ürün türü seçin",
+    "owner": "Sorumlu",
+    "requirements": "Ürün gereksinimleri",
+    "open_requirements": "Aç",
+    "no_requirements": "Henüz gereksinim yok",
+    "requirements_placeholder": "Bu türdeki bir ürünün neleri içermesi gerektiğini açıklayın",
+    "progress": "İlerleme",
+    "manual_progress": "Elle girilen ilerleme, %",
+    "manual_progress_hint": "Hesaplanan ilerlemeyi kullanmak için boş bırakın.",
+    "calculated": "Görevlere göre: {progress} ({completed}/{total})",
+    "completed_with_open_tasks": "Ürün tamamlandı ancak hâlâ açık görevleri var.",
+    "status_comment": "Durum yorumu",
+    "products": "Ürünler",
+    "no_products": "Henüz ürün yok",
+    "dates": "Tarihler",
+    "indicator": "Süre durumu",
+    "active": "Etkin",
+    "move_up": "Yukarı taşı",
+    "move_down": "Aşağı taşı",
+    "color": "Renk",
+    "create_type": "Tür oluştur",
+    "edit_type": "Türü düzenle",
+    "delete_type": {
+      "title": "Ürün türünü sil",
+      "description": "“{name}” türü silinecek."
+    },
+    "make_product": "Ürüne dönüştür",
+    "make_task": "Göreve dönüştür",
+    "outside_dates": "Tarihler ürünün tarihlerinin dışında.",
+    "delete_keeps_items": "Ürünün görevleri projede kalacak.",
+    "items": "Görevler",
+    "indicators": {
+      "completed": "Tamamlandı",
+      "cancelled": "İptal edildi",
+      "overdue": "Gecikmiş",
+      "at_risk": "Riskli",
+      "not_started": "Başlamadı",
+      "on_track": "Zamanında"
+    },
+    "summary": {
+      "total": "Toplam",
+      "in_progress": "Devam ediyor",
+      "overdue": "Gecikmiş",
+      "completed": "Tamamlandı"
+    },
+    "history": {
+      "kind": "Tür",
+      "product_type": "Ürün türü",
+      "product_owner": "Sorumlu",
+      "manual_progress": "Elle girilen ilerleme",
+      "status_comment": "Durum yorumu"
+    },
+    "errors": {
+      "type_in_use": "Tür kullanımda. Bunun yerine devre dışı bırakın.",
+      "has_items": "Önce ürünün görevlerinin bağlantısını kaldırın.",
+      "has_parent": "Önce üst öğeyi kaldırın.",
+      "in_cycle": "Önce öğeyi döngüden ve modüllerden çıkarın.",
+      "no_parent": "Bir ürünün üst öğesi olamaz.",
+      "owner": "Sorumlu kişi proje üyesi olmalıdır.",
+      "type_unavailable": "Bu ürün türü kullanılamıyor.",
+      "required": "Ürün türünü, sorumluyu, başlangıç ve bitiş tarihlerini seçin."
+    }
   }
 }

@@ -114,7 +114,7 @@ export const IssueDetailMetaRow = observer(function IssueDetailMetaRow(props: Pr
             }
             maxDate={maxDate}
             disabled={disabled}
-            clearable
+            clearable={issue.kind !== "product"}
             icon={<StartDateOutline />}
             weekStartsOn={userProfile?.start_of_the_week}
             variant="select-ghost-lg"
@@ -137,7 +137,7 @@ export const IssueDetailMetaRow = observer(function IssueDetailMetaRow(props: Pr
             }
             minDate={minDate}
             disabled={disabled}
-            clearable
+            clearable={issue.kind !== "product"}
             className={getIssueDueDateClassName(issue.target_date, stateDetails?.group)}
             icon={<DueDateOutline />}
             weekStartsOn={userProfile?.start_of_the_week}

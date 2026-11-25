@@ -15,6 +15,8 @@ import {
 import { ISSUE_GROUP_BY_OPTIONS } from "@plane/constants";
 import { useTranslation } from "@plane/i18n";
 import type { IIssueDisplayFilterOptions, TIssueGroupByOptions } from "@plane/types";
+// hooks
+import { useTeam } from "@/hooks/store/use-team";
 // local imports
 import { DisplayFilterCurrentValue } from "./current-value";
 
@@ -29,6 +31,7 @@ export const FilterSubGroupBy = observer(function FilterSubGroupBy(props: Props)
   const { displayFilters, handleUpdate, subGroupByOptions, ignoreGroupedFilters } = props;
   // hooks
   const { t } = useTranslation();
+  const { isEnabled: areProductsEnabled } = useTeam();
 
   const selectedGroupBy = displayFilters.group_by ?? null;
   const selectedSubGroupBy = displayFilters.sub_group_by ?? null;
@@ -37,6 +40,7 @@ export const FilterSubGroupBy = observer(function FilterSubGroupBy(props: Props)
     if (!subGroupByOptions.includes(option.key)) return false;
     // a board can't group and sub-group by the same property
     if (selectedGroupBy !== null && option.key === selectedGroupBy) return false;
+    if (option.key === "kind" && !areProductsEnabled) return false;
     return !ignoreGroupedFilters.includes(option.key);
   });
   const selectedOption = options.find((option) => option.key === selectedSubGroupBy);

@@ -61,5 +61,77 @@
       "orphaned_project": "Un projet se retrouverait sans administrateur.",
       "archived": "Le portefeuille ou son équipe est archivé."
     }
+  },
+  "product": {
+    "kind": "Nature",
+    "kinds": {
+      "task": "Tâche",
+      "product": "Produit"
+    },
+    "type": "Type de produit",
+    "types": "Types de produits",
+    "types_description": "Types de produits et exigences pour chacun d’eux.",
+    "select_type": "Sélectionner un type de produit",
+    "owner": "Responsable",
+    "requirements": "Exigences du produit",
+    "open_requirements": "Ouvrir",
+    "no_requirements": "Aucune exigence pour le moment",
+    "requirements_placeholder": "Décrivez ce qu’un produit de ce type doit contenir",
+    "progress": "Progression",
+    "manual_progress": "Progression manuelle, %",
+    "manual_progress_hint": "Laissez vide pour utiliser la progression calculée.",
+    "calculated": "D’après les tâches : {progress} ({completed} sur {total})",
+    "completed_with_open_tasks": "Le produit est terminé, mais il a encore des tâches ouvertes.",
+    "status_comment": "Commentaire de statut",
+    "products": "Produits",
+    "no_products": "Aucun produit pour le moment",
+    "dates": "Dates",
+    "indicator": "État de l’échéance",
+    "active": "Actif",
+    "move_up": "Monter",
+    "move_down": "Descendre",
+    "color": "Couleur",
+    "create_type": "Créer un type",
+    "edit_type": "Modifier le type",
+    "delete_type": {
+      "title": "Supprimer le type de produit",
+      "description": "Le type « {name} » sera supprimé."
+    },
+    "make_product": "Convertir en produit",
+    "make_task": "Convertir en tâche",
+    "outside_dates": "Les dates sont en dehors de celles du produit.",
+    "delete_keeps_items": "Les tâches du produit resteront dans le projet.",
+    "items": "Tâches",
+    "indicators": {
+      "completed": "Terminé",
+      "cancelled": "Annulé",
+      "overdue": "En retard",
+      "at_risk": "À risque",
+      "not_started": "Non commencé",
+      "on_track": "Dans les temps"
+    },
+    "summary": {
+      "total": "Total",
+      "in_progress": "En cours",
+      "overdue": "En retard",
+      "completed": "Terminés"
+    },
+    "history": {
+      "kind": "Nature",
+      "product_type": "Type de produit",
+      "product_owner": "Responsable",
+      "manual_progress": "Progression manuelle",
+      "status_comment": "Commentaire de statut"
+    },
+    "errors": {
+      "type_in_use": "Ce type est utilisé. Désactivez-le plutôt.",
+      "has_items": "Dissociez d’abord les tâches du produit.",
+      "has_parent": "Retirez d’abord le parent de l’élément.",
+      "in_cycle": "Retirez d’abord l’élément de son cycle et de ses modules.",
+      "no_parent": "Un produit ne peut pas avoir de parent.",
+      "owner": "Le responsable doit être membre du projet.",
+      "type_unavailable": "Ce type de produit n’est pas disponible.",
+      "required": "Choisissez le type de produit, le responsable, la date de début et la date d’échéance."
+    }
   }
 }

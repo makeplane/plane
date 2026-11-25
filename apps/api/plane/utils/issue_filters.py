@@ -380,6 +380,19 @@ def filter_inbox_status(params, issue_filter, method, prefix=""):
     return issue_filter
 
 
+def filter_kind(params, issue_filter, method, prefix=""):
+    kinds = params.get("kind")
+    kinds = kinds.split(",") if isinstance(kinds, str) else (kinds or [])
+    # Tasks have no kind, so a group of them is called None.
+    tasks = "None" in kinds or "task" in kinds
+    others = [kind for kind in kinds if kind not in ("None", "task", "null", "")]
+    if tasks and not others:
+        issue_filter[f"{prefix}type__kind__isnull"] = True
+    elif others and not tasks:
+        issue_filter[f"{prefix}type__kind__in"] = others
+    return issue_filter
+
+
 def filter_sub_issue_toggle(params, issue_filter, method, prefix=""):
     if params.get("sub_issue", "false") != "false":
         return issue_filter
@@ -457,6 +470,7 @@ def issue_filters(query_params, method, prefix=""):
         "intake_status": filter_intake_status,
         "inbox_status": filter_inbox_status,
         "sub_issue": filter_sub_issue_toggle,
+        "kind": filter_kind,
         "subscriber": filter_subscribed_issues,
         "start_target_date": filter_start_target_date_issues,
     }

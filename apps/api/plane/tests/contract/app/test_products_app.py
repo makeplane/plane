@@ -389,6 +389,9 @@ class TestLists:
         assert ids(get({"filters": '{"kind": "product"}'})) == {str(product.id)}
         assert ids(get({"filters": '{"kind__in": "task"}'})) == {str(i.id) for i in (child, plain, nested)}
         assert ids(get({"sub_issue": "false"})) == {str(i.id) for i in (product, child, plain)}
+        # Loading more of one group
+        assert ids(get({"kind": "product"})) == {str(product.id)}
+        assert ids(get({"kind": "None"})) == {str(i.id) for i in (child, plain, nested)}
         grouped = get({"group_by": "type__kind"})["results"]
         assert grouped["product"]["total_results"] == 1
         assert grouped["None"]["total_results"] == 3

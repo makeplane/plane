@@ -61,5 +61,77 @@
       "orphaned_project": "Un proiect ar rămâne fără administrator.",
       "archived": "Portofoliul sau echipa acestuia este arhivată."
     }
+  },
+  "product": {
+    "kind": "Fel",
+    "kinds": {
+      "task": "Sarcină",
+      "product": "Produs"
+    },
+    "type": "Tip de produs",
+    "types": "Tipuri de produse",
+    "types_description": "Tipuri de produse și cerințele pentru fiecare.",
+    "select_type": "Selectează un tip de produs",
+    "owner": "Responsabil",
+    "requirements": "Cerințe pentru produs",
+    "open_requirements": "Deschide",
+    "no_requirements": "Încă nu există cerințe",
+    "requirements_placeholder": "Descrie ce trebuie să conțină un produs de acest tip",
+    "progress": "Progres",
+    "manual_progress": "Progres manual, %",
+    "manual_progress_hint": "Lasă gol pentru a folosi progresul calculat.",
+    "calculated": "După sarcini: {progress} ({completed} din {total})",
+    "completed_with_open_tasks": "Produsul este finalizat, dar mai are sarcini deschise.",
+    "status_comment": "Comentariu de stare",
+    "products": "Produse",
+    "no_products": "Încă nu există produse",
+    "dates": "Date",
+    "indicator": "Starea termenului",
+    "active": "Activ",
+    "move_up": "Mută în sus",
+    "move_down": "Mută în jos",
+    "color": "Culoare",
+    "create_type": "Creează tip",
+    "edit_type": "Editează tipul",
+    "delete_type": {
+      "title": "Șterge tipul de produs",
+      "description": "Tipul „{name}” va fi șters."
+    },
+    "make_product": "Transformă în produs",
+    "make_task": "Transformă în sarcină",
+    "outside_dates": "Datele sunt în afara datelor produsului.",
+    "delete_keeps_items": "Sarcinile produsului vor rămâne în proiect.",
+    "items": "Sarcini",
+    "indicators": {
+      "completed": "Finalizat",
+      "cancelled": "Anulat",
+      "overdue": "Întârziat",
+      "at_risk": "În risc",
+      "not_started": "Neînceput",
+      "on_track": "La timp"
+    },
+    "summary": {
+      "total": "Total",
+      "in_progress": "În lucru",
+      "overdue": "Întârziate",
+      "completed": "Finalizate"
+    },
+    "history": {
+      "kind": "Fel",
+      "product_type": "Tip de produs",
+      "product_owner": "Responsabil",
+      "manual_progress": "Progres manual",
+      "status_comment": "Comentariu de stare"
+    },
+    "errors": {
+      "type_in_use": "Tipul este folosit. Îl poți doar dezactiva.",
+      "has_items": "Mai întâi desprinde sarcinile produsului.",
+      "has_parent": "Mai întâi elimină elementul părinte.",
+      "in_cycle": "Mai întâi elimină elementul din ciclu și module.",
+      "no_parent": "Un produs nu poate avea element părinte.",
+      "owner": "Responsabilul trebuie să fie membru al proiectului.",
+      "type_unavailable": "Acest tip de produs nu este disponibil.",
+      "required": "Alege tipul de produs, responsabilul, data de început și data limită."
+    }
   }
 }

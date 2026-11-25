@@ -30,6 +30,7 @@ import { PrioritySelect } from "@/components/dropdowns/priority/priority-select"
 import { StateSelect } from "@/components/dropdowns/state/state-select";
 import { ParentIssuesListModal } from "@/components/issues/parent-issues-list-modal";
 import { IssueIdentifier } from "@/components/issues/issue-detail/issue-identifier";
+import { ProductFormFields } from "@/components/products/form-fields";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useProject } from "@/hooks/store/use-project";
@@ -47,6 +48,7 @@ type TIssueDefaultPropertiesProps = {
   targetDate: string | null;
   parentId: string | null;
   isDraft: boolean;
+  isProduct?: boolean;
   handleFormChange: () => void;
   setSelectedParentIssue: (issue: ISearchIssueResponse) => void;
 };
@@ -62,6 +64,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
     targetDate,
     parentId,
     isDraft,
+    isProduct = false,
     handleFormChange,
     setSelectedParentIssue,
   } = props;
@@ -87,6 +90,24 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      {isProduct && !id && (
+        <Controller
+          control={control}
+          name="product"
+          render={({ field: { value, onChange } }) => (
+            <ProductFormFields
+              workspaceSlug={workspaceSlug}
+              projectId={projectId}
+              value={value ?? {}}
+              onChange={(product) => {
+                onChange(product);
+                handleFormChange();
+              }}
+              variant="pill-md"
+            />
+          )}
+        />
+      )}
       <Controller
         control={control}
         name="state_id"
@@ -200,7 +221,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           />
         )}
       />
-      {projectDetails?.cycle_view && projectId && (
+      {!isProduct && projectDetails?.cycle_view && projectId && (
         <Controller
           control={control}
           name="cycle_id"
@@ -220,7 +241,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           )}
         />
       )}
-      {projectDetails?.module_view && workspaceSlug && projectId && (
+      {!isProduct && projectDetails?.module_view && workspaceSlug && projectId && (
         <Controller
           control={control}
           name="module_ids"
@@ -240,7 +261,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           )}
         />
       )}
-      {projectId && areEstimateEnabledByProjectId(projectId) && (
+      {!isProduct && projectId && areEstimateEnabledByProjectId(projectId) && (
         <Controller
           control={control}
           name="estimate_point"
@@ -259,7 +280,7 @@ export const IssueDefaultProperties = observer(function IssueDefaultProperties(p
           )}
         />
       )}
-      {parentId ? (
+      {isProduct ? null : parentId ? (
         <Menu>
           <MenuTrigger
             tabIndex={getIndex("parent_id")}

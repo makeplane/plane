@@ -61,5 +61,77 @@
       "orphaned_project": "會有專案沒有管理員。",
       "archived": "專案組合或其團隊已封存。"
     }
+  },
+  "product": {
+    "kind": "類別",
+    "kinds": {
+      "task": "任務",
+      "product": "產品"
+    },
+    "type": "產品類型",
+    "types": "產品類型",
+    "types_description": "產品類型及其各自的要求。",
+    "select_type": "選擇產品類型",
+    "owner": "負責人",
+    "requirements": "產品要求",
+    "open_requirements": "開啟",
+    "no_requirements": "尚無要求",
+    "requirements_placeholder": "描述此類型的產品必須包含的內容",
+    "progress": "進度",
+    "manual_progress": "手動進度（%）",
+    "manual_progress_hint": "留空則使用計算得出的進度。",
+    "calculated": "依任務：{progress}（{completed}/{total}）",
+    "completed_with_open_tasks": "產品已完成，但仍有未完成的任務。",
+    "status_comment": "狀態備註",
+    "products": "產品",
+    "no_products": "尚無產品",
+    "dates": "日期",
+    "indicator": "期限狀態",
+    "active": "啟用",
+    "move_up": "上移",
+    "move_down": "下移",
+    "color": "顏色",
+    "create_type": "建立類型",
+    "edit_type": "編輯類型",
+    "delete_type": {
+      "title": "刪除產品類型",
+      "description": "類型「{name}」將被刪除。"
+    },
+    "make_product": "轉為產品",
+    "make_task": "轉為任務",
+    "outside_dates": "日期超出了產品的日期範圍。",
+    "delete_keeps_items": "產品的任務將保留在專案中。",
+    "items": "任務",
+    "indicators": {
+      "completed": "已完成",
+      "cancelled": "已取消",
+      "overdue": "已逾期",
+      "at_risk": "有風險",
+      "not_started": "未開始",
+      "on_track": "如期"
+    },
+    "summary": {
+      "total": "總計",
+      "in_progress": "進行中",
+      "overdue": "已逾期",
+      "completed": "已完成"
+    },
+    "history": {
+      "kind": "類別",
+      "product_type": "產品類型",
+      "product_owner": "負責人",
+      "manual_progress": "手動進度",
+      "status_comment": "狀態備註"
+    },
+    "errors": {
+      "type_in_use": "此類型正在使用中，只能停用。",
+      "has_items": "請先取消連結產品的任務。",
+      "has_parent": "請先移除父級。",
+      "in_cycle": "請先將其移出週期和模組。",
+      "no_parent": "產品不能有父級。",
+      "owner": "負責人必須是專案成員。",
+      "type_unavailable": "此產品類型無法使用。",
+      "required": "請選擇產品類型、負責人、開始日期和截止日期。"
+    }
   }
 }

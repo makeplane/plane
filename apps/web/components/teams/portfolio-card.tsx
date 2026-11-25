@@ -19,6 +19,7 @@ import { useTranslation } from "@plane/i18n";
 import type { TPortfolio } from "@plane/types";
 // components
 import { CreateProjectModal } from "@/components/project/create-project-modal";
+import { PortfolioProductSummary } from "@/components/products/product-list";
 // hooks
 import { useTeam } from "@/hooks/store/use-team";
 // local imports
@@ -128,6 +129,7 @@ export const PortfolioCard = observer(function PortfolioCard(props: Props) {
         )}
       </div>
       {portfolio.description && <p className="text-body-xs-regular text-tertiary">{portfolio.description}</p>}
+      {!isLinked && <PortfolioProductSummary workspaceSlug={workspaceSlug} portfolioId={portfolio.id} />}
       <PortfolioProjects workspaceSlug={workspaceSlug} portfolioId={portfolio.id} />
     </section>
   );

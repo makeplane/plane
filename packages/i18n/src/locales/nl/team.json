@@ -61,5 +61,77 @@
       "orphaned_project": "Een project zou zonder beheerder blijven.",
       "archived": "Het portfolio of het team ervan is gearchiveerd."
     }
+  },
+  "product": {
+    "kind": "Soort",
+    "kinds": {
+      "task": "Taak",
+      "product": "Product"
+    },
+    "type": "Producttype",
+    "types": "Producttypen",
+    "types_description": "Producttypen en de eisen voor elk type.",
+    "select_type": "Selecteer een producttype",
+    "owner": "Verantwoordelijke",
+    "requirements": "Eisen aan het product",
+    "open_requirements": "Openen",
+    "no_requirements": "Nog geen eisen",
+    "requirements_placeholder": "Beschrijf wat een product van dit type moet bevatten",
+    "progress": "Voortgang",
+    "manual_progress": "Handmatige voortgang, %",
+    "manual_progress_hint": "Laat leeg om de berekende voortgang te gebruiken.",
+    "calculated": "Op basis van taken: {progress} ({completed} van {total})",
+    "completed_with_open_tasks": "Het product is voltooid, maar heeft nog open taken.",
+    "status_comment": "Statusopmerking",
+    "products": "Producten",
+    "no_products": "Nog geen producten",
+    "dates": "Datums",
+    "indicator": "Deadlinestatus",
+    "active": "Actief",
+    "move_up": "Omhoog",
+    "move_down": "Omlaag",
+    "color": "Kleur",
+    "create_type": "Type aanmaken",
+    "edit_type": "Type bewerken",
+    "delete_type": {
+      "title": "Producttype verwijderen",
+      "description": "Het type ‘{name}’ wordt verwijderd."
+    },
+    "make_product": "Product van maken",
+    "make_task": "Taak van maken",
+    "outside_dates": "De datums vallen buiten de datums van het product.",
+    "delete_keeps_items": "De taken van het product blijven in het project.",
+    "items": "Taken",
+    "indicators": {
+      "completed": "Voltooid",
+      "cancelled": "Geannuleerd",
+      "overdue": "Te laat",
+      "at_risk": "Risico",
+      "not_started": "Niet gestart",
+      "on_track": "Op schema"
+    },
+    "summary": {
+      "total": "Totaal",
+      "in_progress": "Bezig",
+      "overdue": "Te laat",
+      "completed": "Voltooid"
+    },
+    "history": {
+      "kind": "Soort",
+      "product_type": "Producttype",
+      "product_owner": "Verantwoordelijke",
+      "manual_progress": "Handmatige voortgang",
+      "status_comment": "Statusopmerking"
+    },
+    "errors": {
+      "type_in_use": "Het type is in gebruik. Je kunt het alleen uitschakelen.",
+      "has_items": "Ontkoppel eerst de taken van het product.",
+      "has_parent": "Verwijder eerst het bovenliggende item.",
+      "in_cycle": "Verwijder het item eerst uit de cyclus en modules.",
+      "no_parent": "Een product kan geen bovenliggend item hebben.",
+      "owner": "De verantwoordelijke moet projectlid zijn.",
+      "type_unavailable": "Dit producttype is niet beschikbaar.",
+      "required": "Kies het producttype, de verantwoordelijke, de startdatum en de einddatum."
+    }
   }
 }

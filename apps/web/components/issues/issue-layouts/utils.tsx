@@ -13,6 +13,7 @@ import type { FC } from "react";
 import {
   AttachOutline,
   CalendarOutline,
+  CubeOutline,
   CyclesOutline,
   DueDateOutline,
   EstimateOutline,
@@ -28,6 +29,7 @@ import {
 // plane types
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { EIconSize, ISSUE_PRIORITIES, STATE_GROUPS } from "@plane/constants";
+import { i18nInstance } from "@plane/i18n";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 import type { ISvgIcons } from "@plane/blocks/icons";
 import { CycleGroupIcon, PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
@@ -153,6 +155,7 @@ export const getGroupByColumns = ({
     assignees: getAssigneeColumns,
     created_by: getCreatedByColumns,
     team_project: getTeamProjectColumns,
+    kind: getKindColumns,
   };
 
   // Get and return the columns for the specified group by option
@@ -270,6 +273,21 @@ const getStateGroupColumns = (): IGroupByColumn[] => {
     payload: {},
   }));
 };
+
+const getKindColumns = (): IGroupByColumn[] => [
+  {
+    id: "product",
+    name: i18nInstance.t("product.kinds.product"),
+    icon: <CubeOutline className="size-3.5" />,
+    payload: {},
+  },
+  {
+    id: "None",
+    name: i18nInstance.t("product.kinds.task"),
+    icon: <WorkItemsOutline className="size-3.5" />,
+    payload: {},
+  },
+];
 
 const getPriorityColumns = (): IGroupByColumn[] => {
   const priorities = ISSUE_PRIORITIES;

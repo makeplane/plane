@@ -54,6 +54,7 @@ export const POWER_K_SEARCH_RESULTS_GROUPS_MAP: Record<TPowerKSearchResultsKeys,
         issueTypeId={workItem.type_id}
         projectIdentifier={workItem.project__identifier}
         issueSequenceId={workItem.sequence_id}
+        isProduct={workItem.type__kind === "product"}
         size="xs"
       />
     ),

@@ -451,7 +451,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
     });
   }
 
-  if (!isEpic) {
+  if (!isEpic && issue.kind !== "product") {
     // modules
     if (projectDetails?.module_view && isShown("modules")) {
       const moduleIds = issue.module_ids ?? [];
@@ -511,7 +511,12 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
   }
 
   // estimates
-  if (projectId && areEstimateEnabledByProjectId(projectId?.toString()) && isShown("estimate")) {
+  if (
+    issue.kind !== "product" &&
+    projectId &&
+    areEstimateEnabledByProjectId(projectId?.toString()) &&
+    isShown("estimate")
+  ) {
     const renderEstimate = (extra: TPropertyEditorProps) => (
       <EstimateSelect
         value={issue.estimate_point ?? undefined}

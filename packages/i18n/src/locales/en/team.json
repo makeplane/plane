@@ -61,5 +61,77 @@
       "orphaned_project": "A project would be left without an admin.",
       "archived": "The portfolio or its team is archived."
     }
+  },
+  "product": {
+    "kind": "Kind",
+    "kinds": {
+      "task": "Task",
+      "product": "Product"
+    },
+    "type": "Product type",
+    "types": "Product types",
+    "types_description": "Types of products and the requirements for each of them.",
+    "select_type": "Select a product type",
+    "owner": "Owner",
+    "requirements": "Requirements for the product",
+    "open_requirements": "Open",
+    "no_requirements": "No requirements yet",
+    "requirements_placeholder": "Describe what a product of this type must contain",
+    "progress": "Progress",
+    "manual_progress": "Manual progress, %",
+    "manual_progress_hint": "Leave empty to use the calculated progress.",
+    "calculated": "By tasks: {progress} ({completed} of {total})",
+    "completed_with_open_tasks": "The product is completed, but it still has open tasks.",
+    "status_comment": "Status comment",
+    "products": "Products",
+    "no_products": "No products yet",
+    "dates": "Dates",
+    "indicator": "Deadline status",
+    "active": "Active",
+    "move_up": "Move up",
+    "move_down": "Move down",
+    "color": "Color",
+    "create_type": "Create type",
+    "edit_type": "Edit type",
+    "delete_type": {
+      "title": "Delete product type",
+      "description": "The type “{name}” will be deleted."
+    },
+    "make_product": "Make a product",
+    "make_task": "Make a task",
+    "outside_dates": "The dates are outside the dates of the product.",
+    "delete_keeps_items": "Tasks of the product will stay in the project.",
+    "items": "Tasks",
+    "indicators": {
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "overdue": "Overdue",
+      "at_risk": "At risk",
+      "not_started": "Not started",
+      "on_track": "On track"
+    },
+    "summary": {
+      "total": "Total",
+      "in_progress": "In progress",
+      "overdue": "Overdue",
+      "completed": "Completed"
+    },
+    "history": {
+      "kind": "Kind",
+      "product_type": "Product type",
+      "product_owner": "Owner",
+      "manual_progress": "Manual progress",
+      "status_comment": "Status comment"
+    },
+    "errors": {
+      "type_in_use": "The type is in use. Disable it instead.",
+      "has_items": "Unlink the tasks of the product first.",
+      "has_parent": "Remove the parent of the work item first.",
+      "in_cycle": "Remove the work item from its cycle and modules first.",
+      "no_parent": "A product cannot have a parent.",
+      "owner": "The owner must be a member of the project.",
+      "type_unavailable": "This product type is not available.",
+      "required": "Choose the product type, owner, start date and due date."
+    }
   }
 }
