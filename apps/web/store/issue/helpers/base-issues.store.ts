@@ -124,6 +124,7 @@ export const ISSUE_GROUP_BY_KEY: Record<TIssueDisplayFilterOptions, keyof TIssue
   cycle: "cycle_id",
   module: "module_ids",
   team_project: "project_id",
+  kind: "kind",
 };
 
 export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof TIssue> = {
@@ -138,6 +139,7 @@ export const ISSUE_FILTER_DEFAULT_DATA: Record<TIssueDisplayFilterOptions, keyof
   assignees: "assignee_ids",
   target_date: "target_date",
   team_project: "project_id",
+  kind: "kind",
 };
 
 // This constant maps the order by keys to the respective issue property that the key relies on
@@ -1224,7 +1226,9 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
       for (const issueUpdate of issueUpdates) {
         //if update is add, add it at a particular path
         if (issueUpdate.action === EIssueGroupedAction.ADD) {
-          const isSubIssue = issue?.parent_id;
+          // a work item of a product is not a sub-work item
+          const parent = issue?.parent_id ? this.rootIssueStore.issues.getIssueById(issue.parent_id) : undefined;
+          const isSubIssue = issue?.parent_id && parent?.kind !== "product";
           if (isSubIssue && !isShowWorkItemsEnabled) continue;
           // add issue Id at the path
           update(this, ["groupedIssueIds", ...issueUpdate.path], (issueIds: string[] = []) =>
@@ -1646,6 +1650,8 @@ export abstract class BaseIssuesStore implements IBaseIssuesStore {
   ): string[] => {
     // if issue object is undefined return empty array
     if (!issueObject) return [];
+    // the server groups tasks under None
+    if (groupByKey === "kind") return [issueObject.kind === "product" ? "product" : "None"];
     // if value is not defined, return None value in array
     if (!value || isEmpty(value)) return ["None"];
     // if array return the array

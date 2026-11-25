@@ -1,3 +1,4 @@
+// oxlint-disable no-shadow
 /**
  * Copyright (c) 2023-present Plane Software, Inc. and contributors
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -8,6 +9,7 @@ import { useCallback, useMemo } from "react";
 import {
   AtOutline,
   CalendarOutline,
+  CubeOutline,
   CyclesOutline,
   DueDateOutline,
   LabelsOutline,
@@ -18,8 +20,10 @@ import {
   StartDateOutline,
   StateOutline,
   UserOutline,
+  WorkItemsOutline,
 } from "@makeplane/propel/icons";
 // plane imports
+import { useTranslation } from "@plane/i18n";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { CycleGroupIcon, PriorityIcon, StateGroupIcon } from "@plane/blocks/icons";
@@ -39,6 +43,7 @@ import {
   getCreatedAtFilterConfig,
   getCreatedByFilterConfig,
   getCycleFilterConfig,
+  getKindFilterConfig,
   getFileURL,
   getLabelFilterConfig,
   getMentionFilterConfig,
@@ -60,6 +65,7 @@ import { useMember } from "@/hooks/store/use-member";
 import { useModule } from "@/hooks/store/use-module";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useTeam } from "@/hooks/store/use-team";
 // plane web imports
 import { useFiltersOperatorConfigs } from "@/hooks/rich-filters/use-filters-operator-configs";
 
@@ -91,7 +97,9 @@ export type TWorkItemFiltersConfig = {
 export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps): TWorkItemFiltersConfig => {
   const { allowedFilters, cycleIds, labelIds, memberIds, moduleIds, projectId, projectIds, stateIds, workspaceSlug } =
     props;
+  const { t } = useTranslation();
   // store hooks
+  const { isEnabled: areProductsEnabled } = useTeam();
   const { loader: projectLoader, getProjectById } = useProject();
   const { getCycleById } = useCycle();
   const { getLabelById } = useLabel();
@@ -305,6 +313,28 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
     [isFilterEnabled, operatorConfigs]
   );
 
+  // kind filter config
+  const kindFilterConfig = useMemo(
+    () =>
+      getKindFilterConfig<TWorkItemFilterProperty>("kind")({
+        isEnabled: isFilterEnabled("kind") && areProductsEnabled,
+        filterIcon: CubeOutline,
+        label: t("product.kind"),
+        kinds: [
+          { key: "task", title: t("product.kinds.task") },
+          { key: "product", title: t("product.kinds.product") },
+        ],
+        getOptionIcon: (kind) =>
+          kind === "product" ? (
+            <CubeOutline className="size-3.5 flex-shrink-0" />
+          ) : (
+            <WorkItemsOutline className="size-3.5 flex-shrink-0" />
+          ),
+        ...operatorConfigs,
+      }),
+    [isFilterEnabled, areProductsEnabled, operatorConfigs, t]
+  );
+
   // start date filter config
   const startDateFilterConfig = useMemo(
     () =>
@@ -365,6 +395,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
   return {
     areAllConfigsInitialized,
     configs: [
+      kindFilterConfig,
       stateFilterConfig,
       stateGroupFilterConfig,
       assigneeFilterConfig,
@@ -382,6 +413,7 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
       subscriberFilterConfig,
     ],
     configMap: {
+      kind: kindFilterConfig,
       project_id: projectFilterConfig,
       state_group: stateGroupFilterConfig,
       state_id: stateFilterConfig,

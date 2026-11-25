@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@makeplane/propel/compo
 import type { TIssue } from "@plane/types";
 import { ControlLink } from "@plane/blocks/layout";
 import { cn, generateWorkItemLink } from "@plane/utils";
+import { ProductIcon } from "@/components/products/product-icon";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useIssues } from "@/hooks/store/use-issues";
@@ -134,6 +135,7 @@ export const CalendarIssueBlock = observer(
                         backgroundColor: stateColor,
                       }}
                     />
+                    {issue.kind === "product" && <ProductIcon />}
                     {showWorkItemKey && projectIdentifier && (
                       // In a narrow day cell the project key truncates before the sequence number does.
                       <span

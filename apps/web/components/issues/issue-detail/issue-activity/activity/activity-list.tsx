@@ -18,6 +18,7 @@ import {
   IssueStateActivity,
   IssueAssigneeActivity,
   IssuePriorityActivity,
+  IssueProductActivity,
   IssueEstimateActivity,
   IssueParentActivity,
   IssueRelationActivity,
@@ -88,6 +89,12 @@ export const IssueActivityItem = observer(function IssueActivityItem(props: TIss
       return <IssueAttachmentActivity {...componentDefaultProps} showIssue={false} />;
     case "archived_at":
       return <IssueArchivedAtActivity {...componentDefaultProps} />;
+    case "kind":
+    case "product_type":
+    case "product_owner":
+    case "manual_progress":
+    case "status_comment":
+      return <IssueProductActivity {...componentDefaultProps} />;
     case "intake":
     case "inbox":
       return <IssueInboxActivity {...componentDefaultProps} />;

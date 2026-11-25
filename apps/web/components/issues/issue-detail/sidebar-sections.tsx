@@ -23,6 +23,8 @@ import { calculateTimeAgo, cn, renderFormattedDate } from "@plane/utils";
 import { SidebarPropertyListItem } from "@/components/common/layout/sidebar/property-list-item";
 import { EstimateSelect } from "@/components/dropdowns/estimate/estimate-select";
 import { IssueParentSelectRoot } from "@/components/issues/parent-select-root";
+import { isOutsideProductDates } from "@/components/products/helper";
+import { ProductSection } from "@/components/products/product-section";
 // hooks
 import { useProjectEstimates } from "@/hooks/store/estimates";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
@@ -71,7 +73,9 @@ export const IssueDetailSidebarSections = observer(function IssueDetailSidebarSe
   const projectDetails = getProjectById(issue.project_id);
   const createdByDetails = getUserDetails(issue.created_by);
   const createdByName = createdByDetails?.display_name?.includes("-intake") ? "Plane" : createdByDetails?.display_name;
-  const hasProjectStructureProperties = !!projectDetails?.cycle_view || !!projectDetails?.module_view;
+  const isProduct = issue.kind === "product";
+  const parent = issue.parent_id ? getIssueById(issue.parent_id) : undefined;
+  const hasProjectStructureProperties = !isProduct && (!!projectDetails?.cycle_view || !!projectDetails?.module_view);
 
   const auditRows = [
     createdByName ? { key: "created_by", icon: UserOutline, text: `${t("common.created_by")} ${createdByName}` } : null,
@@ -110,23 +114,47 @@ export const IssueDetailSidebarSections = observer(function IssueDetailSidebarSe
       </div>
 
       <div className={cn("flex flex-col gap-5", { "opacity-60": disabled })}>
+        {isProduct && (
+          <>
+            <IssueDetailSidebarGroup label={t("product.kinds.product")}>
+              <ProductSection
+                key={issueId}
+                workspaceSlug={workspaceSlug}
+                projectId={projectId}
+                issueId={issueId}
+                disabled={disabled}
+              />
+            </IssueDetailSidebarGroup>
+            <div className="w-full border-t border-subtle" />
+          </>
+        )}
         <IssueDetailSidebarGroup label={t("common.details")}>
-          <SidebarPropertyListItem icon={ParentOutline} label={t("common.parent")}>
-            <IssueParentSelectRoot
-              className="w-full grow"
-              workspaceSlug={workspaceSlug}
-              projectId={projectId}
-              issueId={issueId}
-              issueOperations={issueOperations}
-              disabled={disabled}
-            />
-          </SidebarPropertyListItem>
+          {!isProduct && (
+            <>
+              <SidebarPropertyListItem
+                icon={ParentOutline}
+                label={t(parent?.kind === "product" ? "product.kinds.product" : "common.parent")}
+              >
+                <IssueParentSelectRoot
+                  className="w-full grow"
+                  workspaceSlug={workspaceSlug}
+                  projectId={projectId}
+                  issueId={issueId}
+                  issueOperations={issueOperations}
+                  disabled={disabled}
+                />
+              </SidebarPropertyListItem>
+              {parent?.kind === "product" && isOutsideProductDates(issue, parent) && (
+                <p className="text-caption-md-regular text-danger-primary">{t("product.outside_dates")}</p>
+              )}
+            </>
+          )}
 
           <SidebarPropertyListItem icon={LabelsOutline} label={t("common.labels")}>
             <IssueLabel workspaceSlug={workspaceSlug} projectId={projectId} issueId={issueId} disabled={disabled} />
           </SidebarPropertyListItem>
 
-          {projectId && areEstimateEnabledByProjectId(projectId) && (
+          {!isProduct && projectId && areEstimateEnabledByProjectId(projectId) && (
             <SidebarPropertyListItem icon={EstimateOutline} label={t("common.estimate")}>
               <EstimateSelect
                 value={issue.estimate_point ?? undefined}

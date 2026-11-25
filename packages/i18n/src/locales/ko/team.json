@@ -61,5 +61,77 @@
       "orphaned_project": "관리자가 없는 프로젝트가 생깁니다.",
       "archived": "포트폴리오 또는 해당 팀이 보관되었습니다."
     }
+  },
+  "product": {
+    "kind": "종류",
+    "kinds": {
+      "task": "작업",
+      "product": "제품"
+    },
+    "type": "제품 유형",
+    "types": "제품 유형",
+    "types_description": "제품 유형과 각 유형의 요구 사항입니다.",
+    "select_type": "제품 유형 선택",
+    "owner": "담당 책임자",
+    "requirements": "제품 요구 사항",
+    "open_requirements": "열기",
+    "no_requirements": "아직 요구 사항이 없습니다",
+    "requirements_placeholder": "이 유형의 제품에 포함되어야 할 내용을 설명하세요",
+    "progress": "진행률",
+    "manual_progress": "수동 진행률, %",
+    "manual_progress_hint": "비워 두면 계산된 진행률을 사용합니다.",
+    "calculated": "작업 기준: {progress} ({completed}/{total})",
+    "completed_with_open_tasks": "제품이 완료되었지만 아직 열린 작업이 있습니다.",
+    "status_comment": "상태 댓글",
+    "products": "제품",
+    "no_products": "아직 제품이 없습니다",
+    "dates": "날짜",
+    "indicator": "기한 상태",
+    "active": "활성",
+    "move_up": "위로 이동",
+    "move_down": "아래로 이동",
+    "color": "색상",
+    "create_type": "유형 만들기",
+    "edit_type": "유형 편집",
+    "delete_type": {
+      "title": "제품 유형 삭제",
+      "description": "\"{name}\" 유형이 삭제됩니다."
+    },
+    "make_product": "제품으로 전환",
+    "make_task": "작업으로 전환",
+    "outside_dates": "날짜가 제품 기간을 벗어납니다.",
+    "delete_keeps_items": "제품의 작업은 프로젝트에 남습니다.",
+    "items": "작업",
+    "indicators": {
+      "completed": "완료됨",
+      "cancelled": "취소됨",
+      "overdue": "기한 초과",
+      "at_risk": "위험",
+      "not_started": "시작 전",
+      "on_track": "정상 진행"
+    },
+    "summary": {
+      "total": "전체",
+      "in_progress": "진행 중",
+      "overdue": "기한 초과",
+      "completed": "완료됨"
+    },
+    "history": {
+      "kind": "종류",
+      "product_type": "제품 유형",
+      "product_owner": "담당 책임자",
+      "manual_progress": "수동 진행률",
+      "status_comment": "상태 댓글"
+    },
+    "errors": {
+      "type_in_use": "사용 중인 유형입니다. 대신 비활성화하세요.",
+      "has_items": "먼저 제품의 작업 연결을 해제하세요.",
+      "has_parent": "먼저 상위 항목을 제거하세요.",
+      "in_cycle": "먼저 사이클과 모듈에서 항목을 제거하세요.",
+      "no_parent": "제품은 상위 항목을 가질 수 없습니다.",
+      "owner": "책임자는 프로젝트 멤버여야 합니다.",
+      "type_unavailable": "이 제품 유형은 사용할 수 없습니다.",
+      "required": "제품 유형, 책임자, 시작일, 마감일을 선택하세요."
+    }
   }
 }

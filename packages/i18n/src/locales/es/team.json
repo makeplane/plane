@@ -61,5 +61,77 @@
       "orphaned_project": "Un proyecto quedaría sin administrador.",
       "archived": "El portafolio o su equipo está archivado."
     }
+  },
+  "product": {
+    "kind": "Clase",
+    "kinds": {
+      "task": "Tarea",
+      "product": "Producto"
+    },
+    "type": "Tipo de producto",
+    "types": "Tipos de producto",
+    "types_description": "Tipos de producto y los requisitos de cada uno.",
+    "select_type": "Selecciona un tipo de producto",
+    "owner": "Responsable",
+    "requirements": "Requisitos del producto",
+    "open_requirements": "Abrir",
+    "no_requirements": "Aún no hay requisitos",
+    "requirements_placeholder": "Describe qué debe contener un producto de este tipo",
+    "progress": "Progreso",
+    "manual_progress": "Progreso manual, %",
+    "manual_progress_hint": "Déjalo vacío para usar el progreso calculado.",
+    "calculated": "Por tareas: {progress} ({completed} de {total})",
+    "completed_with_open_tasks": "El producto está completado, pero aún tiene tareas abiertas.",
+    "status_comment": "Comentario de estado",
+    "products": "Productos",
+    "no_products": "Aún no hay productos",
+    "dates": "Fechas",
+    "indicator": "Estado del plazo",
+    "active": "Activo",
+    "move_up": "Subir",
+    "move_down": "Bajar",
+    "color": "Color",
+    "create_type": "Crear tipo",
+    "edit_type": "Editar tipo",
+    "delete_type": {
+      "title": "Eliminar tipo de producto",
+      "description": "Se eliminará el tipo «{name}»."
+    },
+    "make_product": "Convertir en producto",
+    "make_task": "Convertir en tarea",
+    "outside_dates": "Las fechas están fuera de las fechas del producto.",
+    "delete_keeps_items": "Las tareas del producto permanecerán en el proyecto.",
+    "items": "Tareas",
+    "indicators": {
+      "completed": "Completado",
+      "cancelled": "Cancelado",
+      "overdue": "Vencido",
+      "at_risk": "En riesgo",
+      "not_started": "Sin empezar",
+      "on_track": "A tiempo"
+    },
+    "summary": {
+      "total": "Total",
+      "in_progress": "En curso",
+      "overdue": "Vencidos",
+      "completed": "Completados"
+    },
+    "history": {
+      "kind": "Clase",
+      "product_type": "Tipo de producto",
+      "product_owner": "Responsable",
+      "manual_progress": "Progreso manual",
+      "status_comment": "Comentario de estado"
+    },
+    "errors": {
+      "type_in_use": "El tipo está en uso. Desactívalo en su lugar.",
+      "has_items": "Primero desvincula las tareas del producto.",
+      "has_parent": "Primero quita el elemento padre.",
+      "in_cycle": "Primero quita el elemento de su ciclo y módulos.",
+      "no_parent": "Un producto no puede tener un elemento padre.",
+      "owner": "El responsable debe ser miembro del proyecto.",
+      "type_unavailable": "Este tipo de producto no está disponible.",
+      "required": "Elige el tipo de producto, el responsable, la fecha de inicio y la fecha de vencimiento."
+    }
   }
 }

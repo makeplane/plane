@@ -61,5 +61,77 @@
       "orphaned_project": "Một dự án sẽ không còn quản trị viên.",
       "archived": "Danh mục hoặc nhóm của danh mục đã được lưu trữ."
     }
+  },
+  "product": {
+    "kind": "Dạng",
+    "kinds": {
+      "task": "Nhiệm vụ",
+      "product": "Sản phẩm"
+    },
+    "type": "Loại sản phẩm",
+    "types": "Các loại sản phẩm",
+    "types_description": "Các loại sản phẩm và yêu cầu đối với từng loại.",
+    "select_type": "Chọn loại sản phẩm",
+    "owner": "Người phụ trách",
+    "requirements": "Yêu cầu đối với sản phẩm",
+    "open_requirements": "Mở",
+    "no_requirements": "Chưa có yêu cầu",
+    "requirements_placeholder": "Mô tả những gì sản phẩm loại này phải có",
+    "progress": "Tiến độ",
+    "manual_progress": "Tiến độ thủ công, %",
+    "manual_progress_hint": "Để trống để dùng tiến độ được tính.",
+    "calculated": "Theo nhiệm vụ: {progress} ({completed}/{total})",
+    "completed_with_open_tasks": "Sản phẩm đã hoàn thành nhưng vẫn còn nhiệm vụ đang mở.",
+    "status_comment": "Nhận xét trạng thái",
+    "products": "Sản phẩm",
+    "no_products": "Chưa có sản phẩm",
+    "dates": "Ngày",
+    "indicator": "Tình trạng thời hạn",
+    "active": "Đang dùng",
+    "move_up": "Chuyển lên",
+    "move_down": "Chuyển xuống",
+    "color": "Màu",
+    "create_type": "Tạo loại",
+    "edit_type": "Sửa loại",
+    "delete_type": {
+      "title": "Xóa loại sản phẩm",
+      "description": "Loại “{name}” sẽ bị xóa."
+    },
+    "make_product": "Chuyển thành sản phẩm",
+    "make_task": "Chuyển thành nhiệm vụ",
+    "outside_dates": "Ngày nằm ngoài khoảng ngày của sản phẩm.",
+    "delete_keeps_items": "Các nhiệm vụ của sản phẩm sẽ ở lại dự án.",
+    "items": "Nhiệm vụ",
+    "indicators": {
+      "completed": "Hoàn thành",
+      "cancelled": "Đã hủy",
+      "overdue": "Quá hạn",
+      "at_risk": "Có rủi ro",
+      "not_started": "Chưa bắt đầu",
+      "on_track": "Đúng hạn"
+    },
+    "summary": {
+      "total": "Tổng số",
+      "in_progress": "Đang thực hiện",
+      "overdue": "Quá hạn",
+      "completed": "Hoàn thành"
+    },
+    "history": {
+      "kind": "Dạng",
+      "product_type": "Loại sản phẩm",
+      "product_owner": "Người phụ trách",
+      "manual_progress": "Tiến độ thủ công",
+      "status_comment": "Nhận xét trạng thái"
+    },
+    "errors": {
+      "type_in_use": "Loại này đang được dùng. Bạn chỉ có thể tắt nó.",
+      "has_items": "Trước tiên hãy gỡ liên kết các nhiệm vụ của sản phẩm.",
+      "has_parent": "Trước tiên hãy gỡ mục cha.",
+      "in_cycle": "Trước tiên hãy gỡ mục khỏi chu kỳ và mô-đun.",
+      "no_parent": "Sản phẩm không thể có mục cha.",
+      "owner": "Người phụ trách phải là thành viên dự án.",
+      "type_unavailable": "Loại sản phẩm này không khả dụng.",
+      "required": "Hãy chọn loại sản phẩm, người phụ trách, ngày bắt đầu và ngày đến hạn."
+    }
   }
 }

@@ -26,7 +26,7 @@ import {
   DialogTitle,
 } from "@makeplane/propel/components/dialog";
 import { setToast } from "@plane/blocks/toast";
-import type { TIssue, TWorkspaceDraftIssue } from "@plane/types";
+import type { TIssue, TWorkItemKind, TWorkspaceDraftIssue } from "@plane/types";
 // hooks
 import { Switch } from "@makeplane/propel/components/switch";
 import {
@@ -43,12 +43,13 @@ import {
   IssueProjectSelect,
   IssueTitleInput,
 } from "@/components/issues/issue-modal/components";
-// helpers
+import { isProductComplete } from "@/components/products/helper";
 // hooks
 import { useIssueModal } from "@/hooks/context/use-issue-modal";
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
 import { useProjectState } from "@/hooks/store/use-project-state";
+import { useTeam } from "@/hooks/store/use-team";
 import { useWorkspaceDraftIssues } from "@/hooks/store/workspace-draft";
 import { usePlatformOS } from "@/hooks/use-platform-os";
 import { useProjectIssueProperties } from "@/hooks/use-project-issue-properties";
@@ -128,6 +129,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
     handleCreateUpdatePropertyValues,
     handleTemplateChange,
   } = useIssueModal();
+  const { isEnabled: areProductsEnabled } = useTeam();
   const { isMobile } = usePlatformOS();
   const { moveIssue } = useWorkspaceDraftIssues();
 
@@ -156,6 +158,23 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
   const projectId = watch("project_id");
 
   const isDisabled = isSubmitting || isApplyingTemplate;
+
+  const isProduct = watch("kind") === "product";
+  // the kind of an existing work item is changed on its page
+  const canChooseKind = areProductsEnabled && !isDraft && !data?.id;
+
+  const handleKindChange = (kind: TWorkItemKind) => {
+    setValue("kind", kind, { shouldDirty: true });
+    if (kind === "product") {
+      // a product has none of these
+      setValue("parent_id", null);
+      setValue("cycle_id", null);
+      setValue("module_ids", null);
+      setValue("estimate_point", null);
+      setSelectedParentIssue(null);
+    } else setValue("product", undefined);
+    handleFormChange();
+  };
 
   const { getIndex } = getTabIndex(ETabIndices.ISSUE_FORM, isMobile);
 
@@ -217,6 +236,11 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
         title: t("error"),
         message: t("editor_is_not_ready_to_discard_changes"),
       });
+      return;
+    }
+
+    if (!data?.id && isProduct && !isProductComplete(formData.product, getValues())) {
+      setToast({ type: "error", title: t("error"), message: t("product.errors.required") });
       return;
     }
 
@@ -373,6 +397,22 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                     disabled={!!data?.id || !!data?.sourceIssueId || isProjectSelectionDisabled}
                     handleFormChange={handleFormChange}
                   />
+                  {canChooseKind && (
+                    <div role="group" aria-label={t("product.kind")} className="flex items-center gap-1">
+                      {(["task", "product"] as const).map((kind) => (
+                        <Button
+                          key={kind}
+                          type="button"
+                          size="sm"
+                          stretch="auto"
+                          variant={(kind === "product") === isProduct ? "secondary" : "ghost"}
+                          aria-pressed={(kind === "product") === isProduct}
+                          label={t(`product.kinds.${kind}`)}
+                          onClick={() => handleKindChange(kind)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
               {watch("parent_id") && selectedParentIssue && (
@@ -425,6 +465,7 @@ export const IssueFormRoot = observer(function IssueFormRoot(props: IssueFormPro
                 startDate={watch("start_date")}
                 targetDate={watch("target_date")}
                 parentId={watch("parent_id")}
+                isProduct={isProduct}
                 isDraft={isDraft}
                 handleFormChange={handleFormChange}
                 setSelectedParentIssue={setSelectedParentIssue}

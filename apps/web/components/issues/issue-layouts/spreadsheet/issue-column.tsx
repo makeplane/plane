@@ -14,6 +14,8 @@ import { SPREADSHEET_COLUMNS } from "../utils";
 import { shouldRenderColumn } from "@/helpers/issue-filter.helper";
 import { WithDisplayPropertiesHOC } from "../properties/with-display-properties-HOC";
 
+const TASK_ONLY_PROPERTIES = new Set<keyof IIssueDisplayProperties>(["cycle", "modules", "estimate"]);
+
 type Props = {
   displayProperties: IIssueDisplayProperties;
   issueDetail: TIssue;
@@ -52,7 +54,8 @@ export const IssueColumn = observer(function IssueColumn(props: Props) {
         <Column
           issue={issueDetail}
           onChange={handleUpdateIssue}
-          disabled={disableUserActions}
+          // a product has no cycle, modules or estimate
+          disabled={disableUserActions || (issueDetail.kind === "product" && TASK_ONLY_PROPERTIES.has(property))}
           onClose={() => tableCellRef?.current?.focus()}
         />
       </td>

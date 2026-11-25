@@ -23,6 +23,7 @@ export type TIssueGroupByOptions =
   | "module"
   | "target_date"
   | "team_project"
+  | "kind"
   | null;
 
 export type TIssueOrderByOptions =
@@ -84,6 +85,7 @@ export type TIssueParams =
   | "cursor"
   | "per_page"
   | "issue_type"
+  | "kind"
   | "layout"
   | "expand"
   | "filters";
@@ -94,6 +96,7 @@ export type TCalendarLayouts = "month" | "week";
  * Keys for the work item filter properties
  */
 export const WORK_ITEM_FILTER_PROPERTY_KEYS = [
+  "kind",
   "state_group",
   "priority",
   "start_date",

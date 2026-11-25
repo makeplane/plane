@@ -14,6 +14,7 @@ import { ConfirmDialog } from "@plane/blocks/dialog";
 import { useTranslation } from "@plane/i18n";
 // components
 import { PageHead } from "@/components/core/page-title";
+import { TeamProductList } from "@/components/products/product-list";
 import { SettingsBoxedControlItem } from "@/components/settings/boxed-control-item";
 // hooks
 import { useTeam } from "@/hooks/store/use-team";
@@ -96,6 +97,7 @@ export const TeamPage = observer(function TeamPage(props: Props) {
         <Tabs variant="underline" defaultValue={isManagement ? "members" : "portfolios"}>
           <TabsList>
             {!isManagement && <Tab value="portfolios" label={t("team_structure.portfolios")} />}
+            {!isManagement && <Tab value="products" label={t("product.products")} />}
             <Tab value="members" label={t("members")} />
             {canManage && <Tab value="settings" label={t("settings")} />}
           </TabsList>
@@ -117,6 +119,13 @@ export const TeamPage = observer(function TeamPage(props: Props) {
                 {portfolios.map((portfolio) => (
                   <PortfolioCard key={portfolio.id} workspaceSlug={workspaceSlug} portfolio={portfolio} />
                 ))}
+              </div>
+            </TabsPanel>
+          )}
+          {!isManagement && (
+            <TabsPanel value="products">
+              <div className="pt-4">
+                <TeamProductList workspaceSlug={workspaceSlug} teamId={teamId} />
               </div>
             </TabsPanel>
           )}

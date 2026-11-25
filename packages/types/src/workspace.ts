@@ -136,6 +136,7 @@ export interface IWorkspaceIssueSearchResult {
   sequence_id: number;
   workspace__slug: string;
   type_id: string;
+  type__kind?: string | null;
 }
 
 export interface IWorkspacePageSearchResult {

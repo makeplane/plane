@@ -10,7 +10,9 @@ import type { TIssueIdentifierProps } from "@plane/types";
 // hooks
 import { useIssueDetail } from "@/hooks/store/use-issue-detail";
 import { useProject } from "@/hooks/store/use-project";
+// components
 import { IdentifierText } from "@/components/issues/issue-detail/identifier-text";
+import { ProductIcon } from "@/components/products/product-icon";
 
 export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueIdentifierProps) {
   const { projectId, variant, size, displayProperties, enableClickToCopyIdentifier = false } = props;
@@ -27,16 +29,21 @@ export const IssueIdentifier = observer(function IssueIdentifier(props: TIssueId
   const issueSequenceId = isUsingStoreData ? issue?.sequence_id : props.issueSequenceId;
   const shouldRenderIssueID = displayProperties ? displayProperties.key : true;
 
-  if (!shouldRenderIssueID) return null;
+  const isProduct = isUsingStoreData ? issue?.kind === "product" : props.isProduct;
+
+  if (!shouldRenderIssueID && !isProduct) return null;
 
   return (
     <div className="flex shrink-0 items-center space-x-2">
-      <IdentifierText
-        identifier={`${projectIdentifier}-${issueSequenceId}`}
-        enableClickToCopyIdentifier={enableClickToCopyIdentifier}
-        variant={variant}
-        size={size}
-      />
+      {isProduct && <ProductIcon />}
+      {shouldRenderIssueID && (
+        <IdentifierText
+          identifier={`${projectIdentifier}-${issueSequenceId}`}
+          enableClickToCopyIdentifier={enableClickToCopyIdentifier}
+          variant={variant}
+          size={size}
+        />
+      )}
     </div>
   );
 });

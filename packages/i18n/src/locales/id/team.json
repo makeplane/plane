@@ -61,5 +61,77 @@
       "orphaned_project": "Sebuah proyek akan tanpa admin.",
       "archived": "Portofolio atau timnya diarsipkan."
     }
+  },
+  "product": {
+    "kind": "Bentuk",
+    "kinds": {
+      "task": "Tugas",
+      "product": "Produk"
+    },
+    "type": "Jenis produk",
+    "types": "Jenis produk",
+    "types_description": "Jenis produk dan persyaratan untuk masing-masing.",
+    "select_type": "Pilih jenis produk",
+    "owner": "Penanggung jawab",
+    "requirements": "Persyaratan produk",
+    "open_requirements": "Buka",
+    "no_requirements": "Belum ada persyaratan",
+    "requirements_placeholder": "Jelaskan apa yang harus dimuat produk jenis ini",
+    "progress": "Kemajuan",
+    "manual_progress": "Kemajuan manual, %",
+    "manual_progress_hint": "Kosongkan untuk menggunakan kemajuan terhitung.",
+    "calculated": "Menurut tugas: {progress} ({completed} dari {total})",
+    "completed_with_open_tasks": "Produk sudah selesai, tetapi masih memiliki tugas terbuka.",
+    "status_comment": "Komentar status",
+    "products": "Produk",
+    "no_products": "Belum ada produk",
+    "dates": "Tanggal",
+    "indicator": "Status tenggat",
+    "active": "Aktif",
+    "move_up": "Naikkan",
+    "move_down": "Turunkan",
+    "color": "Warna",
+    "create_type": "Buat jenis",
+    "edit_type": "Edit jenis",
+    "delete_type": {
+      "title": "Hapus jenis produk",
+      "description": "Jenis “{name}” akan dihapus."
+    },
+    "make_product": "Jadikan produk",
+    "make_task": "Jadikan tugas",
+    "outside_dates": "Tanggal berada di luar tanggal produk.",
+    "delete_keeps_items": "Tugas produk akan tetap ada di proyek.",
+    "items": "Tugas",
+    "indicators": {
+      "completed": "Selesai",
+      "cancelled": "Dibatalkan",
+      "overdue": "Terlambat",
+      "at_risk": "Berisiko",
+      "not_started": "Belum dimulai",
+      "on_track": "Sesuai jadwal"
+    },
+    "summary": {
+      "total": "Total",
+      "in_progress": "Sedang berjalan",
+      "overdue": "Terlambat",
+      "completed": "Selesai"
+    },
+    "history": {
+      "kind": "Bentuk",
+      "product_type": "Jenis produk",
+      "product_owner": "Penanggung jawab",
+      "manual_progress": "Kemajuan manual",
+      "status_comment": "Komentar status"
+    },
+    "errors": {
+      "type_in_use": "Jenis ini sedang digunakan. Anda hanya dapat menonaktifkannya.",
+      "has_items": "Lepaskan dahulu tugas-tugas produk.",
+      "has_parent": "Hapus dahulu induk item.",
+      "in_cycle": "Keluarkan dahulu item dari siklus dan modul.",
+      "no_parent": "Produk tidak dapat memiliki induk.",
+      "owner": "Penanggung jawab harus anggota proyek.",
+      "type_unavailable": "Jenis produk ini tidak tersedia.",
+      "required": "Pilih jenis produk, penanggung jawab, tanggal mulai, dan tenggat."
+    }
   }
 }

@@ -10,6 +10,7 @@ export * from "./description";
 export * from "./state";
 export * from "./assignee";
 export * from "./priority";
+export * from "./product";
 export * from "./estimate";
 export * from "./parent";
 export * from "./relation";

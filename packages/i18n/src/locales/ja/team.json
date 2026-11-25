@@ -61,5 +61,77 @@
       "orphaned_project": "管理者のいないプロジェクトが生じます。",
       "archived": "ポートフォリオまたはそのチームはアーカイブされています。"
     }
+  },
+  "product": {
+    "kind": "種別",
+    "kinds": {
+      "task": "タスク",
+      "product": "プロダクト"
+    },
+    "type": "プロダクトタイプ",
+    "types": "プロダクトタイプ",
+    "types_description": "プロダクトタイプとそれぞれの要件です。",
+    "select_type": "プロダクトタイプを選択",
+    "owner": "責任者",
+    "requirements": "プロダクトの要件",
+    "open_requirements": "開く",
+    "no_requirements": "要件はまだありません",
+    "requirements_placeholder": "このタイプのプロダクトに必要な内容を記述してください",
+    "progress": "進捗",
+    "manual_progress": "手動の進捗、%",
+    "manual_progress_hint": "空欄にすると、計算された進捗が使用されます。",
+    "calculated": "タスク別：{progress}（{completed}/{total}）",
+    "completed_with_open_tasks": "プロダクトは完了していますが、未完了のタスクが残っています。",
+    "status_comment": "ステータスコメント",
+    "products": "プロダクト",
+    "no_products": "プロダクトはまだありません",
+    "dates": "日付",
+    "indicator": "期限の状況",
+    "active": "有効",
+    "move_up": "上へ移動",
+    "move_down": "下へ移動",
+    "color": "色",
+    "create_type": "タイプを作成",
+    "edit_type": "タイプを編集",
+    "delete_type": {
+      "title": "プロダクトタイプを削除",
+      "description": "タイプ「{name}」が削除されます。"
+    },
+    "make_product": "プロダクトに変換",
+    "make_task": "タスクに変換",
+    "outside_dates": "日付がプロダクトの期間外です。",
+    "delete_keeps_items": "プロダクトのタスクはプロジェクトに残ります。",
+    "items": "タスク",
+    "indicators": {
+      "completed": "完了",
+      "cancelled": "キャンセル",
+      "overdue": "期限超過",
+      "at_risk": "リスクあり",
+      "not_started": "未開始",
+      "on_track": "順調"
+    },
+    "summary": {
+      "total": "合計",
+      "in_progress": "進行中",
+      "overdue": "期限超過",
+      "completed": "完了"
+    },
+    "history": {
+      "kind": "種別",
+      "product_type": "プロダクトタイプ",
+      "product_owner": "責任者",
+      "manual_progress": "手動の進捗",
+      "status_comment": "ステータスコメント"
+    },
+    "errors": {
+      "type_in_use": "このタイプは使用中です。代わりに無効にしてください。",
+      "has_items": "先にプロダクトのタスクのリンクを解除してください。",
+      "has_parent": "先に親を解除してください。",
+      "in_cycle": "先にサイクルとモジュールから外してください。",
+      "no_parent": "プロダクトに親を設定することはできません。",
+      "owner": "責任者はプロジェクトのメンバーである必要があります。",
+      "type_unavailable": "このプロダクトタイプは利用できません。",
+      "required": "プロダクトタイプ、責任者、開始日、期限を選択してください。"
+    }
   }
 }

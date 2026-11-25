@@ -34,6 +34,7 @@ export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props
   const {
     openWidgets,
     toggleOpenWidget,
+    issue: { getIssueById },
     subIssues: { subIssuesByIssueId },
   } = useIssueDetail(issueServiceType);
   // derived values
@@ -42,7 +43,11 @@ export const SubIssuesCollapsible = observer(function SubIssuesCollapsible(props
 
   return (
     <EntityDetailWidgetSection
-      title={issueServiceType === EIssueServiceType.EPICS ? t("issue.label", { count: 1 }) : t("common.sub_work_items")}
+      title={
+        issueServiceType === EIssueServiceType.EPICS
+          ? t("issue.label", { count: 1 })
+          : t(getIssueById(issueId)?.kind === "product" ? "product.items" : "common.sub_work_items")
+      }
       count={subIssuesCount}
       isOpen={isCollapsibleOpen}
       onToggle={() => toggleOpenWidget("sub-work-items")}

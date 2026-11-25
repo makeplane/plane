@@ -5,6 +5,7 @@
  */
 
 import type { TIssuePriorities } from "../issues";
+import type { TProductPayload, TWorkItemKind } from "../product";
 import type { TStateGroups } from "../state";
 import type { TIssuePublicComment } from "./activity/issue_comment";
 import type { TIssueAttachment } from "./issue_attachment";
@@ -76,6 +77,7 @@ export type TBaseIssue = {
 
   is_draft: boolean;
   is_epic?: boolean;
+  kind?: TWorkItemKind;
   is_intake?: boolean;
 };
 
@@ -101,6 +103,7 @@ export type TIssue = TBaseIssue & {
   // sourceIssueId is used to store the original issue id when creating a copy of an issue. Used in cloning property values. It is not a part of the API response.
   sourceIssueId?: string;
   state__group?: TStateGroups | null;
+  product?: TProductPayload | null;
 };
 
 export type TIssueMap = {

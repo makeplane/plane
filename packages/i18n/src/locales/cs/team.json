@@ -61,5 +61,77 @@
       "orphaned_project": "Projekt by zůstal bez správce.",
       "archived": "Portfolio nebo jeho tým je archivován."
     }
+  },
+  "product": {
+    "kind": "Druh",
+    "kinds": {
+      "task": "Úkol",
+      "product": "Produkt"
+    },
+    "type": "Typ produktu",
+    "types": "Typy produktů",
+    "types_description": "Typy produktů a požadavky na každý z nich.",
+    "select_type": "Vyberte typ produktu",
+    "owner": "Odpovědná osoba",
+    "requirements": "Požadavky na produkt",
+    "open_requirements": "Otevřít",
+    "no_requirements": "Zatím žádné požadavky",
+    "requirements_placeholder": "Popište, co musí produkt tohoto typu obsahovat",
+    "progress": "Průběh",
+    "manual_progress": "Ruční průběh, %",
+    "manual_progress_hint": "Ponechte prázdné, aby se použil vypočtený průběh.",
+    "calculated": "Podle úkolů: {progress} ({completed} z {total})",
+    "completed_with_open_tasks": "Produkt je dokončen, ale má ještě otevřené úkoly.",
+    "status_comment": "Komentář ke stavu",
+    "products": "Produkty",
+    "no_products": "Zatím žádné produkty",
+    "dates": "Termíny",
+    "indicator": "Stav termínu",
+    "active": "Aktivní",
+    "move_up": "Posunout nahoru",
+    "move_down": "Posunout dolů",
+    "color": "Barva",
+    "create_type": "Vytvořit typ",
+    "edit_type": "Upravit typ",
+    "delete_type": {
+      "title": "Smazat typ produktu",
+      "description": "Typ „{name}“ bude smazán."
+    },
+    "make_product": "Změnit na produkt",
+    "make_task": "Změnit na úkol",
+    "outside_dates": "Data jsou mimo termíny produktu.",
+    "delete_keeps_items": "Úkoly produktu zůstanou v projektu.",
+    "items": "Úkoly",
+    "indicators": {
+      "completed": "Dokončen",
+      "cancelled": "Zrušen",
+      "overdue": "Po termínu",
+      "at_risk": "Ohrožen",
+      "not_started": "Nezahájen",
+      "on_track": "V termínu"
+    },
+    "summary": {
+      "total": "Celkem",
+      "in_progress": "Probíhá",
+      "overdue": "Po termínu",
+      "completed": "Dokončené"
+    },
+    "history": {
+      "kind": "Druh",
+      "product_type": "Typ produktu",
+      "product_owner": "Odpovědná osoba",
+      "manual_progress": "Ruční průběh",
+      "status_comment": "Komentář ke stavu"
+    },
+    "errors": {
+      "type_in_use": "Typ se používá. Můžete ho pouze vypnout.",
+      "has_items": "Nejprve odpojte úkoly produktu.",
+      "has_parent": "Nejprve odeberte nadřazenou položku.",
+      "in_cycle": "Nejprve odeberte položku z cyklu a modulů.",
+      "no_parent": "Produkt nemůže mít nadřazenou položku.",
+      "owner": "Odpovědná osoba musí být členem projektu.",
+      "type_unavailable": "Tento typ produktu není dostupný.",
+      "required": "Vyberte typ produktu, odpovědnou osobu, datum zahájení a termín."
+    }
   }
 }

@@ -116,6 +116,14 @@ export const coreRoutes: RouteConfigEntry[] = [
           ),
         ]),
 
+        // Requirements for products
+        layout("./(all)/[workspaceSlug]/(projects)/product-types/[productTypeId]/layout.tsx", [
+          route(
+            ":workspaceSlug/product-types/:productTypeId",
+            "./(all)/[workspaceSlug]/(projects)/product-types/[productTypeId]/page.tsx"
+          ),
+        ]),
+
         // Workspace Views
         layout("./(all)/[workspaceSlug]/(projects)/workspace-views/layout.tsx", [
           route(":workspaceSlug/workspace-views", "./(all)/[workspaceSlug]/(projects)/workspace-views/page.tsx"),
@@ -284,6 +292,10 @@ export const coreRoutes: RouteConfigEntry[] = [
           route(
             ":workspaceSlug/settings/teams",
             "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/teams/page.tsx"
+          ),
+          route(
+            ":workspaceSlug/settings/product-types",
+            "./(all)/[workspaceSlug]/(settings)/settings/(workspace)/product-types/page.tsx"
           ),
           route(
             ":workspaceSlug/settings/exports",

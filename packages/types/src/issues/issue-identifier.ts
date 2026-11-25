@@ -26,6 +26,7 @@ export type TIssueIdentifierWithDetails = TIssueIdentifierBaseProps & {
   issueTypeId?: string | null;
   projectIdentifier: string;
   issueSequenceId: string | number;
+  isProduct?: boolean;
 };
 
 export type TIssueIdentifierProps = TIssueIdentifierFromStore | TIssueIdentifierWithDetails;
