@@ -94,8 +94,10 @@ export function scanSource(file: string, source: string): Hit[] {
 
   const add = (node: ts.Node, text: string) => {
     const line = sf.getLineAndCharacterOfPosition(node.getStart()).line + 1;
-    // Escape hatch: marker on the same line or the line above.
-    if (lines[line - 1]?.includes(IGNORE_MARKER) || lines[line - 2]?.includes(IGNORE_MARKER)) return;
+    // Escape hatch: marker on the same line, or on a comment-only line directly above.
+    const prev = lines[line - 2]?.trim() ?? "";
+    const prevIsComment = prev.startsWith("//") || prev.startsWith("{/*") || prev.startsWith("/*");
+    if (lines[line - 1]?.includes(IGNORE_MARKER) || (prevIsComment && prev.includes(IGNORE_MARKER))) return;
     hits.push({ file, line, text: text.trim().replace(/\s+/g, " ") });
   };
 
@@ -117,7 +119,12 @@ export function scanSource(file: string, source: string): Hit[] {
         literals(e.right);
       } else if (op === ts.SyntaxKind.AmpersandAmpersandToken) {
         literals(e.right); // `cond && "text"`: only the right arm renders
+      } else if (op === ts.SyntaxKind.PlusToken) {
+        literals(e.left);
+        literals(e.right);
       }
+    } else if (ts.isAsExpression(e) || ts.isSatisfiesExpression(e) || ts.isNonNullExpression(e)) {
+      literals(e.expression);
     } else if (ts.isParenthesizedExpression(e)) {
       literals(e.expression);
     }
@@ -154,4 +161,32 @@ export function findRegressions(baseline: Counts, current: Counts): Regression[]
     .filter(([file, n]) => n > (baseline[file] ?? 0))
     .map(([file, n]) => ({ file, baseline: baseline[file] ?? 0, current: n }))
     .toSorted((a, b) => a.file.localeCompare(b.file));
+}
+
+/**
+ * Hits in `current` that have no matching text in `base`. Matching by text (as a multiset)
+ * rather than by line keeps strings that only moved within the file out of the result.
+ */
+export function findNewHits(base: Hit[], current: Hit[]): Hit[] {
+  const remaining = new Map<string, number>();
+  for (const hit of base) remaining.set(hit.text, (remaining.get(hit.text) ?? 0) + 1);
+  return current.filter((hit) => {
+    const left = remaining.get(hit.text) ?? 0;
+    if (left === 0) return true;
+    remaining.set(hit.text, left - 1);
+    return false;
+  });
+}
+
+function total(counts: Counts): number {
+  return Object.values(counts).reduce((a, b) => a + b, 0);
+}
+
+/**
+ * Regressions `--update` must refuse. A renamed or moved file shows up as a new path,
+ * so new paths are allowed as long as the repo total doesn't grow.
+ */
+export function findBlockedIncreases(baseline: Counts, current: Counts): Regression[] {
+  const grew = total(current) > total(baseline);
+  return findRegressions(baseline, current).filter((r) => r.baseline > 0 || grew);
 }

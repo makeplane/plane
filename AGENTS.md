@@ -56,9 +56,9 @@ Strings live in `packages/i18n/src/locales/<lang>/<namespace>.json`; `en` is the
 
 ### Hardcoded strings
 
-`pnpm --filter=@plane/i18n check:hardcoded` scans `apps/web`, `apps/admin`, `apps/space` and `packages/*` for user-facing strings that bypass `t()` (JSX text, attributes such as `placeholder`/`title`/`label`, and object props such as `title`/`message`/`description`). CI fails when a file has more hits than its entry in `packages/i18n/hardcoded-baseline.json`, or when a file missing from it has any.
+`pnpm --filter=@plane/i18n check:hardcoded` scans `apps/web`, `apps/admin`, `apps/space` and `packages/*` for user-facing strings that bypass `t()` (JSX text, attributes such as `placeholder`/`title`/`label`, and object props such as `title`/`message`/`description`). CI fails when a file has more hits than its entry in `packages/i18n/hardcoded-baseline.json`, when a file missing from it has any, or when a file has fewer hits than its entry (the baseline is stale).
 
-- The baseline only shrinks. After removing strings, run `pnpm --filter=@plane/i18n hardcoded:update` and commit the baseline. `--update` refuses to raise a count unless `--allow-increase` is passed; don't use that flag to land new strings.
+- The baseline only shrinks. After removing strings, or after renaming or moving a file, run `pnpm --filter=@plane/i18n hardcoded:update` and commit the baseline. `--update` refuses to raise a count unless `--allow-increase` is passed; don't use that flag to land new strings.
 - For a string that must not be translated (a standalone product name such as `Wiki` or `Argus`, code samples), add `// i18n-ignore: <reason>` on the same or previous line (`{/* i18n-ignore: <reason> */}` inside JSX). A product name inside a sentence still goes through `t()`; keep it untranslated via the Do-Not-Translate glossary in the `translate` skill.
 - `pnpm --filter=@plane/i18n hardcoded:check` prints the report by package.
 
