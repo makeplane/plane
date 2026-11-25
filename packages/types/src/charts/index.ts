@@ -22,6 +22,8 @@ export type TChartMargin = {
   left?: number;
 };
 
+export type TChartTooltipValueFormatter = (value: number, dataKey: string) => React.ReactNode;
+
 export type TChartData<K extends string, T extends string> = {
   // required key
   [key in K]: string | number;
@@ -139,6 +141,7 @@ export type TAreaItem<T extends string> = {
 
 export type TAreaChartProps<K extends string, T extends string> = TAxisChartProps<K, T> & {
   areas: TAreaItem<T>[];
+  tooltipValueFormatter?: TChartTooltipValueFormatter;
   comparisonLine?: {
     dashedLine: boolean;
     strokeColor: string;

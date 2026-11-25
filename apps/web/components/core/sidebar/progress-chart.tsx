@@ -28,6 +28,7 @@ function ProgressChart({ distribution, totalIssues, className = "", plotTitle = 
     <div className={`flex w-full items-center justify-center ${className}`}>
       <AreaChart
         data={chartData}
+        tooltipValueFormatter={(value, dataKey) => (dataKey === "ideal" ? Number(value.toFixed(1)) : value)}
         areas={[
           {
             key: "current",
