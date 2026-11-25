@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "W przeciwnym razie spróbuj od czasu do czasu odświeżyć stronę lub odwiedź naszą",
     "status_page": "stronę statusu"
   },
+  "calendar_layouts": {
+    "month": "Układ miesięczny",
+    "week": "Układ tygodniowy"
+  },
+  "months": {
+    "january": "Styczeń",
+    "february": "Luty",
+    "march": "Marzec",
+    "april": "Kwiecień",
+    "may": "Maj",
+    "june": "Czerwiec",
+    "july": "Lipiec",
+    "august": "Sierpień",
+    "september": "Wrzesień",
+    "october": "Październik",
+    "november": "Listopad",
+    "december": "Grudzień"
+  },
+  "months_short": {
+    "jan": "Sty",
+    "feb": "Lut",
+    "mar": "Mar",
+    "apr": "Kwi",
+    "may": "Maj",
+    "jun": "Cze",
+    "jul": "Lip",
+    "aug": "Sie",
+    "sep": "Wrz",
+    "oct": "Paź",
+    "nov": "Lis",
+    "dec": "Gru"
+  },
+  "weekdays": {
+    "sunday": "Niedziela",
+    "monday": "Poniedziałek",
+    "tuesday": "Wtorek",
+    "wednesday": "Środa",
+    "thursday": "Czwartek",
+    "friday": "Piątek",
+    "saturday": "Sobota"
+  },
+  "weekdays_short": {
+    "sun": "Niedz.",
+    "mon": "Pon.",
+    "tue": "Wt.",
+    "wed": "Śr.",
+    "thu": "Czw.",
+    "fri": "Pt.",
+    "sat": "Sob."
+  },
   "submit": "Wyślij",
   "submitting": "Wysyłanie",
   "cancel": "Anuluj",

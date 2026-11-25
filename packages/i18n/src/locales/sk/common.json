@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Inak skúste občas obnoviť stránku alebo navštívte našu",
     "status_page": "stránku stavu"
   },
+  "calendar_layouts": {
+    "month": "Mesačné rozloženie",
+    "week": "Týždenné rozloženie"
+  },
+  "months": {
+    "january": "Január",
+    "february": "Február",
+    "march": "Marec",
+    "april": "Apríl",
+    "may": "Máj",
+    "june": "Jún",
+    "july": "Júl",
+    "august": "August",
+    "september": "September",
+    "october": "Október",
+    "november": "November",
+    "december": "December"
+  },
+  "months_short": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "Máj",
+    "jun": "Jún",
+    "jul": "Júl",
+    "aug": "Aug",
+    "sep": "Sep",
+    "oct": "Okt",
+    "nov": "Nov",
+    "dec": "Dec"
+  },
+  "weekdays": {
+    "sunday": "Nedeľa",
+    "monday": "Pondelok",
+    "tuesday": "Utorok",
+    "wednesday": "Streda",
+    "thursday": "Štvrtok",
+    "friday": "Piatok",
+    "saturday": "Sobota"
+  },
+  "weekdays_short": {
+    "sun": "Ne",
+    "mon": "Po",
+    "tue": "Ut",
+    "wed": "St",
+    "thu": "Št",
+    "fri": "Pi",
+    "sat": "So"
+  },
   "submit": "Odoslať",
   "submitting": "Odosielanie",
   "cancel": "Zrušiť",

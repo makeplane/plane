@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 // plane imports
@@ -361,6 +362,7 @@ export interface IKanBanSwimLanes {
 }
 
 export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanSwimLanes) {
+  const { t } = useTranslation();
   const {
     issuesMap,
     groupedIssueIds,
@@ -392,12 +394,14 @@ export const KanBanSwimLanes = observer(function KanBanSwimLanes(props: IKanBanS
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    t,
   });
   const subGroupByList = getGroupByColumns({
     groupBy: sub_group_by as GroupByColumnTypes,
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    t,
   });
 
   if (!groupByList || !subGroupByList) return null;

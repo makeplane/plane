@@ -102,7 +102,7 @@ export function EstimateCreateStageOne(props: TEstimateCreateStageOne) {
                     className="space-y-1 rounded-md border border-subtle bg-layer-2 p-3 py-2.5 text-left hover:bg-layer-2-hover"
                     onClick={() => handleEstimatePoints(name)}
                   >
-                    <p className="text-body-sm-medium">{currentEstimateSystem.templates[name]?.title}</p>
+                    <p className="text-body-sm-medium">{t(currentEstimateSystem.templates[name]?.i18n_title)}</p>
                     <p className="text-caption-sm-regular text-tertiary">
                       {currentEstimateSystem.templates[name]?.values
                         ?.map((template) =>

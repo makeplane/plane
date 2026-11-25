@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Otherwise, try refreshing the page occasionally or visit our",
     "status_page": "Status page"
   },
+  "calendar_layouts": {
+    "month": "თვის განლაგება",
+    "week": "კვირის განლაგება"
+  },
+  "months": {
+    "january": "იანვარი",
+    "february": "თებერვალი",
+    "march": "მარტი",
+    "april": "აპრილი",
+    "may": "მაისი",
+    "june": "ივნისი",
+    "july": "ივლისი",
+    "august": "აგვისტო",
+    "september": "სექტემბერი",
+    "october": "ოქტომბერი",
+    "november": "ნოემბერი",
+    "december": "დეკემბერი"
+  },
+  "months_short": {
+    "jan": "იან",
+    "feb": "თებ",
+    "mar": "მარ",
+    "apr": "აპრ",
+    "may": "მაი",
+    "jun": "ივნ",
+    "jul": "ივლ",
+    "aug": "აგვ",
+    "sep": "სექ",
+    "oct": "ოქტ",
+    "nov": "ნოე",
+    "dec": "დეკ"
+  },
+  "weekdays": {
+    "sunday": "კვირა",
+    "monday": "ორშაბათი",
+    "tuesday": "სამშაბათი",
+    "wednesday": "ოთხშაბათი",
+    "thursday": "ხუთშაბათი",
+    "friday": "პარასკევი",
+    "saturday": "შაბათი"
+  },
+  "weekdays_short": {
+    "sun": "კვი",
+    "mon": "ორშ",
+    "tue": "სამ",
+    "wed": "ოთხ",
+    "thu": "ხუთ",
+    "fri": "პარ",
+    "sat": "შაბ"
+  },
   "submit": "გაგზავნა",
   "submitting": "იგზავნება",
   "cancel": "გაუქმება",

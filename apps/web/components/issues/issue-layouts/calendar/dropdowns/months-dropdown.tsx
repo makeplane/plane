@@ -48,16 +48,16 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
     if (!firstDay || !lastDay) return "Week view";
 
     if (firstDay.getMonth() === lastDay.getMonth() && firstDay.getFullYear() === lastDay.getFullYear())
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].title} ${firstDay.getFullYear()}`;
+      return `${t(MONTHS_LIST[firstDay.getMonth() + 1].i18n_title)} ${firstDay.getFullYear()}`;
 
     if (firstDay.getFullYear() !== lastDay.getFullYear()) {
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} ${firstDay.getFullYear()} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
-      } ${lastDay.getFullYear()}`;
+      return `${t(MONTHS_LIST[firstDay.getMonth() + 1].i18n_short_title)} ${firstDay.getFullYear()} - ${t(
+        MONTHS_LIST[lastDay.getMonth() + 1].i18n_short_title
+      )} ${lastDay.getFullYear()}`;
     } else
-      return `${MONTHS_LIST[firstDay.getMonth() + 1].shortTitle} - ${
-        MONTHS_LIST[lastDay.getMonth() + 1].shortTitle
-      } ${lastDay.getFullYear()}`;
+      return `${t(MONTHS_LIST[firstDay.getMonth() + 1].i18n_short_title)} - ${t(
+        MONTHS_LIST[lastDay.getMonth() + 1].i18n_short_title
+      )} ${lastDay.getFullYear()}`;
   };
 
   const handleDateChange = (date: Date) => {
@@ -76,7 +76,7 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
             className="rounded-xs text-h5-semibold outline-none focus-visible:ring-2 focus-visible:ring-accent-strong"
           >
             {calendarLayout === "month"
-              ? `${MONTHS_LIST[activeMonthDate.getMonth() + 1].title} ${activeMonthDate.getFullYear()}`
+              ? `${t(MONTHS_LIST[activeMonthDate.getMonth() + 1].i18n_title)} ${activeMonthDate.getFullYear()}`
               : getWeekLayoutHeader()}
           </button>
         }
@@ -106,13 +106,13 @@ export const CalendarMonthsDropdown = observer(function CalendarMonthsDropdown(p
               }}
             />
           </div>
-          <div className="grid grid-cols-4 items-stretch justify-items-stretch gap-4 pt-3">
+          <div className="grid grid-cols-3 items-stretch justify-items-stretch gap-2 pt-3">
             {Object.values(MONTHS_LIST).map((month, index) => (
               <Toggle
-                key={month.shortTitle}
+                key={month.i18n_short_title}
                 size="xs"
-                label={month.shortTitle}
-                aria-label={`${month.title} ${activeMonthDate.getFullYear()}`}
+                label={t(month.i18n_short_title)}
+                aria-label={`${t(month.i18n_title)} ${activeMonthDate.getFullYear()}`}
                 pressed={activeMonthDate.getMonth() === index}
                 onClick={() => {
                   const newDate = new Date(activeMonthDate.getFullYear(), index, 1);

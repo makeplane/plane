@@ -303,7 +303,7 @@ export const IssueProperties = observer(function IssueProperties(props: IIssuePr
       menuRow: {
         icon: <PriorityIcon priority={issue.priority ?? "none"} className="size-4" />,
         label: t("common.priority"),
-        preview: priority && priority.key !== "none" ? t(priority.key) || priority.title : none,
+        preview: priority && priority.key !== "none" ? t(priority.i18n_title) : none,
         disabled: isReadOnly,
         editor: ({ onEditorClose }) => renderPriority(getPropertyEditorProps(onEditorClose)),
       },

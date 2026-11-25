@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 import { EStartOfTheWeek } from "@plane/types";
 import { getOrderedDays } from "@plane/utils";
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Props) {
+  const { t } = useTranslation();
   const { isLoading, showWeekends } = props;
   // hooks
   const { data } = useUserProfile();
@@ -40,8 +42,8 @@ export const CalendarWeekHeader = observer(function CalendarWeekHeader(props: Pr
           return null;
 
         return (
-          <div key={day.shortTitle} className="flex h-11 items-center justify-center bg-layer-1 px-4 md:justify-end">
-            {day.shortTitle}
+          <div key={day.value} className="flex h-11 items-center justify-center bg-layer-1 px-4 md:justify-end">
+            {t(day.i18n_short_title)}
           </div>
         );
       })}

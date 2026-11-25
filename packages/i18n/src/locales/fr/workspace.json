@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Éléments de travail résolus vs en attente",
     "projects_by_status": "Projets par statut",
     "active_users": "Utilisateurs actifs",
-    "intake_trends": "Tendances des admissions"
+    "intake_trends": "Tendances des admissions",
+    "state_name": "Nom de l’état",
+    "estimate_point": "Point d’estimation",
+    "completed_date": "Date d’achèvement"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projet} other {Projets}}",
@@ -177,7 +180,8 @@
       "unstarted": "Non commencé",
       "started": "Commencé",
       "completed": "Terminé",
-      "cancelled": "Annulé"
+      "cancelled": "Annulé",
+      "canceled": "Annulé"
     },
     "sort": {
       "manual": "Manuel",

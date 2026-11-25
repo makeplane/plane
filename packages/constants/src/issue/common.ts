@@ -66,27 +66,27 @@ export enum EIssueListRow {
 
 export const ISSUE_PRIORITIES: {
   key: TIssuePriorities;
-  title: string;
+  i18n_title: string;
 }[] = [
   {
     key: "urgent",
-    title: "Urgent",
+    i18n_title: "urgent",
   },
   {
     key: "high",
-    title: "High",
+    i18n_title: "high",
   },
   {
     key: "medium",
-    title: "Medium",
+    i18n_title: "medium",
   },
   {
     key: "low",
-    title: "Low",
+    i18n_title: "low",
   },
   {
     key: "none",
-    title: "None",
+    i18n_title: "none",
   },
 ];
 

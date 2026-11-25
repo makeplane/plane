@@ -57,7 +57,6 @@ export type TEstimatePointsObject = {
 };
 
 export type TTemplateValues = {
-  title: string;
   i18n_title: string;
   values: TEstimatePointsObject[];
   hide?: boolean;

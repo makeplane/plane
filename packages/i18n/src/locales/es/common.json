@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "De lo contrario, intenta actualizar la página ocasionalmente o visita nuestra",
     "status_page": "página de estado"
   },
+  "calendar_layouts": {
+    "month": "Vista mensual",
+    "week": "Vista semanal"
+  },
+  "months": {
+    "january": "Enero",
+    "february": "Febrero",
+    "march": "Marzo",
+    "april": "Abril",
+    "may": "Mayo",
+    "june": "Junio",
+    "july": "Julio",
+    "august": "Agosto",
+    "september": "Septiembre",
+    "october": "Octubre",
+    "november": "Noviembre",
+    "december": "Diciembre"
+  },
+  "months_short": {
+    "jan": "Ene",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Abr",
+    "may": "May",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Ago",
+    "sep": "Sept",
+    "oct": "Oct",
+    "nov": "Nov",
+    "dec": "Dic"
+  },
+  "weekdays": {
+    "sunday": "Domingo",
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado"
+  },
+  "weekdays_short": {
+    "sun": "Dom",
+    "mon": "Lun",
+    "tue": "Mar",
+    "wed": "Mié",
+    "thu": "Jue",
+    "fri": "Vie",
+    "sat": "Sáb"
+  },
   "submit": "Enviar",
   "submitting": "Enviando",
   "cancel": "Cancelar",

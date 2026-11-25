@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Work items resolved vs pending",
     "projects_by_status": "Projects by status",
     "active_users": "Active users",
-    "intake_trends": "Intake Trends"
+    "intake_trends": "Intake Trends",
+    "state_name": "მდგომარეობის სახელი",
+    "estimate_point": "შეფასების ქულა",
+    "completed_date": "დასრულების თარიღი"
   },
   "workspace_projects": {
     "label": "{count, plural, one {პროექტი} other {პროექტები}}",
@@ -177,7 +180,8 @@
       "unstarted": "დაუწყებელი",
       "started": "დაწყებული",
       "completed": "დასრულებული",
-      "cancelled": "გაუქმებული"
+      "cancelled": "გაუქმებული",
+      "canceled": "გაუქმებული"
     },
     "sort": {
       "manual": "ხელით",

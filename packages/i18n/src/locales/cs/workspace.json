@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Vyřešené vs. čekající pracovní položky",
     "projects_by_status": "Projekty podle stavu",
     "active_users": "Aktivní uživatelé",
-    "intake_trends": "Trendy příjmů"
+    "intake_trends": "Trendy příjmů",
+    "state_name": "Název stavu",
+    "estimate_point": "Bod odhadu",
+    "completed_date": "Datum dokončení"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Projekt} few {Projekty} other {Projektů}}",
@@ -177,7 +180,8 @@
       "unstarted": "Nezačato",
       "started": "Zahájeno",
       "completed": "Dokončeno",
-      "cancelled": "Zrušeno"
+      "cancelled": "Zrušeno",
+      "canceled": "Zrušeno"
     },
     "sort": {
       "manual": "Ručně",

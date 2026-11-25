@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "그렇지 않으면 가끔 페이지를 새로고침하거나 저희",
     "status_page": "상태 페이지를 방문해 주세요"
   },
+  "calendar_layouts": {
+    "month": "월간 레이아웃",
+    "week": "주간 레이아웃"
+  },
+  "months": {
+    "january": "1월",
+    "february": "2월",
+    "march": "3월",
+    "april": "4월",
+    "may": "5월",
+    "june": "6월",
+    "july": "7월",
+    "august": "8월",
+    "september": "9월",
+    "october": "10월",
+    "november": "11월",
+    "december": "12월"
+  },
+  "months_short": {
+    "jan": "1월",
+    "feb": "2월",
+    "mar": "3월",
+    "apr": "4월",
+    "may": "5월",
+    "jun": "6월",
+    "jul": "7월",
+    "aug": "8월",
+    "sep": "9월",
+    "oct": "10월",
+    "nov": "11월",
+    "dec": "12월"
+  },
+  "weekdays": {
+    "sunday": "일요일",
+    "monday": "월요일",
+    "tuesday": "화요일",
+    "wednesday": "수요일",
+    "thursday": "목요일",
+    "friday": "금요일",
+    "saturday": "토요일"
+  },
+  "weekdays_short": {
+    "sun": "일",
+    "mon": "월",
+    "tue": "화",
+    "wed": "수",
+    "thu": "목",
+    "fri": "금",
+    "sat": "토"
+  },
   "submit": "제출",
   "submitting": "제출 중",
   "cancel": "취소",

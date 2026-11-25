@@ -26,7 +26,6 @@ export type IPaymentProductPrice = {
 export type TProductSubscriptionType = "FREE" | "ONE" | "PRO" | "BUSINESS" | "ENTERPRISE";
 
 export type IPaymentProduct = {
-  description: string;
   id: string;
   name: string;
   type: Omit<TProductSubscriptionType, "FREE">;

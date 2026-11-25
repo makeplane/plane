@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "否則，請偶爾重新整理頁面或造訪我們的",
     "status_page": "狀態頁面"
   },
+  "calendar_layouts": {
+    "month": "月版面配置",
+    "week": "週版面配置"
+  },
+  "months": {
+    "january": "1月",
+    "february": "2月",
+    "march": "3月",
+    "april": "4月",
+    "may": "5月",
+    "june": "6月",
+    "july": "7月",
+    "august": "8月",
+    "september": "9月",
+    "october": "10月",
+    "november": "11月",
+    "december": "12月"
+  },
+  "months_short": {
+    "jan": "1月",
+    "feb": "2月",
+    "mar": "3月",
+    "apr": "4月",
+    "may": "5月",
+    "jun": "6月",
+    "jul": "7月",
+    "aug": "8月",
+    "sep": "9月",
+    "oct": "10月",
+    "nov": "11月",
+    "dec": "12月"
+  },
+  "weekdays": {
+    "sunday": "星期日",
+    "monday": "星期一",
+    "tuesday": "星期二",
+    "wednesday": "星期三",
+    "thursday": "星期四",
+    "friday": "星期五",
+    "saturday": "星期六"
+  },
+  "weekdays_short": {
+    "sun": "週日",
+    "mon": "週一",
+    "tue": "週二",
+    "wed": "週三",
+    "thu": "週四",
+    "fri": "週五",
+    "sat": "週六"
+  },
   "submit": "送出",
   "submitting": "送出中",
   "cancel": "取消",

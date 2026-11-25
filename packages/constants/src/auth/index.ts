@@ -17,29 +17,6 @@ export enum E_PASSWORD_STRENGTH {
 
 export const PASSWORD_MIN_LENGTH = 8;
 
-export const SPACE_PASSWORD_CRITERIA = [
-  {
-    key: "min_8_char",
-    label: "Min 8 characters",
-    isCriteriaValid: (password: string) => password.length >= PASSWORD_MIN_LENGTH,
-  },
-  // {
-  //   key: "min_1_upper_case",
-  //   label: "Min 1 upper-case letter",
-  //   isCriteriaValid: (password: string) => PASSWORD_NUMBER_REGEX.test(password),
-  // },
-  // {
-  //   key: "min_1_number",
-  //   label: "Min 1 number",
-  //   isCriteriaValid: (password: string) => PASSWORD_CHAR_CAPS_REGEX.test(password),
-  // },
-  // {
-  //   key: "min_1_special_char",
-  //   label: "Min 1 special character",
-  //   isCriteriaValid: (password: string) => PASSWORD_SPECIAL_CHAR_REGEX.test(password),
-  // },
-];
-
 export enum EAuthPageTypes {
   PUBLIC = "PUBLIC",
   NON_AUTHENTICATED = "NON_AUTHENTICATED",

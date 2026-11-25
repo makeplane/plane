@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Інакше спробуйте періодично оновлювати сторінку або відвідайте нашу",
     "status_page": "сторінку статусу"
   },
+  "calendar_layouts": {
+    "month": "Макет за місяцями",
+    "week": "Макет за тижнями"
+  },
+  "months": {
+    "january": "Січень",
+    "february": "Лютий",
+    "march": "Березень",
+    "april": "Квітень",
+    "may": "Травень",
+    "june": "Червень",
+    "july": "Липень",
+    "august": "Серпень",
+    "september": "Вересень",
+    "october": "Жовтень",
+    "november": "Листопад",
+    "december": "Грудень"
+  },
+  "months_short": {
+    "jan": "Січ.",
+    "feb": "Лют.",
+    "mar": "Бер.",
+    "apr": "Квіт.",
+    "may": "Трав.",
+    "jun": "Черв.",
+    "jul": "Лип.",
+    "aug": "Серп.",
+    "sep": "Вер.",
+    "oct": "Жовт.",
+    "nov": "Лист.",
+    "dec": "Груд."
+  },
+  "weekdays": {
+    "sunday": "Неділя",
+    "monday": "Понеділок",
+    "tuesday": "Вівторок",
+    "wednesday": "Середа",
+    "thursday": "Четвер",
+    "friday": "Пʼятниця",
+    "saturday": "Субота"
+  },
+  "weekdays_short": {
+    "sun": "Нд",
+    "mon": "Пн",
+    "tue": "Вт",
+    "wed": "Ср",
+    "thu": "Чт",
+    "fri": "Пт",
+    "sat": "Сб"
+  },
   "submit": "Надіслати",
   "submitting": "Надсилання",
   "cancel": "Скасувати",

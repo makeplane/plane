@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
@@ -73,6 +74,7 @@ type Props = {
 };
 
 export const CalendarChart = observer(function CalendarChart(props: Props) {
+  const { t } = useTranslation();
   const {
     issuesFilterStore,
     issues,
@@ -206,9 +208,9 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
             {/* mobile view */}
             <div className="md:hidden">
               <p className="p-4 text-h5-semibold">
-                {`${selectedDate.getDate()} ${
-                  MONTHS_LIST[selectedDate.getMonth() + 1].title
-                }, ${selectedDate.getFullYear()}`}
+                {`${selectedDate.getDate()} ${t(
+                  MONTHS_LIST[selectedDate.getMonth() + 1].i18n_title
+                )}, ${selectedDate.getFullYear()}`}
               </p>
               <CalendarIssueBlocks
                 date={selectedDate}
@@ -234,9 +236,9 @@ export const CalendarChart = observer(function CalendarChart(props: Props) {
         {/* mobile view */}
         <div className="md:hidden">
           <p className="p-4 text-h5-semibold">
-            {`${selectedDate.getDate()} ${
-              MONTHS_LIST[selectedDate.getMonth() + 1].title
-            }, ${selectedDate.getFullYear()}`}
+            {`${selectedDate.getDate()} ${t(
+              MONTHS_LIST[selectedDate.getMonth() + 1].i18n_title
+            )}, ${selectedDate.getFullYear()}`}
           </p>
           <CalendarIssueBlocks
             date={selectedDate}

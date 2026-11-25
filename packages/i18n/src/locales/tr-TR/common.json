@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Aksi takdirde, sayfayı ara sıra yenilemeyi deneyin veya",
     "status_page": "durum sayfamızı ziyaret edin"
   },
+  "calendar_layouts": {
+    "month": "Ay düzeni",
+    "week": "Hafta düzeni"
+  },
+  "months": {
+    "january": "Ocak",
+    "february": "Şubat",
+    "march": "Mart",
+    "april": "Nisan",
+    "may": "Mayıs",
+    "june": "Haziran",
+    "july": "Temmuz",
+    "august": "Ağustos",
+    "september": "Eylül",
+    "october": "Ekim",
+    "november": "Kasım",
+    "december": "Aralık"
+  },
+  "months_short": {
+    "jan": "Oca",
+    "feb": "Şub",
+    "mar": "Mar",
+    "apr": "Nis",
+    "may": "May",
+    "jun": "Haz",
+    "jul": "Tem",
+    "aug": "Ağu",
+    "sep": "Eyl",
+    "oct": "Eki",
+    "nov": "Kas",
+    "dec": "Ara"
+  },
+  "weekdays": {
+    "sunday": "Pazar",
+    "monday": "Pazartesi",
+    "tuesday": "Salı",
+    "wednesday": "Çarşamba",
+    "thursday": "Perşembe",
+    "friday": "Cuma",
+    "saturday": "Cumartesi"
+  },
+  "weekdays_short": {
+    "sun": "Paz",
+    "mon": "Pzt",
+    "tue": "Sal",
+    "wed": "Çar",
+    "thu": "Per",
+    "fri": "Cum",
+    "sat": "Cmt"
+  },
   "submit": "Gönder",
   "submitting": "Gönderiliyor",
   "cancel": "İptal",

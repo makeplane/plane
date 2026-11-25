@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "已解決 vs 待處理的工作項目",
     "projects_by_status": "按狀態分類的專案",
     "active_users": "活躍使用者",
-    "intake_trends": "入學趨勢"
+    "intake_trends": "入學趨勢",
+    "state_name": "狀態名稱",
+    "estimate_point": "預估點數",
+    "completed_date": "完成日期"
   },
   "workspace_projects": {
     "label": "{count, plural, one {專案} other {專案}}",
@@ -177,7 +180,8 @@
       "unstarted": "未開始",
       "started": "已開始",
       "completed": "已完成",
-      "cancelled": "已取消"
+      "cancelled": "已取消",
+      "canceled": "已取消"
     },
     "sort": {
       "manual": "手動",

@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Решенные vs ожидающие рабочие элементы",
     "projects_by_status": "Проекты по статусу",
     "active_users": "Активные пользователи",
-    "intake_trends": "Тенденции приёма"
+    "intake_trends": "Тенденции приёма",
+    "state_name": "Название статуса",
+    "estimate_point": "Оценочный балл",
+    "completed_date": "Дата завершения"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проект} other {Проекты}}",
@@ -177,7 +180,8 @@
       "unstarted": "Не начато",
       "started": "В процессе",
       "completed": "Завершено",
-      "cancelled": "Отменено"
+      "cancelled": "Отменено",
+      "canceled": "Отменено"
     },
     "sort": {
       "manual": "Вручную",
