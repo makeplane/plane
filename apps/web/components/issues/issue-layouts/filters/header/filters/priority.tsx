@@ -18,7 +18,7 @@ type Props = {
 
 const PRIORITY_OPTIONS = ISSUE_PRIORITIES.map((priority) => ({
   value: priority.key,
-  label: priority.title,
+  i18n_label: priority.i18n_title,
   icon: <PriorityIcon priority={priority.key} className="h-3.5 w-3.5" />,
 }));
 
@@ -29,7 +29,7 @@ export const FilterPriority = observer(function FilterPriority(props: Props) {
   return (
     <FilterSubmenu
       label={t("common.priority")}
-      options={PRIORITY_OPTIONS}
+      options={PRIORITY_OPTIONS.map(({ value, icon, i18n_label }) => ({ value, icon, label: t(i18n_label) }))}
       appliedFilters={appliedFilters}
       onToggle={handleUpdate}
     />

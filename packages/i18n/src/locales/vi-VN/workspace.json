@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Mục công việc đã giải quyết vs đang chờ",
     "projects_by_status": "Dự án theo trạng thái",
     "active_users": "Người dùng hoạt động",
-    "intake_trends": "Xu hướng tiếp nhận"
+    "intake_trends": "Xu hướng tiếp nhận",
+    "state_name": "Tên trạng thái",
+    "estimate_point": "Điểm ước tính",
+    "completed_date": "Ngày hoàn thành"
   },
   "workspace_projects": {
     "label": "{count, plural, one {dự án} other {dự án}}",
@@ -177,7 +180,8 @@
       "unstarted": "Chưa bắt đầu",
       "started": "Đang tiến hành",
       "completed": "Đã hoàn thành",
-      "cancelled": "Đã hủy"
+      "cancelled": "Đã hủy",
+      "canceled": "Đã hủy"
     },
     "sort": {
       "manual": "Thủ công",

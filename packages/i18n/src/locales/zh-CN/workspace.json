@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "已解决 vs 待处理的工作项",
     "projects_by_status": "按状态分类的项目",
     "active_users": "活跃用户",
-    "intake_trends": "入学趋势"
+    "intake_trends": "入学趋势",
+    "state_name": "状态名称",
+    "estimate_point": "估算点数",
+    "completed_date": "完成日期"
   },
   "workspace_projects": {
     "label": "{count, plural, one {项目} other {项目}}",
@@ -177,7 +180,8 @@
       "unstarted": "未开始",
       "started": "进行中",
       "completed": "已完成",
-      "cancelled": "已取消"
+      "cancelled": "已取消",
+      "canceled": "已取消"
     },
     "sort": {
       "manual": "手动",

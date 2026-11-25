@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Вирішені vs очікуючі робочі елементи",
     "projects_by_status": "Проєкти за статусом",
     "active_users": "Активні користувачі",
-    "intake_trends": "Тенденції прийому"
+    "intake_trends": "Тенденції прийому",
+    "state_name": "Назва стану",
+    "estimate_point": "Оцінковий бал",
+    "completed_date": "Дата завершення"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Проєкт} few {Проєкти} other {Проєктів}}",
@@ -177,7 +180,8 @@
       "unstarted": "Не почато",
       "started": "Розпочато",
       "completed": "Завершено",
-      "cancelled": "Скасовано"
+      "cancelled": "Скасовано",
+      "canceled": "Скасовано"
     },
     "sort": {
       "manual": "Вручну",

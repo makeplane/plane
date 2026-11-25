@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { observer } from "mobx-react";
 // plane imports
 import { SelectField } from "@makeplane/propel/components/select-field";
@@ -18,6 +19,7 @@ import { useUserProfile } from "@/hooks/store/user";
 export const StartOfWeekPreference = observer(function StartOfWeekPreference(props: {
   option: { title: string; description: string };
 }) {
+  const { t } = useTranslation();
   // hooks
   const { data: userProfile, updateUserProfile } = useUserProfile();
 
@@ -39,7 +41,7 @@ export const StartOfWeekPreference = observer(function StartOfWeekPreference(pro
           aria-label={props.option.title}
           size="md"
           width="fit"
-          options={START_OF_THE_WEEK_OPTIONS}
+          options={START_OF_THE_WEEK_OPTIONS.map((day) => ({ value: day.value, label: t(day.i18n_label) }))}
           value={userProfile.start_of_the_week}
           onValueChange={(value) => {
             if (value !== null) void handleStartOfWeekChange(value);

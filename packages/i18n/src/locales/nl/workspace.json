@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Werkitems opgelost versus openstaand",
     "projects_by_status": "Projecten op status",
     "active_users": "Actieve gebruikers",
-    "intake_trends": "Intaketrends"
+    "intake_trends": "Intaketrends",
+    "state_name": "Statusnaam",
+    "estimate_point": "Inschattingspunt",
+    "completed_date": "Voltooiingsdatum"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Project} other {Projecten}}",
@@ -177,7 +180,8 @@
       "unstarted": "Niet gestart",
       "started": "Gestart",
       "completed": "Voltooid",
-      "cancelled": "Geannuleerd"
+      "cancelled": "Geannuleerd",
+      "canceled": "Geannuleerd"
     },
     "sort": {
       "manual": "Handmatig",

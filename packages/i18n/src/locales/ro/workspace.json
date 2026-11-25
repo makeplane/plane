@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Elemente de lucru rezolvate vs în așteptare",
     "projects_by_status": "Proiecte după statut",
     "active_users": "Utilizatori activi",
-    "intake_trends": "Tendințe de admitere"
+    "intake_trends": "Tendințe de admitere",
+    "state_name": "Numele stării",
+    "estimate_point": "Punct de estimare",
+    "completed_date": "Data finalizării"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proiect} other {Proiecte}}",
@@ -177,7 +180,8 @@
       "unstarted": "Neîncepute",
       "started": "În desfășurare",
       "completed": "Finalizate",
-      "cancelled": "Anulate"
+      "cancelled": "Anulate",
+      "canceled": "Anulate"
     },
     "sort": {
       "manual": "Manual",

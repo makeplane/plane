@@ -69,6 +69,7 @@ export const SubIssuesListRoot = observer(function SubIssuesListRoot(props: Prop
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: issueServiceType === EIssueServiceType.EPICS,
     projectId,
+    t,
   });
 
   const getWorkItemIds = useCallback(

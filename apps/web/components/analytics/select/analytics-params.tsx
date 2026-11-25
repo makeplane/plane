@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { useMemo } from "react";
 import { observer } from "mobx-react";
 import type { Control, UseFormSetValue } from "react-hook-form";
@@ -28,14 +29,23 @@ type Props = {
 };
 
 export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(props: Props) {
+  const { t } = useTranslation();
   const { control, params, classNames, isEpic } = props;
   const xAxisOptions = useMemo(
-    () => ANALYTICS_X_AXIS_VALUES.filter((option) => option.value !== params.group_by),
-    [params.group_by]
+    () =>
+      ANALYTICS_X_AXIS_VALUES.filter((option) => option.value !== params.group_by).map((option) => ({
+        value: option.value,
+        label: t(option.i18n_label),
+      })),
+    [params.group_by, t]
   );
   const groupByOptions = useMemo(
-    () => ANALYTICS_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis),
-    [params.x_axis]
+    () =>
+      ANALYTICS_X_AXIS_VALUES.filter((option) => option.value !== params.x_axis).map((option) => ({
+        value: option.value,
+        label: t(option.i18n_label),
+      })),
+    [params.x_axis, t]
   );
 
   return (
@@ -50,7 +60,7 @@ export const AnalyticsSelectParams = observer(function AnalyticsSelectParams(pro
               onChange={(val: ChartYAxisMetric | null) => {
                 onChange(val);
               }}
-              options={ANALYTICS_Y_AXIS_VALUES}
+              options={ANALYTICS_Y_AXIS_VALUES.map((option) => ({ value: option.value, label: t(option.i18n_label) }))}
               hiddenOptions={[
                 ChartYAxisMetric.ESTIMATE_POINT_COUNT,
                 isEpic ? ChartYAxisMetric.WORK_ITEM_COUNT : ChartYAxisMetric.EPIC_WORK_ITEM_COUNT,

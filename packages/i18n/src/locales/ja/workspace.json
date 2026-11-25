@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "解決済み／保留中の作業項目",
     "projects_by_status": "ステータス別のプロジェクト",
     "active_users": "アクティブユーザー",
-    "intake_trends": "Intakeの推移"
+    "intake_trends": "Intakeの推移",
+    "state_name": "ステート名",
+    "estimate_point": "見積もりポイント",
+    "completed_date": "完了日"
   },
   "workspace_projects": {
     "label": "{count, plural, one {プロジェクト} other {プロジェクト}}",
@@ -177,7 +180,8 @@
       "unstarted": "未開始",
       "started": "開始済み",
       "completed": "完了",
-      "cancelled": "キャンセル"
+      "cancelled": "キャンセル",
+      "canceled": "キャンセル"
     },
     "sort": {
       "manual": "手動",

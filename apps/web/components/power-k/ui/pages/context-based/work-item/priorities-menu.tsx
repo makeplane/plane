@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { Command } from "cmdk";
 import { observer } from "mobx-react";
 // plane imports
@@ -19,6 +20,7 @@ type Props = {
 };
 
 export const PowerKWorkItemPrioritiesMenu = observer(function PowerKWorkItemPrioritiesMenu(props: Props) {
+  const { t } = useTranslation();
   const { handleSelect, workItemDetails } = props;
 
   return (
@@ -27,7 +29,7 @@ export const PowerKWorkItemPrioritiesMenu = observer(function PowerKWorkItemPrio
         <PowerKModalCommandItem
           key={priority.key}
           iconNode={<PriorityIcon priority={priority.key} />}
-          label={priority.title}
+          label={t(priority.i18n_title)}
           isSelected={priority.key === workItemDetails.priority}
           onSelect={() => handleSelect(priority.key)}
         />

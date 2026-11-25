@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import React from "react";
 import { Command } from "cmdk";
 // plane imports
@@ -17,12 +18,13 @@ type Props = {
 };
 
 export function PowerKPreferencesStartOfWeekMenu(props: Props) {
+  const { t } = useTranslation();
   const { onSelect } = props;
 
   return (
     <Command.Group>
       {START_OF_THE_WEEK_OPTIONS.map((day) => (
-        <PowerKModalCommandItem key={day.value} onSelect={() => onSelect(day.value)} label={day.label} />
+        <PowerKModalCommandItem key={day.value} onSelect={() => onSelect(day.value)} label={t(day.i18n_label)} />
       ))}
     </Command.Group>
   );

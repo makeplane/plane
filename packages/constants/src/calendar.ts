@@ -9,100 +9,100 @@ import { EStartOfTheWeek } from "@plane/types";
 
 export const MONTHS_LIST: {
   [monthNumber: number]: {
-    shortTitle: string;
-    title: string;
+    i18n_short_title: string;
+    i18n_title: string;
   };
 } = {
   1: {
-    shortTitle: "Jan",
-    title: "January",
+    i18n_short_title: "months_short.jan",
+    i18n_title: "months.january",
   },
   2: {
-    shortTitle: "Feb",
-    title: "February",
+    i18n_short_title: "months_short.feb",
+    i18n_title: "months.february",
   },
   3: {
-    shortTitle: "Mar",
-    title: "March",
+    i18n_short_title: "months_short.mar",
+    i18n_title: "months.march",
   },
   4: {
-    shortTitle: "Apr",
-    title: "April",
+    i18n_short_title: "months_short.apr",
+    i18n_title: "months.april",
   },
   5: {
-    shortTitle: "May",
-    title: "May",
+    i18n_short_title: "months_short.may",
+    i18n_title: "months.may",
   },
   6: {
-    shortTitle: "Jun",
-    title: "June",
+    i18n_short_title: "months_short.jun",
+    i18n_title: "months.june",
   },
   7: {
-    shortTitle: "Jul",
-    title: "July",
+    i18n_short_title: "months_short.jul",
+    i18n_title: "months.july",
   },
   8: {
-    shortTitle: "Aug",
-    title: "August",
+    i18n_short_title: "months_short.aug",
+    i18n_title: "months.august",
   },
   9: {
-    shortTitle: "Sep",
-    title: "September",
+    i18n_short_title: "months_short.sep",
+    i18n_title: "months.september",
   },
   10: {
-    shortTitle: "Oct",
-    title: "October",
+    i18n_short_title: "months_short.oct",
+    i18n_title: "months.october",
   },
   11: {
-    shortTitle: "Nov",
-    title: "November",
+    i18n_short_title: "months_short.nov",
+    i18n_title: "months.november",
   },
   12: {
-    shortTitle: "Dec",
-    title: "December",
+    i18n_short_title: "months_short.dec",
+    i18n_title: "months.december",
   },
 };
 
 export const DAYS_LIST: {
   [dayIndex: number]: {
-    shortTitle: string;
-    title: string;
+    i18n_short_title: string;
+    i18n_title: string;
     value: EStartOfTheWeek;
   };
 } = {
   1: {
-    shortTitle: "Sun",
-    title: "Sunday",
+    i18n_short_title: "weekdays_short.sun",
+    i18n_title: "weekdays.sunday",
     value: EStartOfTheWeek.SUNDAY,
   },
   2: {
-    shortTitle: "Mon",
-    title: "Monday",
+    i18n_short_title: "weekdays_short.mon",
+    i18n_title: "weekdays.monday",
     value: EStartOfTheWeek.MONDAY,
   },
   3: {
-    shortTitle: "Tue",
-    title: "Tuesday",
+    i18n_short_title: "weekdays_short.tue",
+    i18n_title: "weekdays.tuesday",
     value: EStartOfTheWeek.TUESDAY,
   },
   4: {
-    shortTitle: "Wed",
-    title: "Wednesday",
+    i18n_short_title: "weekdays_short.wed",
+    i18n_title: "weekdays.wednesday",
     value: EStartOfTheWeek.WEDNESDAY,
   },
   5: {
-    shortTitle: "Thu",
-    title: "Thursday",
+    i18n_short_title: "weekdays_short.thu",
+    i18n_title: "weekdays.thursday",
     value: EStartOfTheWeek.THURSDAY,
   },
   6: {
-    shortTitle: "Fri",
-    title: "Friday",
+    i18n_short_title: "weekdays_short.fri",
+    i18n_title: "weekdays.friday",
     value: EStartOfTheWeek.FRIDAY,
   },
   7: {
-    shortTitle: "Sat",
-    title: "Saturday",
+    i18n_short_title: "weekdays_short.sat",
+    i18n_title: "weekdays.saturday",
     value: EStartOfTheWeek.SATURDAY,
   },
 };
@@ -110,15 +110,15 @@ export const DAYS_LIST: {
 export const CALENDAR_LAYOUTS: {
   [layout in TCalendarLayouts]: {
     key: TCalendarLayouts;
-    title: string;
+    i18n_title: string;
   };
 } = {
   month: {
     key: "month",
-    title: "Month layout",
+    i18n_title: "calendar_layouts.month",
   },
   week: {
     key: "week",
-    title: "Week layout",
+    i18n_title: "calendar_layouts.week",
   },
 };

@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Item kerja yang diselesaikan vs tertunda",
     "projects_by_status": "Proyek berdasarkan status",
     "active_users": "Pengguna aktif",
-    "intake_trends": "Tren Penerimaan"
+    "intake_trends": "Tren Penerimaan",
+    "state_name": "Nama status",
+    "estimate_point": "Poin perkiraan",
+    "completed_date": "Tanggal selesai"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Proyek} other {Proyek}}",
@@ -177,7 +180,8 @@
       "unstarted": "Belum dimulai",
       "started": "Dimulai",
       "completed": "Selesai",
-      "cancelled": "Dibatalkan"
+      "cancelled": "Dibatalkan",
+      "canceled": "Dibatalkan"
     },
     "sort": {
       "manual": "Manual",

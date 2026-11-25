@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "Work items resolved vs pending",
     "projects_by_status": "Projects by status",
     "active_users": "Active users",
-    "intake_trends": "Intake Trends"
+    "intake_trends": "Intake Trends",
+    "state_name": "State name",
+    "estimate_point": "Estimate point",
+    "completed_date": "Completed date"
   },
   "workspace_projects": {
     "label": "{count, plural, one {Project} other {Projects}}",
@@ -177,7 +180,8 @@
       "unstarted": "Unstarted",
       "started": "Started",
       "completed": "Completed",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "canceled": "Canceled"
     },
     "sort": {
       "manual": "Manual",

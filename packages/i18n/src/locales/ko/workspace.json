@@ -148,7 +148,10 @@
     "workitem_resolved_vs_pending": "해결된 vs 대기 중인 작업 항목",
     "projects_by_status": "상태별 프로젝트",
     "active_users": "활성 사용자",
-    "intake_trends": "수용 추세"
+    "intake_trends": "수용 추세",
+    "state_name": "상태 이름",
+    "estimate_point": "추정 포인트",
+    "completed_date": "완료일"
   },
   "workspace_projects": {
     "label": "{count, plural, one {프로젝트} other {프로젝트}}",
@@ -177,7 +180,8 @@
       "unstarted": "시작되지 않음",
       "started": "시작됨",
       "completed": "완료됨",
-      "cancelled": "취소됨"
+      "cancelled": "취소됨",
+      "canceled": "취소됨"
     },
     "sort": {
       "manual": "수동",

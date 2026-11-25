@@ -14,7 +14,7 @@ import type { SelectTooltip, SelectVariant } from "../select/types";
 /** A single priority the picker offers. Sourced from the hardcoded `ISSUE_PRIORITIES` list. */
 export type PriorityOption = {
   key: TIssuePriorities;
-  title: string;
+  i18n_title: string;
 };
 
 export type PrioritySelectProps = {
@@ -59,7 +59,7 @@ export function PrioritySelect(props: PrioritySelectProps) {
   const selected = value ? (ISSUE_PRIORITIES.find((priority) => priority.key === value) ?? null) : null;
 
   // Priority titles are shipped as English strings; prefer the localized copy keyed off `key`.
-  const labelOf = (option: PriorityOption) => t(option.key) || option.title;
+  const labelOf = (option: PriorityOption) => t(option.i18n_title);
 
   return (
     <Select<PriorityOption>

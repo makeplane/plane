@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "В противном случае попробуйте периодически обновлять страницу или посетите нашу",
     "status_page": "страницу статуса"
   },
+  "calendar_layouts": {
+    "month": "Макет по месяцам",
+    "week": "Макет по неделям"
+  },
+  "months": {
+    "january": "Январь",
+    "february": "Февраль",
+    "march": "Март",
+    "april": "Апрель",
+    "may": "Май",
+    "june": "Июнь",
+    "july": "Июль",
+    "august": "Август",
+    "september": "Сентябрь",
+    "october": "Октябрь",
+    "november": "Ноябрь",
+    "december": "Декабрь"
+  },
+  "months_short": {
+    "jan": "Янв.",
+    "feb": "Февр.",
+    "mar": "Март",
+    "apr": "Апр.",
+    "may": "Май",
+    "jun": "Июнь",
+    "jul": "Июль",
+    "aug": "Авг.",
+    "sep": "Сент.",
+    "oct": "Окт.",
+    "nov": "Нояб.",
+    "dec": "Дек."
+  },
+  "weekdays": {
+    "sunday": "Воскресенье",
+    "monday": "Понедельник",
+    "tuesday": "Вторник",
+    "wednesday": "Среда",
+    "thursday": "Четверг",
+    "friday": "Пятница",
+    "saturday": "Суббота"
+  },
+  "weekdays_short": {
+    "sun": "Вс",
+    "mon": "Пн",
+    "tue": "Вт",
+    "wed": "Ср",
+    "thu": "Чт",
+    "fri": "Пт",
+    "sat": "Сб"
+  },
   "submit": "Отправить",
   "submitting": "Отправка",
   "cancel": "Отменить",

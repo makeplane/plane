@@ -124,7 +124,7 @@ export const CalendarOptionsDropdown = observer(function CalendarOptionsDropdown
           onValueChange={(value) => handleLayoutChange(value as TCalendarLayouts)}
         >
           {Object.entries(CALENDAR_LAYOUTS).map(([layout, layoutDetails]) => (
-            <MenuRadioItem key={layout} value={layout} label={layoutDetails.title} closeOnClick={isMobile} />
+            <MenuRadioItem key={layout} value={layout} label={t(layoutDetails.i18n_title)} closeOnClick={isMobile} />
           ))}
         </MenuRadioGroup>
         <MenuSeparator />

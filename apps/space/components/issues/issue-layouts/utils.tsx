@@ -31,6 +31,7 @@ export const HIGHLIGHT_CLASS = "highlight";
 export const HIGHLIGHT_WITH_LINE = "highlight-with-line";
 
 export const getGroupByColumns = (
+  t: (key: string) => string,
   groupBy: GroupByColumnTypes | null,
   cycle: ICycleStore,
   module: IIssueModuleStore,
@@ -47,7 +48,7 @@ export const getGroupByColumns = (
     case "state":
       return getStateColumns(projectState);
     case "priority":
-      return getPriorityColumns();
+      return getPriorityColumns(t);
     case "labels":
       return getLabelsColumns(label) as any;
     case "assignees":
@@ -129,12 +130,12 @@ const getStateColumns = (projectState: IStateStore): IGroupByColumn[] | undefine
   })) as any;
 };
 
-const getPriorityColumns = () => {
+const getPriorityColumns = (t: (key: string) => string) => {
   const priorities = ISSUE_PRIORITIES;
 
   return priorities.map((priority) => ({
     id: priority.key,
-    name: priority.title,
+    name: t(priority.i18n_title),
     icon: <PriorityIcon priority={priority?.key} />,
     payload: { priority: priority.key },
   }));

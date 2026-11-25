@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Jika tidak, coba segarkan halaman sesekali atau kunjungi",
     "status_page": "halaman status kami"
   },
+  "calendar_layouts": {
+    "month": "Tata letak bulan",
+    "week": "Tata letak minggu"
+  },
+  "months": {
+    "january": "Januari",
+    "february": "Februari",
+    "march": "Maret",
+    "april": "April",
+    "may": "Mei",
+    "june": "Juni",
+    "july": "Juli",
+    "august": "Agustus",
+    "september": "September",
+    "october": "Oktober",
+    "november": "November",
+    "december": "Desember"
+  },
+  "months_short": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "Mei",
+    "jun": "Jun",
+    "jul": "Jul",
+    "aug": "Agu",
+    "sep": "Sep",
+    "oct": "Okt",
+    "nov": "Nov",
+    "dec": "Des"
+  },
+  "weekdays": {
+    "sunday": "Minggu",
+    "monday": "Senin",
+    "tuesday": "Selasa",
+    "wednesday": "Rabu",
+    "thursday": "Kamis",
+    "friday": "Jumat",
+    "saturday": "Sabtu"
+  },
+  "weekdays_short": {
+    "sun": "Min",
+    "mon": "Sen",
+    "tue": "Sel",
+    "wed": "Rab",
+    "thu": "Kam",
+    "fri": "Jum",
+    "sat": "Sab"
+  },
   "submit": "Kirim",
   "submitting": "Mengirim",
   "cancel": "Batal",

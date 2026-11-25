@@ -28,7 +28,9 @@ export const ReadonlyPriority = observer(function ReadonlyPriority(props: TReado
   return (
     <div className={cn("flex items-center gap-1 text-body-xs-regular", className)}>
       {!hideIcon && <PriorityIcon priority={value ?? "none"} className="size-4" />}
-      <span className="flex-grow truncate">{priorityDetails?.title ?? placeholder ?? t("common.none")}</span>
+      <span className="flex-grow truncate">
+        {priorityDetails ? t(priorityDetails.i18n_title) : (placeholder ?? t("common.none"))}
+      </span>
     </div>
   );
 });

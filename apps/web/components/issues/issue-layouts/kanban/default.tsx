@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import type { MutableRefObject } from "react";
 import { observer } from "mobx-react";
 import type {
@@ -78,6 +79,7 @@ export interface IKanBan {
 }
 
 export const KanBan = observer(function KanBan(props: IKanBan) {
+  const { t } = useTranslation();
   const {
     issuesMap,
     groupedIssueIds,
@@ -120,6 +122,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     includeNone: true,
     isWorkspaceLevel: isWorkspaceLevel(storeType),
     isEpic: isEpic,
+    t,
   });
 
   if (!list) return null;

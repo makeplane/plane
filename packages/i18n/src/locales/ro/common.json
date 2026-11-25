@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Altfel, încercați să reîmprospătați pagina din când în când sau vizitați",
     "status_page": "pagina noastră de stare"
   },
+  "calendar_layouts": {
+    "month": "Aspect lunar",
+    "week": "Aspect săptămânal"
+  },
+  "months": {
+    "january": "Ianuarie",
+    "february": "Februarie",
+    "march": "Martie",
+    "april": "Aprilie",
+    "may": "Mai",
+    "june": "Iunie",
+    "july": "Iulie",
+    "august": "August",
+    "september": "Septembrie",
+    "october": "Octombrie",
+    "november": "Noiembrie",
+    "december": "Decembrie"
+  },
+  "months_short": {
+    "jan": "Ian.",
+    "feb": "Feb.",
+    "mar": "Mar.",
+    "apr": "Apr.",
+    "may": "Mai",
+    "jun": "Iun.",
+    "jul": "Iul.",
+    "aug": "Aug.",
+    "sep": "Sept.",
+    "oct": "Oct.",
+    "nov": "Nov.",
+    "dec": "Dec."
+  },
+  "weekdays": {
+    "sunday": "Duminică",
+    "monday": "Luni",
+    "tuesday": "Marți",
+    "wednesday": "Miercuri",
+    "thursday": "Joi",
+    "friday": "Vineri",
+    "saturday": "Sâmbătă"
+  },
+  "weekdays_short": {
+    "sun": "Dum.",
+    "mon": "Lun.",
+    "tue": "Mar.",
+    "wed": "Mie.",
+    "thu": "Joi",
+    "fri": "Vin.",
+    "sat": "Sâm."
+  },
   "submit": "Trimite",
   "submitting": "Se trimite",
   "cancel": "Anulează",

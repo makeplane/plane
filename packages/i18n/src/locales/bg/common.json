@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "В противен случай опитвайте да опресните страницата от време на време или посетете нашата",
     "status_page": "Страница за състоянието"
   },
+  "calendar_layouts": {
+    "month": "Месечен изглед",
+    "week": "Седмичен изглед"
+  },
+  "months": {
+    "january": "Януари",
+    "february": "Февруари",
+    "march": "Март",
+    "april": "Април",
+    "may": "Май",
+    "june": "Юни",
+    "july": "Юли",
+    "august": "Август",
+    "september": "Септември",
+    "october": "Октомври",
+    "november": "Ноември",
+    "december": "Декември"
+  },
+  "months_short": {
+    "jan": "01",
+    "feb": "02",
+    "mar": "03",
+    "apr": "04",
+    "may": "05",
+    "jun": "06",
+    "jul": "07",
+    "aug": "08",
+    "sep": "09",
+    "oct": "10",
+    "nov": "11",
+    "dec": "12"
+  },
+  "weekdays": {
+    "sunday": "Неделя",
+    "monday": "Понеделник",
+    "tuesday": "Вторник",
+    "wednesday": "Сряда",
+    "thursday": "Четвъртък",
+    "friday": "Петък",
+    "saturday": "Събота"
+  },
+  "weekdays_short": {
+    "sun": "Нд",
+    "mon": "Пн",
+    "tue": "Вт",
+    "wed": "Ср",
+    "thu": "Чт",
+    "fri": "Пт",
+    "sat": "Сб"
+  },
   "submit": "Изпрати",
   "submitting": "Изпращане",
   "cancel": "Отказ",

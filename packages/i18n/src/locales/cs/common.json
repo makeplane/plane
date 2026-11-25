@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Jinak zkuste občas obnovit stránku nebo navštivte naši",
     "status_page": "stránku stavu"
   },
+  "calendar_layouts": {
+    "month": "Měsíční rozložení",
+    "week": "Týdenní rozložení"
+  },
+  "months": {
+    "january": "Leden",
+    "february": "Únor",
+    "march": "Březen",
+    "april": "Duben",
+    "may": "Květen",
+    "june": "Červen",
+    "july": "Červenec",
+    "august": "Srpen",
+    "september": "Září",
+    "october": "Říjen",
+    "november": "Listopad",
+    "december": "Prosinec"
+  },
+  "months_short": {
+    "jan": "Led",
+    "feb": "Úno",
+    "mar": "Bře",
+    "apr": "Dub",
+    "may": "Kvě",
+    "jun": "Čvn",
+    "jul": "Čvc",
+    "aug": "Srp",
+    "sep": "Zář",
+    "oct": "Říj",
+    "nov": "Lis",
+    "dec": "Pro"
+  },
+  "weekdays": {
+    "sunday": "Neděle",
+    "monday": "Pondělí",
+    "tuesday": "Úterý",
+    "wednesday": "Středa",
+    "thursday": "Čtvrtek",
+    "friday": "Pátek",
+    "saturday": "Sobota"
+  },
+  "weekdays_short": {
+    "sun": "Ne",
+    "mon": "Po",
+    "tue": "Út",
+    "wed": "St",
+    "thu": "Čt",
+    "fri": "Pá",
+    "sat": "So"
+  },
   "submit": "Odeslat",
   "submitting": "Odesílání",
   "cancel": "Zrušit",

@@ -175,9 +175,10 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         isEnabled: isFilterEnabled("state_group"),
         filterIcon: StateOutline,
         getOptionIcon: (stateGroupKey) => <StateGroupIcon stateGroup={stateGroupKey} />,
+        getOptionLabel: t,
         ...operatorConfigs,
       }),
-    [isFilterEnabled, operatorConfigs, filterLabels.state_group]
+    [isFilterEnabled, operatorConfigs, filterLabels.state_group, t]
   );
 
   // state filter config
@@ -330,9 +331,10 @@ export const useWorkItemFiltersConfig = (props: TUseWorkItemFiltersConfigProps):
         isEnabled: isFilterEnabled("priority"),
         filterIcon: PriorityOutline,
         getOptionIcon: (priority) => <PriorityIcon priority={priority} />,
+        getOptionLabel: t,
         ...operatorConfigs,
       }),
-    [isFilterEnabled, operatorConfigs, filterLabels.priority]
+    [isFilterEnabled, operatorConfigs, filterLabels.priority, t]
   );
 
   // start date filter config

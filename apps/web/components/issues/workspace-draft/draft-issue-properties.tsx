@@ -209,7 +209,7 @@ export const DraftIssueProperties = observer(function DraftIssueProperties(props
     menuRow: {
       icon: <PriorityIcon priority={issue.priority ?? "none"} className="size-4" />,
       label: t("common.priority"),
-      preview: priority && priority.key !== "none" ? t(priority.key) || priority.title : none,
+      preview: priority && priority.key !== "none" ? t(priority.i18n_title) : none,
       editor: ({ onEditorClose }) => renderPriority(getPropertyEditorProps(onEditorClose)),
     },
   });

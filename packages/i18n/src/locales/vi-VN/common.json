@@ -5,6 +5,56 @@
     "otherwise_try_refreshing_the_page_occasionally_or_visit_our": "Nếu không, hãy thử làm mới trang thỉnh thoảng hoặc truy cập",
     "status_page": "trang trạng thái của chúng tôi"
   },
+  "calendar_layouts": {
+    "month": "Bố cục tháng",
+    "week": "Bố cục tuần"
+  },
+  "months": {
+    "january": "Tháng 1",
+    "february": "Tháng 2",
+    "march": "Tháng 3",
+    "april": "Tháng 4",
+    "may": "Tháng 5",
+    "june": "Tháng 6",
+    "july": "Tháng 7",
+    "august": "Tháng 8",
+    "september": "Tháng 9",
+    "october": "Tháng 10",
+    "november": "Tháng 11",
+    "december": "Tháng 12"
+  },
+  "months_short": {
+    "jan": "Tháng 1",
+    "feb": "Tháng 2",
+    "mar": "Tháng 3",
+    "apr": "Tháng 4",
+    "may": "Tháng 5",
+    "jun": "Tháng 6",
+    "jul": "Tháng 7",
+    "aug": "Tháng 8",
+    "sep": "Tháng 9",
+    "oct": "Tháng 10",
+    "nov": "Tháng 11",
+    "dec": "Tháng 12"
+  },
+  "weekdays": {
+    "sunday": "Chủ Nhật",
+    "monday": "Thứ Hai",
+    "tuesday": "Thứ Ba",
+    "wednesday": "Thứ Tư",
+    "thursday": "Thứ Năm",
+    "friday": "Thứ Sáu",
+    "saturday": "Thứ Bảy"
+  },
+  "weekdays_short": {
+    "sun": "CN",
+    "mon": "Th 2",
+    "tue": "Th 3",
+    "wed": "Th 4",
+    "thu": "Th 5",
+    "fri": "Th 6",
+    "sat": "Th 7"
+  },
   "submit": "Gửi",
   "submitting": "Đang gửi",
   "cancel": "Hủy",
