@@ -43,18 +43,46 @@ def sync_unread_memberships():
 
 
 NOTIFY_NEW_WORK_ITEM_TASK = "plane.liviere.tasks.notify_new_work_item"
+NOTIFY_PROJECT_WORK_ITEMS_TASK = "plane.liviere.tasks.notify_project_work_items"
 SEND_TEST_PUSH_TASK = "plane.liviere.tasks.send_test_push"
 
 
 @shared_task(name=NOTIFY_NEW_WORK_ITEM_TASK)
 def notify_new_work_item(issue_id):
-    """Web push about a new work item (queued by plane/liviere/push/signals.py after the commit)."""
+    """Web push about one new work item (queued by plane/liviere/push/signals.py when coalescing is off)."""
     from plane.liviere.push.config import vapid_config
     from plane.liviere.push.notify import notify_new_work_item as notify
 
     try:
         config = vapid_config()
         return notify(issue_id, config) if config else 0
+    except Exception as e:
+        log_exception(e)
+        return 0
+
+
+@shared_task(name=NOTIFY_PROJECT_WORK_ITEMS_TASK)
+def notify_project_work_items(project_id, since):
+    """Web push about the new work items of a project collected in one window (plane/liviere/push/signals.py).
+
+    The window's key is deleted first, before anything is read: a work item committed later queues a new task, so it
+    is never lost; one committed between the delete and the reading is counted now and gives at most one more
+    notification a window later."""
+    from datetime import datetime
+
+    from django.core.cache import cache
+
+    from plane.liviere.push.config import vapid_config
+    from plane.liviere.push.notify import notify_project_work_items as notify
+    from plane.liviere.push.signals import pending_key
+
+    try:
+        cache.delete(pending_key(project_id))
+    except Exception as e:
+        log_exception(e)
+    try:
+        config = vapid_config()
+        return notify(project_id, datetime.fromisoformat(since), config) if config else 0
     except Exception as e:
         log_exception(e)
         return 0

@@ -251,25 +251,36 @@ it is unavailable, subscribing answers 503 and nothing is queued):
 | `LIVIERE_VAPID_PUBLIC_KEY` | base64url of the uncompressed P-256 public point (65 bytes) |
 | `LIVIERE_VAPID_PRIVATE_KEY` | base64url of the 32-byte private scalar (must match the public key) |
 | `LIVIERE_VAPID_SUBJECT` | `mailto:…` or `https://…` contact for the push services |
+| `LIVIERE_PUSH_COALESCE_SECONDS` | optional: window collecting a project's new work items into one push (empty or invalid = 15, `0` = one push per work item, at most 3600) |
 
 `api` and `worker` both need them (`x-app-env` in `deployments/cli/community/docker-compose.yml` passes them; the
 local `docker-compose-local.yml` reads `apps/api/.env`). The web app gets the public key from the API.
 
-**Flow.** `post_save` of a new `Issue` (app, `/api/v1/` with an API key, MCP) queues
-`plane.liviere.tasks.notify_new_work_item` with `transaction.on_commit`; nothing happens in the request when the keys
-are missing or the item is a draft, and the receiver never raises. The task reads the item from
-`Issue.issue_objects` (no drafts, triage, archived, deleted) and sends to every browser of every recipient:
-people who chose the project (`PushProject`, per account), except the author, who are active members allowed to
-see others' work items – the rules of *New*. Not notified: items created by `bulk_create` (imports) and intake
-items accepted later.
+**Flow.** `post_save` of a new `Issue` (app, `/api/v1/` with an API key, MCP) does its work with
+`transaction.on_commit`; nothing happens in the request when the keys are missing or the item is a draft, and
+neither the receiver nor a broker failure breaks creating the work item. Work items are read from
+`Issue.issue_objects` (no drafts, triage, archived, deleted) and sent to every browser of every recipient: people
+who chose the project (`PushProject`, per account) who are active members allowed to see others' work items – the
+rules of *New*. Own work items are never new, so their author gets nothing about them. Not notified: items created
+by `bulk_create` (imports) and intake items accepted later.
 
-**One notification per project.** The tag is `liviere-new-<project id>`, so a newer notification replaces the
-older one; `renotify` is not set, so by the Notifications API a replacement does not alert again while the
-previous one is still shown (not yet verified in every browser). The title counts
-the recipient's new work items of the project at sending time: with one, `LS-7 · Project name` and a click opens
-the work item (which marks it as read); with more, `LS: 4 new work items` (Polish for a `pl` profile language:
-`nowe elementy pracy` / `nowych elementów pracy`) and a click opens *New* filtered to the project. The body is the
-title of the newest one. Nothing else of the work item is sent.
+**One notification per project and window.** The tag is `liviere-new-<project id>`, so a newer notification
+replaces the older one and the notification centre keeps one entry per project. That alone does not stop the
+pop-ups: on Windows the toast pops up again on every replacement (live test: a parent and two sub-items 3 s apart
+gave 3 pop-ups), with or without `renotify`. So the server coalesces: the first work item of a project committed
+after a quiet spell takes the cache key `liviere-push-pending-<project id>` (`cache.add`, two windows long) and
+queues `plane.liviere.tasks.notify_project_work_items` with a countdown of `LIVIERE_PUSH_COALESCE_SECONDS`
+(default 15 s); later work items queue nothing while the key exists. The task deletes the key before it reads
+anything, so a work item committed after that queues the next window (never lost; one committed right at the
+boundary may give one extra notification). A recipient gets the push only when at least one of their new work
+items was created in the window (from 5 s before its first work item), so an older unread item never pops up
+again because of somebody's – or their own – new work item. If the cache fails, every work item queues the
+project task (no coalescing, nothing lost); with the window `0` every work item queues
+`plane.liviere.tasks.notify_new_work_item` at once, as before. The title counts the recipient's
+new work items of the project at sending time: with one, `LS-7 · Project name` and a click opens the work item
+(which marks it as read); with more, `LS: 4 new work items` (Polish for a `pl` profile language: `nowe elementy
+pracy` / `nowych elementów pracy`) and a click opens *New* filtered to the project. The body is the title of the
+newest one. Nothing else of the work item is sent. Notifications come up to one window late.
 
 **Sending** (`webpush.py`): aes128gcm (RFC 8291, `http-ece`) and a VAPID JWT (RFC 8292, ES256 with `PyJWT`), TTL
 24 h. The endpoint comes from the browser, so it must be `https://` on a known push service

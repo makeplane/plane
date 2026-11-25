@@ -7,6 +7,8 @@
 #   LIVIERE_VAPID_PRIVATE_KEY  base64url of the 32-byte private scalar
 #   LIVIERE_VAPID_SUBJECT      contact for push services, "mailto:…" or "https://…"
 # Without all three (or with a pair that does not match) push is unavailable and nothing is sent.
+#   LIVIERE_PUSH_COALESCE_SECONDS  window collecting new work items of a project into one notification
+#                                  (default 15; 0 = one notification per work item; see plane/liviere/push/notify.py)
 
 # Python imports
 import base64
@@ -61,6 +63,22 @@ def vapid_config():
     return VapidConfig(
         public_key=b64url_encode(public_key_bytes(private_key)), private_key=private_key, subject=subject
     )
+
+
+DEFAULT_COALESCE_SECONDS = 15
+MAX_COALESCE_SECONDS = 3600
+
+
+def coalesce_seconds():
+    """The coalescing window in seconds; a missing, malformed or negative value gives the default."""
+    value = os.environ.get("LIVIERE_PUSH_COALESCE_SECONDS", "").strip()
+    try:
+        seconds = int(value)
+    except ValueError:
+        return DEFAULT_COALESCE_SECONDS
+    if seconds < 0:
+        return DEFAULT_COALESCE_SECONDS
+    return min(seconds, MAX_COALESCE_SECONDS)
 
 
 def push_available():

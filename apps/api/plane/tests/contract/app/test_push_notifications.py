@@ -5,6 +5,7 @@
 # Liviere/plane fork: web push about new work items (plane/liviere/push). The push services are mocked.
 
 import os
+from datetime import timedelta
 from unittest import mock
 from uuid import uuid4
 
@@ -13,14 +14,17 @@ import requests
 from crum import impersonate
 from cryptography.hazmat.primitives.asymmetric import ec
 from rest_framework import status
+from django.core.cache import cache
 from django.test import Client
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from plane.db.models import Issue, Profile, Project, ProjectMember, State, User, WorkspaceMember
 from plane.db.models.api import APIToken
 from plane.liviere.models import PushProject, PushSubscription, WorkItemOpen
 from plane.liviere.push import messages, notify
-from plane.liviere.push.config import b64url_encode, public_key_bytes, vapid_config
+from plane.liviere.push.config import b64url_encode, coalesce_seconds, public_key_bytes, vapid_config
+from plane.liviere.push.signals import pending_key
 
 ADMIN, MEMBER, GUEST = 20, 15, 5
 SETTINGS_URL = "/api/users/me/liviere/push/"
@@ -33,6 +37,8 @@ def _vapid_env():
         "LIVIERE_VAPID_PRIVATE_KEY": b64url_encode(private_key.private_numbers().private_value.to_bytes(32, "big")),
         "LIVIERE_VAPID_PUBLIC_KEY": b64url_encode(public_key_bytes(private_key)),
         "LIVIERE_VAPID_SUBJECT": "mailto:push@example.com",
+        # One task per work item; the coalescing tests set their own window
+        "LIVIERE_PUSH_COALESCE_SECONDS": "0",
     }
 
 
@@ -505,3 +511,132 @@ class TestReviewFixes:
         client.post("/auth/sign-out/")
         assert PushSubscription.objects.filter(user=me).count() == 0
         assert PushSubscription.objects.filter(user=agent).count() == 1
+
+
+@pytest.fixture
+def window(project):
+    """Coalescing on with a 15 s window; the project's key is removed afterwards."""
+    with mock.patch.dict(os.environ, {"LIVIERE_PUSH_COALESCE_SECONDS": "15"}):
+        yield 15
+    cache.delete(pending_key(project.id))
+
+
+def _queued(apply_async):
+    return [call.kwargs for call in apply_async.call_args_list]
+
+
+@pytest.mark.contract
+class TestCoalescing:
+    def test_three_work_items_in_a_window_give_one_task_and_one_notification(
+        self, workspace, project, me, agent, vapid, window, sent, django_capture_on_commit_callbacks
+    ):
+        from plane.liviere.tasks import notify_project_work_items
+
+        _subscribe(me)
+        _choose(me, project)
+        with (
+            mock.patch("plane.liviere.tasks.notify_project_work_items.apply_async") as apply_async,
+            mock.patch("plane.liviere.tasks.notify_new_work_item.delay") as delay,
+        ):
+            for name in ("Parent", "Sub-item 1", "Sub-item 2"):
+                with django_capture_on_commit_callbacks(execute=True):
+                    _issue(project, agent, name)
+        delay.assert_not_called()
+        assert apply_async.call_count == 1
+        queued = _queued(apply_async)[0]
+        assert queued["countdown"] == 15
+        assert queued["args"][0] == str(project.id)
+        assert notify_project_work_items(*queued["args"]) == 1
+        assert len(sent) == 1
+        message = sent[0][1]
+        assert message["count"] == 3
+        assert message["body"] == "Sub-item 2"
+        assert message["url"] == f"/{workspace.slug}/new-work-items?projects={project.id}"
+        # The task released the key
+        assert cache.get(pending_key(project.id)) is None
+
+    def test_a_work_item_after_the_window_queues_a_new_task(
+        self, project, me, agent, vapid, window, sent, django_capture_on_commit_callbacks
+    ):
+        from plane.liviere.tasks import notify_project_work_items
+
+        _subscribe(me)
+        _choose(me, project)
+        with mock.patch("plane.liviere.tasks.notify_project_work_items.apply_async") as apply_async:
+            with django_capture_on_commit_callbacks(execute=True):
+                _issue(project, agent, "First")
+            notify_project_work_items(*_queued(apply_async)[0]["args"])
+            with django_capture_on_commit_callbacks(execute=True):
+                _issue(project, agent, "Second")
+        assert apply_async.call_count == 2
+        assert notify_project_work_items(*_queued(apply_async)[1]["args"]) == 1
+        assert [message["count"] for _, message in sent] == [1, 2]
+
+    def test_window_zero_keeps_one_task_per_work_item(self, project, agent, vapid, django_capture_on_commit_callbacks):
+        with (
+            mock.patch("plane.liviere.tasks.notify_project_work_items.apply_async") as apply_async,
+            mock.patch("plane.liviere.tasks.notify_new_work_item.delay") as delay,
+        ):
+            issues = []
+            for n in range(3):
+                with django_capture_on_commit_callbacks(execute=True):
+                    issues.append(_issue(project, agent, f"Item {n}"))
+        apply_async.assert_not_called()
+        assert [call.args for call in delay.call_args_list] == [(str(issue.id),) for issue in issues]
+
+    def test_own_work_item_does_not_bring_back_an_older_unread_one(self, workspace, project, me, agent, vapid, sent):
+        older = _issue(project, agent, "Older")
+        Issue.objects.filter(pk=older.pk).update(created_at=timezone.now() - timedelta(minutes=5))
+        for user in (me, agent):
+            _subscribe(user)
+            _choose(user, project)
+        own = _issue(project, me, "Mine")
+        since = own.created_at - timedelta(seconds=5)
+        assert notify.notify_project_work_items(project.id, since, vapid) == 1
+        # Only the agent hears about my work item; my older unread one does not pop up again
+        assert [endpoint for endpoint, _ in sent] == [PushSubscription.objects.get(user=agent).endpoint]
+        assert sent[0][1]["body"] == "Mine"
+
+    def test_only_stale_unread_work_items_give_nothing(self, project, me, agent, vapid, sent):
+        _issue(project, agent, "Old")
+        _subscribe(me)
+        _choose(me, project)
+        assert notify.notify_project_work_items(project.id, timezone.now() + timedelta(seconds=1), vapid) == 0
+        assert sent == []
+
+    def test_a_cache_error_still_queues_the_task(
+        self, project, agent, vapid, window, django_capture_on_commit_callbacks
+    ):
+        with (
+            mock.patch("plane.liviere.push.signals.cache.add", side_effect=RuntimeError("redis down")),
+            mock.patch("plane.liviere.tasks.notify_project_work_items.apply_async") as apply_async,
+        ):
+            with django_capture_on_commit_callbacks(execute=True):
+                _issue(project, agent)
+        assert apply_async.call_count == 1
+
+    def test_a_broker_error_releases_the_key(self, project, agent, vapid, window, django_capture_on_commit_callbacks):
+        with mock.patch(
+            "plane.liviere.tasks.notify_project_work_items.apply_async", side_effect=RuntimeError("broker down")
+        ):
+            with django_capture_on_commit_callbacks(execute=True):
+                issue = _issue(project, agent)
+        assert Issue.objects.filter(pk=issue.pk).exists()
+        assert cache.get(pending_key(project.id)) is None
+
+    def test_the_task_sends_nothing_without_keys(self, project, me, agent, no_vapid):
+        from plane.liviere.tasks import notify_project_work_items
+
+        _subscribe(me)
+        _choose(me, project)
+        _issue(project, agent)
+        with mock.patch.object(notify, "send") as send:
+            assert notify_project_work_items(str(project.id), (timezone.now() - timedelta(minutes=1)).isoformat()) == 0
+        send.assert_not_called()
+
+    @pytest.mark.parametrize(
+        "value, expected", [("", 15), ("abc", 15), ("-1", 15), ("0", 0), ("30", 30), ("99999", 3600)]
+    )
+    def test_window_from_the_environment(self, value, expected):
+        with mock.patch.dict(os.environ, {"LIVIERE_PUSH_COALESCE_SECONDS": value}):
+            assert coalesce_seconds() == expected

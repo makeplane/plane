@@ -7,8 +7,10 @@
 // Liviere/plane fork: service worker of web push notifications about new work items (apps/web/liviere/push).
 // Registered with the scope /liviere/push/: it controls no page, it only receives pushes and clicks, so it
 // cannot clash with a service worker of the app at "/". Payload: { title, body, tag, url }.
-// A notification with the same tag (one per project) replaces the previous one; `renotify` is not set, so by the
-// Notifications API the replacement does not alert again while the previous one is still shown.
+// A notification with the same tag (one per project) replaces the previous one, so the notification centre keeps
+// one entry per project. That does not stop the pop-ups: Windows shows the toast again on every replacement, even
+// without `renotify`. A series of work items is therefore coalesced on the server into one push per project
+// (LIVIERE_PUSH_COALESCE_SECONDS, apps/api/plane/liviere/push/signals.py).
 
 self.addEventListener("install", () => self.skipWaiting());
 
