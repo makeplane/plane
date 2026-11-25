@@ -136,4 +136,5 @@ from .draft import (
     DraftIssueDetailSerializer,
 )
 
+from .product import ProductTypeSerializer
 from .team import PortfolioSerializer, TeamMemberSerializer, TeamSerializer

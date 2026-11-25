@@ -168,6 +168,9 @@ class IssueFilterSet(BaseFilterSet):
     subscriber_id = filters.UUIDFilter(method="filter_subscriber_id")
     subscriber_id__in = UUIDInFilter(method="filter_subscriber_id_in", lookup_expr="in")
 
+    kind = filters.CharFilter(method="filter_kind")
+    kind__in = CharInFilter(method="filter_kind_in", lookup_expr="in")
+
     # created_at / updated_at are DateTimeFields, but the UI sends a bare calendar
     # date (yyyy-MM-dd, e.g. {"created_at__exact": "2026-07-30"}). An `exact` lookup
     # coerces that to midnight, so the filter only matched rows stamped exactly
@@ -198,6 +201,16 @@ class IssueFilterSet(BaseFilterSet):
             "is_draft": ["exact"],
             "priority": ["exact", "in"],
         }
+
+    def filter_kind(self, queryset, name, value):
+        return self.filter_kind_in(queryset, name, [value])
+
+    def filter_kind_in(self, queryset, name, value):
+        """task matches the work items that have no kind of their own"""
+        q = Q(type__kind__in=[kind for kind in value if kind != "task"])
+        if "task" in value:
+            q |= Q(type__kind__isnull=True)
+        return q
 
     def filter_is_archived(self, queryset, name, value):
         """

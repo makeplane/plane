@@ -11,6 +11,13 @@ from .project import ProjectBaseModel
 from .base import BaseModel
 
 
+class WorkItemKind(models.TextChoices):
+    """Kinds with rules of their own. A work item without a typed kind is a plain task."""
+
+    MEETING = "meeting", "Meeting"
+    PRODUCT = "product", "Product"
+
+
 class IssueType(BaseModel):
     workspace = models.ForeignKey("db.Workspace", related_name="issue_types", on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
@@ -20,10 +27,19 @@ class IssueType(BaseModel):
     is_default = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     level = models.FloatField(default=0)
+    # Set only on system types, see plane.utils.work_item_types.
+    kind = models.CharField(max_length=20, choices=WorkItemKind.choices, null=True, blank=True)
     external_source = models.CharField(max_length=255, null=True, blank=True)
     external_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["workspace", "kind"],
+                condition=Q(deleted_at__isnull=True, kind__isnull=False),
+                name="issue_type_unique_workspace_kind_when_deleted_at_null",
+            )
+        ]
         verbose_name = "Issue Type"
         verbose_name_plural = "Issue Types"
         db_table = "issue_types"

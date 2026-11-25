@@ -5,7 +5,7 @@
 # Django imports
 from django.utils import timezone
 from lxml import html
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 
 #  Third party imports
 from rest_framework import serializers
@@ -31,6 +31,7 @@ from plane.utils.content_validator import (
     validate_html_content,
     validate_binary_data,
 )
+from plane.utils.products import WorkItemKindMixin, clean_work_item, save_product
 
 from .base import BaseSerializer
 from .cycle import CycleLiteSerializer, CycleSerializer
@@ -43,7 +44,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import URLValidator
 
 
-class IssueSerializer(BaseSerializer):
+class IssueSerializer(WorkItemKindMixin, BaseSerializer):
     """
     Comprehensive work item serializer with full relationship management.
 
@@ -179,7 +180,7 @@ class IssueSerializer(BaseSerializer):
         ):
             raise serializers.ValidationError("Estimate point is not valid please pass a valid estimate_point_id")
 
-        return data
+        return clean_work_item(data, self.instance, self.context.get("project_id"))
 
     def create(self, validated_data):
         assignees = validated_data.pop("assignees", None)
@@ -196,7 +197,10 @@ class IssueSerializer(BaseSerializer):
             issue_type = IssueType.objects.filter(project_issue_types__project_id=project_id, is_default=True).first()
             issue_type = issue_type
 
-        issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
+        product = validated_data.pop("product", None)
+        with transaction.atomic():
+            issue = Issue.objects.create(**validated_data, project_id=project_id, type=issue_type)
+            save_product(issue, product)
 
         # Issue Audit Users
         created_by_id = issue.created_by_id
@@ -318,7 +322,11 @@ class IssueSerializer(BaseSerializer):
 
         # Time updation occues even when other related models are updated
         instance.updated_at = timezone.now()
-        return super().update(instance, validated_data)
+        product = validated_data.pop("product", None)
+        with transaction.atomic():
+            instance = super().update(instance, validated_data)
+            save_product(instance, product)
+        return instance
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

@@ -22,6 +22,7 @@ class TestIssueGroupByAllowlist:
         expected = {
             "state_id",
             "state__group",
+            "type__kind",
             "priority",
             "labels__id",
             "assignees__id",

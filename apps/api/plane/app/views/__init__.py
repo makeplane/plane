@@ -240,6 +240,7 @@ from .user.base import AccountEndpoint, ProfileEndpoint, UserSessionEndpoint
 
 from .timezone.base import TimezoneEndpoint
 
+from .product.base import ProductTypeDetailEndpoint, ProductTypeListEndpoint, WorkspaceProductListEndpoint
 from .team.base import (
     PortfolioArchiveEndpoint,
     PortfolioDetailEndpoint,

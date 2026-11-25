@@ -6,7 +6,10 @@ import re
 import uuid
 from datetime import timedelta
 
+from django.db.models import Q
 from django.utils import timezone
+
+from plane.db.models import Issue
 
 # The date from pattern
 pattern = re.compile(r"\d+_(weeks|months)$")
@@ -378,14 +381,16 @@ def filter_inbox_status(params, issue_filter, method, prefix=""):
 
 
 def filter_sub_issue_toggle(params, issue_filter, method, prefix=""):
+    if params.get("sub_issue", "false") != "false":
+        return issue_filter
     if method == "GET":
-        sub_issue = params.get("sub_issue", "false")
-        if sub_issue == "false":
-            issue_filter[f"{prefix}parent__isnull"] = True
+        # A work item of a product is not a sub work item.
+        issue_filter[f"{prefix}pk__in"] = Issue.objects.filter(
+            Q(parent__isnull=True) | Q(parent__type__kind="product")
+        ).values("pk")
     else:
-        sub_issue = params.get("sub_issue", "false")
-        if sub_issue == "false":
-            issue_filter[f"{prefix}parent__isnull"] = True
+        # Saved in views as JSON, so it has to be a plain value.
+        issue_filter[f"{prefix}parent__isnull"] = True
     return issue_filter
 
 

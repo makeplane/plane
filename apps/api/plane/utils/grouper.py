@@ -82,6 +82,8 @@ def issue_queryset_grouper(
 
     default_annotations: Dict[str, Any] = {}
 
+    default_annotations["kind"] = Coalesce("type__kind", Value("task"))
+
     for key, expression in annotations_map.items():
         if FIELD_MAPPER.get(key) in {group_by, sub_group_by}:
             continue
@@ -127,7 +129,12 @@ def issue_on_results(
         "is_draft",
         "archived_at",
         "state__group",
+        "type_id",
+        "kind",
     ]
+
+    if "type__kind" in {group_by, sub_group_by}:
+        required_fields.append("type__kind")
 
     if group_by in FIELD_MAPPER:
         original_list.remove(FIELD_MAPPER[group_by])
@@ -188,6 +195,10 @@ def issue_group_values(
 
     if field == "project_id":
         return list(Project.objects.filter(workspace__slug=slug, id__in=project_ids).values_list("id", flat=True))
+
+    if field == "type__kind":
+        # Tasks have no kind.
+        return ["None", "product"]
 
     if field == "priority":
         return ["low", "medium", "high", "urgent", "none"]
