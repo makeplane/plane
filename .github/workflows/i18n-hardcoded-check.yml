@@ -1,0 +1,55 @@
+name: i18n hardcoded string check
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "preview"
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "ready_for_review"
+    paths:
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "apps/space/**"
+      - "packages/**"
+      - ".github/workflows/i18n-hardcoded-check.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  hardcoded-check:
+    name: check:hardcoded
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          filter: blob:none
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.22.0"
+
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --filter=@plane/i18n
+
+      - name: Test scanner
+        run: pnpm --filter=@plane/i18n test:hardcoded
+
+      - name: Run hardcoded string check
+        run: pnpm --filter=@plane/i18n check:hardcoded
