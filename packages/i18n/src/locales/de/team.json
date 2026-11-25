@@ -166,5 +166,37 @@
       "time": "Die Besprechung braucht einen Beginn und ein späteres Ende.",
       "people": "Nur wer die Besprechung sieht, kann teilnehmen."
     }
+  },
+  "product_board": {
+    "title": "Produktboard",
+    "view": "Ansicht",
+    "views": {
+      "timeline": "Zeitachse",
+      "table": "Tabelle",
+      "kanban": "Kanban"
+    },
+    "scale": "Maßstab",
+    "scales": {
+      "week": "Woche",
+      "month": "Monat",
+      "quarter": "Quartal"
+    },
+    "team": "Team",
+    "period_from": "Zeitraum von",
+    "period_to": "Zeitraum bis",
+    "show_closed": "Geschlossene Projekte anzeigen",
+    "show_old": "Vor über 90 Tagen beendete anzeigen",
+    "reset": "Zurücksetzen",
+    "shown": "Angezeigt: {shown} von {total}",
+    "closed_project": "Geschlossenes Projekt",
+    "limited": "Das Projekt ist geschlossen. Details sehen nur seine Mitglieder.",
+    "conflict": "Dieses Feld wurde inzwischen geändert. Der aktuelle Wert wird angezeigt.",
+    "no_access": "Sie können dieses Produkt nicht ändern.",
+    "gone": "Das Produkt ist nicht mehr auf dem Board.",
+    "choose_state": "Status auswählen",
+    "open_in_project": "Im Projekt öffnen",
+    "move_start": "Beginn verschieben",
+    "move_end": "Ende verschieben",
+    "today": "Heute"
   }
 }

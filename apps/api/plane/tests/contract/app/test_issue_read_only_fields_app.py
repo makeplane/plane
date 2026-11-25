@@ -42,8 +42,8 @@ def test_partial_update_does_not_set_read_only_field(workspace, create_user, fie
     client.force_authenticate(user=member)
 
     with (
-        mock.patch("plane.app.views.issue.base.issue_activity") as issue_activity,
-        mock.patch("plane.app.views.issue.base.model_activity") as model_activity,
+        mock.patch("plane.utils.issue_updates.issue_activity") as issue_activity,
+        mock.patch("plane.utils.issue_updates.model_activity") as model_activity,
     ):
         response = client.patch(
             f"/api/workspaces/{workspace.slug}/projects/{project.id}/issues/{issue.id}/",

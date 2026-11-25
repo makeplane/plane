@@ -166,5 +166,37 @@
       "time": "Rapat memerlukan waktu mulai dan waktu selesai setelahnya.",
       "people": "Hanya orang yang melihat rapat yang dapat ikut serta."
     }
+  },
+  "product_board": {
+    "title": "Papan produk",
+    "view": "Tampilan",
+    "views": {
+      "timeline": "Lini masa",
+      "table": "Tabel",
+      "kanban": "Kanban"
+    },
+    "scale": "Skala",
+    "scales": {
+      "week": "Minggu",
+      "month": "Bulan",
+      "quarter": "Kuartal"
+    },
+    "team": "Tim",
+    "period_from": "Periode dari",
+    "period_to": "Periode sampai",
+    "show_closed": "Tampilkan proyek tertutup",
+    "show_old": "Tampilkan yang selesai lebih dari 90 hari lalu",
+    "reset": "Atur ulang",
+    "shown": "Ditampilkan: {shown} dari {total}",
+    "closed_project": "Proyek tertutup",
+    "limited": "Proyek ini tertutup. Hanya anggotanya yang melihat detail.",
+    "conflict": "Kolom ini telah diubah orang lain. Nilai terkini ditampilkan.",
+    "no_access": "Anda tidak dapat mengubah produk ini.",
+    "gone": "Produk tidak lagi ada di papan.",
+    "choose_state": "Pilih status",
+    "open_in_project": "Buka di proyek",
+    "move_start": "Geser awal",
+    "move_end": "Geser akhir",
+    "today": "Hari ini"
   }
 }

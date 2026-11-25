@@ -166,5 +166,37 @@
       "time": "会议需要开始时间和晚于它的结束时间。",
       "people": "只有能看到会议的人才能参加。"
     }
+  },
+  "product_board": {
+    "title": "产品看板",
+    "view": "视图",
+    "views": {
+      "timeline": "时间线",
+      "table": "表格",
+      "kanban": "看板"
+    },
+    "scale": "比例",
+    "scales": {
+      "week": "周",
+      "month": "月",
+      "quarter": "季度"
+    },
+    "team": "团队",
+    "period_from": "时段开始",
+    "period_to": "时段结束",
+    "show_closed": "显示封闭项目",
+    "show_old": "显示 90 天前已结束的产品",
+    "reset": "重置",
+    "shown": "显示：{shown}/{total}",
+    "closed_project": "封闭项目",
+    "limited": "该项目已封闭，仅成员可查看详情。",
+    "conflict": "此字段已被他人修改，现显示当前值。",
+    "no_access": "您无法修改此产品。",
+    "gone": "该产品已不在看板上。",
+    "choose_state": "选择状态",
+    "open_in_project": "在项目中打开",
+    "move_start": "移动开始日期",
+    "move_end": "移动结束日期",
+    "today": "今天"
   }
 }

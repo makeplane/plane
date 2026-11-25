@@ -166,5 +166,37 @@
       "time": "Schůzka potřebuje začátek a pozdější konec.",
       "people": "Účastnit se mohou jen lidé, kteří schůzku vidí."
     }
+  },
+  "product_board": {
+    "title": "Nástěnka produktů",
+    "view": "Zobrazení",
+    "views": {
+      "timeline": "Časová osa",
+      "table": "Tabulka",
+      "kanban": "Kanban"
+    },
+    "scale": "Měřítko",
+    "scales": {
+      "week": "Týden",
+      "month": "Měsíc",
+      "quarter": "Čtvrtletí"
+    },
+    "team": "Tým",
+    "period_from": "Období od",
+    "period_to": "Období do",
+    "show_closed": "Zobrazit uzavřené projekty",
+    "show_old": "Zobrazit dokončené před více než 90 dny",
+    "reset": "Obnovit",
+    "shown": "Zobrazeno: {shown} z {total}",
+    "closed_project": "Uzavřený projekt",
+    "limited": "Projekt je uzavřený. Podrobnosti vidí jen jeho členové.",
+    "conflict": "Toto pole mezitím někdo změnil. Je zobrazena aktuální hodnota.",
+    "no_access": "Tento produkt nemůžete změnit.",
+    "gone": "Produkt už na nástěnce není.",
+    "choose_state": "Vyberte stav",
+    "open_in_project": "Otevřít v projektu",
+    "move_start": "Posunout začátek",
+    "move_end": "Posunout konec",
+    "today": "Dnes"
   }
 }

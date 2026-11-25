@@ -166,5 +166,37 @@
       "time": "La riunione richiede un inizio e una fine successiva.",
       "people": "Solo chi vede la riunione può parteciparvi."
     }
+  },
+  "product_board": {
+    "title": "Bacheca dei prodotti",
+    "view": "Vista",
+    "views": {
+      "timeline": "Cronologia",
+      "table": "Tabella",
+      "kanban": "Kanban"
+    },
+    "scale": "Scala",
+    "scales": {
+      "week": "Settimana",
+      "month": "Mese",
+      "quarter": "Trimestre"
+    },
+    "team": "Team",
+    "period_from": "Periodo dal",
+    "period_to": "Periodo al",
+    "show_closed": "Mostra i progetti chiusi",
+    "show_old": "Mostra quelli conclusi da oltre 90 giorni",
+    "reset": "Reimposta",
+    "shown": "Mostrati: {shown} di {total}",
+    "closed_project": "Progetto chiuso",
+    "limited": "Il progetto è chiuso. Solo i suoi membri vedono i dettagli.",
+    "conflict": "Questo campo è stato modificato nel frattempo. Viene mostrato il valore attuale.",
+    "no_access": "Non puoi modificare questo prodotto.",
+    "gone": "Il prodotto non è più sulla bacheca.",
+    "choose_state": "Scegli uno stato",
+    "open_in_project": "Apri nel progetto",
+    "move_start": "Sposta l’inizio",
+    "move_end": "Sposta la fine",
+    "today": "Oggi"
   }
 }

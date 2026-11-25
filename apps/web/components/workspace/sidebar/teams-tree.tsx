@@ -7,7 +7,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import { observer } from "mobx-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Collapsible } from "@makeplane/propel/components/collapsible";
 import { Icon } from "@makeplane/propel/components/icon";
@@ -15,7 +15,7 @@ import { IconButton } from "@makeplane/propel/components/icon-button";
 import { ListItem, ListItemLabel, ListItemLink } from "@makeplane/propel/elements/list";
 import { Menu, MenuContent, MenuItem, MenuTrigger } from "@makeplane/propel/components/menu";
 import { Tooltip } from "@makeplane/propel/components/tooltip";
-import { AddOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
+import { AddOutline, BoardOutline, MoreHorizontalOutline } from "@makeplane/propel/icons";
 // plane imports
 import { Logo } from "@plane/blocks/emoji-icon-picker";
 import { setToast } from "@plane/blocks/toast";
@@ -196,8 +196,10 @@ const TeamNode = observer(function TeamNode({ team }: TTeamNodeProps) {
 export const SidebarTeamsTree = observer(function SidebarTeamsTree() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const { workspaceSlug } = useParams();
-  const { activeTeams, unassignedProjects, canCreateProject } = useTeam();
+  const { activeTeams, unassignedProjects, canCreateProject, canSeeProductBoard } = useTeam();
+  const pathname = usePathname();
   const { t } = useTranslation();
+  const boardHref = `/${workspaceSlug?.toString()}/product-board`;
   const ownUnassigned = unassignedProjects.filter((project) => !!project.member_role);
 
   return (
@@ -209,6 +211,18 @@ export const SidebarTeamsTree = observer(function SidebarTeamsTree() {
           setToFavorite={false}
           workspaceSlug={workspaceSlug.toString()}
         />
+      )}
+      {canSeeProductBoard && (
+        <ListItem density="comfortable">
+          <ListItemLink
+            href={boardHref}
+            render={<Link href={boardHref} />}
+            aria-current={pathname.replace(/\/$/, "") === boardHref ? "page" : undefined}
+          >
+            <BoardOutline className="size-4 shrink-0" />
+            <ListItemLabel>{t("product_board.title")}</ListItemLabel>
+          </ListItemLink>
+        </ListItem>
       )}
       <div className="flex items-center justify-between px-2 py-1">
         <span className="text-body-xs-semibold text-tertiary">{t("team_structure.teams")}</span>

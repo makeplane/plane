@@ -116,6 +116,11 @@ export const coreRoutes: RouteConfigEntry[] = [
           ),
         ]),
 
+        // Product board
+        layout("./(all)/[workspaceSlug]/(projects)/product-board/layout.tsx", [
+          route(":workspaceSlug/product-board", "./(all)/[workspaceSlug]/(projects)/product-board/page.tsx"),
+        ]),
+
         // Requirements for products
         layout("./(all)/[workspaceSlug]/(projects)/product-types/[productTypeId]/layout.tsx", [
           route(

@@ -242,6 +242,7 @@ from .timezone.base import TimezoneEndpoint
 
 from .meeting.base import MeetingTaskEndpoint, ProjectMeetingListEndpoint
 from .product.base import ProductTypeDetailEndpoint, ProductTypeListEndpoint, WorkspaceProductListEndpoint
+from .product_board.base import ProductBoardDetailEndpoint, ProductBoardEndpoint, ProductBoardStatesEndpoint
 from .team.base import (
     PortfolioArchiveEndpoint,
     PortfolioDetailEndpoint,

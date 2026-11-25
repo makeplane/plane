@@ -166,5 +166,37 @@
       "time": "La réunion a besoin d’un début et d’une fin postérieure.",
       "people": "Seules les personnes qui voient la réunion peuvent y participer."
     }
+  },
+  "product_board": {
+    "title": "Tableau des produits",
+    "view": "Vue",
+    "views": {
+      "timeline": "Chronologie",
+      "table": "Tableau",
+      "kanban": "Kanban"
+    },
+    "scale": "Échelle",
+    "scales": {
+      "week": "Semaine",
+      "month": "Mois",
+      "quarter": "Trimestre"
+    },
+    "team": "Équipe",
+    "period_from": "Période du",
+    "period_to": "Période au",
+    "show_closed": "Afficher les projets fermés",
+    "show_old": "Afficher ceux terminés depuis plus de 90 jours",
+    "reset": "Réinitialiser",
+    "shown": "Affichés : {shown} sur {total}",
+    "closed_project": "Projet fermé",
+    "limited": "Le projet est fermé. Seuls ses membres en voient les détails.",
+    "conflict": "Ce champ a été modifié entre-temps. La valeur actuelle est affichée.",
+    "no_access": "Vous ne pouvez pas modifier ce produit.",
+    "gone": "Le produit n’est plus sur le tableau.",
+    "choose_state": "Choisissez un état",
+    "open_in_project": "Ouvrir dans le projet",
+    "move_start": "Déplacer le début",
+    "move_end": "Déplacer la fin",
+    "today": "Aujourd’hui"
   }
 }

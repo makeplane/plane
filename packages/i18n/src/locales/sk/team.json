@@ -166,5 +166,37 @@
       "time": "Stretnutie potrebuje začiatok a neskorší koniec.",
       "people": "Zúčastniť sa môžu iba ľudia, ktorí stretnutie vidia."
     }
+  },
+  "product_board": {
+    "title": "Nástenka produktov",
+    "view": "Zobrazenie",
+    "views": {
+      "timeline": "Časová os",
+      "table": "Tabuľka",
+      "kanban": "Kanban"
+    },
+    "scale": "Mierka",
+    "scales": {
+      "week": "Týždeň",
+      "month": "Mesiac",
+      "quarter": "Štvrťrok"
+    },
+    "team": "Tím",
+    "period_from": "Obdobie od",
+    "period_to": "Obdobie do",
+    "show_closed": "Zobraziť uzavreté projekty",
+    "show_old": "Zobraziť dokončené pred viac ako 90 dňami",
+    "reset": "Obnoviť",
+    "shown": "Zobrazené: {shown} z {total}",
+    "closed_project": "Uzavretý projekt",
+    "limited": "Projekt je uzavretý. Podrobnosti vidia iba jeho členovia.",
+    "conflict": "Toto pole medzitým niekto zmenil. Zobrazená je aktuálna hodnota.",
+    "no_access": "Tento produkt nemôžete zmeniť.",
+    "gone": "Produkt už na nástenke nie je.",
+    "choose_state": "Vyberte stav",
+    "open_in_project": "Otvoriť v projekte",
+    "move_start": "Posunúť začiatok",
+    "move_end": "Posunúť koniec",
+    "today": "Dnes"
   }
 }

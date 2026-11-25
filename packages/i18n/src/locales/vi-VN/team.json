@@ -166,5 +166,37 @@
       "time": "Cuộc họp cần có thời điểm bắt đầu và kết thúc sau đó.",
       "people": "Chỉ những người thấy cuộc họp mới có thể tham gia."
     }
+  },
+  "product_board": {
+    "title": "Bảng sản phẩm",
+    "view": "Chế độ xem",
+    "views": {
+      "timeline": "Dòng thời gian",
+      "table": "Bảng",
+      "kanban": "Kanban"
+    },
+    "scale": "Tỷ lệ",
+    "scales": {
+      "week": "Tuần",
+      "month": "Tháng",
+      "quarter": "Quý"
+    },
+    "team": "Nhóm",
+    "period_from": "Từ ngày",
+    "period_to": "Đến ngày",
+    "show_closed": "Hiện dự án đã đóng",
+    "show_old": "Hiện sản phẩm kết thúc hơn 90 ngày trước",
+    "reset": "Đặt lại",
+    "shown": "Đang hiện: {shown}/{total}",
+    "closed_project": "Dự án đã đóng",
+    "limited": "Dự án đã đóng. Chỉ thành viên thấy chi tiết.",
+    "conflict": "Trường này vừa được người khác thay đổi. Giá trị hiện tại được hiển thị.",
+    "no_access": "Bạn không thể thay đổi sản phẩm này.",
+    "gone": "Sản phẩm không còn trên bảng.",
+    "choose_state": "Chọn trạng thái",
+    "open_in_project": "Mở trong dự án",
+    "move_start": "Dời điểm bắt đầu",
+    "move_end": "Dời điểm kết thúc",
+    "today": "Hôm nay"
   }
 }

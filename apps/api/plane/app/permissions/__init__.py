@@ -24,6 +24,7 @@ from .page import ProjectPagePermission
 from .team import (
     PortfolioChoiceError,
     can_manage_team,
+    can_see_product_board,
     get_portfolio_for_new_project,
     is_team_admin,
     is_workspace_admin,

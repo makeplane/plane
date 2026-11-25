@@ -166,5 +166,37 @@
       "time": "The meeting needs a start and an end after it.",
       "people": "Only people who see the meeting can take part in it."
     }
+  },
+  "product_board": {
+    "title": "Product board",
+    "view": "View",
+    "views": {
+      "timeline": "Timeline",
+      "table": "Table",
+      "kanban": "Kanban"
+    },
+    "scale": "Scale",
+    "scales": {
+      "week": "Week",
+      "month": "Month",
+      "quarter": "Quarter"
+    },
+    "team": "Team",
+    "period_from": "Period from",
+    "period_to": "Period to",
+    "show_closed": "Show closed projects",
+    "show_old": "Show finished over 90 days ago",
+    "reset": "Reset",
+    "shown": "Shown: {shown} of {total}",
+    "closed_project": "Closed project",
+    "limited": "The project is closed. Its details are visible to its members only.",
+    "conflict": "Somebody changed this field meanwhile. The current value is shown.",
+    "no_access": "You cannot change this product.",
+    "gone": "The product is no longer on the board.",
+    "choose_state": "Choose a state",
+    "open_in_project": "Open in the project",
+    "move_start": "Move the start",
+    "move_end": "Move the end",
+    "today": "Today"
   }
 }

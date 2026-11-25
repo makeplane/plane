@@ -166,5 +166,37 @@
       "time": "會議需要開始時間和晚於它的結束時間。",
       "people": "只有能看到會議的人才能參加。"
     }
+  },
+  "product_board": {
+    "title": "產品看板",
+    "view": "檢視",
+    "views": {
+      "timeline": "時間軸",
+      "table": "表格",
+      "kanban": "看板"
+    },
+    "scale": "比例",
+    "scales": {
+      "week": "週",
+      "month": "月",
+      "quarter": "季"
+    },
+    "team": "團隊",
+    "period_from": "期間開始",
+    "period_to": "期間結束",
+    "show_closed": "顯示封閉專案",
+    "show_old": "顯示 90 天前已結束的產品",
+    "reset": "重設",
+    "shown": "顯示：{shown}/{total}",
+    "closed_project": "封閉專案",
+    "limited": "此專案已封閉，僅成員可檢視詳情。",
+    "conflict": "此欄位已被他人修改，現顯示目前的值。",
+    "no_access": "您無法修改此產品。",
+    "gone": "此產品已不在看板上。",
+    "choose_state": "選擇狀態",
+    "open_in_project": "在專案中開啟",
+    "move_start": "移動開始日期",
+    "move_end": "移動結束日期",
+    "today": "今天"
   }
 }
