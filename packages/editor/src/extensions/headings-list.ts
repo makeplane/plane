@@ -35,20 +35,20 @@ export const HeadingListExtension = Extension.create<unknown, HeadingExtensionSt
       key: new PluginKey("heading-list"),
       appendTransaction: (_, __, newState) => {
         const headings: IMarking[] = [];
-        let h1Sequence = 0;
-        let h2Sequence = 0;
-        let h3Sequence = 0;
+        const sequences = new Map<number, number>();
 
         newState.doc.descendants((node) => {
           if (node.type.name === "heading") {
             const level = node.attrs.level;
             const text = node.textContent;
+            const sequence = (sequences.get(level) ?? 0) + 1;
+            sequences.set(level, sequence);
 
             headings.push({
               type: "heading",
               level: level,
               text: text,
-              sequence: level === 1 ? ++h1Sequence : level === 2 ? ++h2Sequence : ++h3Sequence,
+              sequence,
             });
           }
         });
