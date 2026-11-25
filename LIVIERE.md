@@ -130,7 +130,8 @@ description, comment, link/attachment, relation/sub-item, cycle/module membershi
 page created, edited, renamed, archived/deleted; cycle changed, module changed; view changed; log entry.
 
 **Settings** – Project settings → Features → Activity (project admins): *Enable Activity* (shows the item in
-the project navigation; events are recorded either way) and the counted actions. Stored in
+the project navigation; events are recorded either way), the counted actions and the series thresholds of the
+time report. Stored in
 `ProjectActivitySettings`; the choice of actions applies at read time, so also to the past.
 
 **API.** Project admins and members (not guests – events name work items a guest may not see):
@@ -202,20 +203,33 @@ split at local midnights of the project time zone (`tz`) and counted in real tim
 has 25 hours. Every cell (a day of one source, for the project or one person) is rounded to whole minutes, half
 up; the difference and totals add up rounded cells, so every format shows the same numbers. Actions just before
 the period still start series that reach into it: a day counts the same in a report of that day and of its
-month. Code: `activity/report.py` (counting, pure functions), `report_export.py` (files), `report_labels.py`
-(their texts in `en`/`pl`); tests `plane/tests/unit/liviere/test_activity_report.py` (hand-counted examples)
+month. Code: `activity/report.py` (counting, pure functions), `report_export.py` (Markdown, CSV),
+`report_pdf.py` (PDF), `report_labels.py` (texts of the files in `en`/`pl`; the app has its own in the i18n
+namespace, `liviere.activity.report.*` – keep the descriptions of the sources in step); tests `plane/tests/unit/liviere/test_activity_report.py` (hand-counted examples)
 and `plane/tests/contract/api/test_activity_report.py`.
 
 `GET .../activity/report/` (admins and members, the same parameters as `heatmap/`: `from`, `to`, `tz`, `actor`,
-`kinds`) plus `source=grid|log|mixed`, `entries=0` (leave the list of log entries out), `export=md|csv` (a file
+`kinds`) plus `source=grid|log|mixed`, `entries=0` (leave the list of log entries out), `export=pdf|md|csv` (a file
 instead of JSON; not `format`, which Django REST framework keeps for itself) and `lang=en|pl` (files; default
 the language of the Plane profile, else English). JSON: the header fields, `totals`, `days` (`date`,
-`log_minutes`, `grid_minutes`, `difference_minutes`, `result_minutes`, `entries`) and `people`. Markdown: the
-header, how the time was counted, the tables of days and people and the entries day by day. CSV: one row per day
-and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read Polish letters). The app endpoint
-is `/api/workspaces/.../projects/{id}/liviere/activity/report/`.
-`plane-log report -p ORD --month previous|current` or `--from D --to D`, with `--source`, `--format md|csv|json`,
-`--lang`, `--mine`, `--no-entries`, `-o file` (tests: `python3 -m unittest liviere/tools/test_plane_log.py`).
+`log_minutes`, `grid_minutes`, `difference_minutes`, `result_minutes`, `entries`) and `people`. PDF (A4, the
+main format) and Markdown: the header, how the time was counted, the tables of days and people and the entries
+day by day. CSV: one row per day and a total row, minutes as numbers, UTF-8 with a BOM (spreadsheets then read
+Polish letters). The app endpoint is `/api/workspaces/.../projects/{id}/liviere/activity/report/`; the
+*Activity* page shows the report in its *Report* tab (`?view=report&source=…`, the period of the toolbar) with
+*PDF*, *Markdown* and *CSV* buttons, and the Activity settings have the two thresholds.
+`plane-log report -p ORD --month previous|current` or `--from D --to D`, with `--source`, `--format pdf|md|csv|json`,
+`--lang`, `--mine`, `--no-entries`, `-o file` (a PDF needs `-o`; tests:
+`python3 -m unittest liviere/tools/test_plane_log.py`).
+
+**PDF** – `fpdf2` 2.9.0 (pure Python, LGPL-3.0, with `Pillow` and `fontTools`, prebuilt wheels for the Alpine
+image: no system packages, no browser, no other service) draws the file in DejaVu Sans 2.37 (regular and bold,
+`activity/fonts/` with its licence: Bitstream Vera / Arev, free to use, embed and redistribute; the PDF embeds
+only the used glyphs). Characters the font lacks (emoji) print as "?"; the `fpdf` logger is set to errors only,
+so texts of entries never reach the server logs. Tests read the PDF text with `pypdf` (test group only).
+`APITokenLogMiddleware` (upstream) stores response bodies of `/api/v1/` requests in `api_activity_logs` for 14
+days (`API_ACTIVITY_LOG_RETENTION_DAYS`): the PDF as `[Binary Content]`, but JSON, Markdown and CSV reports – like
+the `logs/` endpoints already do – with the texts of the entries.
 
 ## New work items (`/:workspace/new-work-items`)
 

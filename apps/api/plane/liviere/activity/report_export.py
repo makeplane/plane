@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-# Files of the activity time report: Markdown and CSV. They render the
+# Files of the activity time report: Markdown and CSV here, PDF in report_pdf.py. All of them render the
 # dictionary of report.build_report through the same tables below, so they show the numbers of the app view.
 
 # Python imports
@@ -30,6 +30,7 @@ COLUMN_LABELS = {
 EXPORTS = {
     "md": "text/markdown; charset=utf-8",
     "csv": "text/csv; charset=utf-8",
+    "pdf": "application/pdf",
 }
 
 
@@ -191,4 +192,9 @@ def render(report, export, language):
         return to_markdown(report, language).encode("utf-8")
     if export == "csv":
         return to_csv(report, language)
+    if export == "pdf":
+        # Imported here: fpdf2 loads only for PDFs
+        from plane.liviere.activity.report_pdf import to_pdf
+
+        return to_pdf(report, language)
     raise ValueError(f"Unknown export: {export}")

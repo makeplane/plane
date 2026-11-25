@@ -37,7 +37,7 @@ class FakePlane(BaseHTTPRequestHandler):
 
     requests = []
     # (status, content type, body) of the next report responses, by `export`
-    files = {"md": b"# Raport aktywno\xc5\x9bci\n", "csv": b"\xef\xbb\xbfData\r\n"}
+    files = {"md": b"# Raport aktywno\xc5\x9bci\n", "csv": b"\xef\xbb\xbfData\r\n", "pdf": b"%PDF-1.7\n\x00\xff"}
     stored = {}
 
     def log_message(self, *args):
@@ -160,6 +160,21 @@ class TestReport(PlaneLogTestCase):
         self.assertEqual(request["params"]["entries"], "0")
         self.assertEqual(request["params"]["actor"], ME["id"])
         self.assertTrue(request["params"]["from"].endswith("-01"))
+
+    def test_pdf_from_the_file_extension(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = os.path.join(directory, "october.pdf")
+            code, _, err = self.run_tool("report", "-p", "LS", "--month", "previous", "-o", target)
+            self.assertEqual(code, 0, err)
+            with open(target, "rb") as saved:
+                self.assertEqual(saved.read(), FakePlane.files["pdf"])
+        self.assertEqual(self.report_requests()[0]["params"]["export"], "pdf")
+
+    def test_pdf_needs_a_file(self):
+        code, _, err = self.run_tool("report", "-p", "LS", "--month", "current", "--format", "pdf")
+        self.assertEqual(code, 1)
+        self.assertIn("-o FILE", err)
+        self.assertEqual(self.report_requests(), [])
 
     def test_json(self):
         code, out, err = self.run_tool("report", "-p", "LS", "--from", "2026-11-01", "--to", "2026-11-30", "--json")

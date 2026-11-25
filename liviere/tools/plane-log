@@ -19,7 +19,7 @@ Examples:
     plane-log list -p ORD --date 2026-10-27 --at 14:30 --events   # everything in that quarter
     plane-log edit -p ORD 123 --text "Better description"
     plane-log rm -p ORD 123
-    plane-log report -p ORD --month previous -o ORD-october.md          # last month, Markdown
+    plane-log report -p ORD --month previous -o ORD-october.pdf         # last month, PDF
     plane-log report -p ORD --from 2026-11-01 --to 2026-11-07 --format csv --source log -o week.csv
 """
 
@@ -255,20 +255,26 @@ def command_report(plane, args):
             start, end = date.fromisoformat(args.start), date.fromisoformat(args.end)
         except ValueError:
             raise Failure("--from and --to must be dates in the YYYY-MM-DD format")
+    output = args.output if args.output and args.output != "-" else None
+    export = args.format or (os.path.splitext(output)[1].lstrip(".").lower() if output else "") or "md"
+    if export not in ("pdf", "md", "csv", "json"):
+        export = "md"
+    if export == "pdf" and not output:
+        raise Failure("A PDF needs -o FILE")
     params = {"from": start.isoformat(), "to": end.isoformat(), "source": args.source, "lang": args.lang}
     if args.no_entries:
         params["entries"] = "0"
     if args.mine:
         params["actor"] = plane.request("GET", f"{plane.root}/users/me/")["id"]
     url = plane.activity(project, "report/")
-    if args.format == "json" or args.json:
+    if export == "json" or args.json:
         content = (json.dumps(plane.request("GET", url, params), ensure_ascii=False, indent=2) + "\n").encode()
     else:
-        content = plane.request("GET", url, {**params, "export": args.format}, raw=True)
-    if args.output and args.output != "-":
-        with open(args.output, "wb") as output:
-            output.write(content)
-        print(f"Saved {args.output} ({len(content)} bytes, {start}–{end})", file=sys.stderr)
+        content = plane.request("GET", url, {**params, "export": export}, raw=True)
+    if output:
+        with open(output, "wb") as target:
+            target.write(content)
+        print(f"Saved {output} ({len(content)} bytes, {start}–{end})", file=sys.stderr)
     else:
         sys.stdout.buffer.write(content)
         sys.stdout.flush()
@@ -320,7 +326,9 @@ def main(argv=None):
     report.add_argument(
         "--source", choices=["mixed", "log", "grid"], default="mixed", help="time source (default: mixed)"
     )
-    report.add_argument("--format", choices=["md", "csv", "json"], default="md", help="file format (default: md)")
+    report.add_argument(
+        "--format", choices=["pdf", "md", "csv", "json"], help="file format (default: from the -o extension, else md)"
+    )
     report.add_argument("--lang", choices=["pl", "en"], help="language of the file (default: your Plane profile)")
     report.add_argument("--mine", action="store_true", help="only your own time")
     report.add_argument("--no-entries", action="store_true", help="leave the list of log entries out")

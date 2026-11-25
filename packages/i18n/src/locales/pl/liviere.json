@@ -4,6 +4,7 @@
       "title": "Aktywność",
       "view_grid": "Siatka",
       "view_log": "Dziennik",
+      "view_report": "Raport",
       "ranges": {
         "7d": "7 dni",
         "30d": "30 dni",
@@ -39,7 +40,13 @@
         "toggle_description": "Pokazuje Aktywność w nawigacji projektu. Akcje są zapisywane niezależnie od tego, więc po późniejszym włączeniu widać też przeszłość.",
         "kinds_title": "Liczone akcje",
         "kinds_description": "Wybierz akcje, które liczą się jako aktywność. Wybór dotyczy też akcji z przeszłości.",
-        "save_error": "Nie udało się zapisać ustawienia. Spróbuj ponownie."
+        "save_error": "Nie udało się zapisać ustawienia. Spróbuj ponownie.",
+        "report_title": "Raport czasu",
+        "report_description": "Raport na stronie Aktywność liczy rzeczywisty czas z serii akcji, nie z kwadransów. Siatka nadal pokazuje kwadranse.",
+        "series_gap": "Przerwa między seriami (min)",
+        "series_gap_description": "Akcje bliżej siebie niż ta wartość łączą się w jedną serię (1–120).",
+        "series_padding": "Czas dodawany do serii (min)",
+        "series_padding_description": "Seria trwa od pierwszej do ostatniej akcji plus ten czas, więc pojedyncza akcja liczy się tyle (0–60, nie więcej niż przerwa)."
       },
       "groups": {
         "issues": "Elementy pracy",
@@ -131,6 +138,39 @@
         "day_summary": "{count, plural, one {# wpis} few {# wpisy} many {# wpisów} other {# wpisu}} · {duration}",
         "empty_title": "Brak wpisów dziennika w tym zakresie",
         "empty_description": "Wpisy mówią, co i kiedy zostało zrobione. Dodaj je tutaj albo pozwól agentom AI zapisywać je przez API lub skrypt plane-log."
+      },
+      "report": {
+        "sources": {
+          "mixed": "Mieszane",
+          "log": "Dziennik",
+          "grid": "Akcje"
+        },
+        "include_entries": "Pokaż wpisy dziennika",
+        "download": {
+          "pdf": "PDF",
+          "md": "Markdown",
+          "csv": "CSV"
+        },
+        "download_error": "Nie udało się pobrać raportu. Spróbuj ponownie.",
+        "describe_grid": "Czas z serii akcji, nie z kwadransów: akcje oddalone o mniej niż {gap} min tworzą serię od pierwszej do ostatniej akcji plus {padding} min, więc pojedyncza akcja to {padding} min.",
+        "describe_log": "Czas z wpisów dziennika pracy; wpis bez końca liczy się jako {open} min.",
+        "describe_mixed": "Wynik (dziennik + akcje poza dziennikiem): czas, w którym był wpis dziennika albo seria akcji, liczony raz. Akcje poza wpisami dziennika też się doliczają, również akcje agentów AI (np. tickety zakładane w nocy).",
+        "describe_union": "Czas projektu to czas, w którym ktokolwiek pracował; praca równoległa liczy się raz.",
+        "mixed_summary": "Dziennik {log} · serie {grid} · różnica {difference}",
+        "columns": {
+          "date": "Data",
+          "person": "Osoba",
+          "log": "Dziennik",
+          "grid": "Serie",
+          "difference": "Różnica (dziennik − serie)",
+          "result": "Wynik"
+        },
+        "days": "Dni",
+        "people": "Osoby",
+        "total": "Razem",
+        "entries": "Wpisy dziennika",
+        "no_entries": "Brak wpisów.",
+        "unknown_person": "(usunięty użytkownik)"
       }
     },
     "unread": {

@@ -6,12 +6,14 @@
 # (API key) and the app (session): sources, files, settings and permissions. The counting itself is tested
 # in plane/tests/unit/liviere/test_activity_report.py; the numbers here are the same hand-counted examples.
 
+import io
 import logging
 from datetime import datetime, timezone as dt_timezone
 from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 import pytest
+from pypdf import PdfReader
 from rest_framework import status
 from rest_framework.test import APIClient
 
@@ -283,6 +285,44 @@ class TestReportFiles:
         ]
 
     @pytest.mark.django_db
+    def test_pdf_has_the_numbers_of_the_view_and_polish_letters(self, api_key_client, workspace, project, create_user):
+        _p5_example(project, create_user)
+        _entry(project, create_user, "15:00", "15:30", note="Emoji 🚀 i tabulator\tw tekście")
+
+        response = api_key_client.get(_v1(workspace, project), {"from": DAY, "to": DAY, "export": "pdf", "lang": "pl"})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response["Content-Type"] == "application/pdf"
+        assert response["Content-Disposition"] == f'attachment; filename="RP-activity-{DAY}_{DAY}.pdf"'
+        assert response.content.startswith(b"%PDF-")
+        reader = PdfReader(io.BytesIO(response.content))
+        text = "\n".join(page.extract_text() for page in reader.pages)
+        assert "Raport aktywności: Raporty Łódź" in text
+        assert "Mieszane: dziennik + akcje poza dziennikiem" in text
+        assert "nie z kwadransów" in text
+        # Log 60 + 30, series 28, mixed 73 + 30
+        assert "2026-11-16 1 h 30 min 28 min 1 h 02 min 1 h 43 min" in text
+        assert "10:00–11:00 · tomasz" in text
+        assert POLISH_NOTE in text
+        # A character the font lacks becomes "?"
+        assert "Emoji ? i tabulator w tekście" in text
+        assert "Strona 1 z 1" in text
+
+    @pytest.mark.django_db
+    def test_pdf_in_english(self, api_key_client, workspace, project, create_user):
+        _p5_example(project, create_user)
+
+        response = api_key_client.get(
+            _v1(workspace, project), {"from": DAY, "to": DAY, "export": "pdf", "lang": "en", "entries": "0"}
+        )
+
+        text = "\n".join(page.extract_text() for page in PdfReader(io.BytesIO(response.content)).pages)
+        assert "Activity report: Raporty Łódź" in text
+        assert "not from quarter-hours" in text
+        assert "Page 1 of 1" in text
+        assert POLISH_NOTE not in text
+
+    @pytest.mark.django_db
     def test_the_app_endpoint_gives_the_same_report(self, session_client, workspace, project, create_user):
         _p5_example(project, create_user)
 
@@ -296,7 +336,7 @@ class TestReportFiles:
         _p5_example(project, create_user)
 
         with caplog.at_level(logging.DEBUG):
-            for export in (None, "md", "csv"):
+            for export in (None, "md", "csv", "pdf"):
                 params = {"from": DAY, "to": DAY, **({"export": export} if export else {})}
                 assert api_key_client.get(_v1(workspace, project), params).status_code == status.HTTP_200_OK
 

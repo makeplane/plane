@@ -7,8 +7,9 @@
 // Liviere/plane fork: the "Activity" page of a project. Rows are days (newest on top), columns are the
 // 96 quarters of the day; the colour says how many actions happened in that quarter. Admins and members
 // add log entries here (what they did, from when to when); agents do it through the API. The "Work log" view
-// (?view=log) lists the entries by day instead of the grid. Days and quarters are in the project's time zone;
-// the period is in the URL (range.ts).
+// (?view=log) lists the entries by day instead of the grid; the "Report" view (?view=report, ?source=) counts
+// the time of the period and downloads it as PDF, Markdown or CSV. Days and quarters are in the project's time
+// zone; the period is in the URL (range.ts).
 
 import { useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
@@ -33,13 +34,17 @@ import { ActivityEventList } from "./activity-events";
 import { ActivityGrid } from "./activity-grid";
 import { ActivityLogList } from "./activity-log-list";
 import { ActivityLogModal } from "./activity-log-modal";
+import { ActivityReport } from "./activity-report";
 import { MAX_RANGE_DAYS, RANGE_PRESETS, parseRange, rangeQueryChange, resolveRange, validCustomRange } from "./range";
 import type { TRangeSelection } from "./range";
-import type { TActivityEvent } from "./types";
+import { REPORT_SOURCES } from "./types";
+import type { TActivityEvent, TReportSource } from "./types";
 import { refreshProjectActivity, useActivityHeatmap, useCurrentQuarter } from "./use-activity";
 
 const VIEW_PARAM = "view";
 const LOG_VIEW = "log";
+const REPORT_VIEW = "report";
+const SOURCE_PARAM = "source";
 
 type Props = {
   workspaceSlug: string;
@@ -69,15 +74,26 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
   const router = useRouter();
   const searchParams = useSearchParams();
   const { updateQueryParams } = useQueryParams();
-  const view = searchParams.get(VIEW_PARAM) === LOG_VIEW ? LOG_VIEW : "grid";
+  const viewParam = searchParams.get(VIEW_PARAM);
+  const view = viewParam === LOG_VIEW || viewParam === REPORT_VIEW ? viewParam : "grid";
   const setView = (value: string) => {
     setSelected(null);
     router.replace(
-      value === LOG_VIEW
-        ? updateQueryParams({ paramsToAdd: { [VIEW_PARAM]: LOG_VIEW } })
+      value === LOG_VIEW || value === REPORT_VIEW
+        ? updateQueryParams({ paramsToAdd: { [VIEW_PARAM]: value } })
         : updateQueryParams({ paramsToRemove: [VIEW_PARAM] })
     );
   };
+  const sourceParam = searchParams.get(SOURCE_PARAM);
+  const reportSource: TReportSource = (REPORT_SOURCES as readonly string[]).includes(sourceParam ?? "")
+    ? (sourceParam as TReportSource)
+    : "mixed";
+  const setReportSource = (value: TReportSource) =>
+    router.replace(
+      value === "mixed"
+        ? updateQueryParams({ paramsToRemove: [SOURCE_PARAM] })
+        : updateQueryParams({ paramsToAdd: { [SOURCE_PARAM]: value } })
+    );
   const rangeSelection = parseRange(searchParams);
   const setRange = (selection: TRangeSelection) => {
     setSelected(null);
@@ -119,6 +135,7 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
             <TabsList aria-label={t("liviere.activity.title")}>
               <Tab value="grid" label={t("liviere.activity.view_grid")} />
               <Tab value={LOG_VIEW} label={t("liviere.activity.view_log")} />
+              <Tab value={REPORT_VIEW} label={t("liviere.activity.view_report")} />
             </TabsList>
           </Tabs>
         </div>
@@ -211,7 +228,16 @@ export const ProjectActivityRoot = observer(function ProjectActivityRoot(props: 
         )}
       </div>
 
-      {view === LOG_VIEW ? (
+      {view === REPORT_VIEW ? (
+        <ActivityReport
+          workspaceSlug={workspaceSlug}
+          projectId={projectId}
+          query={query}
+          locale={currentLocale}
+          source={reportSource}
+          onSourceChange={setReportSource}
+        />
+      ) : view === LOG_VIEW ? (
         <ActivityLogList
           workspaceSlug={workspaceSlug}
           projectId={projectId}

@@ -57,6 +57,9 @@ export type TActivityEventsPage = {
 export type TActivitySettings = {
   enabled: boolean;
   kinds: string[];
+  // Time report: actions closer than the gap join a series lasting until the last action plus the padding
+  series_gap_minutes: number;
+  series_padding_minutes: number;
   catalog: { group: string; kinds: { key: string; default: boolean }[] }[];
 };
 
@@ -75,3 +78,49 @@ export type TActivityQuery = {
   tz: string;
   actor?: string | null;
 };
+
+// Time report (apps/api/plane/liviere/activity/report.py)
+
+export const REPORT_SOURCES = ["mixed", "log", "grid"] as const;
+export type TReportSource = (typeof REPORT_SOURCES)[number];
+export const REPORT_EXPORTS = ["pdf", "md", "csv"] as const;
+export type TReportExport = (typeof REPORT_EXPORTS)[number];
+
+export type TReportMinutes = {
+  log_minutes: number;
+  grid_minutes: number;
+  // log minus series
+  difference_minutes: number;
+  // the minutes of the chosen source
+  result_minutes: number;
+};
+
+export type TReportActor = { id: string; display_name: string | null } | null;
+
+export type TReportEntry = {
+  id: number;
+  start: string; // ISO date-time in the report's time zone
+  end: string | null;
+  actor: TReportActor;
+  issue: { id: string; identifier: string | null; name: string | null } | null;
+  note: string | null;
+};
+
+export type TActivityReport = {
+  project: { id: string; name: string; identifier: string };
+  from: string;
+  to: string;
+  timezone: string;
+  source: TReportSource;
+  mixed_rule: string;
+  actor: TReportActor;
+  series_gap_minutes: number;
+  series_padding_minutes: number;
+  open_entry_minutes: number;
+  entries_included: boolean;
+  totals: TReportMinutes;
+  days: (TReportMinutes & { date: string; entries: TReportEntry[] })[];
+  people: (TReportMinutes & { actor: TReportActor })[];
+};
+
+export type TReportOptions = { source: TReportSource; entries: boolean };

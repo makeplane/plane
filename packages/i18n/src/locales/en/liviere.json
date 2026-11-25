@@ -4,6 +4,7 @@
       "title": "Activity",
       "view_grid": "Grid",
       "view_log": "Work log",
+      "view_report": "Report",
       "ranges": {
         "7d": "7 days",
         "30d": "30 days",
@@ -39,7 +40,13 @@
         "toggle_description": "Shows Activity in the project navigation. Actions are recorded either way, so turning it on later shows the past too.",
         "kinds_title": "Counted actions",
         "kinds_description": "Pick the actions that count as activity. The choice also applies to past actions.",
-        "save_error": "The setting could not be saved. Please try again."
+        "save_error": "The setting could not be saved. Please try again.",
+        "report_title": "Time report",
+        "report_description": "The report on the Activity page counts real time from series of actions, not from quarter-hours. The grid keeps showing quarters.",
+        "series_gap": "Gap between series (min)",
+        "series_gap_description": "Actions closer than this join one series (1–120).",
+        "series_padding": "Time added to a series (min)",
+        "series_padding_description": "A series lasts from its first to its last action plus this time, so a single action counts this long (0–60, not more than the gap)."
       },
       "groups": {
         "issues": "Work items",
@@ -131,6 +138,39 @@
         "day_summary": "{count, plural, one {# entry} other {# entries}} · {duration}",
         "empty_title": "No log entries in this range",
         "empty_description": "Log entries say what was done and when. Add them here, or let AI agents write them through the API or the plane-log script."
+      },
+      "report": {
+        "sources": {
+          "mixed": "Mixed",
+          "log": "Work log",
+          "grid": "Actions"
+        },
+        "include_entries": "List log entries",
+        "download": {
+          "pdf": "PDF",
+          "md": "Markdown",
+          "csv": "CSV"
+        },
+        "download_error": "The report could not be downloaded. Please try again.",
+        "describe_grid": "Time from series of actions, not from quarter-hours: actions less than {gap} min apart form a series that lasts from the first to the last action plus {padding} min, so a single action counts {padding} min.",
+        "describe_log": "Time from work log entries; an entry without an end counts {open} min.",
+        "describe_mixed": "Result (work log + actions outside the log): the time covered by a log entry or by a series of actions, counted once. Actions outside log entries add to it, also those of AI agents (for example work items created at night).",
+        "describe_union": "The project time counts the time anyone worked; parallel work counts once.",
+        "mixed_summary": "Work log {log} · series {grid} · difference {difference}",
+        "columns": {
+          "date": "Date",
+          "person": "Person",
+          "log": "Work log",
+          "grid": "Series",
+          "difference": "Difference (log − series)",
+          "result": "Result"
+        },
+        "days": "Days",
+        "people": "People",
+        "total": "Total",
+        "entries": "Work log entries",
+        "no_entries": "No entries.",
+        "unknown_person": "(deleted user)"
       }
     },
     "unread": {

@@ -15,7 +15,10 @@ import type {
   TActivityHeatmap,
   TActivityLogInput,
   TActivityQuery,
+  TActivityReport,
   TActivitySettings,
+  TReportExport,
+  TReportOptions,
 } from "./types";
 
 // Entries per page of the work log view
@@ -67,9 +70,47 @@ export class ProjectActivityService extends APIService {
   async updateSettings(
     workspaceSlug: string,
     projectId: string,
-    data: Partial<Pick<TActivitySettings, "enabled" | "kinds">>
+    data: Partial<Pick<TActivitySettings, "enabled" | "kinds" | "series_gap_minutes" | "series_padding_minutes">>
   ): Promise<TActivitySettings> {
     return this.patch(this.projectUrl(workspaceSlug, projectId, "settings"), data)
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  private reportParams(query: TActivityQuery, options: TReportOptions) {
+    return { ...this.queryParams(query), source: options.source, entries: options.entries ? "1" : "0" };
+  }
+
+  async getReport(
+    workspaceSlug: string,
+    projectId: string,
+    query: TActivityQuery,
+    options: TReportOptions
+  ): Promise<TActivityReport> {
+    return this.get(this.projectUrl(workspaceSlug, projectId, "report"), {
+      params: this.reportParams(query, options),
+    })
+      .then((response) => response?.data)
+      .catch((error) => {
+        throw error?.response?.data;
+      });
+  }
+
+  /** The report as a file (PDF, Markdown or CSV), in the given language. */
+  async downloadReport(
+    workspaceSlug: string,
+    projectId: string,
+    query: TActivityQuery,
+    options: TReportOptions,
+    format: TReportExport,
+    lang: string
+  ): Promise<Blob> {
+    return this.get(this.projectUrl(workspaceSlug, projectId, "report"), {
+      params: { ...this.reportParams(query, options), export: format, lang },
+      responseType: "blob",
+    })
       .then((response) => response?.data)
       .catch((error) => {
         throw error?.response?.data;

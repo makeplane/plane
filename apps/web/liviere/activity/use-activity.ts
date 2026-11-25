@@ -13,7 +13,7 @@ import type { TNavigationItem } from "@/components/navigation/tab-navigation-roo
 import { projectActivityService } from "./activity.service";
 import { ActivityIcon } from "./activity-icon";
 import { currentQuarter, msToNextQuarter } from "./grid";
-import type { TActivityQuery } from "./types";
+import type { TActivityQuery, TReportOptions } from "./types";
 
 export const ACTIVITY_NAVIGATION_KEY = "liviere_activity";
 
@@ -61,13 +61,26 @@ export const useActivityHeatmap = (workspaceSlug: string, projectId: string, que
     { refreshInterval: 60_000, keepPreviousData: true }
   );
 
-/** Reloads the heatmap and the event lists of a project, e.g. after a log entry changed. */
+export const useActivityReport = (
+  workspaceSlug: string,
+  projectId: string,
+  query: TActivityQuery,
+  options: TReportOptions
+) =>
+  useSWR(
+    `LIVIERE_ACTIVITY_REPORT_${projectId}_${query.from}_${query.to}_${query.tz}_${query.actor ?? ""}_${options.source}_${options.entries}`,
+    () => projectActivityService.getReport(workspaceSlug, projectId, query, options),
+    { revalidateOnFocus: false, keepPreviousData: true }
+  );
+
+/** Reloads the heatmap, the event lists and the report of a project, e.g. after a log entry changed. */
 export const refreshProjectActivity = (projectId: string) =>
   mutate(
     (key) =>
       typeof key === "string" &&
       (key.startsWith(`LIVIERE_ACTIVITY_HEATMAP_${projectId}_`) ||
-        key.startsWith(`LIVIERE_ACTIVITY_EVENTS_${projectId}_`))
+        key.startsWith(`LIVIERE_ACTIVITY_EVENTS_${projectId}_`) ||
+        key.startsWith(`LIVIERE_ACTIVITY_REPORT_${projectId}_`))
   );
 
 /** The current quarter of the day in a time zone; changes when the next quarter starts. */
