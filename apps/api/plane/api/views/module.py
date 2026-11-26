@@ -467,15 +467,22 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
             )
         serializer = ModuleUpdateSerializer(module, data=request.data, context={"project_id": project_id}, partial=True)
         if serializer.is_valid():
+            new_external_id = request.data.get("external_id", module.external_id)
+            new_external_source = request.data.get("external_source", module.external_source)
             if (
-                request.data.get("external_id")
-                and (module.external_id != request.data.get("external_id"))
+                ("external_id" in request.data or "external_source" in request.data)
+                and new_external_id
+                and new_external_source
+                and (
+                    str(new_external_id) != str(module.external_id)
+                    or new_external_source != module.external_source
+                )
                 and Module.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", module.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
+                    external_source=new_external_source,
+                    external_id=new_external_id,
+                ).exclude(pk=module.id).exists()
             ):
                 return Response(
                     {

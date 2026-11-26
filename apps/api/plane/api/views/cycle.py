@@ -572,15 +572,22 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             cycle, data=request.data, partial=True, context={"request": request, "project_id": project_id}
         )
         if serializer.is_valid():
+            new_external_id = request.data.get("external_id", cycle.external_id)
+            new_external_source = request.data.get("external_source", cycle.external_source)
             if (
-                request.data.get("external_id")
-                and (cycle.external_id != request.data.get("external_id"))
+                ("external_id" in request.data or "external_source" in request.data)
+                and new_external_id
+                and new_external_source
+                and (
+                    str(new_external_id) != str(cycle.external_id)
+                    or new_external_source != cycle.external_source
+                )
                 and Cycle.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", cycle.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
+                    external_source=new_external_source,
+                    external_id=new_external_id,
+                ).exclude(pk=cycle.id).exists()
             ):
                 return Response(
                     {
