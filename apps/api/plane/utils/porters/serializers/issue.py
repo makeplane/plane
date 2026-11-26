@@ -71,8 +71,8 @@ class IssueExportSerializer(IssueSerializer):
     def get_assignees(self, obj):
         return [
             ia.assignee.full_name
-            for ia in obj.issue_assignee.filter(deleted_at__isnull=True).select_related("assignee")
-            if ia.assignee and ia.assignee.is_active
+            for ia in obj.issue_assignee.all()
+            if ia.deleted_at is None and ia.assignee and ia.assignee.is_active
         ]
 
     def get_subscribers(self, obj):
