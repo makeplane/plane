@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { HideOutline, ShowOutline } from "@makeplane/propel/icons";
@@ -101,6 +101,7 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     control,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<TProfileSetupFormValues>({
     defaultValues: {
@@ -111,6 +112,10 @@ export const ProfileSetup = observer(function ProfileSetup(props: Props) {
     },
     mode: "onChange",
   });
+
+  useEffect(() => {
+    void trigger();
+  }, [trigger]);
   // derived values
   const userAvatar = watch("avatar_url");
 
