@@ -102,8 +102,9 @@ class EntityAssetEndpoint(BaseAPIView):
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
         try:
-            size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
-        except (TypeError, ValueError):
+            raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
+            size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
+        except (TypeError, ValueError, OverflowError):
             return Response(
                 {"error": "Invalid size.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -115,7 +116,12 @@ class EntityAssetEndpoint(BaseAPIView):
         # Clamp the client-provided size to [1, FILE_SIZE_LIMIT] so the signed
         # upload policy cannot exceed the instance limit and always carries a
         # valid content-length-range bound
-        size_limit = max(1, min(size, settings.FILE_SIZE_LIMIT))
+        if size <= 0:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Check if the entity type is allowed
         if entity_type != FileAsset.EntityTypeContext.COMMENT_DESCRIPTION:

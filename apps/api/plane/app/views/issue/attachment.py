@@ -128,7 +128,11 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
             )
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", False)
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        try:
+            raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
+            size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
+        except (TypeError, ValueError, OverflowError):
+            size = 0
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
             return Response(
@@ -146,6 +150,11 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         asset_key = f"{workspace.id}/{uuid.uuid4().hex}-{name}"
 
         # Get the size limit
+        if size <= 0:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Create a File Asset
