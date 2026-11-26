@@ -3,7 +3,7 @@
 # See the LICENSE file for details.
 
 """The presigned work item attachment route rejects a type outside ``ATTACHMENT_MIME_TYPES``
-with a message the web app shows as is, so it has to say what can be attached."""
+with a message the web app shows as is, so it names the rejected extension and what can be attached."""
 
 import pytest
 from rest_framework import status
@@ -21,10 +21,20 @@ def url(workspace, create_user):
 
 @pytest.mark.contract
 @pytest.mark.django_db
-@pytest.mark.parametrize("content_type", ["text/html", ""])
-def test_unsupported_type_is_rejected_with_the_supported_kinds(session_client, url, content_type):
-    resp = session_client.post(url, {"name": "page.html", "type": content_type, "size": 10}, format="json")
+@pytest.mark.parametrize(
+    "name, content_type, rejected",
+    [
+        ("page.HTML", "text/html", ".html files aren't supported."),
+        ("notes.txt", "", ".txt files aren't supported."),
+        ("README", "", "This file type isn't supported."),
+    ],
+)
+def test_unsupported_type_names_the_extension(session_client, url, name, content_type, rejected):
+    resp = session_client.post(url, {"name": name, "type": content_type, "size": 10}, format="json")
 
     assert resp.status_code == status.HTTP_400_BAD_REQUEST, resp.content
-    assert resp.data["error"].startswith("This file type isn't supported. You can attach images, documents")
+    assert resp.data["error"] == (
+        f"{rejected} You can attach images, documents, spreadsheets, presentations, "
+        "text files, audio, video, archives, 3D models and fonts."
+    )
     assert not FileAsset.objects.exists()
