@@ -851,15 +851,22 @@ class IssueDetailAPIEndpoint(BaseAPIView):
             partial=True,
         )
         if serializer.is_valid():
+            new_external_id = request.data.get("external_id", issue.external_id)
+            new_external_source = request.data.get("external_source", issue.external_source)
             if (
-                request.data.get("external_id")
-                and (issue.external_id != str(request.data.get("external_id")))
+                ("external_id" in request.data or "external_source" in request.data)
+                and new_external_id
+                and new_external_source
+                and (
+                    str(new_external_id) != str(issue.external_id)
+                    or new_external_source != issue.external_source
+                )
                 and Issue.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", issue.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
+                    external_source=new_external_source,
+                    external_id=new_external_id,
+                ).exclude(pk=issue.id).exists()
             ):
                 return Response(
                     {

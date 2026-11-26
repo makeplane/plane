@@ -289,15 +289,22 @@ class StateDetailAPIEndpoint(BaseAPIView):
         state = State.objects.get(workspace__slug=slug, project_id=project_id, pk=state_id)
         serializer = StateSerializer(state, data=request.data, partial=True)
         if serializer.is_valid():
+            new_external_id = request.data.get("external_id", state.external_id)
+            new_external_source = request.data.get("external_source", state.external_source)
             if (
-                request.data.get("external_id")
-                and (state.external_id != str(request.data.get("external_id")))
+                ("external_id" in request.data or "external_source" in request.data)
+                and new_external_id
+                and new_external_source
+                and (
+                    str(new_external_id) != str(state.external_id)
+                    or new_external_source != state.external_source
+                )
                 and State.objects.filter(
                     project_id=project_id,
                     workspace__slug=slug,
-                    external_source=request.data.get("external_source", state.external_source),
-                    external_id=request.data.get("external_id"),
-                ).exists()
+                    external_source=new_external_source,
+                    external_id=new_external_id,
+                ).exclude(pk=state.id).exists()
             ):
                 return Response(
                     {
