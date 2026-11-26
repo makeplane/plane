@@ -43,6 +43,7 @@ from plane.db.models import (
 from plane.db.models.intake import IntakeIssueStatus
 from plane.utils.host import base_host
 from plane.utils.order_queryset import PROJECT_ORDER_BY_ALLOWLIST, sanitize_order_by
+from plane.utils.cache import invalidate_cache_directly
 
 
 class ProjectViewSet(BaseViewSet):
@@ -356,6 +357,13 @@ class ProjectViewSet(BaseViewSet):
 
         if serializer.is_valid():
             serializer.save()
+            if "estimate" in request.data:
+                invalidate_cache_directly(
+                    path="/api/workspaces/:slug/estimates/",
+                    url_params=True,
+                    user=True,
+                    request=request,
+                )
             if intake_view:
                 intake = Intake.objects.filter(project=project, is_default=True).first()
                 if not intake:
