@@ -278,6 +278,83 @@ the server logs. Tests read the PDF text with `pypdf` (test group only).
 `[Binary Content]`, but JSON, Markdown and CSV reports and the `logs/` and `summaries/` requests with the texts
 of entries and summaries – as the `logs/` endpoints already did before the report.
 
+## Content search (`/api/v1/workspaces/{slug}/liviere/search/`)
+
+Upstream search (`IssueSearchEndpoint`) matches only the title and the number of a work item, so an agent that
+does not know the number reads work items one by one. This endpoint finds a phrase in the title, the description
+or a comment. It is a plain substring search, not a search by meaning, and nothing leaves the server.
+
+Code: `apps/api/plane/liviere/search/` (`queries.py` rules and queries, `privacy.py` routes kept out of the request
+log), `liviere/api/search.py` (endpoint). Tests: `plane/tests/contract/api/test_content_search.py`,
+`plane/tests/unit/liviere/test_content_search_snippet.py`; the timing test runs only with
+`LIVIERE_SEARCH_BENCH=1` (`docker compose … run -e LIVIERE_SEARCH_BENCH=1 api-tests pytest -k timing …`).
+
+`POST` (API key; any active workspace member) with a JSON body. The phrase is never part of a URL, so it does not
+reach the request log of `RequestLoggerMiddleware` (`docker logs`) or proxy logs:
+
+| Field | |
+|---|---|
+| `q` | the phrase, 3–200 characters after trimming (400 otherwise, e.g. `q must be at least 3 characters`) |
+| `project` | optional identifier (any case) or id; 404 when the key is not an active member or the project is archived; without it every project of the key |
+| `limit` | 1–100, default 20; no paging, narrow the phrase instead |
+| `archived` | default `true`; `false` leaves archived work items out |
+
+**What matches.** Case-insensitive `icontains` on `Issue.name`, `Issue.description_stripped` and
+`IssueComment.comment_stripped` (plain text Plane keeps next to the HTML). A piece of a word matches, so agents
+search by the stem with Polish letters: "oszust" finds "oszustwo", "zapyta" finds "zapytań". There is no
+`unaccent`, so "zapytan" does not find "zapytań"; upper and lower case of Polish letters match when the
+database's `LC_CTYPE` is a UTF-8 locale (the official Postgres image: `en_US.utf8`), not with `C`. `%` and `_` are
+literal. Plane strips tags without adding spaces, so a phrase across two paragraphs may not match. Mentions are
+stored as tags, so a mentioned person's name is not in the text.
+
+**Which work items.** The rules of the work item list of the API: `visible_issue_q` (members above guests, guests of
+projects sharing all features; restricted guests only their own work items), as an `EXISTS` per row. Deleted work
+items, drafts, triage/intake work items and work items of archived projects never match; deleted comments never
+match, and neither do comments of a work item that does not (also before the background task marks them
+deleted). Unlike `Issue.issue_objects`, archived work items match by default (`archived: true` in the result):
+projects with `archive_in` move closed work items to the archive after a month, and old decisions are what agents
+look for. Comments are not filtered by `access` (INTERNAL/EXTERNAL), like the upstream comment API.
+
+**Result.** One per work item: `match` is the best place (`title`, then `description`, then `comment`), and
+`comment_matches` counts its matching comments in every case. Order: place, then newest first (`updated_at` of
+the work item for title and description, the newest matching comment for comments), then id.
+
+```json
+{"query": "rate limit", "project": null, "limit": 20, "archived": true, "total": 1, "has_more": false,
+ "results": [{"id": "…", "identifier": "LS-5", "project_id": "…", "project_identifier": "LS", "sequence_id": 5,
+   "name": "…", "state": "Todo", "state_group": "unstarted", "archived": false, "archived_at": null,
+   "updated_at": "…", "match": "comment", "comment_matches": 1,
+   "snippet": "…a rate limit of 60 requests a minute…", "highlight": [2, 12],
+   "comment_id": "…", "comment_created_at": "…"}]}
+```
+
+`snippet` is the whole title, or up to 80 characters on both sides of the first match with whitespace collapsed and
+"…" where it was cut; `highlight` is `[start, end]` of the match in it (`null` when Python's case rules disagree
+with the database's and the snippet is the start of the text). `comment_id` and `comment_created_at` (the newest
+matching comment) only with `match: "comment"`.
+
+**Cost.** Four queries whatever the number of matches (matching work items as ids only, matching comments counted
+per work item, details of the shown work items, their newest matching comment); no index, migration or extension.
+Every search scans the text columns of the workspace. Measured on the test stack (1000 work items, 3000 comments,
+a machine under load ~20, median of 5): the queries alone 121–287 ms, the whole request 258–283 ms (a rare phrase,
+one in 400 work items, one only in a comment). Add a `pg_trgm` index or `tsvector` only when times on the server
+reach about 300 ms.
+
+**Request log.** `APITokenLogMiddleware` (upstream, stores `/api/v1/` requests in `api_activity_logs` for 14 days)
+keeps a row for this route without `query_params`, `body` and `response_body` (hook in
+`plane/middleware/logger.py`, marked `Liviere/plane fork`; routes listed in `liviere/search/privacy.py`). Other
+routes are logged as before.
+
+**`liviere/tools/plane-search`** – the command-line client for agents (Python standard library only, the same
+configuration as `plane-log`: `~/.config/plane-mcp/env` or `$PLANE_LOG_ENV`):
+`plane-search [-p LS] [-n 20] [--no-archived] [--json] PHRASE…` prints one line per work item
+(`LS-5  [Todo]  comment (2)  Title`, archived ones as `[Done, archived]`) with the fragment indented under it
+(not for a title match) and `N of TOTAL` at the end; `--json` prints the response. Tests:
+`python3 -m unittest liviere/tools/test_plane_search.py`. Install like `plane-log`, as a copy of the file in
+`~/.local/bin`.
+
+**Going back** to images without our code: nothing to disable; no tables.
+
 ## New work items (`/:workspace/new-work-items`)
 
 Most work items here are created by AI agents (API key, MCP). *New* lists the work items somebody else created in
