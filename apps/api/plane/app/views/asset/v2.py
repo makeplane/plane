@@ -195,10 +195,24 @@ class UserAssetsV2Endpoint(BaseAPIView):
         # get the asset key
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
+            size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
+        except (TypeError, ValueError, OverflowError):
+            size = 0
         entity_type = request.data.get("entity_type", False)
 
         # Check if the file size is within the limit
+        if size <= 0:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         #  Check if the entity type is allowed
@@ -398,7 +412,16 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
     def post(self, request, slug):
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
+            size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
+        except (TypeError, ValueError, OverflowError):
+            size = 0
         entity_type = request.data.get("entity_type")
         entity_identifier = request.data.get("entity_identifier", False)
 
@@ -434,6 +457,12 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                     "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
                     "status": False,
                 },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if size <= 0:
+            return Response(
+                {"error": "Invalid size.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -664,7 +693,16 @@ class ProjectAssetEndpoint(BaseAPIView):
     def post(self, request, slug, project_id):
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
+            size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
+        except (TypeError, ValueError, OverflowError):
+            size = 0
         entity_type = request.data.get("entity_type", "")
         entity_identifier = request.data.get("entity_identifier")
 
@@ -689,6 +727,12 @@ class ProjectAssetEndpoint(BaseAPIView):
                     "error": "Invalid file type. Only JPEG, PNG, WebP, JPG and GIF files are allowed.",
                     "status": False,
                 },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if size <= 0:
+            return Response(
+                {"error": "Invalid size.", "status": False},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

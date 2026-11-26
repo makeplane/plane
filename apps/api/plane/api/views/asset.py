@@ -119,10 +119,24 @@ class UserAssetEndpoint(BaseAPIView):
         # get the asset key
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
+            size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
+        except (TypeError, ValueError, OverflowError):
+            size = 0
         entity_type = request.data.get("entity_type", False)
 
         # Check if the file size is within the limit
+        if size <= 0:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         #  Check if the entity type is allowed
@@ -292,10 +306,24 @@ class UserServerAssetEndpoint(BaseAPIView):
         # get the asset key
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
+            size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
+        except (TypeError, ValueError, OverflowError):
+            size = 0
         entity_type = request.data.get("entity_type", False)
 
         # Check if the file size is within the limit
+        if size <= 0:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         #  Check if the entity type is allowed
@@ -520,7 +548,16 @@ class GenericAssetEndpoint(BaseAPIView):
         """
         name = sanitize_filename(request.data.get("name"))
         type = request.data.get("type")
-        size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
+            size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
+        except (TypeError, ValueError, OverflowError):
+            size = 0
         project_id = request.data.get("project_id")
         external_id = request.data.get("external_id")
         external_source = request.data.get("external_source")
@@ -533,6 +570,11 @@ class GenericAssetEndpoint(BaseAPIView):
             )
 
         # Check if the file size is within the limit
+        if size <= 0:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         size_limit = min(size, settings.FILE_SIZE_LIMIT)
 
         # Check if the file type is allowed
