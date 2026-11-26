@@ -76,13 +76,8 @@ export const IssueAttachmentItemList = observer(function IssueAttachmentItemList
 
         setIsUploading(true);
         createAttachment(currentFile)
-          .catch(() => {
-            setToast({
-              type: "error",
-              title: t("toast.error"),
-              message: t("attachment.error"),
-            });
-          })
+          // create() already shows the error toast
+          .catch(() => {})
           .finally(() => {
             handleFetchPropertyActivities();
             setIsUploading(false);

@@ -4,6 +4,7 @@
 
 # Python imports
 import json
+import os
 import uuid
 
 # Django imports
@@ -131,8 +132,14 @@ class IssueAttachmentV2Endpoint(BaseAPIView):
         size = int(request.data.get("size", settings.FILE_SIZE_LIMIT))
 
         if not type or type not in settings.ATTACHMENT_MIME_TYPES:
+            extension = os.path.splitext(name)[1].lower()
+            rejected = f"{extension} files aren't supported." if extension else "This file type isn't supported."
             return Response(
-                {"error": "Invalid file type.", "status": False},
+                {
+                    "error": f"{rejected} You can attach images, documents, spreadsheets, presentations, "
+                    "text files, audio, video, archives, 3D models and fonts.",
+                    "status": False,
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
