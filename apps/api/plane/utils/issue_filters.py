@@ -358,7 +358,7 @@ def filter_intake_status(params, issue_filter, method, prefix=""):
             and len(params.get("intake_status"))
             and params.get("intake_status") != "null"
         ):
-            issue_filter[f"{prefix}issue_intake__status__in"] = params.get("inbox_status")
+            issue_filter[f"{prefix}issue_intake__status__in"] = params.get("intake_status")
     return issue_filter
 
 
