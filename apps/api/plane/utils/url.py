@@ -22,8 +22,21 @@ URL_PATTERN = re.compile(
     r")"
 )
 
+# Stricter variant used where bare domain-like labels are legitimate (e.g. person
+# names with initials such as "J. Smith"). Drops the bare-domain alternative.
+URL_PATTERN_STRICT = re.compile(
+    r"(?i)"  # Case insensitive
+    r"(?:"  # Non-capturing group for alternatives
+    r"https?://[^\s]+"  # http:// or https:// followed by non-whitespace
+    r"|"
+    r"www\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*"  # noqa: E501
+    r"|"
+    r"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"  # noqa: E501
+    r")"
+)
 
-def contains_url(value: str) -> bool:
+
+def contains_url(value: str, detect_bare_domains: bool = True) -> bool:
     """
     Check if the value contains a URL.
 
@@ -43,11 +56,13 @@ def contains_url(value: str) -> bool:
         return False
 
     # Additional safety: truncate very long lines that might contain URLs
+    pattern = URL_PATTERN if detect_bare_domains else URL_PATTERN_STRICT
+
     lines = value.split("\n")
     for line in lines:
         if len(line) > 500:  # Process only reasonable length lines
             line = line[:500]
-        if URL_PATTERN.search(line):
+        if pattern.search(line):
             return True
 
     return False

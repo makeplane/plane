@@ -23,7 +23,7 @@
  * Use case: Accommodates international names like "José", "李明", "محمد", "Müller"
  * Blocks: Injection-risk characters and special symbols
  */
-export const PERSON_NAME_REGEX = /^[\p{L}\s'-]+$/u;
+export const PERSON_NAME_REGEX = /^[\p{L}\s'.-]+$/u;
 
 /**
  * Display Name Pattern (for display_name, usernames)
@@ -83,7 +83,7 @@ export const validatePersonName = (name: string): boolean | string => {
   }
 
   if (!PERSON_NAME_REGEX.test(name)) {
-    return "Names can only contain letters, spaces, hyphens, and apostrophes";
+    return "Names can only contain letters, spaces, hyphens, apostrophes, and periods";
   }
 
   return true;
