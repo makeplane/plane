@@ -170,7 +170,7 @@ def issue_export_task(
                 "labels",
                 "issue_cycle__cycle",
                 "issue_module__module",
-                "assignees",
+                "issue_assignee__assignee",
                 "issue_link",
                 Prefetch(
                     "issue_subscribers",
