@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Нет подходящих результатов",
         "description": "Удалите критерии поиска, чтобы увидеть все результаты"
-      }
+      },
+      "cycles": "Поиск циклов...",
+      "modules": "Поиск модулей...",
+      "states": "Поиск статусов...",
+      "projects": "Поиск проектов...",
+      "estimates": "Поиск оценок...",
+      "labels": "Поиск меток...",
+      "members": "Поиск участников..."
     },
     "actions": {
       "edit": "Редактировать",
@@ -734,7 +741,14 @@
       "created_on_date": "Создано {date}",
       "priority": "Приоритет: {value}"
     },
-    "locked": "Заблокировано"
+    "locked": "Заблокировано",
+    "suspended_member": "Отключён",
+    "selected_count": {
+      "module": "{count, plural, one {# модуль} few {# модуля} many {# модулей} other {# модуля}}",
+      "project": "{count, plural, one {# проект} few {# проекта} many {# проектов} other {# проекта}}",
+      "member": "{count, plural, one {# участник} few {# участника} many {# участников} other {# участника}}",
+      "summary": "Выбрано: {count}"
+    }
   },
   "chart": {
     "x_axis": "Ось X",

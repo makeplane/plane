@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Žádné odpovídající výsledky",
         "description": "Odstraňte kritéria hledání pro zobrazení všech výsledků"
-      }
+      },
+      "cycles": "Hledat cykly…",
+      "modules": "Hledat moduly…",
+      "states": "Hledat stavy…",
+      "projects": "Hledat projekty…",
+      "estimates": "Hledat odhady…",
+      "labels": "Hledat štítky…",
+      "members": "Hledat členy…"
     },
     "actions": {
       "edit": "Upravit",
@@ -734,7 +741,14 @@
       "created_on_date": "Vytvořeno dne {date}",
       "priority": "Priorita: {value}"
     },
-    "locked": "Uzamčeno"
+    "locked": "Uzamčeno",
+    "suspended_member": "Pozastavený účet",
+    "selected_count": {
+      "module": "{count, plural, one {# modul} few {# moduly} many {# modulu} other {# modulů}}",
+      "project": "{count, plural, one {# projekt} few {# projekty} many {# projektu} other {# projektů}}",
+      "member": "{count, plural, one {# člen} few {# členové} many {# člena} other {# členů}}",
+      "summary": "Vybráno: {count}"
+    }
   },
   "chart": {
     "x_axis": "Osa X",

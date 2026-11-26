@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Mai multe acțiuni",
-      "remove": "Elimină"
+      "remove": "Elimină",
+      "loading_options": "Se încarcă opțiunile",
+      "loading_progress": "Se încarcă...",
+      "loading_more_rows": "Se încarcă mai multe rânduri"
     },
     "color_picker": {
       "open": "Deschide selectorul de culoare",

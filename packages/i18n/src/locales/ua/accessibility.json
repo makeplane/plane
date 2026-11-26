@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Інші дії",
-      "remove": "Вилучити"
+      "remove": "Вилучити",
+      "loading_options": "Завантаження варіантів",
+      "loading_progress": "Завантаження…",
+      "loading_more_rows": "Завантаження додаткових рядків"
     },
     "color_picker": {
       "open": "Відкрити вибір кольору",

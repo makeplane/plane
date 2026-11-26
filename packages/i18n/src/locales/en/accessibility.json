@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "More actions",
-      "remove": "Remove"
+      "remove": "Remove",
+      "loading_options": "Loading options",
+      "loading_progress": "Loading...",
+      "loading_more_rows": "Loading more rows"
     },
     "color_picker": {
       "open": "Open color picker",

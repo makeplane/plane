@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Diğer işlemler",
-      "remove": "Kaldır"
+      "remove": "Kaldır",
+      "loading_options": "Seçenekler yükleniyor",
+      "loading_progress": "Yükleniyor...",
+      "loading_more_rows": "Daha fazla satır yükleniyor"
     },
     "color_picker": {
       "open": "Renk seçiciyi aç",

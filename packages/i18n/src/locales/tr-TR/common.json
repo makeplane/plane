@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Eşleşen sonuç yok",
         "description": "Tüm sonuçları görmek için arama kriterlerini kaldırın"
-      }
+      },
+      "cycles": "Döngüleri arayın…",
+      "modules": "Modülleri arayın…",
+      "states": "Durumları arayın…",
+      "projects": "Projeleri arayın…",
+      "estimates": "Tahminleri arayın…",
+      "labels": "Etiketleri arayın…",
+      "members": "Üyeleri arayın…"
     },
     "actions": {
       "edit": "Düzenle",
@@ -734,7 +741,14 @@
       "created_on_date": "Oluşturulma tarihi: {date}",
       "priority": "Öncelik: {value}"
     },
-    "locked": "Kilitli"
+    "locked": "Kilitli",
+    "suspended_member": "Askıya alındı",
+    "selected_count": {
+      "module": "{count, plural, one {# modül} other {# modül}}",
+      "project": "{count, plural, one {# proje} other {# proje}}",
+      "member": "{count, plural, one {# üye} other {# üye}}",
+      "summary": "{count} seçildi"
+    }
   },
   "chart": {
     "x_axis": "X ekseni",

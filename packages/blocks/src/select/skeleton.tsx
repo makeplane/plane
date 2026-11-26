@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { Skeleton } from "../skeleton/root";
 
 type SelectOptionsSkeletonProps = {
@@ -14,8 +15,9 @@ type SelectOptionsSkeletonProps = {
 // Pulse-animated placeholder rows that mirror an option's `icon + text` layout (matching the
 // `flex items-center gap-2 px-2 py-1.5` of a real `Combobox.Option`), shown while options load.
 export function SelectOptionsSkeleton({ rows = 3 }: SelectOptionsSkeletonProps) {
+  const { t } = useTranslation();
   return (
-    <Skeleton ariaLabel="Loading options" className="flex w-full flex-col">
+    <Skeleton ariaLabel={t("aria_labels.common.loading_options")} className="flex w-full flex-col">
       {Array.from({ length: Math.max(1, rows) }).map((_, index) => (
         // oxlint-disable-next-line react/no-array-index-key -- static, identical placeholder rows
         <div key={index} className="flex items-center gap-2 px-2 py-1.5">

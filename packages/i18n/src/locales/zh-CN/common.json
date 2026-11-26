@@ -609,7 +609,14 @@
       "no_results": {
         "title": "没有匹配的结果",
         "description": "移除搜索条件以查看所有结果"
-      }
+      },
+      "cycles": "搜索周期…",
+      "modules": "搜索模块…",
+      "states": "搜索状态…",
+      "projects": "搜索项目…",
+      "estimates": "搜索估算…",
+      "labels": "搜索标签…",
+      "members": "搜索成员…"
     },
     "actions": {
       "edit": "编辑",
@@ -734,7 +741,14 @@
       "created_on_date": "创建于 {date}",
       "priority": "优先级：{value}"
     },
-    "locked": "已锁定"
+    "locked": "已锁定",
+    "suspended_member": "已停用",
+    "selected_count": {
+      "module": "{count, plural, one {# 个模块} other {# 个模块}}",
+      "project": "{count, plural, one {# 个项目} other {# 个项目}}",
+      "member": "{count, plural, one {# 名成员} other {# 名成员}}",
+      "summary": "已选择 {count} 项"
+    }
   },
   "chart": {
     "x_axis": "X轴",

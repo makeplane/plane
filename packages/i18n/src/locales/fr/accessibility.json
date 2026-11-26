@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Plus d’actions",
-      "remove": "Supprimer"
+      "remove": "Supprimer",
+      "loading_options": "Chargement des options",
+      "loading_progress": "Chargement...",
+      "loading_more_rows": "Chargement des lignes supplémentaires"
     },
     "color_picker": {
       "open": "Ouvrir le sélecteur de couleur",

@@ -609,7 +609,14 @@
       "no_results": {
         "title": "일치하는 결과 없음",
         "description": "모든 결과를 보려면 검색 조건을 제거하세요"
-      }
+      },
+      "cycles": "사이클 검색…",
+      "modules": "모듈 검색…",
+      "states": "상태 검색…",
+      "projects": "프로젝트 검색…",
+      "estimates": "추정치 검색…",
+      "labels": "라벨 검색…",
+      "members": "구성원 검색…"
     },
     "actions": {
       "edit": "편집",
@@ -734,7 +741,14 @@
       "created_on_date": "생성일: {date}",
       "priority": "우선순위: {value}"
     },
-    "locked": "잠김"
+    "locked": "잠김",
+    "suspended_member": "이용 정지",
+    "selected_count": {
+      "module": "{count, plural, one {모듈 #개} other {모듈 #개}}",
+      "project": "{count, plural, one {프로젝트 #개} other {프로젝트 #개}}",
+      "member": "{count, plural, one {구성원 #명} other {구성원 #명}}",
+      "summary": "{count}개 선택됨"
+    }
   },
   "chart": {
     "x_axis": "X축",

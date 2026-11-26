@@ -62,6 +62,7 @@ function useStableItems<T>(next: T[]): T[] {
 }
 
 export function SelectRoot<T>(props: SelectProps<T>) {
+  const { t } = useTranslation();
   const {
     getOptionValue,
     getOptionLabel,
@@ -84,7 +85,7 @@ export function SelectRoot<T>(props: SelectProps<T>) {
     placeholder,
     searchPlaceholder,
     showSearch = true,
-    emptyMessage = "No results found",
+    emptyMessage = t("command_k.empty_state.search.title"),
     onClose,
     children,
     // The standard row is a fixed single line; hand-drawn and two-line rows are taller.
@@ -192,9 +193,6 @@ export function SelectRoot<T>(props: SelectProps<T>) {
   const [syncQuery, setSyncQuery] = useState("");
   const { contains } = useFilter();
   const query = isInfinite ? infinite.query : syncQuery;
-
-  // translation
-  const { t } = useTranslation();
 
   // Base UI skips its `CompositeList` in virtualized mode, so a row only registers itself while it
   // is rendered. Keyboard navigation can walk the highlight past the rendered window, where Enter

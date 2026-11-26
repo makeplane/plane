@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Meer acties",
-      "remove": "Verwijderen"
+      "remove": "Verwijderen",
+      "loading_options": "Opties laden",
+      "loading_progress": "Laden...",
+      "loading_more_rows": "Meer rijen laden"
     },
     "color_picker": {
       "open": "Kleurkiezer openen",

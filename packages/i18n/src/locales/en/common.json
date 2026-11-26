@@ -609,7 +609,14 @@
       "no_results": {
         "title": "No matching results",
         "description": "Remove the search criteria to see all results"
-      }
+      },
+      "cycles": "Search cycles...",
+      "modules": "Search modules...",
+      "states": "Search states...",
+      "projects": "Search projects...",
+      "estimates": "Search estimates...",
+      "labels": "Search labels...",
+      "members": "Search members..."
     },
     "actions": {
       "edit": "Edit",
@@ -734,7 +741,14 @@
       "created_on_date": "Created on {date}",
       "priority": "Priority: {value}"
     },
-    "locked": "Locked"
+    "locked": "Locked",
+    "suspended_member": "Suspended",
+    "selected_count": {
+      "module": "{count, plural, one {# module} other {# modules}}",
+      "project": "{count, plural, one {# project} other {# projects}}",
+      "member": "{count, plural, one {# member} other {# members}}",
+      "summary": "{count} selected"
+    }
   },
   "chart": {
     "x_axis": "X-axis",

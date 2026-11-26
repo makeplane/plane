@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Още действия",
-      "remove": "Премахни"
+      "remove": "Премахни",
+      "loading_options": "Зареждане на опциите",
+      "loading_progress": "Зареждане...",
+      "loading_more_rows": "Зареждане на още редове"
     },
     "color_picker": {
       "open": "Отвори инструмента за избор на цвят",
