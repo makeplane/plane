@@ -18,9 +18,15 @@ from .activity import (
     ProjectActivitySummaryDetailAPIEndpoint,
     ProjectActivitySettingsAPIEndpoint,
 )
+from .search import ContentSearchAPIEndpoint
 from .views import PageArchiveUnarchiveAPIEndpoint, PageDetailAPIEndpoint, PageListCreateAPIEndpoint
 
 urlpatterns = [
+    path(
+        "workspaces/<str:slug>/liviere/search/",
+        ContentSearchAPIEndpoint.as_view(http_method_names=["post"]),
+        name="liviere-content-search-v1",
+    ),
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/",
         PageListCreateAPIEndpoint.as_view(http_method_names=["get", "post"]),
