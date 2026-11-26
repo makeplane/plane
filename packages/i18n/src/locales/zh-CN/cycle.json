@@ -37,5 +37,40 @@
         "title": "为工作项添加标签以查看按标签\n划分的工作明细"
       }
     }
+  },
+  "cycle_automation": {
+    "title": "周期自动化",
+    "description": "在周期开始或完成时，将周期中的工作项从某些状态移动到另一个状态。每条规则在每个周期中只运行一次。开启规则不会移动已经开始或已完成的周期中的工作项；如需移动，请在周期上使用“移动工作项”。",
+    "trigger": {
+      "cycle_started": "周期开始时",
+      "cycle_completed": "周期完成时"
+    },
+    "from": "从",
+    "to": "移动到",
+    "select_states": "选择状态",
+    "select_state": "选择状态",
+    "add_rule": "添加规则",
+    "empty": "暂无规则。",
+    "presets": {
+      "start": "添加：开始时 Backlog 移到 Todo",
+      "complete": "添加：完成时 Testing Complete 移到 Done",
+      "missing": "此项目没有适用于此模板的状态。"
+    },
+    "move_up": "上移",
+    "move_down": "下移",
+    "delete": "删除规则",
+    "errors": {
+      "load": "无法加载周期自动化规则。",
+      "save": "无法保存规则。请重试。"
+    },
+    "move": {
+      "menu": "移动工作项",
+      "title": "移动 {cycle} 中的工作项",
+      "description": "将此周期中处于所选状态之一的所有工作项一次性移动到目标状态。",
+      "count": "{count, plural, one{将移动 # 个工作项。} other{将移动 # 个工作项。}}",
+      "submit": "移动",
+      "success": "{count, plural, one{已移动 # 个工作项。} other{已移动 # 个工作项。}}",
+      "error": "无法移动工作项。请重试。"
+    }
   }
 }

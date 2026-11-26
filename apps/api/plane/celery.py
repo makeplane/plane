@@ -62,6 +62,10 @@ app.conf.beat_schedule = {
         "task": "plane.bgtasks.deletion_task.hard_delete",
         "schedule": crontab(hour=0, minute=0),  # UTC 00:00
     },
+    "check-every-5-minutes-cycle-automation": {
+        "task": "plane.bgtasks.cycle_automation_task.run_cycle_automation",
+        "schedule": schedule(run_every=timedelta(minutes=5)),
+    },
     "check-every-day-to-archive-and-close": {
         "task": "plane.bgtasks.issue_automation_task.archive_and_close_old_issues",
         "schedule": crontab(hour=1, minute=0),  # UTC 01:00

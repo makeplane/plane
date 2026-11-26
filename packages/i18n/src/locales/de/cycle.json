@@ -37,5 +37,40 @@
         "title": "Fügen Sie Arbeitsaufgaben Labels hinzu, um die\n Aufschlüsselung der Arbeit nach Labels zu sehen."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Zyklusautomatisierung",
+    "description": "Arbeitselemente eines Zyklus beim Start oder Abschluss des Zyklus von bestimmten Status in einen anderen verschieben. Jede Regel wird pro Zyklus einmal ausgeführt. Das Aktivieren einer Regel verschiebt keine Arbeitselemente von Zyklen, die bereits begonnen haben oder abgeschlossen sind; verwenden Sie dafür „Arbeitselemente verschieben“ im Zyklus.",
+    "trigger": {
+      "cycle_started": "Wenn ein Zyklus beginnt",
+      "cycle_completed": "Wenn ein Zyklus abgeschlossen wird"
+    },
+    "from": "Verschieben von",
+    "to": "nach",
+    "select_states": "Status auswählen",
+    "select_state": "Status auswählen",
+    "add_rule": "Regel hinzufügen",
+    "empty": "Noch keine Regeln.",
+    "presets": {
+      "start": "Hinzufügen: beim Start, Backlog nach Todo",
+      "complete": "Hinzufügen: beim Abschluss, Testing Complete nach Done",
+      "missing": "Dieses Projekt hat keinen Status für diese Vorlage."
+    },
+    "move_up": "Nach oben",
+    "move_down": "Nach unten",
+    "delete": "Regel löschen",
+    "errors": {
+      "load": "Die Regeln der Zyklusautomatisierung konnten nicht geladen werden.",
+      "save": "Die Regel konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+    },
+    "move": {
+      "menu": "Arbeitselemente verschieben",
+      "title": "Arbeitselemente in {cycle} verschieben",
+      "description": "Verschiebt alle Arbeitselemente dieses Zyklus, die sich in einem der ausgewählten Status befinden, in einem Durchgang in den Zielstatus.",
+      "count": "{count, plural, one{# Arbeitselement wird verschoben.} other{# Arbeitselemente werden verschoben.}}",
+      "submit": "Verschieben",
+      "success": "{count, plural, one{# Arbeitselement verschoben.} other{# Arbeitselemente verschoben.}}",
+      "error": "Die Arbeitselemente konnten nicht verschoben werden. Bitte versuchen Sie es erneut."
+    }
   }
 }

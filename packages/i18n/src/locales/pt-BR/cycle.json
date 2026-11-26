@@ -37,5 +37,40 @@
         "title": "Adicione etiquetas aos itens de trabalho para ver a\n divisão do trabalho por etiquetas."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Automação de ciclos",
+    "description": "Move os itens de trabalho de um ciclo de alguns estados para outro quando o ciclo começa ou é concluído. Cada regra é executada uma vez por ciclo. Ativar uma regra não move itens de trabalho de ciclos que já começaram ou foram concluídos; para isso, use \"Mover itens de trabalho\" em um ciclo.",
+    "trigger": {
+      "cycle_started": "Quando um ciclo começa",
+      "cycle_completed": "Quando um ciclo é concluído"
+    },
+    "from": "Mover de",
+    "to": "para",
+    "select_states": "Selecionar estados",
+    "select_state": "Selecionar estado",
+    "add_rule": "Adicionar regra",
+    "empty": "Ainda não há regras.",
+    "presets": {
+      "start": "Adicionar: ao começar, Backlog para Todo",
+      "complete": "Adicionar: ao concluir, Testing Complete para Done",
+      "missing": "Este projeto não tem um estado para este modelo."
+    },
+    "move_up": "Mover para cima",
+    "move_down": "Mover para baixo",
+    "delete": "Excluir regra",
+    "errors": {
+      "load": "Não foi possível carregar as regras de automação de ciclos.",
+      "save": "Não foi possível salvar a regra. Tente novamente."
+    },
+    "move": {
+      "menu": "Mover itens de trabalho",
+      "title": "Mover itens de trabalho em {cycle}",
+      "description": "Move de uma só vez todos os itens de trabalho deste ciclo que estão em um dos estados selecionados para o estado de destino.",
+      "count": "{count, plural, one{# item de trabalho será movido.} many{# itens de trabalho serão movidos.} other{# itens de trabalho serão movidos.}}",
+      "submit": "Mover",
+      "success": "{count, plural, one{# item de trabalho movido.} many{# itens de trabalho movidos.} other{# itens de trabalho movidos.}}",
+      "error": "Não foi possível mover os itens de trabalho. Tente novamente."
+    }
   }
 }

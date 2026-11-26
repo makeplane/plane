@@ -37,5 +37,40 @@
         "title": "Ajoutez des étiquettes aux éléments de travail pour voir la\n répartition du travail par étiquettes."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Automatisation des cycles",
+    "description": "Déplace les éléments de travail d'un cycle de certains états vers un autre lorsque le cycle démarre ou se termine. Chaque règle s'exécute une fois par cycle. Activer une règle ne déplace pas les éléments de travail des cycles déjà démarrés ou terminés. Pour cela, utilisez \"Déplacer les éléments de travail\" sur un cycle.",
+    "trigger": {
+      "cycle_started": "Quand un cycle démarre",
+      "cycle_completed": "Quand un cycle se termine"
+    },
+    "from": "Déplacer depuis",
+    "to": "vers",
+    "select_states": "Sélectionner des états",
+    "select_state": "Sélectionner un état",
+    "add_rule": "Ajouter une règle",
+    "empty": "Aucune règle pour l'instant.",
+    "presets": {
+      "start": "Ajouter au démarrage, Backlog vers Todo",
+      "complete": "Ajouter à la fin, Testing Complete vers Done",
+      "missing": "Ce projet n'a pas d'état pour ce modèle."
+    },
+    "move_up": "Monter",
+    "move_down": "Descendre",
+    "delete": "Supprimer la règle",
+    "errors": {
+      "load": "Impossible de charger les règles d'automatisation des cycles.",
+      "save": "Impossible d'enregistrer la règle. Veuillez réessayer."
+    },
+    "move": {
+      "menu": "Déplacer les éléments de travail",
+      "title": "Déplacer les éléments de travail de {cycle}",
+      "description": "Déplace en une seule fois chaque élément de travail de ce cycle qui se trouve dans l'un des états sélectionnés vers l'état cible.",
+      "count": "{count, plural, one{# élément de travail sera déplacé.} many{# éléments de travail seront déplacés.} other{# éléments de travail seront déplacés.}}",
+      "submit": "Déplacer",
+      "success": "{count, plural, one{# élément de travail déplacé.} many{# éléments de travail déplacés.} other{# éléments de travail déplacés.}}",
+      "error": "Impossible de déplacer les éléments de travail. Veuillez réessayer."
+    }
   }
 }

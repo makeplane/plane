@@ -37,5 +37,40 @@
         "title": "Přidejte štítky k pracovním položkám, abyste viděli\n rozdělení práce podle štítků."
       }
     }
+  },
+  "cycle_automation": {
+    "title": "Automatizace cyklů",
+    "description": "Přesune pracovní položky cyklu z vybraných stavů do jiného stavu, když cyklus začne nebo skončí. Každé pravidlo se spustí jednou za cyklus. Zapnutí pravidla nepřesune pracovní položky cyklů, které již začaly nebo skončily; k tomu použijte „Přesunout pracovní položky“ u cyklu.",
+    "trigger": {
+      "cycle_started": "Když cyklus začne",
+      "cycle_completed": "Když cyklus skončí"
+    },
+    "from": "Přesunout z",
+    "to": "do",
+    "select_states": "Vyberte stavy",
+    "select_state": "Vyberte stav",
+    "add_rule": "Přidat pravidlo",
+    "empty": "Zatím žádná pravidla.",
+    "presets": {
+      "start": "Přidat: při začátku, Backlog do Todo",
+      "complete": "Přidat: při dokončení, Testing Complete do Done",
+      "missing": "Tento projekt nemá stav pro tuto šablonu."
+    },
+    "move_up": "Posunout nahoru",
+    "move_down": "Posunout dolů",
+    "delete": "Smazat pravidlo",
+    "errors": {
+      "load": "Pravidla automatizace cyklů se nepodařilo načíst.",
+      "save": "Pravidlo se nepodařilo uložit. Zkuste to prosím znovu."
+    },
+    "move": {
+      "menu": "Přesunout pracovní položky",
+      "title": "Přesunout pracovní položky v {cycle}",
+      "description": "Přesune najednou do cílového stavu každou pracovní položku tohoto cyklu, která je v jednom z vybraných stavů.",
+      "count": "{count, plural, one{Přesune se # pracovní položka.} few{Přesunou se # pracovní položky.} many{Přesune se # pracovní položky.} other{Přesune se # pracovních položek.}}",
+      "submit": "Přesunout",
+      "success": "{count, plural, one{Přesunuta # pracovní položka.} few{Přesunuty # pracovní položky.} many{Přesunuto # pracovní položky.} other{Přesunuto # pracovních položek.}}",
+      "error": "Pracovní položky se nepodařilo přesunout. Zkuste to prosím znovu."
+    }
   }
 }
