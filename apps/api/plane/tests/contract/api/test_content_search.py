@@ -19,6 +19,7 @@ from rest_framework.test import APIClient
 
 from plane.db.models import Issue, IssueComment, Project, ProjectMember, State, User, WorkspaceMember
 from plane.db.models.api import APIToken
+from plane.liviere.search.queries import search
 
 URL = "/api/v1/workspaces/{slug}/liviere/search/"
 
@@ -394,16 +395,25 @@ def test_timing_on_1000_work_items_and_3000_comments(api_key_client, workspace, 
         ]
     )
 
-    timings = {}
-    for phrase in ("rarebird", "deploy", "kingfisher"):
+    def median_ms(call):
         runs = []
         for _ in range(5):
             started = time.perf_counter()
-            response = _search(api_key_client, workspace, q=phrase, limit=100)
+            result = call()
             runs.append((time.perf_counter() - started) * 1000)
-            assert response.status_code == status.HTTP_200_OK
-        timings[phrase] = (round(statistics.median(runs)), response.json()["total"])
+        return round(statistics.median(runs)), result
 
-    print(f"\nLIVIERE_SEARCH_BENCH 1000 work items, 3000 comments: {timings} (phrase: (median ms, total))")
+    timings, query_timings = {}, {}
+    for phrase in ("rarebird", "deploy", "kingfisher"):
+        ms, response = median_ms(lambda: _search(api_key_client, workspace, q=phrase, limit=100))
+        assert response.status_code == status.HTTP_200_OK
+        timings[phrase] = (ms, response.json()["total"])
+        # The queries alone, without authentication, middleware and rendering
+        query_timings[phrase], _ = median_ms(lambda: search(workspace.slug, create_user, phrase, limit=100))
+
+    print(
+        f"\nLIVIERE_SEARCH_BENCH 1000 work items, 3000 comments: request {timings} (phrase: (median ms, total)), "
+        f"queries only {query_timings} (median ms)"
+    )
     assert timings["rarebird"][1] == 1 and timings["kingfisher"][1] == 1
     assert all(ms < 3000 for ms, _ in timings.values())
