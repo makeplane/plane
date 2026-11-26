@@ -467,7 +467,7 @@ def transfer_cycle_issues(
         current_instance=json.dumps(
             {
                 "updated_cycle_issues": update_cycle_issue_activity,
-                "created_cycle_issues": [],
+                "created_cycle_issues": "[]",
             }
         ),
         epoch=int(timezone.now().timestamp()),
