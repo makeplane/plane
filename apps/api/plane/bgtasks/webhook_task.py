@@ -503,11 +503,23 @@ def model_activity(model_name, model_id, requested_data, current_instance, actor
     # Load the current instance
     current_instance = json.loads(current_instance) if current_instance is not None else None
 
+    # The public API uses relation names (state, assignees, labels, modules) in
+    # the request body, while the serialized instance carries the foreign-key /
+    # relation field names (state_id, assignee_ids, label_ids, module_ids). Map
+    # them so webhook deliveries fire on those changes too.
+    _REQUEST_KEY_ALIASES = {
+        "state": "state_id",
+        "assignees": "assignee_ids",
+        "labels": "label_ids",
+        "modules": "module_ids",
+    }
+
     # Loop through all keys in requested data and check the current value and requested value
     for key in requested_data:
+        instance_key = _REQUEST_KEY_ALIASES.get(key, key)
         # Check if key is present in current instance or not
-        if key in current_instance:
-            current_value = current_instance.get(key, None)
+        if instance_key in current_instance:
+            current_value = current_instance.get(instance_key, None)
             requested_value = requested_data.get(key, None)
             if current_value != requested_value:
                 webhook_activity.delay(
