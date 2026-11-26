@@ -2441,6 +2441,17 @@ class IssueSearchEndpoint(BaseAPIView):
         """
         query = request.query_params.get("search", False)
         limit = request.query_params.get("limit", 10)
+        try:
+            limit = int(limit)
+        except (TypeError, ValueError):
+            return Response({"error": "Invalid limit parameter."}, status=status.HTTP_400_BAD_REQUEST)
+        if limit <= 0:
+            return Response(
+                {"error": "Invalid limit value. Must be greater than zero."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if limit > 1000:
+            return Response({"error": "Invalid limit value. Cannot exceed 1000."}, status=status.HTTP_400_BAD_REQUEST)
         workspace_search = request.query_params.get("workspace_search", "false")
         project_id = request.query_params.get("project_id", False)
 
@@ -2485,7 +2496,7 @@ class IssueSearchEndpoint(BaseAPIView):
             "project__identifier",
             "project_id",
             "workspace__slug",
-        )[: int(limit)]
+        )[: limit]
 
         return Response({"issues": issue_results}, status=status.HTTP_200_OK)
 
