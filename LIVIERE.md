@@ -336,9 +336,11 @@ matching comment) only with `match: "comment"`.
 **Cost.** Four queries whatever the number of matches (matching work items as ids only, matching comments counted
 per work item, details of the shown work items, their newest matching comment); no index, migration or extension.
 Every search scans the text columns of the workspace. Measured on the test stack (1000 work items, 3000 comments,
-a machine under load ~20, median of 5): the queries alone 121–287 ms, the whole request 258–283 ms (a rare phrase,
-one in 400 work items, one only in a comment). Add a `pg_trgm` index or `tsvector` only when times on the server
-reach about 300 ms.
+fresh tables without `ANALYZE`, medians): with the machine under load 13 the whole `search()` took 69 ms (work items
+7 ms and comments 38 ms in Postgres, the rest round trips); under load 20–31 the queries alone took 121–287 ms and
+the whole request 208–368 ms. Most of the comment query is the visibility subquery, not the text scan (13 ms without
+it), so a `pg_trgm` index or `tsvector` would not help much at this size; measure on the server before adding one
+(about 300 ms is the threshold).
 
 **Request log.** `APITokenLogMiddleware` (upstream, stores `/api/v1/` requests in `api_activity_logs` for 14 days)
 keeps a row for this route without `query_params`, `body` and `response_body` (hook in
