@@ -97,7 +97,8 @@ def names_texts(report):
 def day_texts(day, L, with_names):
     """
     Texts of the "log entry" column of a day, each of them possibly several lines: for every person their
-    summary of the day, or without one the notes of their log entries of that day (no times).
+    summary of the day, or without one the notes of their log entries of that day (no times). A summary never
+    starts with its author's name, only notes do (with_names).
     """
     authors = {}
     summaries = {}
@@ -114,7 +115,12 @@ def day_texts(day, L, with_names):
             notes.setdefault(key, []).append(note)
     texts = []
     for key, actor in authors.items():
-        for text in [summaries[key]] if key in summaries else notes[key]:
+        if key in summaries:
+            text = summaries[key].strip()
+            if text:
+                texts.append(text)
+            continue
+        for text in notes[key]:
             text = text.strip()
             if text:
                 texts.append(f"{person_name(actor, L)}: {text}" if with_names else text)

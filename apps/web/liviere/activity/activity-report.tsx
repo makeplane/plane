@@ -59,7 +59,8 @@ const namesTexts = (report: TActivityReport): boolean => {
 
 /**
  * Texts of the "log entry" column of a day, as in the files (report_export.py day_texts): for every person
- * their summary of the day, or without one the notes of their log entries of that day.
+ * their summary of the day, or without one the notes of their log entries of that day. A summary never starts
+ * with its author's name, only notes do (withNames).
  */
 const dayTexts = (day: TReportDay, withNames: boolean, personName: (actor: TReportActor) => string): string[] => {
   const authors = new Map<string, TReportActor>();
@@ -80,7 +81,12 @@ const dayTexts = (day: TReportDay, withNames: boolean, personName: (actor: TRepo
   const texts: string[] = [];
   for (const [key, actor] of authors) {
     const summary = summaries.get(key);
-    for (const text of summary !== undefined ? [summary] : (notes.get(key) ?? [])) {
+    if (summary !== undefined) {
+      const trimmed = summary.trim();
+      if (trimmed) texts.push(trimmed);
+      continue;
+    }
+    for (const text of notes.get(key) ?? []) {
       const trimmed = text.trim();
       if (trimmed) texts.push(withNames ? `${personName(actor)}: ${trimmed}` : trimmed);
     }

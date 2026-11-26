@@ -456,9 +456,10 @@ class TestReportFiles:
         )
         just_ola = api_key_client.get(_v1(workspace, project), {**params, "actor": str(ola.id)}).content.decode("utf-8")
 
-        # Tomasz's summary instead of his note; Ola has no summary, so her notes, each on its own line
+        # Tomasz's summary instead of his note, without his name; Ola has no summary, so her notes, each on
+        # its own line and named
         assert (
-            "| 2026-11-16 | tomasz: Dzień Tomasza<br>ola: Pierwsza notatka Oli<br>ola: Druga notatka Oli | 2 h 00 min |"
+            "| 2026-11-16 | Dzień Tomasza<br>ola: Pierwsza notatka Oli<br>ola: Druga notatka Oli | 2 h 00 min |"
             in everybody
         )
         assert "Notatka Tomasza" not in everybody
