@@ -103,14 +103,10 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     console.warn("Error detecting file type from signature:", _error);
   }
 
-  // Fall back to the MIME type provided by the browser, which is reliable for
-  // signature-less text formats (e.g. .txt, .md, .csv, .json, .log).
-  if (file.type) {
-    return file.type;
-  }
-
-  // Last resort: derive a MIME type from the file extension for the common
-  // text/code formats whose browser-reported type may be empty.
+  // Derive a MIME type from the file extension for the common text/code
+  // formats whose signature cannot be detected. Prefer this over the
+  // browser-reported type, since browsers may report a generic/incorrect type
+  // (e.g. text/plain for .md) that the backend rejects.
   const extension = file.name.split(".").pop()?.toLowerCase() || "";
   const extensionMimeTypes: Record<string, string> = {
     txt: "text/plain",
@@ -122,8 +118,13 @@ const validateAndDetectFileType = async (file: File): Promise<string> => {
     js: "text/javascript",
     xml: "text/xml",
   };
-  if (extensionMimeTypes[extension]) {
+  if (Object.prototype.hasOwnProperty.call(extensionMimeTypes, extension)) {
     return extensionMimeTypes[extension];
+  }
+
+  // Fall back to the MIME type provided by the browser for anything else.
+  if (file.type) {
+    return file.type;
   }
 
   // fallback for unknown files
