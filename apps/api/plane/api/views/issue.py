@@ -1563,6 +1563,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             and IssueComment.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
+                issue_id=issue_id,
                 external_source=request.data.get("external_source"),
                 external_id=request.data.get("external_id"),
             ).exists()
@@ -1570,6 +1571,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             issue_comment = IssueComment.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
+                issue_id=issue_id,
                 external_id=request.data.get("external_id"),
                 external_source=request.data.get("external_source"),
             ).first()
@@ -1733,6 +1735,7 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
             and IssueComment.objects.filter(
                 project_id=project_id,
                 workspace__slug=slug,
+                issue_id=issue_id,
                 external_source=request.data.get("external_source", issue_comment.external_source),
                 external_id=request.data.get("external_id"),
             ).exists()
