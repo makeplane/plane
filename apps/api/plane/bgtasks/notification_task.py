@@ -557,13 +557,13 @@ def notifications(
                                         "new_value": str(last_activity.new_value),
                                         "old_value": str(last_activity.old_value),
                                         "old_identifier": (
-                                            str(issue_activity.get("old_identifier"))
-                                            if issue_activity.get("old_identifier")
+                                            str(last_activity.old_identifier)
+                                            if last_activity.old_identifier
                                             else None
                                         ),
                                         "new_identifier": (
-                                            str(issue_activity.get("new_identifier"))
-                                            if issue_activity.get("new_identifier")
+                                            str(last_activity.new_identifier)
+                                            if last_activity.new_identifier
                                             else None
                                         ),
                                     },
@@ -574,7 +574,7 @@ def notifications(
                             bulk_email_logs.append(
                                 EmailNotificationLog(
                                     triggered_by_id=actor_id,
-                                    receiver_id=subscriber,
+                                    receiver_id=mention_id,
                                     entity_identifier=issue_id,
                                     entity_name="issue",
                                     data={
@@ -594,13 +594,13 @@ def notifications(
                                             "new_value": str(last_activity.new_value),
                                             "old_value": str(last_activity.old_value),
                                             "old_identifier": (
-                                                str(issue_activity.get("old_identifier"))
-                                                if issue_activity.get("old_identifier")
+                                                str(last_activity.old_identifier)
+                                                if last_activity.old_identifier
                                                 else None
                                             ),
                                             "new_identifier": (
-                                                str(issue_activity.get("new_identifier"))
-                                                if issue_activity.get("new_identifier")
+                                                str(last_activity.new_identifier)
+                                                if last_activity.new_identifier
                                                 else None
                                             ),
                                             "activity_time": str(last_activity.created_at),
@@ -623,7 +623,7 @@ def notifications(
                                 bulk_email_logs.append(
                                     EmailNotificationLog(
                                         triggered_by_id=actor_id,
-                                        receiver_id=subscriber,
+                                        receiver_id=mention_id,
                                         entity_identifier=issue_id,
                                         entity_name="issue",
                                         data={
