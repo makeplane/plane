@@ -1571,6 +1571,7 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             issue_comment = IssueComment.objects.filter(
                 workspace__slug=slug,
                 project_id=project_id,
+                issue_id=issue_id,
                 external_id=request.data.get("external_id"),
                 external_source=request.data.get("external_source"),
             ).first()
