@@ -20,8 +20,11 @@ export const renderFormattedDate = (
   date: string | Date | undefined | null,
   formatToken: string = "MMM dd, yyyy"
 ): string | undefined => {
-  // Parse the date to check if it is valid
-  const parsedDate = getDate(date);
+  // For full timestamps (containing a time component) use the local-timezone
+  // Date so the calendar day matches the displayed local time. For date-only
+  // values keep getDate(), which avoids a timezone shift.
+  const parsedDate =
+    typeof date === "string" && (date.includes("T") || date.includes(" ")) ? new Date(date) : getDate(date);
   // return if undefined
   if (!parsedDate) return;
   // Check if the parsed date is valid before formatting
