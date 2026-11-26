@@ -119,6 +119,11 @@ class UserAssetEndpoint(BaseAPIView):
         # get the asset key
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         try:
             raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
             size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
@@ -301,6 +306,11 @@ class UserServerAssetEndpoint(BaseAPIView):
         # get the asset key
         name = sanitize_filename(request.data.get("name")) or "unnamed"
         type = request.data.get("type", "image/jpeg")
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         try:
             raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
             size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
@@ -538,6 +548,11 @@ class GenericAssetEndpoint(BaseAPIView):
         """
         name = sanitize_filename(request.data.get("name"))
         type = request.data.get("type")
+        if "size" in request.data and request.data.get("size") is None:
+            return Response(
+                {"error": "Invalid size.", "status": False},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         try:
             raw_size = request.data.get("size", settings.FILE_SIZE_LIMIT)
             size = int(raw_size) if raw_size is not None else settings.FILE_SIZE_LIMIT
