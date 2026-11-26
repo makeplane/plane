@@ -83,8 +83,11 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
   });
 
   useEffect(() => {
-    void trigger();
-  }, [trigger]);
+    const fields: ("first_name" | "last_name")[] = [];
+    if (user?.first_name) fields.push("first_name");
+    if (user?.last_name) fields.push("last_name");
+    if (fields.length) void trigger(fields);
+  }, [trigger, user?.first_name, user?.last_name]);
   // derived values
   const userAvatar = watch("avatar_url");
 

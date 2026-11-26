@@ -14,12 +14,12 @@ from .base import BaseSerializer
 
 class UserSerializer(BaseSerializer):
     def validate_first_name(self, value):
-        if contains_url(value):
+        if contains_url(value, detect_bare_domains=False):
             raise serializers.ValidationError("First name cannot contain a URL.")
         return value
 
     def validate_last_name(self, value):
-        if contains_url(value):
+        if contains_url(value, detect_bare_domains=False):
             raise serializers.ValidationError("Last name cannot contain a URL.")
         return value
 
