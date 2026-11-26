@@ -160,7 +160,7 @@ export function InstanceSetupForm() {
             <input type="hidden" name="is_telemetry_enabled" value={formData.is_telemetry_enabled ? "True" : "False"} />
 
             <div className="flex flex-col items-center gap-4 sm:flex-row">
-              <div className="w-full">
+              <div className="w-full min-w-0">
                 <InputField
                   size="xl"
                   id="first_name"
@@ -183,7 +183,7 @@ export function InstanceSetupForm() {
                   required
                 />
               </div>
-              <div className="w-full">
+              <div className="w-full min-w-0">
                 <InputField
                   size="xl"
                   id="last_name"
