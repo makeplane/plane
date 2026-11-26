@@ -156,6 +156,14 @@ SPECTACULAR_SETTINGS = {
                 "*Use Cases:* Project setup, team collaboration, access control, project configuration."
             ),
         },
+        {
+            "name": "Pages",
+            "description": (
+                "**Project Pages**\n\n"
+                "Discover and create top-level Pages in a project through the API-key-authenticated "
+                "collection endpoint."
+            ),
+        },
         # Project Organization
         {
             "name": "States",
