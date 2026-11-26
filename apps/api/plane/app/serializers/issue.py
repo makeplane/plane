@@ -794,6 +794,7 @@ class IssueSerializer(DynamicBaseSerializer):
     sub_issues_count = serializers.IntegerField(read_only=True)
     attachment_count = serializers.IntegerField(read_only=True)
     link_count = serializers.IntegerField(read_only=True)
+    comment_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Issue
@@ -821,6 +822,7 @@ class IssueSerializer(DynamicBaseSerializer):
             "updated_by",
             "attachment_count",
             "link_count",
+            "comment_count",
             "is_draft",
             "archived_at",
         ]
@@ -853,6 +855,7 @@ class IssueListDetailSerializer(serializers.Serializer):
         return [assignee.assignee_id for assignee in obj.issue_assignee.all()]
 
     def to_representation(self, instance):
+        """Serialize work item details with computed count annotations."""
         data = {
             # Basic fields
             "id": instance.id,
@@ -881,6 +884,7 @@ class IssueListDetailSerializer(serializers.Serializer):
             "sub_issues_count": instance.sub_issues_count,
             "attachment_count": instance.attachment_count,
             "link_count": instance.link_count,
+            "comment_count": getattr(instance, "comment_count", 0) or 0,
         }
 
         # Handle expanded fields only when requested - using direct field access
