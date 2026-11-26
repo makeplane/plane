@@ -1,0 +1,449 @@
+{
+  "issue": {
+    "label": "{count, plural, one {Element de treball} other {Elements de treball}}",
+    "all": "Tots els elements de treball",
+    "edit": "Edita l’element de treball",
+    "properties_overflow": {
+      "trigger_aria_label": "{count, plural, one {# propietat més} other {# propietats més}}",
+      "label_overflow_indicator": "{count, plural, one {+# etiqueta} other {+# etiquetes}}"
+    },
+    "title": {
+      "label": "Títol de l’element de treball",
+      "required": "El títol de l’element de treball és obligatori."
+    },
+    "add": {
+      "press_enter": "Prem «Retorn» per afegir un altre element de treball",
+      "label": "Afegeix un element de treball",
+      "cycle": {
+        "failed": "No s’ha pogut afegir l’element de treball al cicle. Torna-ho a provar.",
+        "success": "{count, plural, one {Element de treball} other {Elements de treball}} afegits al cicle correctament.",
+        "loading": "S’estan afegint {count, plural, one {l’element de treball} other {els elements de treball}} al cicle"
+      },
+      "assignee": "Afegeix responsables",
+      "start_date": "Afegeix una data d’inici",
+      "due_date": "Afegeix una data de venciment",
+      "parent": "Afegeix un element de treball pare",
+      "sub_issue": "Afegeix un subelement de treball",
+      "dependency": "Afegeix una dependència",
+      "relation": "Afegeix una relació",
+      "link": "Afegeix un enllaç",
+      "existing": "Afegeix un element de treball existent"
+    },
+    "remove": {
+      "label": "Elimina l’element de treball",
+      "cycle": {
+        "loading": "S’està eliminant l’element de treball del cicle",
+        "success": "L’element de treball s’ha eliminat del cicle correctament.",
+        "failed": "No s’ha pogut eliminar l’element de treball del cicle. Torna-ho a provar."
+      },
+      "module": {
+        "loading": "S’està eliminant l’element de treball del mòdul",
+        "success": "L’element de treball s’ha eliminat del mòdul correctament.",
+        "failed": "No s’ha pogut eliminar l’element de treball del mòdul. Torna-ho a provar."
+      },
+      "parent": {
+        "label": "Elimina l’element de treball pare"
+      }
+    },
+    "new": "Element de treball nou",
+    "adding": "S’està afegint un element de treball",
+    "create": {
+      "success": "Element de treball creat correctament"
+    },
+    "priority": {
+      "urgent": "Urgent",
+      "high": "Alta",
+      "medium": "Mitjana",
+      "low": "Baixa"
+    },
+    "display": {
+      "properties": {
+        "label": "Mostra les propietats",
+        "id": "ID",
+        "issue_type": "Tipus d’element de treball",
+        "sub_issue_count": "Nombre de subelements de treball",
+        "attachment_count": "Nombre de fitxers adjunts",
+        "created_on": "Data de creació",
+        "sub_issue": "Subelement de treball",
+        "work_item_count": "Nombre d’elements de treball"
+      },
+      "extra": {
+        "show_sub_issues": "Mostra els subelements de treball",
+        "show_empty_groups": "Mostra els grups buits"
+      }
+    },
+    "layouts": {
+      "ordered_by_label": "Aquesta disposició està ordenada per",
+      "list": "Llista",
+      "kanban": "Tauler",
+      "calendar": "Calendari",
+      "spreadsheet": "Taula",
+      "gantt": "Cronologia",
+      "title": {
+        "list": "Disposició de llista",
+        "kanban": "Disposició de tauler",
+        "calendar": "Disposició de calendari",
+        "spreadsheet": "Disposició de taula",
+        "gantt": "Disposició de cronologia"
+      }
+    },
+    "states": {
+      "active": "Actiu",
+      "backlog": "Llista de pendents"
+    },
+    "comments": {
+      "placeholder": "Afegeix un comentari",
+      "switch": {
+        "private": "Canvia a comentari privat",
+        "public": "Canvia a comentari públic"
+      },
+      "create": {
+        "success": "El comentari s’ha creat correctament",
+        "error": "No s’ha pogut crear el comentari. Torna-ho a provar més tard."
+      },
+      "update": {
+        "success": "El comentari s’ha actualitzat correctament",
+        "error": "No s’ha pogut actualitzar el comentari. Torna-ho a provar més tard."
+      },
+      "remove": {
+        "success": "El comentari s’ha eliminat correctament",
+        "error": "No s’ha pogut eliminar el comentari. Torna-ho a provar més tard."
+      },
+      "upload": {
+        "error": "No s’ha pogut pujar el recurs. Torna-ho a provar més tard."
+      },
+      "copy_link": {
+        "success": "Enllaç del comentari copiat al porta-retalls",
+        "error": "S’ha produït un error en copiar l’enllaç del comentari. Torna-ho a provar més tard."
+      },
+      "replies": {
+        "create": {
+          "submit_button": "Afegeix una resposta",
+          "placeholder": "Afegeix una resposta"
+        },
+        "toast": {
+          "fetch": {
+            "error": {
+              "message": "No s’han pogut obtenir les respostes"
+            }
+          },
+          "create": {
+            "success": {
+              "message": "Resposta creada correctament"
+            },
+            "error": {
+              "message": "No s’ha pogut crear la resposta"
+            }
+          },
+          "update": {
+            "success": {
+              "message": "Resposta actualitzada correctament"
+            },
+            "error": {
+              "message": "No s’ha pogut actualitzar la resposta"
+            }
+          },
+          "delete": {
+            "success": {
+              "message": "Resposta eliminada correctament"
+            },
+            "error": {
+              "message": "No s’ha pogut suprimir la resposta"
+            }
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "issue_detail": {
+        "title": "L’element de treball no existeix",
+        "description": "L’element de treball que busques no existeix, ha estat arxivat o s’ha suprimit.",
+        "primary_button": {
+          "text": "Veure altres elements de treball"
+        }
+      },
+      "no_access": {
+        "title": "No tens accés a aquest element de treball",
+        "description": "Contacta un administrador del projecte per demanar accés."
+      }
+    },
+    "sibling": {
+      "label": "Elements de treball relacionats"
+    },
+    "archive": {
+      "description": "Només es poden arxivar els elements de treball completats o cancel·lats",
+      "label": "Arxiva l’element de treball",
+      "confirm_message": "Segur que vols arxivar l’element de treball? Més endavant podràs restaurar tots els elements de treball arxivats.",
+      "success": {
+        "label": "S’ha arxivat correctament",
+        "message": "Pots trobar els teus elements arxivats a la secció Arxius del projecte."
+      },
+      "failed": {
+        "message": "No s’ha pogut arxivar l’element de treball. Torna-ho a provar."
+      },
+      "banner_message": "Aquest element de treball s’ha arxivat. Visita la secció Arxius per restaurar-lo.",
+      "go_to_archives": "Vés als arxius"
+    },
+    "restore": {
+      "success": {
+        "title": "S’ha restaurat correctament",
+        "message": "Trobaràs l’element de treball als elements de treball del projecte."
+      },
+      "failed": {
+        "message": "No s’ha pogut restaurar l’element de treball. Torna-ho a provar."
+      }
+    },
+    "archived_banner": "Aquest element de treball està arxivat. Restaura’l per fer canvis.",
+    "updated_time_ago": "Actualitzat {time}",
+    "description_load_failed": "No s’ha pogut carregar la descripció.",
+    "assignee_count": "{count, plural, one {# assignat} other {# assignats}}",
+    "relation": {
+      "relates_to": "Es relaciona amb",
+      "duplicate": "Duplicat de",
+      "blocked_by": "Bloquejat per",
+      "blocking": "Bloqueja",
+      "start_before": "Comença abans",
+      "start_after": "Comença després",
+      "finish_before": "Acaba abans",
+      "finish_after": "Acaba després",
+      "implements": "Implementa",
+      "implemented_by": "Implementat per"
+    },
+    "copy_link": "Copia l’enllaç de l’element de treball",
+    "delete": {
+      "label": "Elimina l’element de treball",
+      "error": "S’ha produït un error en suprimir l’element de treball"
+    },
+    "subscription": {
+      "actions": {
+        "subscribed": "T’has subscrit correctament a l’element de treball",
+        "unsubscribed": "Has cancel·lat correctament la subscripció a l’element de treball"
+      }
+    },
+    "select": {
+      "error": "Selecciona almenys un element de treball",
+      "empty": "No has seleccionat cap element de treball",
+      "add_selected": "Afegeix els elements de treball seleccionats",
+      "select_all": "Selecciona-ho tot",
+      "deselect_all": "Desselecciona-ho tot"
+    },
+    "open_in_full_screen": "Obre l’element de treball a pantalla completa",
+    "duplicate": {
+      "modal": {
+        "title": "Fes una còpia a un altre projecte",
+        "description1": "Això crea una còpia de l’element de treball.",
+        "description2": "En duplicar-lo, s’eliminaran totes les dades de les propietats.",
+        "placeholder": "Selecciona un projecte"
+      }
+    },
+    "toast": {
+      "duplicate": {
+        "success": {
+          "message": "Element de treball duplicat correctament"
+        },
+        "error": {
+          "message": "No s’ha pogut duplicar l’element de treball"
+        }
+      }
+    },
+    "pages": {
+      "link_pages": "Enllaça pàgines",
+      "show_wiki_pages": "Mostra les pàgines del wiki",
+      "link_pages_to": "Enllaça pàgines a",
+      "linked_pages": "Pàgines enllaçades",
+      "no_description": "Aquesta és una pàgina buida. Per què no hi escrius alguna cosa i veus com apareix aquí, com aquest text de mostra?",
+      "toasts": {
+        "link": {
+          "success": {
+            "title": "Pàgines actualitzades",
+            "message": "Pàgines actualitzades correctament"
+          },
+          "error": {
+            "title": "No s’han pogut actualitzar les pàgines",
+            "message": "No s’han pogut actualitzar les pàgines"
+          }
+        },
+        "remove": {
+          "success": {
+            "title": "Pàgina eliminada",
+            "message": "Pàgina eliminada correctament"
+          },
+          "error": {
+            "title": "No s’ha pogut eliminar la pàgina",
+            "message": "No s’ha pogut eliminar la pàgina"
+          }
+        }
+      }
+    },
+    "vote": {
+      "click_to_upvote": "Fes clic per donar un vot a favor",
+      "click_to_downvote": "Fes clic per donar un vot en contra",
+      "click_to_view_upvotes": "Fes clic per veure els vots a favor",
+      "click_to_view_downvotes": "Fes clic per veure els vots en contra",
+      "title": "Vots",
+      "upvotes_count": "{count, plural, one {# vot a favor} other {# vots a favor}}",
+      "downvotes_count": "{count, plural, one {# vot negatiu} other {# vots negatius}}",
+      "no_upvotes": "Encara no hi ha vots a favor",
+      "no_downvotes": "Encara no hi ha vots en contra"
+    }
+  },
+  "sub_work_item": {
+    "update": {
+      "success": "Subelement de treball actualitzat correctament",
+      "error": "S’ha produït un error en actualitzar el subelement de treball"
+    },
+    "remove": {
+      "success": "Subelement de treball eliminat correctament",
+      "error": "S’ha produït un error en eliminar el subelement de treball"
+    },
+    "empty_state": {
+      "sub_list_filters": {
+        "title": "No tens subelements de treball que coincideixin amb els filtres que has aplicat.",
+        "description": "Per veure tots els subelements de treball, esborra tots els filtres aplicats.",
+        "action": "Esborra els filtres"
+      },
+      "list_filters": {
+        "title": "No tens elements de treball que coincideixin amb els filtres que has aplicat.",
+        "description": "Per veure tots els elements de treball, esborra tots els filtres aplicats.",
+        "action": "Esborra els filtres"
+      }
+    }
+  },
+  "issue_relation": {
+    "empty_state": {
+      "search": {
+        "title": "No s’han trobat elements de treball coincidents"
+      },
+      "no_issues": {
+        "title": "No s’han trobat elements de treball"
+      }
+    }
+  },
+  "issue_comment": {
+    "empty_state": {
+      "general": {
+        "title": "Encara no hi ha comentaris",
+        "description": "Els comentaris serveixen com a espai de discussió i seguiment dels elements de treball"
+      }
+    }
+  },
+  "bulk_operations": {
+    "error_details": {
+      "invalid_archive_state_group": {
+        "title": "No es poden arxivar els elements de treball",
+        "message": "Només es poden arxivar els elements de treball que pertanyen als grups d’estat Completat o Cancel·lat."
+      },
+      "invalid_issue_start_date": {
+        "title": "No es poden actualitzar els elements de treball",
+        "message": "La data d’inici seleccionada és posterior a la data de venciment d’alguns elements de treball. Assegura’t que la data d’inici sigui anterior a la data de venciment."
+      },
+      "invalid_issue_target_date": {
+        "title": "No es poden actualitzar els elements de treball",
+        "message": "La data de venciment seleccionada és anterior a la data d’inici d’alguns elements de treball. Assegura’t que la data de venciment sigui posterior a la data d’inici."
+      },
+      "invalid_state_transition": {
+        "title": "No es poden actualitzar els elements de treball",
+        "message": "No es permet canviar l’estat d’alguns elements de treball. Assegura’t que el canvi d’estat estigui permès."
+      }
+    },
+    "upgrade_banner": {
+      "message": "Canvia l’estat, la prioritat i molt més a diversos elements de treball alhora. Estalvia una mitjana de tres minuts per operació.",
+      "cta": "Actualitza a One"
+    }
+  },
+  "recurring_work_items": {
+    "settings": {
+      "heading": "Elements de treball recurrents",
+      "description": "Configura el treball repetible una sola vegada i ens encarregarem de les repeticions. Ho veuràs tot aquí quan toqui.",
+      "new_recurring_work_item": "Nou element de treball recurrent",
+      "update_recurring_work_item": "Actualitza l’element de treball recurrent",
+      "form": {
+        "interval": {
+          "title": "Programació",
+          "start_date": {
+            "validation": {
+              "required": "La data d’inici és obligatòria"
+            }
+          },
+          "interval_type": {
+            "validation": {
+              "required": "El tipus d’interval és obligatori"
+            }
+          }
+        },
+        "button": {
+          "create": "Crea un element de treball recurrent",
+          "update": "Actualitza l’element de treball recurrent"
+        }
+      },
+      "create_button": {
+        "label": "Crea un element de treball recurrent",
+        "no_permission": "Contacta l’administrador del projecte per crear elements de treball recurrents"
+      }
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "El teu treball, en automàtic",
+        "description": "Configura-ho una vegada. El tornarem a mostrar quan toqui. Fes una actualització a Business perquè el treball recurrent sigui senzill."
+      },
+      "no_templates": {
+        "button": "Crea el teu primer element de treball recurrent"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Element de treball recurrent creat",
+          "message": "{name}, l’element de treball recurrent, ja està disponible per al teu espai de treball."
+        },
+        "error": {
+          "title": "Aquesta vegada no hem pogut crear l’element de treball recurrent.",
+          "message": "Torna a desar les dades o copia-les en un nou element de treball recurrent, preferiblement en una altra pestanya."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Element de treball recurrent modificat",
+          "message": "S’ha modificat {name}, l’element de treball recurrent."
+        },
+        "error": {
+          "title": "No hem pogut desar els canvis d’aquest element de treball recurrent.",
+          "message": "Torna a desar les teves dades o torna més tard a aquest element de treball recurrent. Si encara tens problemes, contacta amb nosaltres."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Element de treball recurrent suprimit",
+          "message": "{name}, l’element de treball recurrent, s’ha suprimit del teu espai de treball."
+        },
+        "error": {
+          "title": "No hem pogut suprimir aquest element de treball recurrent.",
+          "message": "Prova de suprimir-la de nou o torna-hi més tard. Si llavors tampoc no la pots suprimir, contacta amb nosaltres."
+        }
+      }
+    },
+    "delete_confirmation": {
+      "title": "Suprimeix l’element de treball recurrent",
+      "description": {
+        "prefix": "Segur que vols suprimir l’element de treball recurrent:",
+        "suffix": "? Totes les dades relacionades amb l’element de treball recurrent s’eliminaran permanentment. Aquesta acció no es pot desfer."
+      }
+    }
+  },
+  "epic": {
+    "new": "Èpic nou",
+    "label": "{count, plural, one {Èpic} other {Èpics}}",
+    "adding": "S’està afegint l’èpic",
+    "create": {
+      "success": "Èpic creat correctament"
+    },
+    "add": {
+      "label": "Afegeix un èpic",
+      "press_enter": "Prem ’Retorn’ per afegir un altre èpic"
+    },
+    "title": {
+      "label": "Títol de l’èpic",
+      "required": "El títol de l’èpic és obligatori."
+    }
+  }
+}

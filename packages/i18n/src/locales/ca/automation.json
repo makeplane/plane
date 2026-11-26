@@ -1,0 +1,273 @@
+{
+  "automations": {
+    "settings": {
+      "title": "Automatitzacions personalitzades",
+      "create_automation": "Crea una automatització"
+    },
+    "scope": {
+      "label": "Abast",
+      "run_on": "Executa-ho a"
+    },
+    "trigger": {
+      "label": "Activador",
+      "add_trigger": "Afegeix un activador",
+      "sidebar_header": "Configuració de l’activador",
+      "input_label": "Quin és l’activador d’aquesta automatització?",
+      "input_placeholder": "Selecciona una opció",
+      "section_plane_events": "Esdeveniments de Plane",
+      "section_time_based": "Basat en el temps",
+      "fixed_schedule": "Programació fixa",
+      "schedule": {
+        "frequency": "Freqüència",
+        "select_day": "Selecciona un dia",
+        "day_of_month": "Dia del mes",
+        "monthly_every": "Cada",
+        "monthly_day_aria": "Dia {day}",
+        "time": "Hora",
+        "hour": "Hora",
+        "minute": "Minut",
+        "hour_suffix": "h",
+        "minute_suffix": "min",
+        "am": "AM",
+        "pm": "PM",
+        "timezone": "Zona horària",
+        "timezone_placeholder": "Selecciona una zona horària",
+        "frequency_daily": "Diàriament",
+        "frequency_weekly": "Setmanalment",
+        "frequency_monthly": "Mensualment",
+        "on": "El",
+        "validation_weekly_day_required": "Selecciona almenys un dia de la setmana.",
+        "validation_monthly_date_required": "Selecciona un dia del mes.",
+        "main_content_schedule_summary_daily": "Cada dia a les {time} ({timezone}).",
+        "main_content_schedule_summary_weekly": "Cada setmana, els {days}, a les {time} ({timezone}).",
+        "main_content_schedule_summary_monthly": "Cada mes, el dia {day}, a les {time} ({timezone}).",
+        "schedule_mode": "Mode de programació",
+        "schedule_mode_fixed": "Fixa",
+        "schedule_mode_cron": "Cron",
+        "cron_expression_label": "Introdueix l’expressió Cron",
+        "cron_expression_placeholder": "0 9 * * 1-5",
+        "cron_invalid": "L’expressió cron no és vàlida.",
+        "cron_preview": "Aquesta expressió Cron s’executa «{description}».",
+        "main_content_cron_summary": "{description} ({timezone})."
+      },
+      "button": {
+        "previous": "Enrere",
+        "next": "Afegeix una acció"
+      },
+      "warning": {
+        "disabled_trigger_switching": "Un cop creat l’activador, no en pots canviar el tipus."
+      }
+    },
+    "condition": {
+      "label": "Proporcionat",
+      "add_condition": "Afegeix una condició",
+      "adding_condition": "S’està afegint la condició"
+    },
+    "action": {
+      "label": "Acció",
+      "add_action": "Afegeix una acció",
+      "sidebar_header": "Accions",
+      "input_label": "Què fa l’automatització?",
+      "input_placeholder": "Selecciona una opció",
+      "handler_name": {
+        "add_comment": "Afegeix un comentari",
+        "change_property": "Canvia la propietat",
+        "run_script": "Executa l’script"
+      },
+      "configuration": {
+        "label": "Configuració",
+        "change_property": {
+          "placeholders": {
+            "property_name": "Selecciona una propietat",
+            "change_type": "Selecciona",
+            "property_value_select": "{count, plural, one{Selecciona un valor} other{Selecciona valors}}",
+            "property_value_select_date": "Selecciona una data"
+          },
+          "validation": {
+            "property_name_required": "El nom de la propietat és obligatori",
+            "change_type_required": "El tipus de canvi és obligatori",
+            "property_value_required": "El valor de la propietat és obligatori"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "Afegeix un comentari"
+      },
+      "run_script_block": {
+        "title": "Executa l’script"
+      },
+      "change_property_block": {
+        "title": "Canvia la propietat"
+      },
+      "validation": {
+        "delete_only_action": "Desactiva l’automatització abans de suprimir-ne l’única acció."
+      }
+    },
+    "conjunctions": {
+      "and": "I",
+      "or": "O",
+      "if": "Si",
+      "then": "Llavors"
+    },
+    "enable": {
+      "alert": "Fes clic a «Activa» quan la teva automatització estigui completa. Un cop activada, l’automatització estarà a punt per executar-se.",
+      "validation": {
+        "required": "L’automatització ha de tenir un activador i almenys una acció per poder activar-se."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "L’automatització s’ha de desactivar abans de suprimir-la."
+      }
+    },
+    "table": {
+      "title": "Títol de l’automatització",
+      "scope": "Abast",
+      "projects": "Projectes",
+      "last_run_on": "Última execució",
+      "created_on": "Data de creació",
+      "last_updated_on": "Última actualització",
+      "last_run_status": "Estat de l’última execució",
+      "average_duration": "Durada mitjana",
+      "owner": "Propietari",
+      "executions": "Execucions"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "Crea una automatització",
+        "update": "Actualitza l’automatització"
+      },
+      "title": {
+        "placeholder": "Posa un nom a l’automatització.",
+        "required_error": "El títol és obligatori"
+      },
+      "description": {
+        "placeholder": "Descriu la teva automatització."
+      },
+      "submit_button": {
+        "create": "Crea una automatització",
+        "update": "Actualitza l’automatització"
+      }
+    },
+    "delete_modal": {
+      "heading": "Suprimeix l’automatització"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "Mostra els errors",
+        "all": "Tots",
+        "only_activity": "Només activitat",
+        "only_run_history": "Només historial d’execucions"
+      },
+      "run_history": {
+        "initiator": "Iniciador"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "Correcte!",
+          "message": "L’automatització s’ha creat correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut crear l’automatització."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Correcte!",
+          "message": "L’automatització s’ha actualitzat correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut actualitzar l’automatització."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "Correcte!",
+          "message": "L’automatització s’ha activat correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut activar l’automatització."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "Correcte!",
+          "message": "L’automatització s’ha desactivat correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut desactivar l’automatització."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "Automatització suprimida",
+          "message": "{name}, l’automatització, s’ha eliminat del teu projecte."
+        },
+        "error": {
+          "title": "Aquest cop no hem pogut suprimir l’automatització.",
+          "message": "Prova de suprimir-la de nou o torna-hi més tard. Si llavors tampoc no la pots suprimir, contacta amb nosaltres."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "Error!",
+            "message": "No s’ha pogut crear l’acció. Torna-ho a provar!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "Error!",
+            "message": "No s’ha pogut actualitzar l’acció. Torna-ho a provar!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "Encara no hi ha automatitzacions per mostrar.",
+        "description": "Les automatitzacions t’ajuden a eliminar tasques repetitives mitjançant activadors, condicions i accions. Crea’n una per estalviar temps i mantenir el treball en marxa sense esforç."
+      },
+      "upgrade": {
+        "title": "Automatitzacions",
+        "description": "Les automatitzacions serveixen per automatitzar tasques al teu projecte.",
+        "sub_description": "Recupera el 80% del teu temps administratiu en utilitzar Automatitzacions."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "Selecciona els projectes on executar aquesta automatització",
+        "all_projects": {
+          "label": "Tots els projectes",
+          "description": "L’automatització s’executarà per a tots els projectes de l’espai de treball."
+        },
+        "select_projects": {
+          "label": "Selecciona projectes",
+          "description": "L’automatització s’executarà per als projectes seleccionats de l’espai de treball.",
+          "placeholder": "Selecciona projectes"
+        }
+      },
+      "settings": {
+        "sidebar_label": "Automatitzacions",
+        "title": "Automatitzacions",
+        "description": "Estandarditza els processos de tot l’espai de treball amb automatitzacions globals."
+      },
+      "table": {
+        "scope": {
+          "global": "Global",
+          "project": {
+            "label": "Projecte",
+            "multiple": "Múltiples",
+            "all": "Tots"
+          }
+        }
+      }
+    }
+  }
+}

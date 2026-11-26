@@ -1,0 +1,128 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "Esquema",
+        "empty_state": {
+          "title": "Falten encapçalaments",
+          "description": "Afegeix alguns encapçalaments a aquesta pàgina per veure’ls aquí."
+        }
+      },
+      "info": {
+        "label": "Informació",
+        "document_info": {
+          "words": "Paraules",
+          "characters": "Caràcters",
+          "paragraphs": "Paràgrafs",
+          "read_time": "Temps de lectura"
+        },
+        "actors_info": {
+          "edited_by": "Editat per",
+          "created_by": "Creat per"
+        },
+        "version_history": {
+          "label": "Historial de versions",
+          "current_version": "Versió actual",
+          "highlight_changes": "Ressalta els canvis"
+        }
+      },
+      "version_history": {
+        "view_only": "Només de visualització",
+        "loading_details": "S’estan carregant els detalls de la versió",
+        "load_error_description": "No s’ha pogut carregar la versió. Torna-ho a provar.",
+        "list_error_description": "No s’ha pogut carregar l’historial de versions.",
+        "try_again": "Torna-ho a provar",
+        "restoring": "S’està restaurant",
+        "restore_success": "S’ha restaurat la versió de la pàgina.",
+        "restore_failed": "No s’ha pogut restaurar la versió de la pàgina."
+      },
+      "assets": {
+        "label": "Recursos",
+        "download_button": "Baixa",
+        "empty_state": {
+          "title": "Falten imatges",
+          "description": "Afegeix imatges per veure-les aquí."
+        }
+      },
+      "comments": {
+        "label": "Comentaris",
+        "empty_state": {
+          "title": "Cap comentari",
+          "description": "Afegeix comentaris per veure’ls aquí."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "El nom de la nota adhesiva no pot superar els 100 caràcters.",
+        "already_exists": "Ja existeix una nota adhesiva sense descripció"
+      },
+      "created": {
+        "title": "Sticky creat",
+        "message": "La nota adhesiva s’ha creat correctament"
+      },
+      "not_created": {
+        "title": "No s’ha pogut crear el Sticky",
+        "message": "No s’ha pogut crear la nota adhesiva"
+      },
+      "updated": {
+        "title": "Sticky actualitzat",
+        "message": "La nota adhesiva s’ha actualitzat correctament"
+      },
+      "not_updated": {
+        "title": "No s’ha pogut actualitzar el Sticky",
+        "message": "No s’ha pogut actualitzar la nota adhesiva"
+      },
+      "removed": {
+        "title": "Sticky eliminat",
+        "message": "La nota adhesiva s’ha eliminat correctament"
+      },
+      "not_removed": {
+        "title": "No s’ha pogut eliminar el Sticky",
+        "message": "No s’ha pogut eliminar la nota adhesiva"
+      }
+    },
+    "open_button": "Obre el panell de navegació",
+    "close_button": "Tanca el panell de navegació",
+    "outline_floating_button": "Obre l’esquema"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "Mou",
+        "loading": "S’està movent"
+      },
+      "cannot_move_to_teamspace": "Les pàgines privades i compartides no es poden moure a un espai d’equip.",
+      "placeholders": {
+        "workspace_to_all": "Cerca projectes i espais d’equip",
+        "workspace_to_project": "Cerca projectes",
+        "project_to_all": "Cerca projectes i espais d’equip",
+        "project_to_project": "Cerca projectes",
+        "project_to_all_with_wiki": "Cerca col·leccions de wiki, projectes i espais d’equip",
+        "project_to_project_with_wiki": "Cerca col·leccions de wiki i projectes"
+      },
+      "toasts": {
+        "success": {
+          "title": "Correcte!",
+          "message": "La pàgina s’ha mogut correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut moure la pàgina. Torna-ho a provar més tard."
+        },
+        "collection_error": {
+          "title": "S’ha mogut a la wiki",
+          "message": "La pàgina s’ha mogut al wiki, però no s’ha pogut afegir a la col·lecció seleccionada. Continua a General."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "Elimina de la col·lecció",
+      "success_message": "La pàgina s’ha eliminat de la col·lecció.",
+      "error_message": "No s’ha pogut eliminar la pàgina de la col·lecció. Torna-ho a provar."
+    }
+  },
+  "page_content_limit_banner": {
+    "message": "Has arribat al límit de contingut i la sincronització en temps real està desactivada. Crea una pàgina nova o fes servir pàgines imbricades per continuar sincronitzant."
+  }
+}

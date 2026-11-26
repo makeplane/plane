@@ -1,0 +1,532 @@
+{
+  "project_settings": {
+    "general": {
+      "enter_project_id": "Introdueix l’ID del projecte",
+      "please_select_a_timezone": "Selecciona una zona horària",
+      "archive_project": {
+        "title": "Arxiva el projecte",
+        "description": "En arxivar un projecte, aquest deixarà d’aparèixer a la navegació lateral, tot i que encara podràs accedir-hi des de la pàgina de projectes. Pots restaurar el projecte o eliminar-lo quan vulguis.",
+        "button": "Arxiva el projecte"
+      },
+      "delete_project": {
+        "title": "Suprimeix el projecte",
+        "description": "En suprimir un projecte, totes les dades i els recursos que conté s’eliminaran permanentment i no es podran recuperar.",
+        "button": "Suprimeix el meu projecte",
+        "confirm_description": "Segur que vols suprimir el projecte {projectName}? Totes les dades d’aquest projecte s’eliminaran permanentment. Aquesta acció no es pot desfer.",
+        "success_message": "El projecte s’ha suprimit correctament."
+      },
+      "toast": {
+        "success": "El projecte s’ha actualitzat correctament",
+        "error": "No s’ha pogut actualitzar el projecte. Torna-ho a provar."
+      },
+      "confirm_project_name_label": "Escriu el nom del projecte per continuar.",
+      "leave_project": {
+        "confirm_description": "Segur que vols abandonar el projecte {projectName}? Els elements de treball associats a tu deixaran de ser accessibles."
+      }
+    },
+    "members": {
+      "label": "Membres",
+      "project_lead": "Responsable del projecte",
+      "project_lead_description": "Selecciona el responsable del projecte.",
+      "default_assignee": "Assignat per defecte",
+      "default_assignee_description": "Selecciona l’assignat per defecte del projecte.",
+      "project_subscribers": "Subscriptors del projecte",
+      "project_subscribers_description": "Selecciona els membres que rebran notificacions d’aquest projecte.",
+      "guest_super_permissions": {
+        "title": "Concedeix accés de visualització a tots els elements de treball per als usuaris convidats:",
+        "sub_heading": "Això permetrà que els convidats tinguin accés de visualització a tots els elements de treball del projecte."
+      },
+      "invite_members": {
+        "title": "Convida membres",
+        "sub_heading": "Convida membres a treballar en el teu projecte.",
+        "select_co_worker": "Selecciona un company de feina"
+      }
+    },
+    "states": {
+      "heading": "Estats",
+      "description": "Defineix i personalitza els estats del flux de treball per fer un seguiment del progrés dels teus elements de treball.",
+      "describe_this_state_for_your_members": "Descriu aquest estat per als teus membres.",
+      "empty_state": {
+        "title": "No hi ha estats disponibles per al grup {groupKey}",
+        "description": "Crea un estat nou"
+      }
+    },
+    "labels": {
+      "heading": "Etiquetes",
+      "description": "Crea etiquetes personalitzades per categoritzar i organitzar els teus elements de treball",
+      "label_title": "Títol de l’etiqueta",
+      "label_title_is_required": "El títol de l’etiqueta és obligatori",
+      "label_max_char": "El nom de l’etiqueta no pot superar els 255 caràcters",
+      "toast": {
+        "error": "S’ha produït un error en actualitzar l’etiqueta"
+      }
+    },
+    "estimates": {
+      "heading": "Estimacions",
+      "description": "Configura sistemes d’estimació per fer un seguiment i comunicar l’esforç necessari per a cada element de treball.",
+      "label": "Estimacions",
+      "title": "Activa les estimacions per al meu projecte",
+      "enable_description": "T’ajuden a comunicar la complexitat i la càrrega de treball de l’equip.",
+      "no_estimate": "Sense estimació",
+      "new": "Nou sistema d’estimació",
+      "create": {
+        "custom": "Personalitzat",
+        "start_from_scratch": "Comença de zero",
+        "choose_template": "Tria una plantilla",
+        "choose_estimate_system": "Tria un sistema d’estimació",
+        "enter_estimate_point": "Introdueix l’estimació",
+        "step": "Pas {step} de {total}",
+        "label": "Crea l’estimació"
+      },
+      "toasts": {
+        "created": {
+          "success": {
+            "title": "Estimació creada",
+            "message": "L’estimació s’ha creat correctament"
+          },
+          "error": {
+            "title": "No s’ha pogut crear l’estimació",
+            "message": "No hem pogut crear la nova estimació; torna-ho a provar."
+          }
+        },
+        "updated": {
+          "success": {
+            "title": "Estimació modificada",
+            "message": "L’estimació s’ha actualitzat al teu projecte."
+          },
+          "error": {
+            "title": "No s’ha pogut modificar l’estimació",
+            "message": "No hem pogut modificar l’estimació; torna-ho a provar"
+          }
+        },
+        "enabled": {
+          "success": {
+            "title": "Correcte!",
+            "message": "Les estimacions s’han activat."
+          }
+        },
+        "disabled": {
+          "success": {
+            "title": "Correcte!",
+            "message": "Les estimacions s’han desactivat."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "No s’ha pogut desactivar l’estimació. Torna-ho a provar"
+          }
+        },
+        "reorder": {
+          "success": {
+            "title": "Estimacions reordenades",
+            "message": "Les estimacions s’han reordenat al teu projecte."
+          },
+          "error": {
+            "title": "No s’ha pogut reordenar l’estimació",
+            "message": "No hem pogut reordenar les estimacions; torna-ho a provar"
+          }
+        },
+        "switch": {
+          "success": {
+            "title": "Sistema d’estimació creat",
+            "message": "S’ha creat i activat correctament"
+          },
+          "error": {
+            "title": "Error",
+            "message": "S’ha produït un error"
+          }
+        }
+      },
+      "validation": {
+        "min_length": "L’estimació ha de ser superior a 0.",
+        "unable_to_process": "No podem processar la teva sol·licitud; torna-ho a provar.",
+        "numeric": "L’estimació ha de ser un valor numèric.",
+        "character": "L’estimació ha de ser un valor de caràcters.",
+        "empty": "El valor de l’estimació no pot estar buit.",
+        "already_exists": "El valor de l’estimació ja existeix.",
+        "unsaved_changes": "Tens canvis sense desar. Desa’ls abans de fer clic a Fet",
+        "remove_empty": "L’estimació no pot estar buida. Introdueix un valor a cada camp o elimina els que no en tinguin.",
+        "fill": "Omple aquest camp d’estimació",
+        "repeat": "El valor de l’estimació no es pot repetir"
+      },
+      "systems": {
+        "points": {
+          "label": "Punts",
+          "fibonacci": "Fibonacci",
+          "linear": "Lineal",
+          "squares": "Quadrats",
+          "custom": "Personalitzat"
+        },
+        "categories": {
+          "label": "Categories",
+          "t_shirt_sizes": "Mides de samarreta",
+          "easy_to_hard": "De fàcil a difícil",
+          "custom": "Personalitzat"
+        },
+        "time": {
+          "label": "Hora",
+          "hours": "Hores"
+        }
+      },
+      "edit": {
+        "title": "Edita el sistema d’estimació",
+        "add_or_update": {
+          "title": "Afegeix, actualitza o elimina estimacions",
+          "description": "Gestiona el sistema actual afegint, actualitzant o eliminant punts o categories."
+        },
+        "switch": {
+          "title": "Canvia el tipus d’estimació",
+          "description": "Converteix el teu sistema de punts en un sistema de categories i viceversa."
+        }
+      },
+      "switch": "Canvia el sistema d’estimació",
+      "current": "Sistema d’estimació actual",
+      "select": "Selecciona un sistema d’estimació"
+    },
+    "automations": {
+      "label": "Automatitzacions",
+      "heading": "Automatitzacions",
+      "description": "Configura accions automatitzades per agilitzar el flux de treball de gestió del projecte i reduir les tasques manuals.",
+      "auto-archive": {
+        "title": "Arxiva automàticament els elements de treball tancats",
+        "description": "Plane arxivarà automàticament els elements de treball que s’hagin completat o cancel·lat.",
+        "duration": "Arxiva automàticament els elements de treball que estiguin tancats des de fa"
+      },
+      "auto-close": {
+        "title": "Tanca automàticament els elements de treball",
+        "description": "Plane tancarà automàticament els elements de treball que no s’hagin completat o cancel·lat.",
+        "duration": "Tanca automàticament els elements de treball que estiguin inactius des de fa",
+        "auto_close_status": "Estat de tancament automàtic"
+      },
+      "auto-remind": {
+        "title": "Recordatoris automàtics",
+        "description": "Plane enviarà recordatoris automàticament per correu electrònic i notificacions a l’aplicació perquè el teu equip compleixi els terminis.",
+        "duration": "Envia el recordatori abans"
+      }
+    },
+    "empty_state": {
+      "labels": {
+        "title": "Encara no hi ha etiquetes",
+        "description": "Crea etiquetes per ajudar a organitzar i filtrar els elements de treball del teu projecte."
+      },
+      "estimates": {
+        "title": "Encara no hi ha sistemes d’estimació",
+        "description": "Crea un conjunt d’estimacions per comunicar la quantitat de treball per element de treball.",
+        "primary_button": "Afegeix un sistema d’estimacions"
+      },
+      "integrations": {
+        "title": "No hi ha integracions configurades",
+        "description": "Configura GitHub i altres integracions per sincronitzar els elements de treball del teu projecte."
+      }
+    },
+    "workflows": {
+      "toggle": {
+        "title": "Activa els fluxos de treball",
+        "description": "Configura fluxos de treball per controlar el moviment dels elements de treball",
+        "no_states_tooltip": "No s’ha afegit cap estat al flux de treball.",
+        "no_work_item_types_tooltip": "No s’han afegit tipus d’element de treball al flux de treball.",
+        "no_states_or_work_item_types_tooltip": "No s’han afegit estats ni tipus d’element de treball al flux de treball.",
+        "toast": {
+          "loading": {
+            "enabling": "S’estan activant els fluxos de treball",
+            "disabling": "S’estan desactivant els fluxos de treball"
+          },
+          "success": {
+            "title": "Correcte!",
+            "message": "Els fluxos de treball s’han activat correctament."
+          },
+          "error": {
+            "title": "Error!",
+            "message": "No s’han pogut activar els fluxos de treball. Torna-ho a provar."
+          }
+        }
+      },
+      "heading": "Fluxos de treball",
+      "description": "Automatitza les transicions dels elements de treball i estableix regles per controlar com avancen les tasques pel flux de treball del teu projecte.",
+      "add_button": "Afegeix un flux de treball nou",
+      "search": "Cerca fluxos de treball",
+      "detail": {
+        "define": "Defineix el flux de treball",
+        "add_states": "Afegeix estats",
+        "unmapped_states": {
+          "title": "S’han detectat estats sense assignar",
+          "description": "Alguns elements de treball dels tipus seleccionats es troben actualment en estats que no existeixen en aquest flux de treball.",
+          "note": "Si actives aquest flux de treball, aquests elements es mouran automàticament a l’estat inicial del flux de treball.",
+          "label": "Estats que falten",
+          "tooltip": "Alguns elements de treball es troben en estats que no estan assignats a aquest flux de treball. Obre el flux de treball per revisar-los."
+        }
+      },
+      "select_states": {
+        "empty_state": {
+          "title": "Tots els estats estan en ús",
+          "description": "Tots els estats definits per a aquest projecte ja són presents al teu flux de treball actual."
+        }
+      },
+      "default_footer": {
+        "fallback_message": "Aquest flux de treball s’aplica a qualsevol tipus d’element de treball que no estigui assignat a un flux de treball."
+      },
+      "create": {
+        "heading": "Crea un flux de treball nou",
+        "name": {
+          "placeholder": "Afegeix un nom únic",
+          "validation": {
+            "max_length": "El nom ha de tenir menys de 255 caràcters",
+            "required": "El nom és obligatori",
+            "invalid": "El nom només pot contenir lletres, números, espais, guionets i apòstrofs"
+          }
+        },
+        "description": {
+          "placeholder": "Afegeix una descripció breu",
+          "validation": {
+            "invalid": "La descripció només pot contenir lletres, números, espais, guionets i apòstrofs"
+          }
+        },
+        "work_item_type": {
+          "label": "Tipus d’element de treball"
+        },
+        "success": {
+          "title": "Correcte!",
+          "message": "El flux de treball s’ha creat correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut crear el flux de treball. Torna-ho a provar."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "Correcte!",
+          "message": "El flux de treball s’ha actualitzat correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut actualitzar el flux de treball. Torna-ho a provar."
+        }
+      },
+      "delete": {
+        "loading": "S’està suprimint el flux de treball",
+        "success": {
+          "title": "Correcte!",
+          "message": "El flux de treball s’ha suprimit correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’ha pogut suprimir el flux de treball. Torna-ho a provar."
+        }
+      },
+      "add_states": {
+        "success": {
+          "title": "Correcte!",
+          "message": "Els estats s’han afegit correctament."
+        },
+        "error": {
+          "title": "Error!",
+          "message": "No s’han pogut afegir els estats. Torna-ho a provar."
+        }
+      }
+    },
+    "work_item_types": {
+      "heading": "Tipus d’elements de treball",
+      "description": "Crea i personalitza diferents tipus d’elements de treball amb propietats úniques"
+    },
+    "features": {
+      "cycles": {
+        "title": "Cicles",
+        "short_title": "Cicles",
+        "description": "Planifica el treball en períodes flexibles que s’adaptin al ritme i al pas únics d’aquest projecte.",
+        "toggle_title": "Activa els cicles",
+        "toggle_description": "Planifica el treball en períodes de temps concrets."
+      },
+      "modules": {
+        "title": "Mòduls",
+        "short_title": "Mòduls",
+        "description": "Organitza el treball en subprojectes amb els seus propis responsables i assignats.",
+        "toggle_title": "Activa els mòduls",
+        "toggle_description": "Els membres del projecte podran crear i editar mòduls."
+      },
+      "views": {
+        "title": "Vistes",
+        "short_title": "Vistes",
+        "description": "Desa ordenacions, filtres i opcions de visualització personalitzats, o comparteix-los amb el teu equip.",
+        "toggle_title": "Activa les vistes",
+        "toggle_description": "Els membres del projecte podran crear i editar vistes."
+      },
+      "pages": {
+        "title": "Pàgines",
+        "short_title": "Pàgines",
+        "description": "Crea i edita contingut de format lliure: notes, documents, qualsevol cosa.",
+        "toggle_title": "Activa les pàgines",
+        "toggle_description": "Els membres del projecte podran crear i editar pàgines."
+      },
+      "intake": {
+        "intake_responsibility": "Responsabilitat de l’Intake",
+        "intake_sources": "Orígens de l’Intake",
+        "title": "Intake",
+        "short_title": "Intake",
+        "description": "Permet que persones no membres comparteixin errors, comentaris i suggeriments sense alterar el teu flux de treball.",
+        "toggle_title": "Activa l’Intake",
+        "toggle_description": "Permet que els membres del projecte creïn sol·licituds d’Intake des de l’aplicació.",
+        "toggle_tooltip_on": "Demana a l’administrador del projecte que ho activi.",
+        "toggle_tooltip_off": "Demana a l’administrador del projecte que ho desactivi.",
+        "notify_assignee": {
+          "title": "Notifica els responsables",
+          "description": "Quan arribi una sol·licitud nova a Intake, els responsables predeterminats rebran una notificació."
+        },
+        "in_app": {
+          "title": "A l’aplicació",
+          "description": "Rep nous elements de treball de membres i convidats del teu espai de treball sense alterar els elements de treball existents."
+        },
+        "email": {
+          "title": "Correu electrònic",
+          "description": "Recull nous elements de treball de qualsevol persona que enviï un correu electrònic a una adreça de Plane.",
+          "fieldName": "ID de correu electrònic"
+        },
+        "form": {
+          "title": "Formularis",
+          "description": "Permet que persones fora del teu espai de treball creïn possibles nous elements de treball per a tu mitjançant un formulari dedicat i segur.",
+          "fieldName": "URL del formulari per defecte",
+          "create_forms": "Crea formularis amb tipus d’element de treball",
+          "manage_forms": "Gestiona els formularis",
+          "manage_forms_tooltip": "Demana a l’administrador de l’espai de treball que ho gestioni.",
+          "create_form": "Crea un formulari",
+          "edit_form": "Edita els detalls del formulari",
+          "form_title": "Títol del formulari",
+          "form_title_required": "El títol del formulari és obligatori",
+          "work_item_type": "Tipus d’element de treball",
+          "remove_property": "Elimina la propietat",
+          "select_properties": "Selecciona propietats",
+          "search_placeholder": "Cerca propietats",
+          "toasts": {
+            "success_create": "El formulari d’Intake s’ha creat correctament",
+            "success_update": "El formulari d’Intake s’ha actualitzat correctament",
+            "error_create": "No s’ha pogut crear el formulari d’Intake",
+            "error_update": "No s’ha pogut actualitzar el formulari d’Intake"
+          }
+        },
+        "toasts": {
+          "set": {
+            "loading": "S’estan definint els responsables...",
+            "success": {
+              "title": "Correcte!",
+              "message": "Els responsables s’han definit correctament."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "S’ha produït un error en definir els responsables. Torna-ho a provar."
+            }
+          }
+        }
+      },
+      "time_tracking": {
+        "title": "Seguiment del temps",
+        "short_title": "Seguiment del temps",
+        "description": "Registra el temps dedicat a elements de treball i projectes.",
+        "toggle_title": "Activa el seguiment del temps",
+        "toggle_description": "Els membres del projecte podran registrar el temps treballat."
+      },
+      "milestones": {
+        "title": "Fites",
+        "short_title": "Fites",
+        "description": "Les fites proporcionen una capa per alinear els elements de treball amb dates de finalització compartides.",
+        "toggle_title": "Activa les fites",
+        "toggle_description": "Organitza els elements de treball segons les dates límit de les fites."
+      },
+      "toasts": {
+        "loading": "S’està actualitzant la funcionalitat del projecte...",
+        "success": "La funcionalitat del projecte s’ha actualitzat correctament.",
+        "error": "S’ha produït un error en actualitzar la funcionalitat del projecte. Torna-ho a provar."
+      }
+    },
+    "project_updates": {
+      "heading": "Actualitzacions del projecte",
+      "description": "Seguiment consolidat i supervisió del progrés d’aquest projecte"
+    },
+    "templates": {
+      "heading": "Plantilles",
+      "description": "Estalvia el 80% del temps dedicat a crear projectes, elements de treball i pàgines quan utilitzis plantilles."
+    },
+    "cycles": {
+      "auto_schedule": {
+        "heading": "Programa cicles automàticament",
+        "description": "Mantén els cicles en marxa sense configuració manual.",
+        "tooltip": "Crea automàticament cicles nous segons la programació que hagis triat.",
+        "edit_button": "Edita",
+        "form": {
+          "cycle_title": {
+            "label": "Títol del cicle",
+            "placeholder": "Títol",
+            "tooltip": "El títol s’afegirà amb números per als cicles següents. Per exemple: Disseny - 1/2/3",
+            "validation": {
+              "required": "El títol del cicle és obligatori",
+              "max_length": "El títol no pot superar els 255 caràcters"
+            }
+          },
+          "cycle_duration": {
+            "label": "Durada del cicle",
+            "unit": "Setmanes",
+            "validation": {
+              "required": "La durada del cicle és obligatòria",
+              "min": "La durada del cicle ha de ser com a mínim d’1 setmana",
+              "max": "La durada del cicle no pot superar les 30 setmanes",
+              "positive": "La durada del cicle ha de ser positiva"
+            }
+          },
+          "cooldown_period": {
+            "label": "Període de descans",
+            "unit": "dies",
+            "tooltip": "Pausa entre cicles abans que comenci el següent.",
+            "validation": {
+              "required": "El període de refredament és obligatori",
+              "negative": "El període de refredament no pot ser negatiu"
+            }
+          },
+          "start_date": {
+            "label": "Dia d’inici del cicle",
+            "validation": {
+              "required": "La data d’inici és obligatòria",
+              "past": "La data d’inici no pot ser al passat"
+            }
+          },
+          "number_of_cycles": {
+            "label": "Nombre de cicles futurs",
+            "validation": {
+              "required": "El nombre de cicles és obligatori",
+              "min": "Cal com a mínim 1 cicle",
+              "max": "No es poden programar més de 3 cicles"
+            }
+          },
+          "auto_rollover": {
+            "label": "Trasllada automàticament els elements de treball",
+            "tooltip": "El dia que finalitza un cicle, mou tots els elements de treball no finalitzats al cicle següent."
+          }
+        },
+        "toast": {
+          "toggle": {
+            "loading_enable": "S’està activant la programació automàtica de cicles",
+            "loading_disable": "S’està desactivant la programació automàtica de cicles",
+            "success": {
+              "title": "Correcte!",
+              "message": "La programació automàtica de cicles s’ha activat o desactivat correctament."
+            },
+            "error": {
+              "title": "Error!",
+              "message": "No s’ha pogut activar o desactivar la programació automàtica de cicles."
+            }
+          },
+          "save": {
+            "loading": "S’està desant la configuració de la programació automàtica de cicles",
+            "success": {
+              "title": "Correcte!",
+              "message_create": "La configuració de la programació automàtica de cicles s’ha desat correctament.",
+              "message_update": "La configuració de la programació automàtica de cicles s’ha actualitzat correctament."
+            },
+            "error": {
+              "title": "Error!",
+              "message_create": "No s’ha pogut desar la configuració de programació automàtica de cicles.",
+              "message_update": "No s’ha pogut actualitzar la configuració de programació automàtica de cicles."
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "Deixa els fitxers aquí o fes clic per pujar-ne"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "El fitxer és massa gran.",
+        "description": "La mida màxima per fitxer és de {maxFileSize}MB"
+      },
+      "unsupported_file_type": {
+        "title": "Tipus de fitxer no admès.",
+        "description": "Consulta els formats compatibles"
+      },
+      "default": {
+        "title": "No s’ha pogut pujar.",
+        "description": "Alguna cosa ha fallat. Torna-ho a provar."
+      }
+    },
+    "upgrade": {
+      "description": "Millora el teu pla per veure aquest fitxer adjunt."
+    },
+    "aria": {
+      "click_to_upload": "Fes clic per pujar un fitxer adjunt"
+    }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "Converteix en incrustació",
+      "convert_to_link": "Converteix en enllaç",
+      "convert_to_richcard": "Converteix en targeta enriquida"
+    },
+    "placeholder": {
+      "insert_embed": "Insereix aquí l’enllaç d’inserció que prefereixis, com ara un vídeo de YouTube, un disseny de Figma, etc.",
+      "link": "Introdueix o enganxa un enllaç"
+    },
+    "input_modal": {
+      "embed": "Incrusta",
+      "works_with_links": "Funciona amb YouTube, Figma, Google Docs i molt més"
+    },
+    "error": {
+      "not_valid_link": "Introdueix una URL vàlida."
+    }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "Descriu el contingut d’aquest bloc",
+      "generated_here": "El teu contingut d’IA es generarà aquí"
+    },
+    "block_types": {
+      "placeholder": "Selecciona el tipus de bloc",
+      "summarize_page": "Resumeix la pàgina",
+      "custom_prompt": "Indicació personalitzada"
+    },
+    "actions": {
+      "discard": "Descarta",
+      "generate": "Genera",
+      "generating": "S’està generant",
+      "rewriting": "S’està reescrivint",
+      "rewrite": "Reescriu",
+      "use_this": "Fes servir això",
+      "refine": "Refina"
+    }
+  },
+  "formatting_toolbar": {
+    "label": "Format"
+  }
+}
