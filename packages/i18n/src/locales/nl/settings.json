@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Voorkeuren",
-      "description": "Pas je app-ervaring aan zoals jij werkt"
+      "description": "Pas je app-ervaring aan zoals jij werkt",
+      "boards_heading": "Borden",
+      "global_board_title": "Gebruik dezelfde bordinstellingen in elk project",
+      "global_board_description": "Indeling, groepering, weergave-eigenschappen en overdraagbare filters worden gedeeld door het werkitembord van elk project. Zet je dit uit, dan krijgt elk project zijn eigen instellingen terug.",
+      "global_board_active": "Dezelfde bordinstellingen in elk project",
+      "global_board_active_hint": "Wijzigingen hier gelden voor het werkitembord van elk project.",
+      "auto_collapse_title": "Lege statussen op borden inklappen",
+      "auto_collapse_description": "Groepen zonder werkitems zijn op elk bord ingeklapt en klappen open zodra er een werkitem in komt."
     },
     "notifications": {
       "heading": "E-mailmeldingen",

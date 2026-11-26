@@ -46,6 +46,8 @@ import {
 import { IssueBlocksList } from "./blocks-list";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import type { TRenderQuickActions } from "./list-view-types";
+// hover preview with a ghost row while a work item is dragged over a collapsed group
+import { DropGhost, getDropPreview, useDropPreview } from "@/components/board-preferences/drop-preview";
 
 interface Props {
   groupIssueIds: string[] | undefined;
@@ -69,6 +71,8 @@ interface Props {
   loadMoreIssues: (groupId?: string) => void;
   selectionHelpers: TSelectionHelper;
   handleCollapsedGroups: (value: string) => void;
+  /** opens a collapsed group after a drop onto it (never a toggle) */
+  handleExpandGroup?: (value: string) => void;
   collapsedGroups: TIssueKanbanFilters;
   isEpic?: boolean;
 }
@@ -96,6 +100,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
     loadMoreIssues,
     selectionHelpers,
     handleCollapsedGroups,
+    handleExpandGroup,
     collapsedGroups,
     isEpic = false,
   } = props;
@@ -104,6 +109,9 @@ export const ListGroup = observer(function ListGroup(props: Props) {
   const [dragColumnOrientation, setDragColumnOrientation] = useState<"justify-start" | "justify-end">("justify-start");
   const isExpanded = !collapsedGroups?.group_by.includes(group.id);
   const groupRef = useRef<HTMLDivElement | null>(null);
+  // preview state is local; the drop target below reads the collapsed state through a ref
+  const { preview: dropPreview, enter: enterPreview, leave: leavePreview, end: endPreview } = useDropPreview();
+  const showsCollapsedRef = useRef(false);
   const { t } = useTranslation();
   const projectState = useProjectState();
 
@@ -185,11 +193,13 @@ export const ListGroup = observer(function ListGroup(props: Props) {
       dropTargetForElements({
         element,
         getData: () => ({ groupId: group.id, type: "COLUMN" }),
-        onDragEnter: () => {
+        onDragEnter: ({ source }) => {
           setIsDraggingOverColumn(true);
+          if (showsCollapsedRef.current && source.data?.type === "ISSUE") enterPreview(getDropPreview(source.element));
         },
         onDragLeave: () => {
           setIsDraggingOverColumn(false);
+          leavePreview();
         },
         onDragStart: () => {
           setIsDraggingOverColumn(true);
@@ -212,6 +222,7 @@ export const ListGroup = observer(function ListGroup(props: Props) {
         },
         onDrop: (payload) => {
           setIsDraggingOverColumn(false);
+          endPreview(); // the drop (or the refusal below) ends the preview
           const source = getSourceFromDropPayload(payload);
           const destination = getDestinationFromDropPayload(payload);
 
@@ -231,9 +242,10 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
           highlightIssueOnDrop(getIssueBlockId(source.id, destination?.groupId), orderBy !== "sort_order");
 
-          if (!isExpanded) {
-            handleCollapsedGroups(group.id);
-          }
+          // open the group without toggling it (the drop above already counted the item in, so
+          // with auto-collapse on a toggle would collapse the group it just moved into)
+          if (handleExpandGroup) handleExpandGroup(group.id);
+          else if (!isExpanded) handleCollapsedGroups(group.id);
         },
       })
     );
@@ -254,6 +266,8 @@ export const ListGroup = observer(function ListGroup(props: Props) {
 
   const isGroupByCreatedBy = group_by === "created_by";
   const shouldExpand = (!!groupIssueCount && isExpanded) || !group_by;
+  // the group shows only its header (collapsed, or empty), so a drag over it previews
+  showsCollapsedRef.current = !shouldExpand;
 
   return validateEmptyIssueGroups(groupIssueCount) ? (
     <div
@@ -286,6 +300,12 @@ export const ListGroup = observer(function ListGroup(props: Props) {
           isEpic={isEpic}
         />
       </Row>
+      {/* the collapsed group previews as open, with a ghost of the row where it would land */}
+      {!shouldExpand && dropPreview && (
+        <div className="py-1">
+          <DropGhost preview={dropPreview} invalid={isDropDisabled} />
+        </div>
+      )}
       {shouldExpand && (
         <div className="relative">
           <GroupDragOverlay

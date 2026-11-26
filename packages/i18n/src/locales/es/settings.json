@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Preferencias",
-      "description": "Personaliza tu experiencia de la aplicación según tu forma de trabajar"
+      "description": "Personaliza tu experiencia de la aplicación según tu forma de trabajar",
+      "boards_heading": "Tableros",
+      "global_board_title": "Usar la misma configuración de tablero en todos los proyectos",
+      "global_board_description": "El diseño, la agrupación, las propiedades mostradas y los filtros transferibles se comparten en el tablero de elementos de trabajo de cada proyecto. Al desactivarlo, cada proyecto recupera su propia configuración.",
+      "global_board_active": "Misma configuración de tablero en todos los proyectos",
+      "global_board_active_hint": "Los cambios aquí se aplican al tablero de elementos de trabajo de cada proyecto.",
+      "auto_collapse_title": "Contraer los estados vacíos en los tableros",
+      "auto_collapse_description": "Los grupos sin elementos de trabajo se contraen en cada tablero y se expanden en cuanto llega un elemento de trabajo."
     },
     "notifications": {
       "heading": "Notificaciones por correo electrónico",

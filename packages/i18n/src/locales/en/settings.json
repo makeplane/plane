@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Preferences",
-      "description": "Customize your app experience the way you work"
+      "description": "Customize your app experience the way you work",
+      "boards_heading": "Boards",
+      "global_board_title": "Use the same board settings in every project",
+      "global_board_description": "Layout, grouping, display properties and portable filters are shared by every project's work items board. Turning this off brings back each project's own settings.",
+      "global_board_active": "Same board settings in every project",
+      "global_board_active_hint": "Changes here apply to the work items board of every project.",
+      "auto_collapse_title": "Collapse empty statuses on boards",
+      "auto_collapse_description": "Groups with no work items are collapsed on every board and expand as soon as a work item lands in them."
     },
     "notifications": {
       "heading": "Email notifications",

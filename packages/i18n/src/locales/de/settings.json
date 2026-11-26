@@ -41,7 +41,14 @@
     },
     "preferences": {
       "heading": "Einstellungen",
-      "description": "Passen Sie Ihre App-Erfahrung an Ihre Arbeitsweise an"
+      "description": "Passen Sie Ihre App-Erfahrung an Ihre Arbeitsweise an",
+      "boards_heading": "Boards",
+      "global_board_title": "Dieselben Board-Einstellungen in jedem Projekt verwenden",
+      "global_board_description": "Layout, Gruppierung, anzuzeigende Eigenschaften und übertragbare Filter gelten für das Arbeitselemente-Board jedes Projekts. Durch Deaktivieren werden die eigenen Einstellungen jedes Projekts wiederhergestellt.",
+      "global_board_active": "Dieselben Board-Einstellungen in jedem Projekt",
+      "global_board_active_hint": "Änderungen hier gelten für das Arbeitselemente-Board jedes Projekts.",
+      "auto_collapse_title": "Leere Status auf Boards einklappen",
+      "auto_collapse_description": "Gruppen ohne Arbeitselemente werden auf jedem Board eingeklappt und klappen auf, sobald ein Arbeitselement hineinkommt."
     },
     "notifications": {
       "heading": "E-Mail-Benachrichtigungen",

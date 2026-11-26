@@ -41,6 +41,8 @@ import {
 } from "./collapsed-column-trigger";
 import { HeaderGroupByCard } from "./headers/group-by-card";
 import { KanbanGroup } from "./kanban-group";
+// a collapsed column is a full-height drop zone with a hover preview
+import { CollapsedColumnDropZone } from "@/components/board-preferences/collapsed-column-drop-target";
 
 export interface IKanBan {
   issuesMap: IIssueMap;
@@ -62,6 +64,8 @@ export interface IKanBan {
   quickActions: TRenderQuickActions;
   collapsedGroups: TIssueKanbanFilters;
   handleCollapsedGroups: (toggle: "group_by" | "sub_group_by", value: string) => void;
+  /** opens a collapsed group after a drop onto it (never a toggle) */
+  handleExpandGroup?: (toggle: "group_by" | "sub_group_by", value: string) => void;
   loadMoreIssues: (groupId?: string, subGroupId?: string) => void;
   enableQuickIssueCreate?: boolean;
   quickAddCallback?: (projectId: string | null | undefined, data: TIssue) => Promise<TIssue | undefined>;
@@ -90,6 +94,7 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
     quickActions,
     collapsedGroups,
     handleCollapsedGroups,
+    handleExpandGroup,
     enableQuickIssueCreate,
     quickAddCallback,
     loadMoreIssues,
@@ -167,6 +172,32 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
             : ((groupedIssueIds as TGroupedIssues)?.[subList.id] ?? []);
           const issueLength = issueIds?.length;
           const groupHeight = issueLength * approximateCardHeight;
+          const groupCount = getGroupIssueCount(subList.id, undefined, false) ?? 0;
+
+          // while a work item is dragged over a collapsed column, its header previews as expanded
+          const renderPreviewHeader = () => (
+            <HeaderGroupByCard
+              sub_group_by={sub_group_by}
+              group_by={group_by}
+              column_id={subList.id}
+              icon={subList.icon}
+              title={subList.name}
+              count={groupCount}
+              issuePayload={subList.payload}
+              disableIssueCreation={
+                disableIssueCreation ||
+                isGroupByCreatedBy ||
+                getIsWorkflowWorkItemCreationDisabled(subList.id, sub_group_id)
+              }
+              addIssuesToView={addIssuesToView}
+              collapsedGroups={{
+                ...collapsedGroups,
+                group_by: collapsedGroups.group_by.filter((id) => id !== subList.id),
+              }}
+              handleCollapsedGroups={handleCollapsedGroups}
+              isEpic={isEpic}
+            />
+          );
 
           const groupHeaderCard = (
             <HeaderGroupByCard
@@ -191,8 +222,8 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
 
           // A collapsed column is one expand button. On the flat board it carries the vertical header; a swimlane
           // band cell is an empty extra target whose hover is shared with the column's other pieces.
-          if (!groupByVisibilityToggle.showIssues)
-            return (
+          if (!groupByVisibilityToggle.showIssues) {
+            const collapsedColumn = (
               <div
                 key={subList.id}
                 className={cn("relative flex flex-shrink-0 flex-col bg-layer-1", {
@@ -213,6 +244,29 @@ export const KanBan = observer(function KanBan(props: IKanBan) {
                 </KanbanCollapsedColumnTrigger>
               </div>
             );
+            if (sub_group_by) return collapsedColumn;
+            // On the flat board the whole collapsed column is a drop target (auto-collapse on, or collapsed
+            // by hand): a hovering work item previews the column as expanded, and the drop opens it.
+            return (
+              <CollapsedColumnDropZone
+                key={subList.id}
+                groupId={subList.id}
+                subGroupId={sub_group_id}
+                count={groupCount}
+                isDropDisabled={!!subList.isDropDisabled || !!isDropDisabled}
+                dropErrorMessage={subList.dropErrorMessage ?? dropErrorMessage}
+                handleOnDrop={handleOnDrop}
+                onDropped={() =>
+                  handleExpandGroup
+                    ? handleExpandGroup("group_by", subList.id)
+                    : handleCollapsedGroups("group_by", subList.id)
+                }
+                renderPreviewHeader={renderPreviewHeader}
+              >
+                {collapsedColumn}
+              </CollapsedColumnDropZone>
+            );
+          }
 
           return (
             <div
