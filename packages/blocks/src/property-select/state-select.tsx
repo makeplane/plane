@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
 import { StateGroupIcon } from "../icons/state/state-group-icon";
 import type { TPaginatedResponse, TStateGroups } from "@plane/types";
 import { Select } from "../select/select";
@@ -57,13 +58,14 @@ export type StateSelectProps = {
  * an `onChange` that persists the chosen id — this block owns only the state-specific markup.
  */
 export function StateSelect(props: StateSelectProps) {
+  const { t } = useTranslation();
   const {
     getValues,
     value,
     onChange,
     disabled = false,
     placeholder = "",
-    searchPlaceholder = "Search states...",
+    searchPlaceholder,
     onClose,
     className,
     allowedStateIds = null,
@@ -85,7 +87,7 @@ export function StateSelect(props: StateSelectProps) {
       onChange={onChange}
       disabled={disabled}
       placeholder={placeholder}
-      searchPlaceholder={searchPlaceholder}
+      searchPlaceholder={searchPlaceholder ?? t("common.search.states")}
       onClose={onClose}
       pinSelected={false}
       getOptionValue={(state) => state.id}

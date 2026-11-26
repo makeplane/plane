@@ -31,6 +31,8 @@ export default defineConfig({
           include: ["src/**/*.test.tsx"],
           environment: "jsdom",
           setupFiles: ["./vitest.setup.dom.ts"],
+          // Resolve the ICU dependency through Vite so the DOM tests format plural messages.
+          server: { deps: { inline: ["i18next-icu", "intl-messageformat"] } },
         },
       },
     ],

@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Няма съвпадащи резултати",
         "description": "Премахнете критериите за търсене, за да видите всички резултати"
-      }
+      },
+      "cycles": "Търсене на цикли…",
+      "modules": "Търсене на модули…",
+      "states": "Търсене на състояния…",
+      "projects": "Търсене на проекти…",
+      "estimates": "Търсене на оценки…",
+      "labels": "Търсене на етикети…",
+      "members": "Търсене на членове…"
     },
     "actions": {
       "edit": "Редактирай",
@@ -734,7 +741,14 @@
       "created_on_date": "Създадено на {date}",
       "priority": "Приоритет: {value}"
     },
-    "locked": "Заключено"
+    "locked": "Заключено",
+    "suspended_member": "Спрян достъп",
+    "selected_count": {
+      "module": "{count, plural, one {# модул} other {# модула}}",
+      "project": "{count, plural, one {# проект} other {# проекта}}",
+      "member": "{count, plural, one {# участник} other {# участници}}",
+      "summary": "Избрани: {count}"
+    }
   },
   "chart": {
     "x_axis": "Ос X",

@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import { useTranslation } from "@plane/i18n";
+import type { TTranslationStore } from "@plane/i18n";
 import { useMemo } from "react";
 import { Avatar } from "@makeplane/propel/components/avatar";
 import { AvatarGroup } from "@makeplane/propel/components/avatar-group";
@@ -114,7 +116,7 @@ type MemberSelectCommonProps = {
   tabIndex?: number;
   /** Re-filters the rendered list every render — unlike `getValues`, also catches an already-fetched, still-open list. */
   filterOption?: (member: MemberOption) => boolean;
-  /** Badge text on a {@link MemberOption.suspended} row. Defaults to "Suspended". */
+  /** Badge text on a {@link MemberOption.suspended} row. Defaults to the translated `common.suspended_member` label. */
   suspendedLabel?: string;
   /** Trigger text when more than one member is selected (e.g. "3 assignees"), in place of the default summary. */
   multipleLabel?: (count: number) => string;
@@ -133,6 +135,7 @@ export type MemberSelectProps = MemberSelectCommonProps &
   );
 
 function triggerLabel(
+  t: TTranslationStore["t"],
   selected: MemberOption[],
   showCountOnMultiple: boolean,
   placeholder?: string,
@@ -141,7 +144,7 @@ function triggerLabel(
   if (selected.length === 0) return placeholder ?? "";
   if (selected.length === 1) return selected[0]?.display_name ?? "";
   if (multipleLabel) return multipleLabel(selected.length);
-  if (showCountOnMultiple) return `${selected.length} members`;
+  if (showCountOnMultiple) return t("common.selected_count.member", { count: selected.length });
   // Join-names variant: only the first few selected are resolved (the rest are count-only stubs), so list
   // those names and summarise the remainder rather than rendering blanks for the unresolved ids.
   const names = selected
@@ -162,6 +165,7 @@ function triggerLabel(
  * selection never materialises hundreds of avatar nodes.
  */
 export function MemberSelect(props: MemberSelectProps) {
+  const { t } = useTranslation();
   const {
     getValues,
     disabled = false,
@@ -174,7 +178,7 @@ export function MemberSelect(props: MemberSelectProps) {
     filterOption,
     testId,
     tabIndex,
-    suspendedLabel = "Suspended",
+    suspendedLabel,
     multipleLabel,
   } = props;
   const clearable = !props.multiple && !!props.clearable;
@@ -189,7 +193,8 @@ export function MemberSelect(props: MemberSelectProps) {
   const isSearchInput = kind === "search-input";
   // `search-input`'s box IS the trigger (no separate label), so `placeholder` doubles as its empty
   // text unless the caller sets a distinct `searchPlaceholder`.
-  const searchPlaceholder = searchPlaceholderProp ?? (isSearchInput ? placeholder : undefined) ?? "Search members...";
+  const searchPlaceholder =
+    searchPlaceholderProp ?? (isSearchInput ? placeholder : undefined) ?? t("common.search.members");
 
   // A single-member pill uses a 16px face to match its sibling glyphs. Multi-member stacks keep 20px
   // faces so their remaining-count badge has room. `avatar-group-*` maps its size onto the face and is not a Select
@@ -255,7 +260,9 @@ export function MemberSelect(props: MemberSelectProps) {
     // Suspended members cannot be newly picked; an already-selected one stays toggleable so it can be removed.
     getOptionDisabled: (member: MemberOption) => !!member.suspended && !selectedIds.has(member.id),
     getOptionTrailing: (member: MemberOption) =>
-      member.suspended ? <Badge variant="neutral" size="xs" label={suspendedLabel} /> : undefined,
+      member.suspended ? (
+        <Badge variant="neutral" size="xs" label={suspendedLabel ?? t("common.suspended_member")} />
+      ) : undefined,
     renderChip: (member: MemberOption) => (
       <>
         <Avatar alt={memberAvatarAlt(member)} src={member.avatar_url ?? ""} size="2xs" />
@@ -275,7 +282,7 @@ export function MemberSelect(props: MemberSelectProps) {
       prependIcon={(members) =>
         members.length === 0 ? props.multiple ? <AssigneeOutline /> : <UserAltOutline /> : undefined
       }
-      label={(members) => triggerLabel(members, showCountOnMultiple, placeholder, multipleLabel)}
+      label={(members) => triggerLabel(t, members, showCountOnMultiple, placeholder, multipleLabel)}
       tooltip={tooltip}
     >
       {(members) => (
@@ -295,7 +302,7 @@ export function MemberSelect(props: MemberSelectProps) {
           )}
           {showLabel && (members.length > 0 || !!placeholder) && (
             <span className="min-w-0 grow truncate text-left">
-              {triggerLabel(members, showCountOnMultiple, placeholder, multipleLabel)}
+              {triggerLabel(t, members, showCountOnMultiple, placeholder, multipleLabel)}
             </span>
           )}
         </>

@@ -609,7 +609,14 @@
       "no_results": {
         "title": "No matching results",
         "description": "Remove the search criteria to see all results"
-      }
+      },
+      "cycles": "ციკლების ძიება…",
+      "modules": "მოდულების ძიება…",
+      "states": "სტატუსების ძიება…",
+      "projects": "პროექტების ძიება…",
+      "estimates": "შეფასებების ძიება…",
+      "labels": "ჭდეების ძიება…",
+      "members": "წევრების ძიება…"
     },
     "actions": {
       "edit": "რედაქტირება",
@@ -734,7 +741,14 @@
       "created_on_date": "შექმნილია {date}",
       "priority": "პრიორიტეტი: {value}"
     },
-    "locked": "დაბლოკილი"
+    "locked": "დაბლოკილი",
+    "suspended_member": "შეჩერებულია",
+    "selected_count": {
+      "module": "{count, plural, one {# მოდული} other {# მოდული}}",
+      "project": "{count, plural, one {# პროექტი} other {# პროექტი}}",
+      "member": "{count, plural, one {# წევრი} other {# წევრი}}",
+      "summary": "არჩეულია: {count}"
+    }
   },
   "chart": {
     "x_axis": "X-ღერძი",

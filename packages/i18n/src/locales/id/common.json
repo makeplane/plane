@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Tidak ada hasil yang cocok",
         "description": "Hapus kriteria pencarian untuk melihat semua hasil"
-      }
+      },
+      "cycles": "Cari siklus…",
+      "modules": "Cari modul…",
+      "states": "Cari status…",
+      "projects": "Cari proyek…",
+      "estimates": "Cari estimasi…",
+      "labels": "Cari label…",
+      "members": "Cari anggota…"
     },
     "actions": {
       "edit": "Edit",
@@ -734,7 +741,14 @@
       "created_on_date": "Dibuat pada {date}",
       "priority": "Prioritas: {value}"
     },
-    "locked": "Terkunci"
+    "locked": "Terkunci",
+    "suspended_member": "Ditangguhkan",
+    "selected_count": {
+      "module": "{count, plural, one {# modul} other {# modul}}",
+      "project": "{count, plural, one {# proyek} other {# proyek}}",
+      "member": "{count, plural, one {# anggota} other {# anggota}}",
+      "summary": "{count} dipilih"
+    }
   },
   "chart": {
     "x_axis": "Sumbu-X",

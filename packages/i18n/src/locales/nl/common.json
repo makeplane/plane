@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Geen overeenkomende resultaten",
         "description": "Verwijder de zoekcriteria om alle resultaten te zien"
-      }
+      },
+      "cycles": "Cycli zoeken…",
+      "modules": "Modules zoeken…",
+      "states": "Statussen zoeken…",
+      "projects": "Projecten zoeken…",
+      "estimates": "Schattingen zoeken…",
+      "labels": "Labels zoeken…",
+      "members": "Leden zoeken…"
     },
     "actions": {
       "edit": "Bewerken",
@@ -734,7 +741,14 @@
       "created_on_date": "Aangemaakt op {date}",
       "priority": "Prioriteit: {value}"
     },
-    "locked": "Vergrendeld"
+    "locked": "Vergrendeld",
+    "suspended_member": "Opgeschort",
+    "selected_count": {
+      "module": "{count, plural, one {# module} other {# modules}}",
+      "project": "{count, plural, one {# project} other {# projecten}}",
+      "member": "{count, plural, one {# lid} other {# leden}}",
+      "summary": "{count} geselecteerd"
+    }
   },
   "chart": {
     "x_axis": "X-as",

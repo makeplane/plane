@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Nessun risultato corrispondente",
         "description": "Rimuovi i criteri di ricerca per vedere tutti i risultati"
-      }
+      },
+      "cycles": "Cerca cicli…",
+      "modules": "Cerca moduli…",
+      "states": "Cerca stati…",
+      "projects": "Cerca progetti…",
+      "estimates": "Cerca stime…",
+      "labels": "Cerca etichette…",
+      "members": "Cerca membri…"
     },
     "actions": {
       "edit": "Modifica",
@@ -734,7 +741,14 @@
       "created_on_date": "Creato il {date}",
       "priority": "Priorità: {value}"
     },
-    "locked": "Bloccato"
+    "locked": "Bloccato",
+    "suspended_member": "Account sospeso",
+    "selected_count": {
+      "module": "{count, plural, one {# modulo} many {# moduli} other {# moduli}}",
+      "project": "{count, plural, one {# progetto} many {# progetti} other {# progetti}}",
+      "member": "{count, plural, one {# membro} many {# membri} other {# membri}}",
+      "summary": "Selezione: {count}"
+    }
   },
   "chart": {
     "x_axis": "Asse X",

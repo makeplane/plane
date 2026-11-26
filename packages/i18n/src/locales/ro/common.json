@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Nicio potrivire găsită",
         "description": "Elimină criteriile de căutare pentru a vedea toate rezultatele"
-      }
+      },
+      "cycles": "Căutați cicluri…",
+      "modules": "Căutați module…",
+      "states": "Căutați stări…",
+      "projects": "Căutați proiecte…",
+      "estimates": "Căutați estimări…",
+      "labels": "Căutați etichete…",
+      "members": "Căutați membri…"
     },
     "actions": {
       "edit": "Editează",
@@ -734,7 +741,14 @@
       "created_on_date": "Creat la {date}",
       "priority": "Prioritate: {value}"
     },
-    "locked": "Blocat"
+    "locked": "Blocat",
+    "suspended_member": "Cont suspendat",
+    "selected_count": {
+      "module": "{count, plural, one {# modul} few {# module} other {# de module}}",
+      "project": "{count, plural, one {# proiect} few {# proiecte} other {# de proiecte}}",
+      "member": "{count, plural, one {# membru} few {# membri} other {# de membri}}",
+      "summary": "Selectate: {count}"
+    }
   },
   "chart": {
     "x_axis": "axa-X",

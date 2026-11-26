@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import type { TTranslationStore } from "@plane/i18n";
+import { useTranslation } from "@plane/i18n";
 import { Badge, BadgeLabel } from "@makeplane/propel/elements/badge";
 import { ModuleOutline } from "@makeplane/propel/icons";
 import type { TPaginatedResponse } from "@plane/types";
@@ -49,10 +51,15 @@ export type ModuleSelectProps =
       variant: SelectVariant;
     });
 
-function triggerLabel(selected: ModuleOption[], showCountOnMultiple: boolean, placeholder?: string): string {
+function triggerLabel(
+  t: TTranslationStore["t"],
+  selected: ModuleOption[],
+  showCountOnMultiple: boolean,
+  placeholder?: string
+): string {
   if (selected.length === 0) return placeholder ?? "";
   if (selected.length === 1) return selected[0]?.name ?? "";
-  if (showCountOnMultiple) return `${selected.length} modules`;
+  if (showCountOnMultiple) return t("common.selected_count.module", { count: selected.length });
   return selected.map((module) => module.name).join(", ");
 }
 
@@ -62,6 +69,7 @@ function triggerLabel(selected: ModuleOption[], showCountOnMultiple: boolean, pl
  * single-select (breadcrumb navigation, inline picker).
  */
 export function ModuleSelect(props: ModuleSelectProps) {
+  const { t } = useTranslation();
   if (!props.multiple) {
     const {
       getValues,
@@ -70,7 +78,7 @@ export function ModuleSelect(props: ModuleSelectProps) {
       variant,
       disabled = false,
       placeholder = "",
-      searchPlaceholder = "Search modules...",
+      searchPlaceholder,
       onClose,
       className,
       showIdentifier = false,
@@ -86,7 +94,7 @@ export function ModuleSelect(props: ModuleSelectProps) {
         onChange={onChange}
         disabled={disabled}
         placeholder={placeholder}
-        searchPlaceholder={searchPlaceholder}
+        searchPlaceholder={searchPlaceholder ?? t("common.search.modules")}
         onClose={onClose}
         getOptionValue={(module) => module.id}
         getOptionLabel={(module) => module.name}
@@ -124,7 +132,7 @@ export function ModuleSelect(props: ModuleSelectProps) {
     variant,
     disabled = false,
     placeholder = "",
-    searchPlaceholder = "Search modules...",
+    searchPlaceholder,
     onClose,
     className,
     showIdentifier = false,
@@ -144,7 +152,7 @@ export function ModuleSelect(props: ModuleSelectProps) {
       onChange={onChange}
       disabled={disabled}
       placeholder={placeholder}
-      searchPlaceholder={searchPlaceholder}
+      searchPlaceholder={searchPlaceholder ?? t("common.search.modules")}
       onClose={onClose}
       getOptionValue={(module) => module.id}
       getOptionLabel={(module) => module.name}
@@ -162,7 +170,7 @@ export function ModuleSelect(props: ModuleSelectProps) {
         tabIndex={tabIndex}
         className={className}
         prependIcon={(modules) => (!showCountOnMultiple && modules.length > 0 ? undefined : <ModuleOutline />)}
-        label={(modules) => triggerLabel(modules, showCountOnMultiple, placeholder)}
+        label={(modules) => triggerLabel(t, modules, showCountOnMultiple, placeholder)}
         tooltip={tooltip}
       >
         {(modules) => {
@@ -186,7 +194,7 @@ export function ModuleSelect(props: ModuleSelectProps) {
           ) : (
             (modules.length > 0 || !!placeholder) && (
               <span className="min-w-0 grow truncate text-left">
-                {triggerLabel(modules, showCountOnMultiple, placeholder)}
+                {triggerLabel(t, modules, showCountOnMultiple, placeholder)}
               </span>
             )
           );

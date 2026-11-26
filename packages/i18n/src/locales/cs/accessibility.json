@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Další akce",
-      "remove": "Odebrat"
+      "remove": "Odebrat",
+      "loading_options": "Načítání možností",
+      "loading_progress": "Načítání...",
+      "loading_more_rows": "Načítání dalších řádků"
     },
     "color_picker": {
       "open": "Otevřít výběr barvy",

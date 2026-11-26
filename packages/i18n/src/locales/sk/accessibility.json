@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Ďalšie akcie",
-      "remove": "Odstrániť"
+      "remove": "Odstrániť",
+      "loading_options": "Načítavajú sa možnosti",
+      "loading_progress": "Načítava sa...",
+      "loading_more_rows": "Načítavajú sa ďalšie riadky"
     },
     "color_picker": {
       "open": "Otvoriť výber farby",

@@ -65,7 +65,7 @@ export function CycleSelect(props: CycleSelectProps) {
     onChange,
     disabled = false,
     placeholder = "",
-    searchPlaceholder = "Search cycles...",
+    searchPlaceholder,
     onClose,
     variant,
     className,
@@ -93,7 +93,7 @@ export function CycleSelect(props: CycleSelectProps) {
       onChange={onChange}
       disabled={disabled}
       placeholder={placeholder}
-      searchPlaceholder={searchPlaceholder}
+      searchPlaceholder={searchPlaceholder ?? t("common.search.cycles")}
       onClose={onClose}
       headerItems={clearable ? [clearOption] : undefined}
       getOptionValue={(cycle) => cycle.id}

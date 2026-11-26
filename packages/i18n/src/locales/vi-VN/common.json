@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Không có kết quả phù hợp",
         "description": "Xóa tiêu chí tìm kiếm để xem tất cả kết quả"
-      }
+      },
+      "cycles": "Tìm chu kỳ…",
+      "modules": "Tìm mô-đun…",
+      "states": "Tìm trạng thái…",
+      "projects": "Tìm dự án…",
+      "estimates": "Tìm ước tính…",
+      "labels": "Tìm nhãn…",
+      "members": "Tìm thành viên…"
     },
     "actions": {
       "edit": "Chỉnh sửa",
@@ -734,7 +741,14 @@
       "created_on_date": "Được tạo vào {date}",
       "priority": "Ưu tiên: {value}"
     },
-    "locked": "Đã khóa"
+    "locked": "Đã khóa",
+    "suspended_member": "Đã đình chỉ",
+    "selected_count": {
+      "module": "{count, plural, one {# mô-đun} other {# mô-đun}}",
+      "project": "{count, plural, one {# dự án} other {# dự án}}",
+      "member": "{count, plural, one {# thành viên} other {# thành viên}}",
+      "summary": "Đã chọn: {count}"
+    }
   },
   "chart": {
     "x_axis": "Trục X",

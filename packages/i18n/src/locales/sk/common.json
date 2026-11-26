@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Žiadne zodpovedajúce výsledky",
         "description": "Odstráňte kritériá vyhľadávania, aby ste videli všetky výsledky"
-      }
+      },
+      "cycles": "Hľadať cykly…",
+      "modules": "Hľadať moduly…",
+      "states": "Hľadať stavy…",
+      "projects": "Hľadať projekty…",
+      "estimates": "Hľadať odhady…",
+      "labels": "Hľadať štítky…",
+      "members": "Hľadať členov…"
     },
     "actions": {
       "edit": "Upraviť",
@@ -734,7 +741,14 @@
       "created_on_date": "Vytvorené dňa {date}",
       "priority": "Priorita: {value}"
     },
-    "locked": "Uzamknuté"
+    "locked": "Uzamknuté",
+    "suspended_member": "Pozastavený účet",
+    "selected_count": {
+      "module": "{count, plural, one {# modul} few {# moduly} many {# modulu} other {# modulov}}",
+      "project": "{count, plural, one {# projekt} few {# projekty} many {# projektu} other {# projektov}}",
+      "member": "{count, plural, one {# člen} few {# členovia} many {# člena} other {# členov}}",
+      "summary": "Vybrané: {count}"
+    }
   },
   "chart": {
     "x_axis": "Os X",

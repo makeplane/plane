@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Tindakan lainnya",
-      "remove": "Hapus"
+      "remove": "Hapus",
+      "loading_options": "Memuat pilihan",
+      "loading_progress": "Memuat...",
+      "loading_more_rows": "Memuat baris lainnya"
     },
     "color_picker": {
       "open": "Buka pemilih warna",

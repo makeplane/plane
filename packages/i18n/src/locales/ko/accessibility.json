@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "추가 작업",
-      "remove": "제거"
+      "remove": "제거",
+      "loading_options": "옵션을 불러오는 중",
+      "loading_progress": "불러오는 중…",
+      "loading_more_rows": "행을 더 불러오는 중"
     },
     "color_picker": {
       "open": "색상 선택기 열기",

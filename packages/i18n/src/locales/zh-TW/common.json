@@ -609,7 +609,14 @@
       "no_results": {
         "title": "沒有符合的結果",
         "description": "移除搜尋條件以檢視所有結果"
-      }
+      },
+      "cycles": "搜尋週期…",
+      "modules": "搜尋模組…",
+      "states": "搜尋狀態…",
+      "projects": "搜尋專案…",
+      "estimates": "搜尋估算…",
+      "labels": "搜尋標籤…",
+      "members": "搜尋成員…"
     },
     "actions": {
       "edit": "編輯",
@@ -734,7 +741,14 @@
       "created_on_date": "建立於 {date}",
       "priority": "優先順序：{value}"
     },
-    "locked": "已鎖定"
+    "locked": "已鎖定",
+    "suspended_member": "已停用",
+    "selected_count": {
+      "module": "{count, plural, one {# 個模組} other {# 個模組}}",
+      "project": "{count, plural, one {# 個專案} other {# 個專案}}",
+      "member": "{count, plural, one {# 名成員} other {# 名成員}}",
+      "summary": "已選取 {count} 項"
+    }
   },
   "chart": {
     "x_axis": "X 軸",

@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "მეტი ქმედება",
-      "remove": "ამოღება"
+      "remove": "ამოღება",
+      "loading_options": "პარამეტრები იტვირთება",
+      "loading_progress": "იტვირთება…",
+      "loading_more_rows": "დამატებითი რიგები იტვირთება"
     },
     "color_picker": {
       "open": "ფერის ამომრჩევის გახსნა",

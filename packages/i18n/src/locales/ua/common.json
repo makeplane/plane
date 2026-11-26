@@ -609,7 +609,14 @@
       "no_results": {
         "title": "Немає відповідних результатів",
         "description": "Видаліть критерії пошуку, щоб побачити всі результати"
-      }
+      },
+      "cycles": "Пошук циклів…",
+      "modules": "Пошук модулів…",
+      "states": "Пошук статусів…",
+      "projects": "Пошук проєктів…",
+      "estimates": "Пошук оцінок…",
+      "labels": "Пошук міток…",
+      "members": "Пошук учасників…"
     },
     "actions": {
       "edit": "Редагувати",
@@ -734,7 +741,14 @@
       "created_on_date": "Створено {date}",
       "priority": "Пріоритет: {value}"
     },
-    "locked": "Заблоковано"
+    "locked": "Заблоковано",
+    "suspended_member": "Доступ призупинено",
+    "selected_count": {
+      "module": "{count, plural, one {# модуль} few {# модулі} many {# модулів} other {# модуля}}",
+      "project": "{count, plural, one {# проєкт} few {# проєкти} many {# проєктів} other {# проєкту}}",
+      "member": "{count, plural, one {# учасник} few {# учасники} many {# учасників} other {# учасника}}",
+      "summary": "Вибрано: {count}"
+    }
   },
   "chart": {
     "x_axis": "Вісь X",

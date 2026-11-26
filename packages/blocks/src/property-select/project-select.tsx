@@ -4,6 +4,8 @@
  * See the LICENSE file for details.
  */
 
+import type { TTranslationStore } from "@plane/i18n";
+import { useTranslation } from "@plane/i18n";
 import type { ReactNode } from "react";
 import { Logo } from "../emoji-icon-picker/logo";
 import { ChevronDownOutline, ProjectsOutline } from "@makeplane/propel/icons";
@@ -82,10 +84,15 @@ function ProjectLogo({
   return <ProjectsOutline className={cn("shrink-0 text-primary", slotClassName, className)} />;
 }
 
-function triggerLabel(selected: ProjectOption[], showCountOnMultiple: boolean, placeholder?: string): string {
+function triggerLabel(
+  t: TTranslationStore["t"],
+  selected: ProjectOption[],
+  showCountOnMultiple: boolean,
+  placeholder?: string
+): string {
   if (selected.length === 0) return placeholder ?? "";
   if (selected.length === 1) return selected[0]?.name ?? "";
-  if (showCountOnMultiple) return `${selected.length} projects`;
+  if (showCountOnMultiple) return t("common.selected_count.project", { count: selected.length });
   return selected.map((project) => project.name).join(", ");
 }
 
@@ -108,6 +115,7 @@ function TriggerLogos({ selected }: { selected: ProjectOption[] }) {
  * Pass `multiple={true}` for multi-select; omit or pass `multiple={false}` for single-select.
  */
 export function ProjectSelect(props: ProjectSelectProps) {
+  const { t } = useTranslation();
   const { variant } = props;
   const splitVariant = splitSelectVariant(variant);
   const isSelect = splitVariant.variant === "select";
@@ -123,7 +131,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
       onChange,
       disabled = false,
       placeholder = "",
-      searchPlaceholder = "Search projects...",
+      searchPlaceholder,
       onClose,
       className,
       tooltip,
@@ -140,7 +148,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
         onChange={onChange}
         disabled={disabled}
         placeholder={placeholder}
-        searchPlaceholder={searchPlaceholder}
+        searchPlaceholder={searchPlaceholder ?? t("common.search.projects")}
         onClose={onClose}
         getOptionValue={(project) => project.id}
         getOptionLabel={(project) => project.name}
@@ -203,7 +211,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
     onChange,
     disabled = false,
     placeholder = "",
-    searchPlaceholder = "Search projects...",
+    searchPlaceholder,
     onClose,
     className,
     tooltip,
@@ -220,7 +228,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
       onChange={onChange}
       disabled={disabled}
       placeholder={placeholder}
-      searchPlaceholder={searchPlaceholder}
+      searchPlaceholder={searchPlaceholder ?? t("common.search.projects")}
       onClose={onClose}
       getOptionValue={(project) => project.id}
       getOptionLabel={(project) => project.name}
@@ -256,7 +264,7 @@ export function ProjectSelect(props: ProjectSelectProps) {
                   {!isSelect && <TriggerLogos selected={projects} />}
                   {(projects.length > 0 || !!placeholder) && (
                     <span className="min-w-0 grow truncate text-left">
-                      {triggerLabel(projects, showCountOnMultiple, placeholder)}
+                      {triggerLabel(t, projects, showCountOnMultiple, placeholder)}
                     </span>
                   )}
                 </>

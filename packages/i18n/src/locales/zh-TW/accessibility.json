@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "更多操作",
-      "remove": "移除"
+      "remove": "移除",
+      "loading_options": "正在載入選項",
+      "loading_progress": "載入中…",
+      "loading_more_rows": "正在載入更多列"
     },
     "color_picker": {
       "open": "開啟色彩選擇器",

@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Thao tác khác",
-      "remove": "Xóa"
+      "remove": "Xóa",
+      "loading_options": "Đang tải các tùy chọn",
+      "loading_progress": "Đang tải…",
+      "loading_more_rows": "Đang tải thêm hàng"
     },
     "color_picker": {
       "open": "Mở bộ chọn màu",

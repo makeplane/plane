@@ -609,7 +609,14 @@
       "no_results": {
         "title": "一致する結果がありません",
         "description": "検索条件を削除してすべての結果を表示"
-      }
+      },
+      "cycles": "サイクルを検索…",
+      "modules": "モジュールを検索…",
+      "states": "ステータスを検索…",
+      "projects": "プロジェクトを検索…",
+      "estimates": "見積もりを検索…",
+      "labels": "ラベルを検索…",
+      "members": "メンバーを検索…"
     },
     "actions": {
       "edit": "編集",
@@ -734,7 +741,14 @@
       "created_on_date": "作成日：{date}",
       "priority": "優先度：{value}"
     },
-    "locked": "ロック中"
+    "locked": "ロック中",
+    "suspended_member": "利用停止",
+    "selected_count": {
+      "module": "{count, plural, one {# 件のモジュール} other {# 件のモジュール}}",
+      "project": "{count, plural, one {# 件のプロジェクト} other {# 件のプロジェクト}}",
+      "member": "{count, plural, one {# 人のメンバー} other {# 人のメンバー}}",
+      "summary": "{count} 件選択済み"
+    }
   },
   "chart": {
     "x_axis": "エックス アクシス",

@@ -75,7 +75,7 @@ export function LabelSelect(props: LabelSelectProps) {
     onChange,
     disabled = false,
     placeholder = "",
-    searchPlaceholder = "Search labels...",
+    searchPlaceholder,
     onClose,
     createLabel,
     className,
@@ -116,7 +116,7 @@ export function LabelSelect(props: LabelSelectProps) {
       onChange={onChange}
       disabled={disabled}
       placeholder={placeholder}
-      searchPlaceholder={searchPlaceholder}
+      searchPlaceholder={searchPlaceholder ?? t("common.search.labels")}
       emptyMessage={emptyMessage}
       onClose={onClose}
       getOptionValue={(label) => label.id}

@@ -39,7 +39,10 @@
     },
     "common": {
       "more_actions": "Другие действия",
-      "remove": "Удалить"
+      "remove": "Удалить",
+      "loading_options": "Загрузка вариантов",
+      "loading_progress": "Загрузка…",
+      "loading_more_rows": "Загрузка дополнительных строк"
     },
     "color_picker": {
       "open": "Открыть выбор цвета",
