@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ImageOutline } from "@makeplane/propel/icons";
@@ -70,6 +70,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
     control,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<TProfileSetupFormValues>({
     defaultValues: {
@@ -82,6 +83,13 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
   });
   // derived values
   const userAvatar = watch("avatar_url");
+
+  // The name is pre-filled from the auth provider (e.g. a GitLab name like "john.doe"). In "onChange" mode
+  // react-hook-form only reports errors after the field is edited, so an invalid pre-filled value would leave
+  // Continue disabled with no explanation. Validate it on mount so the reason is shown right away.
+  useEffect(() => {
+    if (getValues("first_name")) void trigger("first_name");
+  }, [getValues, trigger]);
 
   const handleSetPassword = async (password: string) => {
     const token = await authService.requestCSRFToken().then((data) => data?.csrf_token);
