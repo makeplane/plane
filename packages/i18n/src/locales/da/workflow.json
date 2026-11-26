@@ -1,0 +1,100 @@
+{
+  "workflows": {
+    "workflow_states": {
+      "work_item_creation": "Tillad nye opgaver",
+      "work_item_creation_disable_tooltip": "Oprettelse af opgaver er deaktiveret for denne status",
+      "default_state": "Standardstatus lader alle medlemmer oprette nye opgaver. Dette kan ikke ændres",
+      "state_change_count": "{count, plural, one {1 tilladt statusændring} other {{count} tilladte statusændringer}}",
+      "movers_count": "{count, plural, one {1 angivet censor} other {{count} angivne censorer}}",
+      "state_changes": {
+        "label": {
+          "default": "Tilføj tilladt statusændring",
+          "loading": "Tilføjer tilladt statusændring"
+        },
+        "move_to": "Skift status til",
+        "movers": {
+          "label": "Når den gennemses af",
+          "tooltip": "Censorer/godkendere er personer, der har tilladelse til at flytte opgaver fra én status til en anden.",
+          "add": "Tilføj censorer"
+        }
+      }
+    },
+    "workflow_disabled": {
+      "title": "Du kan ikke flytte denne opgave hertil."
+    },
+    "workflow_enabled": {
+      "label": "Statusændring"
+    },
+    "workflow_tree": {
+      "label": "For opgaver i",
+      "state_change_label": "kan flytte den til"
+    },
+    "empty_state": {
+      "upgrade": {
+        "title": "Styr kaosset af ændringer og gennemgange med Arbejdsflows.",
+        "description": "Indstil regler for, hvor dit arbejde flytter hen, af hvem og hvornår med Arbejdsflows i Plane."
+      }
+    },
+    "quick_actions": {
+      "view_change_history": "Vis ændringshistorik",
+      "reset_workflow": "Nulstil arbejdsflow"
+    },
+    "confirmation_modals": {
+      "reset_workflow": {
+        "title": "Er du sikker på, at du vil nulstille dette arbejdsflow?",
+        "description": "Hvis du nulstiller dette arbejdsflow, vil alle dine regler for statusændring blive slettet, og du skal oprette dem igen for at køre dem i dette projekt."
+      },
+      "delete_state_change": {
+        "title": "Er du sikker på, at du vil slette denne regel for statusændring?",
+        "description": "Når den først er slettet, kan du ikke fortryde ændringen, og du skal indstille reglen igen, hvis du vil have den kørende for dette projekt."
+      }
+    },
+    "toasts": {
+      "enable_disable": {
+        "loading": "{action} arbejdsflow",
+        "success": {
+          "title": "Succes",
+          "message": "Arbejdsflow blev {action} med succes"
+        },
+        "error": {
+          "title": "Fejl",
+          "message": "Arbejdsflow kunne ikke blive {action}. Prøv venligst igen."
+        }
+      },
+      "reset": {
+        "success": {
+          "title": "Succes",
+          "message": "Arbejdsflow nulstillet med succes"
+        },
+        "error": {
+          "title": "Fejl ved nulstilling af arbejdsflow",
+          "message": "Arbejdsflow kunne ikke nulstilles. Prøv venligst igen."
+        }
+      },
+      "add_state_change_rule": {
+        "error": {
+          "title": "Fejl ved tilføjelse af regel for statusændring",
+          "message": "Regel for statusændring kunne ikke tilføjes. Prøv venligst igen."
+        }
+      },
+      "modify_state_change_rule": {
+        "error": {
+          "title": "Fejl ved ændring af regel for statusændring",
+          "message": "Regel for statusændring kunne ikke ændres. Prøv venligst igen."
+        }
+      },
+      "remove_state_change_rule": {
+        "error": {
+          "title": "Fejl ved fjernelse af regel for statusændring",
+          "message": "Regel for statusændring kunne ikke fjernes. Prøv venligst igen."
+        }
+      },
+      "modify_state_change_rule_movers": {
+        "error": {
+          "title": "Fejl ved ændring af censorer for statusændringsregel",
+          "message": "Censorer for statusændringsregel kunne ikke ændres. Prøv venligst igen."
+        }
+      }
+    }
+  }
+}
