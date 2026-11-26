@@ -4,7 +4,7 @@
  * See the LICENSE file for details.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { Controller, useForm } from "react-hook-form";
 import { ImageOutline } from "@makeplane/propel/icons";
@@ -70,6 +70,7 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
     control,
     watch,
     setValue,
+    trigger,
     formState: { errors, isSubmitting, isValid },
   } = useForm<TProfileSetupFormValues>({
     defaultValues: {
@@ -80,6 +81,13 @@ export const ProfileSetupStep = observer(function ProfileSetupStep({ handleStepC
     },
     mode: "onChange",
   });
+  // Immediately surface validation errors for pre-filled values (e.g. a GitLab SSO name)
+  // instead of leaving the user stuck on a disabled Continue with no visible error.
+  useEffect(() => {
+    if (user) {
+      void trigger(["first_name", "last_name"]);
+    }
+  }, [trigger, user?.first_name, user?.last_name]);
   // derived values
   const userAvatar = watch("avatar_url");
 
