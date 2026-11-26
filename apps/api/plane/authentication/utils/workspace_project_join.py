@@ -37,7 +37,9 @@ def process_workspace_project_invitations(user):
         return
 
     # Check if user has any accepted invites for workspace and add them to workspace
-    workspace_member_invites = WorkspaceMemberInvite.objects.filter(email=user.email, accepted=True)
+    workspace_member_invites = WorkspaceMemberInvite.objects.filter(email=user.email, accepted=True).select_related(
+        "workspace"
+    )
 
     WorkspaceMember.objects.bulk_create(
         [
