@@ -924,3 +924,43 @@ class TestParallelSupersede:
             thread.join(timeout=30)
         assert results == [200, 200]
         assert client.get(_v1(project, f"{a}/")).json()["related"] == [b]
+
+
+@pytest.mark.contract
+class TestImportReviewDeferral:
+    @pytest.mark.django_db
+    def test_correct_to_deferred_with_a_review(self, key, session, project):
+        n = _new(key, _v1(project), by="user")["number"]
+        Decision.objects.filter(number=n).update(needs_review=True)
+        url = _app(project, f"{n}/import-review/")
+        # Deferred without a date or condition to come back: refused, nothing changes
+        refused = session.post(url, {"status": "deferred"}, format="json").json()
+        assert (refused["code"], refused["field"]) == ("validation_error", "review_on")
+        assert Decision.objects.get(number=n).needs_review is True
+        assert session.post(url, {"status": "deferred", "review_on": "jutro"}, format="json").json()["field"] == (
+            "review_on"
+        )
+        deferred = session.post(
+            url,
+            {"status": "deferred", "review_condition": "gdy wróci kurier", "review_on": "2026-12-01"},
+            format="json",
+        ).json()
+        assert (deferred["status"], deferred["review_condition"], deferred["review_on"], deferred["needs_review"]) == (
+            "deferred",
+            "gdy wróci kurier",
+            "2026-12-01",
+            False,
+        )
+        changes = DecisionEvent.objects.get(decision__number=n, kind="import_reviewed").changes
+        assert changes["review_condition"] == [None, "gdy wróci kurier"]
+        assert deferred["pending_rollout"] is False
+
+    @pytest.mark.django_db
+    def test_review_fields_only_for_active_or_deferred(self, key, session, project):
+        n = _new(key, _v1(project), by="user")["number"]
+        Decision.objects.filter(number=n).update(needs_review=True)
+        url = _app(project, f"{n}/import-review/")
+        response = session.post(url, {"status": "done", "review_on": "2026-12-01"}, format="json").json()
+        assert (response["code"], response["field"]) == ("validation_error", "review_on")
+        active = session.post(url, {"review_on": "2027-02-01"}, format="json").json()
+        assert (active["status"], active["review_on"]) == ("active", "2027-02-01")
