@@ -112,6 +112,7 @@ INSTALLED_APPS = [
     "plane.license",
     "plane.api",
     "plane.authentication",
+    "plane.liviere",  # Liviere/plane fork: own models, migrations and tasks
     # Third-party things
     "rest_framework",
     "corsheaders",

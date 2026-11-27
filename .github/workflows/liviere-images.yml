@@ -1,0 +1,82 @@
+# Plane images of the Liviere/plane fork -> ghcr.io/<owner>/plane-<name>:<tag>.
+# Runs when a v<version>-liviere.<n> tag is pushed (e.g. v1.4.2-liviere.0), or manually.
+# Image names match the official ones (makeplane/plane-*), so compose only needs a different registry.
+# Default build args (empty URLs = relative paths), as in the official images.
+name: Liviere images
+
+on:
+  push:
+    tags:
+      - "v*-liviere.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag (e.g. v1.4.2-liviere.0)"
+        required: true
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: liviere-images-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: plane-${{ matrix.image }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: frontend
+            context: .
+            dockerfile: apps/web/Dockerfile.web
+          - image: space
+            context: .
+            dockerfile: apps/space/Dockerfile.space
+          - image: admin
+            context: .
+            dockerfile: apps/admin/Dockerfile.admin
+          - image: live
+            context: .
+            dockerfile: apps/live/Dockerfile.live
+          - image: backend
+            context: apps/api
+            dockerfile: apps/api/Dockerfile.api
+          - image: proxy
+            context: apps/proxy
+            dockerfile: apps/proxy/Dockerfile.ce
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Image name
+        id: meta
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          tag="${INPUT_TAG:-$GITHUB_REF_NAME}"
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "ref=ghcr.io/${owner}/plane-${{ matrix.image }}:${tag}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.ref }}
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}

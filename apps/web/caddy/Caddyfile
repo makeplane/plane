@@ -12,6 +12,11 @@
 	# Per-client-IP rate limiting for static asset requests
 	rate_limit {
 		zone static {
+			# Liviere/plane fork: hashed, immutable /assets/* files are not counted. One cold sign-in loads
+			# ~440 of them, so the 300/min limit left first visits after every release with blank pages.
+			match {
+				not path /assets/*
+			}
 			key {client_ip}
 			events 300
 			window 1m

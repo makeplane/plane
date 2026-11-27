@@ -8,5 +8,13 @@ import { CollaborationController } from "./collaboration.controller";
 import { DocumentController } from "./document.controller";
 import { HealthController } from "./health.controller";
 import { PdfExportController } from "./pdf-export.controller";
+// Liviere/plane fork
+import { LivierePageEditController } from "@/liviere/page-edit.controller";
 
-export const CONTROLLERS = [CollaborationController, DocumentController, HealthController, PdfExportController];
+export const CONTROLLERS = [
+  CollaborationController,
+  DocumentController,
+  HealthController,
+  PdfExportController,
+  LivierePageEditController,
+];

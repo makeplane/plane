@@ -1,0 +1,521 @@
+{
+  "liviere": {
+    "activity": {
+      "title": "Activity",
+      "view_grid": "Grid",
+      "view_log": "Work log",
+      "view_summaries": "Summaries",
+      "view_report": "Report",
+      "ranges": {
+        "7d": "7 days",
+        "30d": "30 days",
+        "90d": "90 days",
+        "month": "This month",
+        "prev_month": "Last month"
+      },
+      "range_custom": "Period: pick the first and the last day",
+      "range_too_long": "A period can be at most {days} days long.",
+      "all_members": "All members",
+      "summary": "{active} active quarters ≈ {hours} h · {events} actions",
+      "footnote": "One square is 15 minutes ({timezone}). The approximate time counts quarters with any activity; it is not logged working time.",
+      "actions": "{count, plural, one {# action} other {# actions}}",
+      "no_activity": "No activity",
+      "less": "Less",
+      "more": "More",
+      "now": "Now",
+      "close": "Close",
+      "load_error": "Activity could not be loaded. Please try again later.",
+      "untitled": "Untitled",
+      "deleted": "deleted",
+      "more_events": "Showing the latest 200 of {count} actions.",
+      "disabled": {
+        "title": "Activity is turned off",
+        "description": "A project admin can turn it on in project settings → Features → Activity.",
+        "no_access": "Only project admins and members can see the activity of this project.",
+        "open_settings": "Open settings"
+      },
+      "settings": {
+        "title": "Activity",
+        "description": "A heatmap of when work happens in this project: one square per 15 minutes, a darker colour for more actions. Data are also available through the API.",
+        "toggle_title": "Enable activity",
+        "toggle_description": "Shows Activity in the project navigation. Actions are recorded either way, so turning it on later shows the past too.",
+        "kinds_title": "Counted actions",
+        "kinds_description": "Pick the actions that count as activity. The choice also applies to past actions.",
+        "save_error": "The setting could not be saved. Please try again.",
+        "report_title": "Time report",
+        "report_description": "The report on the Activity page counts real time from series of actions, not from quarter-hours. The grid keeps showing quarters.",
+        "series_gap": "Gap between series (min)",
+        "series_gap_description": "Actions closer than this join one series (1–120).",
+        "series_padding": "Time added to a series (min)",
+        "series_padding_description": "A series lasts from its first to its last action plus this time, so a single action counts this long (0–60, not more than the gap)."
+      },
+      "groups": {
+        "issues": "Work items",
+        "pages": "Pages",
+        "cycles_modules": "Cycles and modules",
+        "views": "Views",
+        "log": "Work log"
+      },
+      "kinds": {
+        "issue": {
+          "created": "Work item created",
+          "state": "State changed",
+          "property": "Property changed",
+          "description": "Description edited",
+          "comment": "Comment",
+          "link": "Link or attachment",
+          "relation": "Relation or sub-work item",
+          "cycle_module": "Added to a cycle or module",
+          "archive": "Archived or deleted",
+          "intake": "Intake",
+          "reaction": "Reaction or vote"
+        },
+        "page": {
+          "created": "Page created",
+          "edited": "Page edited",
+          "renamed": "Page renamed",
+          "archive": "Page archived or deleted"
+        },
+        "cycle": {
+          "changed": "Cycle created or changed"
+        },
+        "module": {
+          "changed": "Module created or changed"
+        },
+        "view": {
+          "changed": "View created or changed"
+        },
+        "log": {
+          "entry": "Log entry"
+        }
+      },
+      "kind_descriptions": {
+        "issue": {
+          "created": "A new work item in the project.",
+          "state": "Moving a work item to another state.",
+          "property": "Name, assignees, priority, labels, dates, estimate or parent.",
+          "description": "Changes to the description of a work item.",
+          "comment": "Adding, editing or deleting a comment.",
+          "link": "Adding or removing a link or an attachment.",
+          "relation": "Blocking, related, duplicate and other relations.",
+          "cycle_module": "Adding a work item to a cycle or module, or removing it.",
+          "archive": "Archiving, restoring or deleting a work item.",
+          "intake": "Work items coming in through Intake.",
+          "reaction": "Emoji reactions and votes."
+        },
+        "page": {
+          "created": "A new page in the project.",
+          "edited": "Editing page content, at most once a minute per person and page.",
+          "renamed": "Changing the title of a page.",
+          "archive": "Archiving, restoring or deleting a page."
+        },
+        "cycle": {
+          "changed": "Creating or editing a cycle."
+        },
+        "module": {
+          "changed": "Creating or editing a module."
+        },
+        "view": {
+          "changed": "Creating or editing a view of this project."
+        },
+        "log": {
+          "entry": "Notes of what people and AI agents did, added on the Activity page or through the API. An entry fills every quarter of its time range."
+        }
+      },
+      "log": {
+        "add": "Add entry",
+        "add_title": "New log entry",
+        "edit_title": "Edit log entry",
+        "date": "Date",
+        "from": "From",
+        "to": "To (optional)",
+        "text": "What was done",
+        "text_placeholder": "For example: fixed the redirect after sign-in and deployed it to staging.",
+        "issue": "Work item (optional)",
+        "save_error": "Couldn't save the entry. Try again.",
+        "delete_title": "Delete log entry",
+        "delete_confirm": "The entry will be deleted permanently. This can't be undone.",
+        "delete_error": "Couldn't delete the entry. Try again.",
+        "day_summary": "{count, plural, one {# entry} other {# entries}} · {duration}",
+        "empty_title": "No log entries in this range",
+        "empty_description": "Log entries say what was done and when. Add them here, or let AI agents write them through the API or the plane-log script."
+      },
+      "report": {
+        "sources": {
+          "mixed": "Mixed",
+          "log": "Work log",
+          "grid": "Actions"
+        },
+        "include_entries": "List log entries",
+        "download": {
+          "pdf": "PDF",
+          "md": "Markdown",
+          "csv": "CSV"
+        },
+        "download_error": "The report could not be downloaded. Please try again.",
+        "describe_grid": "Time from series of actions, not from quarter-hours: actions less than {gap} min apart form a series that lasts from the first to the last action plus {padding} min, so a single action counts {padding} min.",
+        "describe_log": "Time from work log entries; an entry without an end counts {open} min.",
+        "describe_mixed": "Result (work log + actions outside the log): the time covered by a log entry or by a series of actions, counted once. Actions outside log entries add to it, also those of AI agents (for example work items created at night).",
+        "describe_union": "The project time counts the time anyone worked; parallel work counts once.",
+        "mixed_summary": "Work log {log} · series {grid} · difference {difference}",
+        "columns": {
+          "date": "Date",
+          "notes": "Log entry",
+          "work": "Work"
+        },
+        "total": "Total",
+        "unknown_person": "(deleted user)",
+        "skipped": "Skipped periods",
+        "describe_skipped": "Skipped periods are left out of every source; an entry or a series counts only outside them.",
+        "no_activity": "No activity in this period.",
+        "empty_days": "Days without activity left out: {count}."
+      },
+      "summaries": {
+        "description": "A few sentences on what happened in the project on a day, one per day and person. AI agents write them through the API or plane-log.",
+        "add": "Add summary",
+        "add_title": "Day summary",
+        "edit_title": "Edit day summary",
+        "text": "What happened that day",
+        "text_placeholder": "For example: the login fix is deployed; the backup review continues tomorrow.",
+        "replaces": "You already have a summary of this day; saving replaces it.",
+        "save_error": "Couldn't save the summary. Try again.",
+        "delete_title": "Delete day summary",
+        "delete_confirm": "The summary will be deleted permanently. This can't be undone.",
+        "delete_error": "Couldn't delete the summary. Try again.",
+        "empty_title": "No day summaries in this range",
+        "empty_description": "Write what happened on a day in a few sentences, or let AI agents do it with plane-log summary add.",
+        "read_error": "Couldn't check your summary of this day, so saving is blocked. Pick the date again or try later."
+      },
+      "skipped": {
+        "title": "Skipped periods",
+        "description": "Periods the time report leaves out, for example a night of automated tests. The grid hatches them but keeps counting. Times in {timezone}.",
+        "add": "Add period",
+        "empty": "No skipped periods.",
+        "add_title": "New skipped period",
+        "edit_title": "Edit skipped period",
+        "from": "From",
+        "to": "To",
+        "description_label": "Description (optional)",
+        "description_placeholder": "For example: night of automated tests",
+        "save_error": "Couldn't save the period. Try again.",
+        "delete_title": "Delete skipped period",
+        "delete_confirm": "The period will count in reports again.",
+        "delete_error": "Couldn't delete the period. Try again.",
+        "in_grid": "Skipped period: left out of the report",
+        "legend": "Skipped in reports"
+      }
+    },
+    "unread": {
+      "title": "New",
+      "description": "Work items created by others in your projects that you have not opened yet.",
+      "all_projects": "All projects",
+      "load_error": "Could not load new work items.",
+      "empty_title": "Nothing new",
+      "empty_description": "You have opened every work item others created in your projects.",
+      "mark_all": {
+        "button": "Mark all as read",
+        "title": "Mark all as read?",
+        "confirm": "{count, plural, one {# new work item} other {# new work items}} in all projects will no longer be new.",
+        "confirm_filtered": "{count, plural, one {# new work item} other {# new work items}} in the selected projects will no longer be new.",
+        "marking": "Marking",
+        "done": "{count, plural, one {# work item marked as read} other {# work items marked as read}}",
+        "error": "Could not mark the work items as read."
+      }
+    },
+    "push": {
+      "heading": "Push notifications",
+      "description": "A system notification about new work items others create in the projects you choose. Turn them on in every browser where you want them.",
+      "unavailable": "Push notifications are not available on this server.",
+      "browser": {
+        "title": "This browser",
+        "loading": "Checking this browser…",
+        "unsupported": "This browser does not support push notifications.",
+        "denied": "Notifications are blocked for this site. Allow them in the browser settings, then reload the page.",
+        "off": "Notifications are off in this browser.",
+        "on": "Notifications are on in this browser."
+      },
+      "enable": "Enable in this browser",
+      "disable": "Turn off",
+      "send_test": "Send a test",
+      "test_sent": "Test notification sent",
+      "projects": "Projects in {workspace}",
+      "errors": {
+        "enable": "Could not turn on notifications in this browser.",
+        "disable": "Could not turn off notifications in this browser.",
+        "projects": "Could not save the projects.",
+        "test": "Could not send a test notification."
+      }
+    },
+    "decisions": {
+      "title": "Decisions",
+      "retry": "Try again",
+      "count": "{shown} of {total}",
+      "empty": "No decisions for these filters.",
+      "incomplete": "The list is incomplete: the first {count} decisions were loaded. Narrow it with filters or tell the coordinator.",
+      "unavailable": {
+        "no_access": {
+          "title": "No access",
+          "description": "Project decisions are visible to project admins and members."
+        },
+        "disabled": {
+          "title": "Decisions are not turned on in this project",
+          "description": "A project admin turns them on in the project settings, under Features."
+        },
+        "error": {
+          "title": "Could not load the decisions",
+          "description": "Check the connection and try again."
+        },
+        "open_settings": "Open settings"
+      },
+      "settings": {
+        "title": "Decisions",
+        "description": "The register of decisions the project keeps to: one decision is one rule with a number, a state and a history of changes. Agents record and read them with plane-decision; here you can review and change them.",
+        "toggle_title": "Enable Decisions",
+        "toggle_description": "Shows “Decisions” in the project navigation and opens the register to project admins and members. When turned off, the decisions stay in the database, but nobody reads or changes them.",
+        "open_page": "Go to decisions",
+        "save_error": "Could not save the setting.",
+        "load_error": "Could not load the decision settings."
+      },
+      "tree": {
+        "label": "Areas",
+        "all": "All areas"
+      },
+      "filters": {
+        "status": "State",
+        "kind": "Kind",
+        "all_kinds": "all"
+      },
+      "status_filter": {
+        "current": "in force",
+        "proposed": "proposed",
+        "deferred": "deferred",
+        "done": "done",
+        "past": "superseded and revoked",
+        "all": "all"
+      },
+      "status": {
+        "proposed": "proposed",
+        "active": "in force",
+        "deferred": "deferred",
+        "done": "done",
+        "superseded": "superseded",
+        "revoked": "revoked"
+      },
+      "kinds": {
+        "product": "product",
+        "architecture": "architecture",
+        "process": "way of working",
+        "operations": "operations"
+      },
+      "author": {
+        "user": "owner",
+        "agent": "agent on the owner’s behalf",
+        "unknown": "author unknown"
+      },
+      "search": {
+        "placeholder": "Search decisions…",
+        "too_short": "Type at least {min} characters to search the text; a decision or work item number works at once.",
+        "loading": "Searching…",
+        "has_more": "Showing the newest results; narrow the phrase to see the rest.",
+        "error": "Search is not working; try again in a moment.",
+        "other_states": "{count, plural, one {# more result in other states.} other {# more results in other states.}}",
+        "show_all_states": "Show all"
+      },
+      "groups": {
+        "general": "General",
+        "from_area": "From area: {area}"
+      },
+      "badges": {
+        "confirm": "to confirm",
+        "review": "review",
+        "return": "return",
+        "approx": "approx.",
+        "overdue": "overdue",
+        "rollout": "waiting for rollout",
+        "imported": "imported, to review",
+        "also_area": "also: {area}"
+      },
+      "card": {
+        "estimated": "est.",
+        "date_unknown": "date unknown",
+        "from_area": "from area: {area}",
+        "issue_hidden": "You have no access to this work item",
+        "why": "Why",
+        "rejected": "Rejected",
+        "chain": "Versions of this decision",
+        "split_from": "Split from {from}, together with: {others}.",
+        "related": "Related",
+        "note": "Note",
+        "sources": "Sources",
+        "no_sources": "none",
+        "history": "History",
+        "history_loading": "Loading the history…",
+        "history_error": "Could not load the history.",
+        "yes": "yes",
+        "no": "no"
+      },
+      "channel": {
+        "app": "browser",
+        "api": "terminal"
+      },
+      "events": {
+        "created": "recorded",
+        "proposed": "proposed",
+        "accepted": "accepted",
+        "confirmed": "confirmed",
+        "deferred": "deferred",
+        "resumed": "back from deferral",
+        "done": "done",
+        "revoked": "revoked",
+        "rejected": "proposal rejected",
+        "reviewed": "reviewed, stays",
+        "import_reviewed": "reviewed after import",
+        "edited": "corrected",
+        "linked": "work items or sources added",
+        "superseded": "superseded",
+        "rollout_ack": "rolled out by the coordinator",
+        "imported": "imported"
+      },
+      "fields": {
+        "title": "rule",
+        "rationale": "why",
+        "rejected": "rejected",
+        "note": "note",
+        "area": "area",
+        "mechanism": "mechanism",
+        "area2": "second area",
+        "kind": "kind",
+        "status": "state",
+        "decided_by": "author",
+        "confirmed": "confirmed",
+        "decided_on": "decision date",
+        "review_on": "review date",
+        "review_condition": "review condition",
+        "issues": "work items",
+        "sources": "sources",
+        "related": "related",
+        "supersedes": "supersedes",
+        "superseded_by": "superseded by",
+        "pending_rollout": "waiting for rollout",
+        "needs_review": "to review",
+        "estimated": "estimated fields"
+      },
+      "queues": {
+        "label": "Queues",
+        "confirm": "To confirm",
+        "review": "To review",
+        "rollout": "Waiting for rollout",
+        "proposed": "Proposed",
+        "imported": "To review after import",
+        "rollout_info": "The project coordinator sees these changes in their inbox (plane-decision inbox), carries them into the rules and the code, then checks them off."
+      },
+      "actions": {
+        "import-ok": "Reviewed, correct",
+        "import-fix": "Correct",
+        "confirm": "Confirm",
+        "reviewed": "Reviewed, stays",
+        "change": "Change",
+        "defer": "Defer",
+        "done": "Done",
+        "revoke": "Revoke",
+        "accept": "Accept",
+        "change-accept": "Change and accept",
+        "reject": "Reject",
+        "resume": "Back to it",
+        "postpone": "Move the return"
+      },
+      "change": {
+        "title": "New wording of the decision",
+        "why_change": "Why you change it",
+        "why": "Why",
+        "version": "New decision {index}",
+        "remove": "Remove",
+        "add_version": "+ Add another decision (split)",
+        "save": "Save the new version",
+        "save_accept": "Save and accept",
+        "hint": "The new version is in force at once. The old one stays in the chain of versions as superseded, and the project coordinator sees the change in their inbox and carries it into the rules and the code.",
+        "hint_split": "Each new decision is a rule of its own and in force at once. The old one stays in the chain as superseded by all of them, and the project coordinator sees the change in their inbox.",
+        "hint_accept": "The proposal is accepted in this wording as your decision and goes to the project coordinator's inbox."
+      },
+      "dialogs": {
+        "condition": "Condition (optional)",
+        "condition_placeholder": "e.g. when returns exceed 20 a month",
+        "date_or_condition": "Give a date or a condition.",
+        "reason": "Reason (optional)",
+        "defer": {
+          "title": "Defer {number}",
+          "description": "The decision is not in force until the date or until the condition is met. The project coordinator sees this in their inbox.",
+          "date": "Back to it on",
+          "submit": "Defer"
+        },
+        "review": {
+          "title": "Review {number}",
+          "description": "The decision stays as it is. Give the date of the next review, or leave both fields empty if no further review is needed.",
+          "date": "Next review",
+          "submit": "Save the review"
+        },
+        "postpone": {
+          "title": "Move the return of {number}",
+          "description": "The decision stays deferred; only the date or the condition of its return changes.",
+          "submit": "Save"
+        },
+        "revoke": {
+          "title": "Revoke {number}?",
+          "description": "The decision stops being in force and nothing replaces it. The project coordinator sees this in their inbox.",
+          "submit": "Revoke"
+        },
+        "reject": {
+          "title": "Reject the proposal {number}?",
+          "description": "The proposal does not come into force and stays in the register as revoked.",
+          "submit": "Reject"
+        },
+        "import_fix": {
+          "title": "Correct {number}",
+          "description": "Correct what the import estimated or did not know. Once saved, the decision leaves the queue “To review after import”.",
+          "author": "Who decided",
+          "pick_author": "choose…",
+          "author_user": "my decision",
+          "author_agent": "an agent",
+          "author_required": "The author is unknown: choose who decided.",
+          "date": "Decision date",
+          "status": "State",
+          "submit": "Save the corrections"
+        }
+      },
+      "errors": {
+        "title": "Could not save the change",
+        "unknown": "The server refused the change.",
+        "invalid_transition": "This action is not possible in the current state of the decision. Reload the page: someone may have just changed it.",
+        "already_superseded": "This decision is already superseded. Change its new version instead.",
+        "already_confirmed": "This decision is already confirmed.",
+        "not_needs_review": "This decision no longer waits for a review after import.",
+        "nothing_to_change": "There is nothing to change.",
+        "validation_error": "Check the fields of the form: one has a wrong value or is too long.",
+        "conflict": "Someone changed this decision at the same moment. Try again."
+      },
+      "views": {
+        "areas": "Areas",
+        "map": "Map"
+      },
+      "map": {
+        "count": "{decisions, plural, one {# decision} other {# decisions}} in {areas, plural, one {# area} other {# areas}}",
+        "in_force": "{count} in force",
+        "legend": {
+          "active": "in force",
+          "proposed": "proposed",
+          "deferred": "deferred",
+          "done": "done",
+          "superseded": "superseded or revoked",
+          "attention": "waiting for you or for a rollout",
+          "supersedes": "supersedes",
+          "related": "related"
+        },
+        "hint": "Hover a decision to see its links; click it to open it.",
+        "narrow": "Links show on a wider screen; click a decision to open it.",
+        "all_lines": "Show all lines ({count})",
+        "focus_lines": "Show only for the pointed decision",
+        "close": "Close"
+      }
+    }
+  }
+}

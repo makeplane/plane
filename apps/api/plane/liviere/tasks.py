@@ -1,0 +1,102 @@
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+# Celery tasks of the Liviere/plane fork, found by app.autodiscover_tasks() (plane/celery.py).
+# Scheduled by django_celery_beat rows created in our migrations, so plane/celery.py stays untouched.
+
+# Third party imports
+from celery import shared_task
+
+# Module imports
+from plane.db.models import IssueActivity
+from plane.liviere.activity.record import sync_issue_activity
+from plane.liviere.models import ActivityEvent
+from plane.utils.exception_logger import log_exception
+
+SYNC_ISSUE_ACTIVITY_TASK = "plane.liviere.tasks.sync_issue_activity_events"
+
+
+@shared_task(name=SYNC_ISSUE_ACTIVITY_TASK)
+def sync_issue_activity_events():
+    """Copies new work item history (IssueActivity) into the activity heatmap events."""
+    try:
+        return sync_issue_activity(IssueActivity, ActivityEvent)
+    except Exception as e:
+        log_exception(e)
+        return 0
+
+
+SYNC_UNREAD_MEMBERSHIPS_TASK = "plane.liviere.tasks.sync_unread_memberships"
+
+
+@shared_task(name=SYNC_UNREAD_MEMBERSHIPS_TASK)
+def sync_unread_memberships():
+    """Notices people added to a project again ("New" work items, plane/liviere/unread/queries.py)."""
+    from plane.liviere.unread.queries import sync_membership_states
+
+    try:
+        return sync_membership_states()
+    except Exception as e:
+        log_exception(e)
+        return 0
+
+
+NOTIFY_NEW_WORK_ITEM_TASK = "plane.liviere.tasks.notify_new_work_item"
+NOTIFY_PROJECT_WORK_ITEMS_TASK = "plane.liviere.tasks.notify_project_work_items"
+SEND_TEST_PUSH_TASK = "plane.liviere.tasks.send_test_push"
+
+
+@shared_task(name=NOTIFY_NEW_WORK_ITEM_TASK)
+def notify_new_work_item(issue_id):
+    """Web push about one new work item (queued by plane/liviere/push/signals.py when coalescing is off)."""
+    from plane.liviere.push.config import vapid_config
+    from plane.liviere.push.notify import notify_new_work_item as notify
+
+    try:
+        config = vapid_config()
+        return notify(issue_id, config) if config else 0
+    except Exception as e:
+        log_exception(e)
+        return 0
+
+
+@shared_task(name=NOTIFY_PROJECT_WORK_ITEMS_TASK)
+def notify_project_work_items(project_id, since):
+    """Web push about the new work items of a project collected in one window (plane/liviere/push/signals.py).
+
+    The window's key is deleted first, before anything is read: a work item committed later queues a new task, so it
+    is never lost; one committed between the delete and the reading is counted now and gives at most one more
+    notification a window later."""
+    from datetime import datetime
+
+    from django.core.cache import cache
+
+    from plane.liviere.push.config import vapid_config
+    from plane.liviere.push.notify import notify_project_work_items as notify
+    from plane.liviere.push.signals import pending_key
+
+    try:
+        cache.delete(pending_key(project_id))
+    except Exception as e:
+        log_exception(e)
+    try:
+        config = vapid_config()
+        return notify(project_id, datetime.fromisoformat(since), config) if config else 0
+    except Exception as e:
+        log_exception(e)
+        return 0
+
+
+@shared_task(name=SEND_TEST_PUSH_TASK)
+def send_test_push(user_id):
+    """Test notification to the person's own browsers (Profile settings → Notifications)."""
+    from plane.liviere.push.config import vapid_config
+    from plane.liviere.push.notify import send_test
+
+    try:
+        config = vapid_config()
+        return send_test(user_id, config) if config else 0
+    except Exception as e:
+        log_exception(e)
+        return 0

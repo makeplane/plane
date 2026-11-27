@@ -53,7 +53,9 @@ export type TPageActions =
   | "delete"
   | "version-history"
   | "export"
-  | "move";
+  | "move"
+  // Liviere/plane fork
+  | "liviere-api-block";
 
 type Props = {
   extraOptions?: (TContextMenuItem & { key: TPageActions })[];

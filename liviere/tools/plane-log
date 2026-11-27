@@ -1,0 +1,443 @@
+#!/usr/bin/env python3
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+"""
+plane-log: activity log entries of the Liviere/plane fork from the command line, for people and AI agents.
+
+An entry says what was done in a project and when (a time range); it shows up in the project's "Activity"
+heatmap. `summary` keeps one short summary of a day per author; `report` downloads the project's time report of
+a period. Only the Python standard library is needed.
+
+Configuration (the same file as the Plane MCP server; variables set in the environment win):
+    ~/.config/plane-mcp/env (or $PLANE_LOG_ENV) with PLANE_API_KEY, PLANE_WORKSPACE_SLUG, PLANE_BASE_URL
+
+Examples:
+    plane-log add -p ORD --minutes 40 --issue ORD-12 "Fixed the login redirect, tests pass."
+    plane-log add -p ORD --from 10:05 --to 10:50 "Reviewed the backup script."
+    plane-log list -p ORD --date 2026-10-27        # log entries of a day
+    plane-log list -p ORD --date 2026-10-27 --at 14:30 --events   # everything in that quarter
+    plane-log edit -p ORD 123 --text "Better description"
+    plane-log rm -p ORD 123
+    plane-log summary add -p ORD "Login fixed and deployed; backups checked."   # today's summary
+    plane-log summary add -p ORD --append "Also reviewed the backup script."     # adds a paragraph
+    plane-log summary show -p ORD --days 7
+    plane-log report -p ORD --month previous -o ORD-october.pdf         # last month, PDF
+    plane-log report -p ORD --from 2026-11-01 --to 2026-11-07 --format csv --source log -o week.csv
+"""
+
+import argparse
+import json
+import os
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+ENV_FILE = os.path.expanduser(os.environ.get("PLANE_LOG_ENV", "~/.config/plane-mcp/env"))
+QUARTER = timedelta(minutes=15)
+
+
+class Failure(Exception):
+    pass
+
+
+def load_config():
+    values = {}
+    if os.path.exists(ENV_FILE):
+        with open(ENV_FILE, encoding="utf-8") as env:
+            for line in env:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, _, value = line.partition("=")
+                    values[key.strip()] = value.strip().strip("'\"")
+    config = {
+        name: os.environ.get(name) or values.get(name, "")
+        for name in ("PLANE_API_KEY", "PLANE_WORKSPACE_SLUG", "PLANE_BASE_URL")
+    }
+    missing = [name for name, value in config.items() if not value]
+    if missing:
+        raise Failure(f"Missing {', '.join(missing)} (environment or {ENV_FILE})")
+    return config
+
+
+class Plane:
+    def __init__(self, config):
+        self.base = config["PLANE_BASE_URL"].rstrip("/") + "/api/v1/workspaces/" + config["PLANE_WORKSPACE_SLUG"]
+        self.root = config["PLANE_BASE_URL"].rstrip("/") + "/api/v1"
+        self.key = config["PLANE_API_KEY"]
+
+    def request(self, method, url, params=None, body=None, raw=False):
+        """The JSON response, or with `raw` the response body as bytes (report files)."""
+        if params:
+            url += "?" + urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
+        data = json.dumps(body).encode() if body is not None else None
+        request = urllib.request.Request(url, data=data, method=method)
+        request.add_header("X-Api-Key", self.key)
+        request.add_header("Accept", "*/*" if raw else "application/json")
+        request.add_header("User-Agent", "plane-log")
+        if data is not None:
+            request.add_header("Content-Type", "application/json")
+        try:
+            with urllib.request.urlopen(request, timeout=60) as response:
+                body_bytes = response.read()
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode(errors="replace")
+            try:
+                parsed = json.loads(detail)
+                detail = parsed.get("error") or parsed.get("detail") or detail
+            except (ValueError, AttributeError):
+                pass
+            raise Failure(f"HTTP {e.code}: {detail}")
+        except urllib.error.URLError as e:
+            raise Failure(f"Cannot reach Plane: {e.reason}")
+        if raw:
+            return body_bytes
+        return json.loads(body_bytes) if body_bytes else None
+
+    def project(self, ref):
+        """Project by identifier (ORD), id or name."""
+        projects = self.request("GET", f"{self.base}/projects/", {"per_page": 100})["results"]
+        for project in projects:
+            if ref.lower() in (project["identifier"].lower(), str(project["id"]), project["name"].lower()):
+                return project
+        known = ", ".join(sorted(p["identifier"] for p in projects))
+        raise Failure(f"Project {ref} not found (projects of this key: {known or 'none'})")
+
+    def activity(self, project, path=""):
+        return f"{self.base}/projects/{project['id']}/activity/{path}"
+
+
+def local_moment(value, day):
+    """HH:MM on the given day, or a full ISO date-time; local time when no offset is given."""
+    try:
+        if len(value) <= 5 and ":" in value:
+            hours, minutes = (int(part) for part in value.split(":"))
+            moment = datetime(day.year, day.month, day.day, hours, minutes)
+        else:
+            moment = datetime.fromisoformat(value)
+    except ValueError:
+        raise Failure(f"Not a time: {value} (use HH:MM or an ISO date-time)")
+    return moment if moment.tzinfo else moment.astimezone()
+
+
+def time_fields(args, changing=False):
+    day = date.fromisoformat(args.date) if args.date else date.today()
+    fields = {}
+    if args.minutes is not None:
+        if args.to:
+            raise Failure("Use --to or --minutes, not both")
+        fields["duration_minutes"] = args.minutes
+    if args.start:
+        fields["started_at"] = local_moment(args.start, day).isoformat()
+    if args.to:
+        if not args.start and not changing:
+            raise Failure("--to needs --from")
+        end = local_moment(args.to, day)
+        if args.start and end <= local_moment(args.start, day):
+            end += timedelta(days=1)  # work past midnight
+        fields["ended_at"] = end.isoformat()
+    return fields
+
+
+def read_text(value):
+    text = sys.stdin.read() if value == "-" else value
+    if not text or not text.strip():
+        raise Failure("The text is empty")
+    return text
+
+
+def clock(value):
+    return datetime.fromisoformat(value).astimezone().strftime("%H:%M")
+
+
+def print_events(events):
+    for event in events:
+        when = clock(event["occurred_at"])
+        if event.get("ended_at"):
+            when += "–" + clock(event["ended_at"])
+        actor = (event.get("actor") or {}).get("display_name") or "-"
+        target = ""
+        if event.get("issue"):
+            target = " ".join(filter(None, [event["issue"].get("identifier"), event["issue"].get("name")]))
+        elif event.get("page") or event.get("object"):
+            target = (event.get("page") or event.get("object")).get("name") or ""
+        line = f"#{event['id']}  {when:<11}  {actor}  {event['kind']}"
+        print(f"{line}  [{target}]" if target else line)
+        if event.get("note"):
+            for text_line in event["note"].splitlines():
+                print(f"      {text_line}")
+    if not events:
+        print("No entries.")
+
+
+def command_add(plane, args):
+    project = plane.project(args.project)
+    body = {"text": read_text(args.text), **time_fields(args)}
+    if args.issue:
+        body["issue"] = args.issue
+    if args.page:
+        body["page"] = args.page
+    entry = plane.request("POST", plane.activity(project, "logs/"), body=body)
+    return entry if args.json else print_events([entry])
+
+
+def command_edit(plane, args):
+    project = plane.project(args.project)
+    body = time_fields(args, changing=True)
+    if args.text is not None:
+        body["text"] = read_text(args.text)
+    if args.issue is not None:
+        body["issue"] = args.issue or None
+    if args.page is not None:
+        body["page"] = args.page or None
+    if not body:
+        raise Failure("Nothing to change")
+    entry = plane.request("PATCH", plane.activity(project, f"logs/{args.id}/"), body=body)
+    return entry if args.json else print_events([entry])
+
+
+def command_rm(plane, args):
+    project = plane.project(args.project)
+    plane.request("DELETE", plane.activity(project, f"logs/{args.id}/"))
+    if not args.json:
+        print(f"Deleted #{args.id}")
+
+
+def command_list(plane, args):
+    project = plane.project(args.project)
+    day = date.fromisoformat(args.date) if args.date else date.today()
+    if args.at:
+        start = local_moment(args.at, day)
+        start = start.replace(minute=start.minute - start.minute % 15)
+        end = start + QUARTER
+    else:
+        start = datetime(day.year, day.month, day.day).astimezone()
+        end = datetime.combine(day + timedelta(days=args.days), datetime.min.time()).astimezone()
+    params = {
+        "from": start.date().isoformat(),
+        "to": end.date().isoformat(),
+        "start": start.isoformat(),
+        "end": end.isoformat(),
+        "per_page": 500,
+    }
+    if args.mine:
+        params["actor"] = plane.request("GET", f"{plane.root}/users/me/")["id"]
+    path = "events/" if args.events else "logs/"
+    events = plane.request("GET", plane.activity(project, path), params)["results"]
+    events.reverse()  # oldest first
+    return events if args.json else print_events(events)
+
+
+def print_summaries(summaries):
+    for summary in summaries:
+        author = (summary.get("author") or {}).get("display_name") or "-"
+        print(f"#{summary['id']}  {summary['date']}  {author}")
+        for text_line in summary["text"].splitlines():
+            print(f"      {text_line}")
+    if not summaries:
+        print("No summaries.")
+
+
+def project_today(project):
+    """Today in the project time zone (the computer's day when the zone is unknown)."""
+    try:
+        return datetime.now(ZoneInfo(project.get("timezone") or "UTC")).date()
+    except (ZoneInfoNotFoundError, ValueError):
+        return date.today()
+
+
+def my_summary(plane, project, day):
+    """Your summary of the day, or None."""
+    params = {"from": day, "to": day, "actor": plane.request("GET", f"{plane.root}/users/me/")["id"]}
+    results = plane.request("GET", plane.activity(project, "summaries/"), params)["results"]
+    return results[0] if results else None
+
+
+def command_summary(plane, args):
+    project = plane.project(args.project)
+    if args.action == "add":
+        if args.replace and args.append:
+            raise Failure("Use --replace or --append, not both")
+        text = read_text(args.text)
+        day = args.date or None
+        # The API replaces an existing summary of the day; ask first, so parallel sessions don't overwrite
+        # each other unnoticed. Without --date the day is today in the project time zone.
+        if not day:
+            day = project_today(project).isoformat()
+        existing = my_summary(plane, project, day)
+        if existing and not (args.replace or args.append):
+            raise Failure(
+                f"You already have a summary of {day} (#{existing['id']}): "
+                "add --replace to overwrite it or --append to add a paragraph"
+            )
+        if existing and args.append:
+            text = existing["text"].rstrip() + "\n\n" + text.strip()
+        summary = plane.request("POST", plane.activity(project, "summaries/"), body={"date": day, "text": text})
+        return summary if args.json else print_summaries([summary])
+    if args.action == "show":
+        day = date.fromisoformat(args.date) if args.date else project_today(project)
+        start = day - timedelta(days=args.days - 1)
+        params = {"from": start.isoformat(), "to": day.isoformat()}
+        if args.mine:
+            params["actor"] = plane.request("GET", f"{plane.root}/users/me/")["id"]
+        summaries = plane.request("GET", plane.activity(project, "summaries/"), params)["results"]
+        return summaries if args.json else print_summaries(summaries)
+    if args.action == "edit":
+        body = {"text": read_text(args.text)}
+        summary = plane.request("PATCH", plane.activity(project, f"summaries/{args.id}/"), body=body)
+        return summary if args.json else print_summaries([summary])
+    plane.request("DELETE", plane.activity(project, f"summaries/{args.id}/"))
+    if not args.json:
+        print(f"Deleted summary #{args.id}")
+
+
+def month_range(today, which):
+    """(first day, last day) of the current month up to today, or of the whole previous month."""
+    first = today.replace(day=1)
+    if which == "current":
+        return first, today
+    last = first - timedelta(days=1)
+    return last.replace(day=1), last
+
+
+def command_report(plane, args):
+    project = plane.project(args.project)
+    if args.month:
+        if args.start or args.end:
+            raise Failure("Use --month or --from/--to, not both")
+        try:
+            zone = ZoneInfo(project.get("timezone") or "UTC")
+        except (ZoneInfoNotFoundError, ValueError):
+            zone = None
+        today = datetime.now(zone).date() if zone else date.today()
+        start, end = month_range(today, args.month)
+    else:
+        if not (args.start and args.end):
+            raise Failure("Give --from and --to (YYYY-MM-DD) or --month current|previous")
+        try:
+            start, end = date.fromisoformat(args.start), date.fromisoformat(args.end)
+        except ValueError:
+            raise Failure("--from and --to must be dates in the YYYY-MM-DD format")
+    output = args.output if args.output and args.output != "-" else None
+    export = args.format or (os.path.splitext(output)[1].lstrip(".").lower() if output else "") or "md"
+    if export not in ("pdf", "md", "csv", "json"):
+        export = "md"
+    if export == "pdf" and not output:
+        raise Failure("A PDF needs -o FILE")
+    params = {"from": start.isoformat(), "to": end.isoformat(), "source": args.source, "lang": args.lang}
+    if args.no_entries:
+        params["entries"] = "0"
+    if args.mine:
+        params["actor"] = plane.request("GET", f"{plane.root}/users/me/")["id"]
+    url = plane.activity(project, "report/")
+    if export == "json" or args.json:
+        content = (json.dumps(plane.request("GET", url, params), ensure_ascii=False, indent=2) + "\n").encode()
+    else:
+        content = plane.request("GET", url, {**params, "export": export}, raw=True)
+    if output:
+        with open(output, "wb") as target:
+            target.write(content)
+        print(f"Saved {output} ({len(content)} bytes, {start}–{end})", file=sys.stderr)
+    else:
+        sys.stdout.buffer.write(content)
+        sys.stdout.flush()
+
+
+def add_time_options(parser):
+    parser.add_argument("--from", dest="start", help="start: HH:MM (on --date, local time) or ISO date-time")
+    parser.add_argument("--to", help="end: HH:MM or ISO date-time")
+    parser.add_argument("--minutes", type=float, help="length; without --from the entry ends now")
+    parser.add_argument("--date", help="day of --from/--to, YYYY-MM-DD (default: today)")
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        prog="plane-log", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("-p", "--project", required=True, help="project identifier, e.g. ORD")
+    common.add_argument("--json", action="store_true", help="print the API response as JSON")
+    commands = parser.add_subparsers(dest="command", required=True)
+
+    add = commands.add_parser("add", parents=[common], help="add an entry")
+    add.add_argument("text", help='what was done ("-" reads standard input)')
+    add.add_argument("--issue", help="work item, e.g. ORD-12")
+    add.add_argument("--page", help="page UUID")
+    add_time_options(add)
+
+    edit = commands.add_parser("edit", parents=[common], help="change your entry")
+    edit.add_argument("id", type=int)
+    edit.add_argument("--text", help='new text ("-" reads standard input)')
+    edit.add_argument("--issue", help='work item ("" removes it)')
+    edit.add_argument("--page", help='page UUID ("" removes it)')
+    add_time_options(edit)
+
+    rm = commands.add_parser("rm", parents=[common], help="delete your entry")
+    rm.add_argument("id", type=int)
+
+    show = commands.add_parser("list", parents=[common], help="entries of a day (or of one quarter with --at)")
+    show.add_argument("--date", help="YYYY-MM-DD (default: today)")
+    show.add_argument("--days", type=int, default=1, help="number of days from --date (default: 1)")
+    show.add_argument("--at", help="HH:MM: only the 15-minute quarter with this time")
+    show.add_argument("--events", action="store_true", help="all counted actions, not only log entries")
+    show.add_argument("--mine", action="store_true", help="only your own")
+
+    summary = commands.add_parser("summary", help="day summaries: add, show, edit, rm")
+    summary_actions = summary.add_subparsers(dest="action", required=True)
+    summary_add = summary_actions.add_parser("add", parents=[common], help="your summary of a day")
+    summary_add.add_argument("text", help='the summary ("-" reads standard input)')
+    summary_add.add_argument("--date", help="YYYY-MM-DD (default: today in the project time zone)")
+    summary_add.add_argument("--replace", action="store_true", help="overwrite your summary of that day")
+    summary_add.add_argument("--append", action="store_true", help="add a paragraph to your summary of that day")
+    summary_show = summary_actions.add_parser("show", parents=[common], help="summaries of a day or a few days")
+    summary_show.add_argument("--date", help="last day, YYYY-MM-DD (default: today in the project time zone)")
+    summary_show.add_argument("--days", type=int, default=1, help="number of days up to --date (default: 1)")
+    summary_show.add_argument("--mine", action="store_true", help="only your own")
+    summary_edit = summary_actions.add_parser("edit", parents=[common], help="change a summary")
+    summary_edit.add_argument("id", type=int)
+    summary_edit.add_argument("--text", required=True, help='new text ("-" reads standard input)')
+    summary_rm = summary_actions.add_parser("rm", parents=[common], help="delete a summary")
+    summary_rm.add_argument("id", type=int)
+
+    report = commands.add_parser("report", parents=[common], help="time report of a period (one project)")
+    report.add_argument("--from", dest="start", help="first day, YYYY-MM-DD")
+    report.add_argument("--to", dest="end", help="last day, YYYY-MM-DD")
+    report.add_argument("--month", choices=["current", "previous"], help="a month in the project time zone")
+    report.add_argument(
+        "--source", choices=["mixed", "log", "grid"], default="mixed", help="time source (default: mixed)"
+    )
+    report.add_argument(
+        "--format", choices=["pdf", "md", "csv", "json"], help="file format (default: from the -o extension, else md)"
+    )
+    report.add_argument("--lang", choices=["pl", "en"], help="language of the file (default: your Plane profile)")
+    report.add_argument("--mine", action="store_true", help="only your own time")
+    report.add_argument(
+        "--no-entries", action="store_true", help="leave the notes of log entries out of the report (day summaries stay)"
+    )
+    report.add_argument("-o", "--output", help="file to write (default: standard output)")
+
+    args = parser.parse_args(argv)
+    handlers = {
+        "add": command_add,
+        "edit": command_edit,
+        "rm": command_rm,
+        "list": command_list,
+        "summary": command_summary,
+        "report": command_report,
+    }
+    try:
+        result = handlers[args.command](Plane(load_config()), args)
+    except Failure as e:
+        print(f"plane-log: {e}", file=sys.stderr)
+        return 1
+    if args.json and result is not None and args.command != "report":
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

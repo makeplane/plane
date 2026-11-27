@@ -1,0 +1,118 @@
+{
+ "format": 2,
+ "sample": true,
+ "project": "DEMO",
+ "project_name": "Sklep z herbatą (projekt zmyślony, wzór formatu importu)",
+ "generated_on": "2026-11-27",
+ "areas": [
+  {"key": "zamowienia", "name": "Zamówienia", "mechanisms": [{"key": "zwroty", "name": "Zwroty"}, {"key": "wysylka", "name": "Wysyłka"}]},
+  {"key": "platnosci", "name": "Płatności", "mechanisms": [{"key": "faktury", "name": "Faktury"}]},
+  {"key": "praca", "name": "Sposób pracy", "mechanisms": []}
+ ],
+ "decisions": [
+  {
+   "number": 1,
+   "title": "Zwrot przyjmujemy do 14 dni od dostawy",
+   "rationale": "Tyle wymaga prawo i na tyle wystarczało miejsca w magazynie.",
+   "rejected": null,
+   "area": "zamowienia", "mechanism": "zwroty", "area2": null,
+   "kind": "product", "status": "superseded",
+   "decided_by": "user", "confirmed": true,
+   "decided_on": "2026-09-02", "review_on": null, "review_condition": null,
+   "issues": [], "sources": ["memory:project_returns_notes.md"],
+   "supersedes": null, "related": [],
+   "pending_rollout": false, "needs_review": true, "estimated": ["decided_on"], "note": null
+  },
+  {
+   "number": 2,
+   "title": "Zwrot przyjmujemy do 30 dni od dostawy",
+   "rationale": "Klienci często otwierają paczkę dopiero po 2–3 tygodniach.",
+   "rejected": "90 dni: towar traci świeżość, zanim wróci.",
+   "area": "zamowienia", "mechanism": "zwroty", "area2": null,
+   "kind": "product", "status": "active",
+   "decided_by": "user", "confirmed": true,
+   "decided_on": "2026-10-10", "review_on": null, "review_condition": null,
+   "issues": ["DEMO-3"], "sources": ["memory:project_returns_notes.md", "CLAUDE.md:41"],
+   "supersedes": 1, "related": [3],
+   "pending_rollout": false, "needs_review": false, "estimated": [], "note": null
+  },
+  {
+   "number": 3,
+   "title": "Paczki wychodzą raz dziennie, o 14:00",
+   "rationale": "Kurier odbiera raz dziennie, więc częstsze pakowanie niczego nie przyspiesza.",
+   "rejected": null,
+   "area": "zamowienia", "mechanism": "wysylka", "area2": null,
+   "kind": "operations", "status": "active",
+   "decided_by": "unknown", "confirmed": false,
+   "decided_on": null, "review_on": null, "review_condition": null,
+   "issues": [], "sources": ["docs:magazyn.md"],
+   "supersedes": null, "related": [2],
+   "pending_rollout": false, "needs_review": true, "estimated": [], "note": "Źródło nie podaje, kto i kiedy to ustalił."
+  },
+  {
+   "number": 4,
+   "title": "Fakturę korygującą po zwrocie wystawia system, bez udziału człowieka",
+   "rationale": "Ręczne korekty opóźniają zwrot pieniędzy o kilka dni.",
+   "rejected": null,
+   "area": "platnosci", "mechanism": "faktury", "area2": "zamowienia",
+   "kind": "process", "status": "deferred",
+   "decided_by": "user", "confirmed": true,
+   "decided_on": "2026-11-05", "review_on": null, "review_condition": "gdy liczba zwrotów przekroczy 20 miesięcznie",
+   "issues": [], "sources": ["memory:feedback_invoices.md"],
+   "supersedes": null, "related": [],
+   "pending_rollout": false, "needs_review": false, "estimated": [], "note": null
+  },
+  {
+   "number": 5,
+   "title": "Stare zamówienia z poprzedniego sklepu przenosimy raz, bez synchronizacji",
+   "rationale": "Poprzedni sklep był zamykany, więc nie było czego synchronizować.",
+   "rejected": "Synchronizacja dwukierunkowa przez miesiąc.",
+   "area": "zamowienia", "mechanism": null, "area2": null,
+   "kind": "operations", "status": "done",
+   "decided_by": "user", "confirmed": true,
+   "decided_on": "2026-10-20", "review_on": null, "review_condition": null,
+   "issues": ["DEMO-2"], "sources": ["memory:project_shop_move.md"],
+   "supersedes": null, "related": [],
+   "pending_rollout": false, "needs_review": false, "estimated": [], "note": null
+  },
+  {
+   "number": 6,
+   "title": "Zmiany cennika wchodzą tylko w poniedziałki",
+   "rationale": "Jeden dzień zmian ułatwia sprawdzenie, od kiedy obowiązywała cena.",
+   "rejected": null,
+   "area": "praca", "mechanism": null, "area2": "platnosci",
+   "kind": "process", "status": "active",
+   "decided_by": "agent", "confirmed": false,
+   "decided_on": "2026-11-24", "review_on": "2026-12-24", "review_condition": "po pierwszym miesiącu pracy w tym układzie",
+   "issues": [], "sources": ["memory:pricing_rules.md"],
+   "supersedes": null, "related": [],
+   "pending_rollout": false, "needs_review": false, "estimated": [], "note": null
+  },
+  {
+   "number": 7,
+   "title": "Raport ze zwrotów przychodzi mailem raz w tygodniu",
+   "rationale": "Codziennego raportu nikt nie czyta.",
+   "rejected": null,
+   "area": "zamowienia", "mechanism": "zwroty", "area2": null,
+   "kind": "operations", "status": "proposed",
+   "decided_by": "agent", "confirmed": false,
+   "decided_on": "2026-11-26", "review_on": null, "review_condition": null,
+   "issues": [], "sources": ["zlecenie:2026-11-26/C"],
+   "supersedes": null, "related": [2],
+   "pending_rollout": false, "needs_review": false, "estimated": [], "note": null
+  },
+  {
+   "number": 8,
+   "title": "Płatność przy odbiorze dostępna dla każdego zamówienia",
+   "rationale": "Część klientów nie ufa płatnościom w sieci.",
+   "rejected": null,
+   "area": "platnosci", "mechanism": null, "area2": null,
+   "kind": "product", "status": "revoked",
+   "decided_by": "user", "confirmed": true,
+   "decided_on": "2026-09-15", "review_on": null, "review_condition": null,
+   "issues": [], "sources": ["memory:project_shop_move.md"],
+   "supersedes": null, "related": [],
+   "pending_rollout": false, "needs_review": false, "estimated": [], "note": "Wycofana 2026-10-01: zbyt wiele nieodebranych paczek."
+  }
+ ]
+}

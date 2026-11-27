@@ -19,6 +19,7 @@ from rest_framework.request import Request
 from plane.utils.ip_address import get_client_ip
 from plane.utils.exception_logger import log_exception
 from plane.bgtasks.logger_task import process_logs
+from plane.liviere.search.privacy import is_private_api_path  # Liviere/plane fork
 
 api_logger = logging.getLogger("plane.api.request")
 
@@ -162,6 +163,9 @@ class APITokenLogMiddleware:
                 "ip_address": get_client_ip(request=request),
                 "user_agent": request.META.get("HTTP_USER_AGENT", None),
             }
+            # Liviere/plane fork: content search carries work item text; log the request without it
+            if is_private_api_path(request.path):
+                log_data.update(query_params="", body=None, response_body=None)
 
             process_logs.delay(log_data=log_data)
 

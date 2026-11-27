@@ -56,6 +56,7 @@ from plane.bgtasks.page_version_task import track_page_version
 from plane.bgtasks.recent_visited_task import recent_visited_task
 from plane.bgtasks.copy_s3_object import copy_s3_objects_of_description_and_assets
 from plane.app.permissions import ProjectPagePermission
+from plane.liviere.activity.record import record_page_archive  # Liviere/plane fork: activity heatmap
 
 
 def unarchive_archive_page_and_descendants(page_id, archived_at):
@@ -328,6 +329,7 @@ class PageViewSet(BaseViewSet):
         ).delete()
 
         unarchive_archive_page_and_descendants(page_id, datetime.now())
+        record_page_archive(page_id, request.user)  # Liviere/plane fork
 
         return Response({"archived_at": str(datetime.now())}, status=status.HTTP_200_OK)
 
@@ -357,6 +359,7 @@ class PageViewSet(BaseViewSet):
             page.save(update_fields=["parent"])
 
         unarchive_archive_page_and_descendants(page_id, None)
+        record_page_archive(page_id, request.user)  # Liviere/plane fork
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

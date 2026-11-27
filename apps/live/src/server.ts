@@ -24,6 +24,7 @@ import { HocusPocusServerManager } from "@/hocuspocus";
 import { drainCollaborationServer, withinShutdownDeadline } from "@/lib/drain-server";
 // redis
 import { redisManager } from "@/redis";
+import { liviereJsonParser } from "@/liviere/body-parser"; // Liviere/plane fork
 
 // Below the 30s container stop grace period, so Redis still disconnects cleanly before a SIGKILL.
 const SHUTDOWN_TIMEOUT_MS = 25_000;
@@ -66,6 +67,7 @@ export class Server {
     // Logging middleware
     this.app.use(loggerMiddleware);
     // Body parsing middleware
+    this.app.use(`${env.LIVE_BASE_PATH}/liviere`, liviereJsonParser); // Liviere/plane fork: larger page edits
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     // cors middleware

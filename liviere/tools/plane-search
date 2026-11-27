@@ -1,0 +1,163 @@
+#!/usr/bin/env python3
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+"""
+plane-search: find work items of the Liviere/plane fork whose title, description or comment contains a phrase,
+for people and AI agents. Only the Python standard library is needed.
+
+The phrase is a case-insensitive piece of text, not a search for meaning: use the stem of a word with Polish
+letters ("oszust" finds "oszustwo", "zapyta" finds "zapytań"). At least 3 characters. One line per work item,
+the best place first (title, description, comment), then the newest; archived work items are included.
+
+Configuration (the same file as plane-log and the Plane MCP server; variables set in the environment win):
+    ~/.config/plane-mcp/env (or $PLANE_LOG_ENV) with PLANE_API_KEY, PLANE_WORKSPACE_SLUG, PLANE_BASE_URL
+
+Examples:
+    plane-search limit 60 zapytań                # every project the key may see
+    plane-search -p LS backup                    # one project (identifier or id)
+    plane-search -p OO -n 50 --no-archived faktur
+    plane-search --json "rate limit"             # the API response as JSON
+"""
+
+import argparse
+import json
+import os
+import sys
+import urllib.error
+import urllib.request
+from datetime import datetime
+
+ENV_FILE = os.path.expanduser(os.environ.get("PLANE_LOG_ENV", "~/.config/plane-mcp/env"))
+
+
+class Failure(Exception):
+    pass
+
+
+# load_config and Plane.request are copied from plane-log (each tool is installed as a single file); keep them in
+# step with it (here the HTTP error is also closed after reading it).
+def load_config():
+    values = {}
+    if os.path.exists(ENV_FILE):
+        with open(ENV_FILE, encoding="utf-8") as env:
+            for line in env:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, _, value = line.partition("=")
+                    values[key.strip()] = value.strip().strip("'\"")
+    config = {
+        name: os.environ.get(name) or values.get(name, "")
+        for name in ("PLANE_API_KEY", "PLANE_WORKSPACE_SLUG", "PLANE_BASE_URL")
+    }
+    missing = [name for name, value in config.items() if not value]
+    if missing:
+        raise Failure(f"Missing {', '.join(missing)} (environment or {ENV_FILE})")
+    return config
+
+
+class Plane:
+    def __init__(self, config):
+        self.base = config["PLANE_BASE_URL"].rstrip("/") + "/api/v1/workspaces/" + config["PLANE_WORKSPACE_SLUG"]
+        self.key = config["PLANE_API_KEY"]
+
+    def request(self, method, url, body=None):
+        data = json.dumps(body).encode() if body is not None else None
+        request = urllib.request.Request(url, data=data, method=method)
+        request.add_header("X-Api-Key", self.key)
+        request.add_header("Accept", "application/json")
+        request.add_header("User-Agent", "plane-search")
+        if data is not None:
+            request.add_header("Content-Type", "application/json")
+        try:
+            with urllib.request.urlopen(request, timeout=60) as response:
+                body_bytes = response.read()
+        except urllib.error.HTTPError as e:
+            with e:
+                detail = e.read().decode(errors="replace")
+            try:
+                parsed = json.loads(detail)
+                detail = parsed.get("error") or parsed.get("detail") or detail
+            except (ValueError, AttributeError):
+                pass
+            raise Failure(f"HTTP {e.code}: {detail}")
+        except urllib.error.URLError as e:
+            raise Failure(f"Cannot reach Plane: {e.reason}")
+        return json.loads(body_bytes) if body_bytes else None
+
+    def search(self, q, project=None, limit=None, archived=True):
+        # POST: the phrase stays out of URLs and request logs
+        body = {"q": q, "archived": archived}
+        if project:
+            body["project"] = project
+        if limit is not None:
+            body["limit"] = limit
+        return self.request("POST", f"{self.base}/liviere/search/", body)
+
+
+def local_time(value):
+    """An ISO date-time of the API as local YYYY-MM-DD HH:MM."""
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone().strftime("%Y-%m-%d %H:%M")
+    except (AttributeError, ValueError):
+        return value or ""
+
+
+def place(result):
+    comments = result.get("comment_matches") or 0
+    if result["match"] == "comment":
+        return f"comment ({comments})" if comments > 1 else "comment"
+    return f"{result['match']} + comments ({comments})" if comments else result["match"]
+
+
+def format_results(data):
+    """Lines to print: one per work item, its fragment indented under it (not for a title match)."""
+    results = data.get("results") or []
+    if not results:
+        return ["No matches."]
+    lines = []
+    for result in results:
+        state = result.get("state") or "no state"
+        if result.get("archived"):
+            state += ", archived"
+        lines.append(f"{result['identifier']}  [{state}]  {place(result)}  {result['name']}")
+        if result["match"] != "title":
+            fragment = f"    {result.get('snippet') or ''}"
+            if result["match"] == "comment" and result.get("comment_created_at"):
+                fragment += f"   (comment {local_time(result['comment_created_at'])})"
+            lines.append(fragment)
+    footer = f"{len(results)} of {data.get('total', len(results))}"
+    if data.get("has_more"):
+        footer += ": narrow the phrase, add -p or raise -n (at most 100)"
+    lines.append(footer)
+    return lines
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        prog="plane-search", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("phrase", nargs="+", help="text to find; several words are joined with spaces")
+    parser.add_argument("-p", "--project", help="project identifier or id (default: every project of the key)")
+    parser.add_argument("-n", "--limit", type=int, help="number of work items, 1-100 (default: 20)")
+    parser.add_argument("--no-archived", action="store_true", help="leave archived work items out")
+    parser.add_argument("--json", action="store_true", help="print the API response as JSON")
+    args = parser.parse_args(argv)
+
+    try:
+        data = Plane(load_config()).search(
+            " ".join(args.phrase), project=args.project, limit=args.limit, archived=not args.no_archived
+        )
+    except Failure as e:
+        print(f"plane-search: {e}", file=sys.stderr)
+        return 1
+    if args.json:
+        print(json.dumps(data, ensure_ascii=False, indent=2))
+    else:
+        print("\n".join(format_results(data)))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

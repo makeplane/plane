@@ -1,0 +1,611 @@
+#!/usr/bin/env python3
+# Copyright (c) 2023-present Plane Software, Inc. and contributors
+# SPDX-License-Identifier: AGPL-3.0-only
+# See the LICENSE file for details.
+
+"""
+plane-decision: the decision register of the Liviere/plane fork from the command line, for AI agents and people.
+
+A decision is one rule of a project ("Returns are accepted for 30 days"), numbered per project (DEMO-D12), with a
+state, an area and a history. The project coordinator writes decisions with `add`; an executing session only
+proposes them with `propose`. `confirm` and `accept --by user` only on the owner's word. Only the Python
+standard library is needed.
+
+Configuration (the same file as plane-log and the Plane MCP server; variables set in the environment win):
+    ~/.config/plane-mcp/env (or $PLANE_LOG_ENV) with PLANE_API_KEY, PLANE_WORKSPACE_SLUG, PLANE_BASE_URL
+
+Examples:
+    plane-decision add -p DEMO --area zamowienia/zwroty --kind product "Zwrot przyjmujemy do 30 dni od dostawy"
+    plane-decision propose -p DEMO --area zamowienia --kind operations "Raport ze zwrotów raz w tygodniu"
+    plane-decision list -p DEMO --area zamowienia --brief       # one line per decision, for an order
+    plane-decision show -p DEMO D2
+    plane-decision search -p DEMO zwrot dni                    # every state; words joined with AND
+    plane-decision supersede -p DEMO D2 "Zwrot przyjmujemy do 60 dni od dostawy" --by user
+    plane-decision inbox -p DEMO
+    plane-decision ack -p DEMO D9 --issue DEMO-20
+    plane-decision areas -p DEMO
+    plane-decision import -p DEMO decisions.json               # dry run; --commit writes
+"""
+
+import argparse
+import json
+import os
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from datetime import datetime
+
+ENV_FILE = os.path.expanduser(os.environ.get("PLANE_LOG_ENV", "~/.config/plane-mcp/env"))
+KINDS = ("product", "architecture", "process", "operations")
+STATUSES = ("proposed", "active", "deferred", "done", "superseded", "revoked")
+QUEUES = ("confirm", "review", "rollout", "proposed", "imported")
+PER_PAGE = 1000
+MAX_PAGES = 50
+REASONS = {
+    "created": "new",
+    "accepted": "accepted proposal",
+    "supersedes": "changed",
+    "revoked": "revoked",
+    "deferred": "deferred",
+    "resumed": "back from deferral",
+    "corrected": "wording corrected",
+}
+
+
+class Failure(Exception):
+    def __init__(self, message, data=None):
+        super().__init__(message)
+        self.data = data
+
+
+# load_config and Plane.request are copied from plane-log (each tool is installed as a single file); keep them in
+# step with it (here a failed request also keeps the parsed body, for the errors of an import).
+def load_config():
+    values = {}
+    if os.path.exists(ENV_FILE):
+        with open(ENV_FILE, encoding="utf-8") as env:
+            for line in env:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, _, value = line.partition("=")
+                    values[key.strip()] = value.strip().strip("'\"")
+    config = {
+        name: os.environ.get(name) or values.get(name, "")
+        for name in ("PLANE_API_KEY", "PLANE_WORKSPACE_SLUG", "PLANE_BASE_URL")
+    }
+    missing = [name for name, value in config.items() if not value]
+    if missing:
+        raise Failure(f"Missing {', '.join(missing)} (environment or {ENV_FILE})")
+    return config
+
+
+class Plane:
+    def __init__(self, config):
+        self.base = config["PLANE_BASE_URL"].rstrip("/") + "/api/v1/workspaces/" + config["PLANE_WORKSPACE_SLUG"]
+        self.key = config["PLANE_API_KEY"]
+        self.project = None
+
+    def request(self, method, url, params=None, body=None):
+        if params:
+            url += "?" + urllib.parse.urlencode({k: v for k, v in params.items() if v is not None})
+        data = json.dumps(body).encode() if body is not None else None
+        request = urllib.request.Request(url, data=data, method=method)
+        request.add_header("X-Api-Key", self.key)
+        request.add_header("Accept", "application/json")
+        request.add_header("User-Agent", "plane-decision")
+        if data is not None:
+            request.add_header("Content-Type", "application/json")
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                body_bytes = response.read()
+        except urllib.error.HTTPError as e:
+            with e:
+                detail = e.read().decode(errors="replace")
+            parsed = None
+            try:
+                parsed = json.loads(detail)
+                detail = parsed.get("error") or parsed.get("detail") or detail
+            except (ValueError, AttributeError):
+                pass
+            raise Failure(f"HTTP {e.code}: {detail}", parsed if isinstance(parsed, dict) else None)
+        except urllib.error.URLError as e:
+            raise Failure(f"Cannot reach Plane: {e.reason}")
+        return json.loads(body_bytes) if body_bytes else None
+
+    def use_project(self, ref):
+        """Project by identifier (DEMO), id or name."""
+        projects = self.request("GET", f"{self.base}/projects/", {"per_page": 100})["results"]
+        for project in projects:
+            if ref.lower() in (project["identifier"].lower(), str(project["id"]), project["name"].lower()):
+                self.project = project
+                return project
+        known = ", ".join(sorted(p["identifier"] for p in projects))
+        raise Failure(f"Project {ref} not found (projects of this key: {known or 'none'})")
+
+    def url(self, path=""):
+        return f"{self.base}/projects/{self.project['id']}/liviere/decisions/{path}"
+
+    def get(self, path="", params=None):
+        return self.request("GET", self.url(path), params)
+
+    def post(self, path, body=None, params=None):
+        return self.request("POST", self.url(path), params, body if body is not None else {})
+
+    def patch(self, path, body):
+        return self.request("PATCH", self.url(path), body=body)
+
+
+def decision_number(value):
+    """12 from "12", "D12" or "DEMO-D12"."""
+    text = value.strip().upper()
+    if "-" in text:
+        text = text.rsplit("-", 1)[1]
+    text = text.removeprefix("D")
+    if not text.isdigit() or int(text) < 1:
+        raise argparse.ArgumentTypeError(f"not a decision: {value} (use 12, D12 or DEMO-D12)")
+    return int(text)
+
+
+def area_parts(value):
+    area, _, mechanism = value.partition("/")
+    return area, (mechanism or None)
+
+
+# Output
+
+
+def local_time(value, date_only=False):
+    """An ISO date-time of the API (UTC) in the local time of this machine: YYYY-MM-DD HH:MM."""
+    try:
+        moment = datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone()
+    except (AttributeError, ValueError):
+        return value or ""
+    return moment.strftime("%Y-%m-%d" if date_only else "%Y-%m-%d %H:%M")
+
+
+def where(d):
+    place = d["area"] + (f"/{d['mechanism']}" if d.get("mechanism") else "")
+    return place + (f" (+{d['area2']})" if d.get("area2") else "")
+
+
+def line(d, brief=False):
+    if brief:
+        return f"{d['identifier']}  {d['title']}"
+    flags = [d["status"]]
+    if d["status"] == "superseded" and d.get("superseded_by"):
+        prefix = d["identifier"].rsplit("-D", 1)[0]
+        flags = [f"superseded → {', '.join(f'{prefix}-D{n}' for n in d['superseded_by'])}"]
+    flags += [q for q in d.get("queues", []) if q != "proposed"]
+    return f"{d['identifier']:<9} [{', '.join(flags)}]  {where(d)}  {d['title']}"
+
+
+def detail(d):
+    prefix = d["identifier"].rsplit("-D", 1)[0]
+    rows = [
+        f"{d['identifier']}  {d['title']}",
+        f"  state:      {d['status']}" + (f" (queues: {', '.join(d['queues'])})" if d.get("queues") else ""),
+        f"  area:       {where(d)} · {d['kind']}",
+        f"  decided:    {d['decided_on'] or 'date unknown'} by {d['decided_by']}"
+        + ("" if d["confirmed"] or d["decided_by"] == "user" else ", not confirmed"),
+    ]
+    for label, name in (("rationale", "rationale"), ("rejected", "rejected"), ("note", "note")):
+        if d.get(name):
+            rows.append(f"  {label + ':':<11} {d[name]}")
+    if d.get("review_on") or d.get("review_condition"):
+        rows.append(f"  review:     {' · '.join(filter(None, [d.get('review_on'), d.get('review_condition')]))}")
+    if d.get("supersedes"):
+        rows.append(f"  supersedes: {prefix}-D{d['supersedes']}")
+    if d.get("superseded_by"):
+        rows.append(f"  superseded by: {', '.join(f'{prefix}-D{n}' for n in d['superseded_by'])}")
+    if d.get("related"):
+        rows.append(f"  related:    {', '.join(f'{prefix}-D{n}' for n in d['related'])}")
+    if d.get("issues"):
+        rows.append(
+            "  issues:     "
+            + ", ".join(i["identifier"] + (f" {i['name']}" if i.get("visible") else "") for i in d["issues"])
+        )
+    if d.get("sources"):
+        rows.append(f"  sources:    {', '.join(d['sources'])}")
+    if d.get("rollout"):
+        rows.append(f"  waiting for rollout: {REASONS.get(d['rollout']['reason'], d['rollout']['reason'])}")
+    for event in d.get("history", []):
+        who = (event.get("actor") or {}).get("display_name") or "?"
+        rows.append(f"  · {local_time(event['occurred_at'])}  {event['kind']} ({who}, {event['channel']})")
+    return rows
+
+
+def inbox_rows(d):
+    prefix = d["identifier"].rsplit("-D", 1)[0]
+    rollout = d.get("rollout") or {}
+    what = REASONS.get(rollout.get("reason"), rollout.get("reason") or "?")
+    if rollout.get("reason") == "supersedes" and d.get("supersedes"):
+        what = f"changed, supersedes {prefix}-D{d['supersedes']}"
+    when = local_time(rollout.get("at"), date_only=True)
+    return [f"{d['identifier']:<9} {what} · {when} · {where(d)}", f"          „{d['title']}”"]
+
+
+# Commands
+
+
+def decision_body(args):
+    area, mechanism = area_parts(args.area)
+    body = {"title": args.title, "area": area, "kind": args.kind}
+    if mechanism:
+        body["mechanism"] = mechanism
+    optional = {
+        "area2": args.area2,
+        "rationale": args.rationale,
+        "rejected": args.rejected,
+        "note": args.note,
+        "review_on": args.review_on,
+        "review_condition": args.review_condition,
+        "decided_on": args.decided_on,
+    }
+    body.update({k: v for k, v in optional.items() if v})
+    for name in ("issues", "sources", "related"):
+        if getattr(args, name):
+            body[name] = getattr(args, name)
+    return body
+
+
+def agent_flags(body, args):
+    if getattr(args, "by", None):
+        body["by"] = args.by
+    if getattr(args, "rollout", False):
+        body["rollout"] = True
+    return body
+
+
+def command_add(plane, args):
+    created = plane.post("", agent_flags(decision_body(args), args))
+    print(line(created))
+    return created
+
+
+def command_propose(plane, args):
+    created = plane.post("propose/", decision_body(args))
+    print(line(created))
+    return created
+
+
+def all_decisions(plane, params):
+    """Every page of the list (the coordinator pastes the whole --brief list into an order)."""
+    results, cursor = [], None
+    for _ in range(MAX_PAGES):
+        page = plane.get("", {**params, "per_page": PER_PAGE, "cursor": cursor})
+        results.extend(page["results"])
+        if not page.get("next_page_results"):
+            return results
+        cursor = page["next_cursor"]
+    print(f"plane-decision: the list was cut after {len(results)} decisions", file=sys.stderr)
+    return results
+
+
+def filters(args):
+    params = {
+        "area": area_parts(args.area)[0] if args.area else None,
+        "mechanism": args.mechanism or (area_parts(args.area)[1] if args.area else None),
+        "status": args.status,
+        "kind": args.kind,
+        "queue": args.queue,
+    }
+    return {k: v for k, v in params.items() if v}
+
+
+def command_list(plane, args):
+    results = all_decisions(plane, filters(args))
+    if not args.json:
+        for d in results:
+            print(line(d, brief=args.brief))
+        if not results:
+            print("No decisions.", file=sys.stderr)
+    return {"results": results}
+
+
+def command_show(plane, args):
+    d = plane.get(f"{args.number}/")
+    if not args.json:
+        print("\n".join(detail(d)))
+    return d
+
+
+def command_search(plane, args):
+    body = {"q": " ".join(args.phrase), "limit": args.limit, **filters(args)}
+    data = plane.post("search/", body)
+    if not args.json:
+        for d in data["results"]:
+            print(line(d))
+        print(f"{len(data['results'])} of {data['total']}", file=sys.stderr)
+    return data
+
+
+def command_supersede(plane, args):
+    titles = args.titles
+    if len(titles) == 1:
+        body = {"title": titles[0]}
+        if args.rationale:
+            body["rationale"] = args.rationale
+    else:
+        body = {
+            "decisions": [{"title": t, **({"rationale": args.rationale} if args.rationale else {})} for t in titles]
+        }
+    data = plane.post(f"{args.number}/supersede/", agent_flags(body, args))
+    if not args.json:
+        print(line(data["superseded"]))
+        for d in data["created"]:
+            print(line(d))
+    return data
+
+
+def command_operation(plane, args):
+    body = {}
+    if args.command == "revoke" and args.reason:
+        body["reason"] = args.reason
+    if args.command == "defer":
+        body.update({k: v for k, v in (("review_on", args.until), ("review_condition", args.when)) if v})
+    if args.command == "accept" and args.by:
+        body["by"] = args.by
+    if getattr(args, "rollout", False):
+        body["rollout"] = True
+    d = plane.post(f"{args.number}/{args.command}/", body)
+    if not args.json:
+        print(line(d))
+    return d
+
+
+def command_link(plane, args):
+    body = {k: v for k, v in (("issues", args.issues), ("sources", args.sources)) if v}
+    if not body:
+        raise Failure("give --issue and/or --source")
+    d = plane.post(f"{args.number}/link/", body)
+    if not args.json:
+        print(line(d))
+    return d
+
+
+def command_inbox(plane, args):
+    data = plane.get("inbox/")
+    if not args.json:
+        for d in data["results"]:
+            print("\n".join(inbox_rows(d)))
+        if not data["results"]:
+            print("Nothing waits for rollout.", file=sys.stderr)
+    return data
+
+
+def command_ack(plane, args):
+    acked = []
+    for number in args.numbers:
+        d = plane.post(f"{number}/ack/", {"issues": args.issues} if args.issues else {})
+        acked.append(d)
+        if not args.json:
+            print(f"{d['identifier']}  rollout done" + (f" ({', '.join(args.issues)})" if args.issues else ""))
+    return {"results": acked}
+
+
+def area_id(plane, key):
+    area, mechanism = area_parts(key)
+    for item in plane.get("areas/")["results"]:
+        if item["key"] == area:
+            if mechanism is None:
+                return item["id"]
+            for m in item["mechanisms"]:
+                if m["key"] == mechanism:
+                    return m["id"]
+    raise Failure(f"Area {key} not found")
+
+
+def command_areas(plane, args):
+    if args.action == "add":
+        area, mechanism = area_parts(args.key)
+        body = {"key": mechanism, "name": args.name, "parent": area} if mechanism else {"key": area, "name": args.name}
+        data = plane.post("areas/", body)
+    elif args.action == "rename":
+        data = plane.patch(f"areas/{area_id(plane, args.key)}/", {"name": args.name})
+    else:
+        data = plane.get("areas/")
+        if not args.json:
+            for item in data["results"]:
+                print(f"{item['key']:<20} {item['name']}")
+                for m in item["mechanisms"]:
+                    print(f"  {item['key'] + '/' + m['key']:<18} {m['name']}")
+        return data
+    if not args.json:
+        print(f"{args.key}  {data['name']}")
+    return data
+
+
+def import_report(data, commit):
+    rows = []
+    for error in data.get("errors", []):
+        where_ = f"D{error['number']} " if error.get("number") else ""
+        rows.append(f"error   {where_}{error.get('field') or ''}: {error['error']}")
+    for warning in data.get("warnings", []):
+        where_ = f"D{warning['number']} " if warning.get("number") else ""
+        rows.append(f"warning {where_}{warning.get('field') or ''}: {warning['warning']}")
+    summary = data.get("summary")
+    if summary:
+        states = ", ".join(f"{k} {v}" for k, v in sorted(summary["by_status"].items()))
+        rows.append(
+            f"{summary['decisions']} decisions ({states}); new areas {summary['areas_created']}, "
+            f"new mechanisms {summary['mechanisms_created']}; to review after import {summary['needs_review']}; "
+            f"work item links {summary['issue_links']}, not found {summary['issues_not_found']}"
+        )
+    if data.get("errors"):
+        rows.append("Nothing was written.")
+    elif commit:
+        rows.append(f"Imported. Next number: {data['last_number'] + 1}.")
+        rows.append("Source → decisions:")
+        rows += [f"  {source}: {', '.join(f'D{n}' for n in numbers)}" for source, numbers in data["sources"].items()]
+    else:
+        rows.append("Dry run: nothing was written. Run again with --commit to import.")
+    return rows
+
+
+def command_import(plane, args):
+    try:
+        with open(args.file, encoding="utf-8") as source:
+            content = json.load(source)
+    except (OSError, ValueError) as e:
+        raise Failure(f"Cannot read {args.file}: {e}")
+    try:
+        data = plane.post("import/", content, {"commit": "1"} if args.commit else None)
+    except Failure as e:
+        if not e.data or "errors" not in e.data:
+            raise
+        data = e.data
+        if not args.json:
+            print("\n".join(import_report(data, args.commit)))
+        raise Failure("the file was not imported", data)
+    if not args.json:
+        print("\n".join(import_report(data, args.commit)))
+    return data
+
+
+# Arguments
+
+
+def add_decision_options(parser, agent=True):
+    parser.add_argument("title", help="the rule, one sentence")
+    parser.add_argument("--area", required=True, help="area or area/mechanism, e.g. zamowienia/zwroty")
+    parser.add_argument("--area2", help="a second area")
+    parser.add_argument("--kind", required=True, choices=KINDS)
+    parser.add_argument("--rationale", help="why")
+    parser.add_argument("--rejected", help="options considered and rejected")
+    parser.add_argument("--note")
+    parser.add_argument("--issue", dest="issues", action="append", help="work item, e.g. DEMO-3 (repeatable)")
+    parser.add_argument("--source", dest="sources", action="append", help="where it is written (repeatable)")
+    parser.add_argument("--related", action="append", type=decision_number, help="related decision (repeatable)")
+    parser.add_argument("--review-on", help="review date, YYYY-MM-DD")
+    parser.add_argument("--review-condition", help="when to come back to it")
+    parser.add_argument("--decided-on", help="YYYY-MM-DD (default: today)")
+    if agent:
+        add_agent_options(parser)
+
+
+def add_agent_options(parser):
+    parser.add_argument("--by", choices=["user", "agent"], help="'user': the owner decided (default: agent)")
+    parser.add_argument("--rollout", action="store_true", help="put it in the coordinator's inbox")
+
+
+def add_filters(parser):
+    parser.add_argument("--area", help="area (also as second area) or area/mechanism")
+    parser.add_argument("--mechanism")
+    parser.add_argument("--status", help=f"comma-separated of {', '.join(STATUSES)}, or all")
+    parser.add_argument("--kind", help=f"comma-separated of {', '.join(KINDS)}")
+    parser.add_argument("--queue", choices=QUEUES)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(
+        prog="plane-decision", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("-p", "--project", required=True, help="project identifier, e.g. DEMO")
+    common.add_argument("--json", action="store_true", help="print the API response as JSON")
+    commands = parser.add_subparsers(dest="command", required=True)
+
+    add_decision_options(commands.add_parser("add", parents=[common], help="write a decision (coordinator)"))
+    add_decision_options(
+        commands.add_parser("propose", parents=[common], help="propose a decision (executing session)"), agent=False
+    )
+
+    listing = commands.add_parser("list", parents=[common], help="decisions (default: in force), every page")
+    add_filters(listing)
+    listing.add_argument("--brief", action="store_true", help="one line per decision: number and rule")
+
+    show = commands.add_parser("show", parents=[common], help="one decision with its history")
+    show.add_argument("number", type=decision_number)
+
+    search = commands.add_parser("search", parents=[common], help="decisions containing every word (every state)")
+    search.add_argument("phrase", nargs="+")
+    search.add_argument("-n", "--limit", type=int, default=50)
+    add_filters(search)
+
+    supersede = commands.add_parser("supersede", parents=[common], help="new version(s) in place of a decision")
+    supersede.add_argument("number", type=decision_number)
+    supersede.add_argument("titles", nargs="+", help="the new rule; several titles split the decision")
+    supersede.add_argument("--rationale")
+    add_agent_options(supersede)
+
+    revoke = commands.add_parser("revoke", parents=[common], help="withdraw a decision (or reject a proposal)")
+    revoke.add_argument("number", type=decision_number)
+    revoke.add_argument("--reason")
+    revoke.add_argument("--rollout", action="store_true", help="put it in the coordinator's inbox")
+    defer = commands.add_parser("defer", parents=[common], help="not now: back on a date or a condition")
+    defer.add_argument("number", type=decision_number)
+    defer.add_argument("--until", help="YYYY-MM-DD")
+    defer.add_argument("--when", help="condition, e.g. 'gdy wróci kurier'")
+    defer.add_argument("--rollout", action="store_true", help="put it in the coordinator's inbox")
+    done = commands.add_parser("done", parents=[common], help="a one-off decision was carried out")
+    done.add_argument("number", type=decision_number)
+    confirm = commands.add_parser("confirm", parents=[common], help="the owner confirmed it (only on their word)")
+    confirm.add_argument("number", type=decision_number)
+    accept = commands.add_parser("accept", parents=[common], help="accept a proposal")
+    accept.add_argument("number", type=decision_number)
+    add_agent_options(accept)
+
+    link = commands.add_parser("link", parents=[common], help="add work items or sources to a decision")
+    link.add_argument("number", type=decision_number)
+    link.add_argument("--issue", dest="issues", action="append")
+    link.add_argument("--source", dest="sources", action="append")
+
+    commands.add_parser("inbox", parents=[common], help="changes waiting for rollout (coordinator)")
+    ack = commands.add_parser("ack", parents=[common], help="rollout done")
+    ack.add_argument("numbers", nargs="+", type=decision_number)
+    ack.add_argument("--issue", dest="issues", action="append", help="work item of the rollout (repeatable)")
+
+    areas = commands.add_parser("areas", help="areas and mechanisms: list, add, rename")
+    area_actions = areas.add_subparsers(dest="action")
+    areas.add_argument("-p", "--project", help=argparse.SUPPRESS)
+    areas.add_argument("--json", action="store_true", help=argparse.SUPPRESS)
+    area_actions.add_parser("list", parents=[common])
+    area_add = area_actions.add_parser("add", parents=[common], help="area, or area/mechanism")
+    area_add.add_argument("key")
+    area_add.add_argument("name")
+    area_rename = area_actions.add_parser("rename", parents=[common])
+    area_rename.add_argument("key")
+    area_rename.add_argument("name")
+
+    importing = commands.add_parser("import", parents=[common], help="import a file (dry run unless --commit)")
+    importing.add_argument("file")
+    importing.add_argument("--commit", action="store_true", help="write (all or nothing)")
+
+    args = parser.parse_args(argv)
+    if args.command == "areas" and not args.project:
+        parser.error("areas needs -p/--project")
+    handlers = {
+        "add": command_add,
+        "propose": command_propose,
+        "list": command_list,
+        "show": command_show,
+        "search": command_search,
+        "supersede": command_supersede,
+        "revoke": command_operation,
+        "defer": command_operation,
+        "done": command_operation,
+        "confirm": command_operation,
+        "accept": command_operation,
+        "link": command_link,
+        "inbox": command_inbox,
+        "ack": command_ack,
+        "areas": command_areas,
+        "import": command_import,
+    }
+    try:
+        plane = Plane(load_config())
+        plane.use_project(args.project)
+        result = handlers[args.command](plane, args)
+    except Failure as e:
+        if args.json and e.data:
+            print(json.dumps(e.data, ensure_ascii=False, indent=2))
+        print(f"plane-decision: {e}", file=sys.stderr)
+        return 1
+    if args.json and result is not None:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

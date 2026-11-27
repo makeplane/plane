@@ -13,6 +13,7 @@ import { ProfileSettingsHeading } from "@/components/settings/profile/heading";
 import { EmailSettingsLoader } from "@/components/ui/loader/settings/email";
 // services
 import { UserService } from "@/services/user.service";
+import { LivierePushSettings } from "@/liviere/push/push-settings"; // Liviere/plane fork
 // local imports
 import { NotificationsProfileSettingsForm } from "./email-notification-form";
 
@@ -38,6 +39,7 @@ export const NotificationsProfileSettings = observer(function NotificationsProfi
       <div className="mt-7">
         <NotificationsProfileSettingsForm data={data} />
       </div>
+      <LivierePushSettings /> {/* Liviere/plane fork: web push about new work items */}
     </div>
   );
 });

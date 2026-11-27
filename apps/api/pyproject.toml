@@ -79,6 +79,11 @@ dependencies = [
     "drf-spectacular==0.29.0",
     # html sanitizer
     "nh3==0.2.18",
+    # web push encryption (Liviere/plane fork: plane/liviere/push)
+    "http-ece==1.2.1",
+    # PDF of the activity time report (Liviere/plane fork: plane/liviere/activity/report_pdf.py);
+    # pure Python, LGPL-3.0; brings Pillow and fontTools (prebuilt musllinux wheels)
+    "fpdf2==2.9.0",
 ]
 
 [dependency-groups]
@@ -111,6 +116,8 @@ test = [
     "freezegun==1.2.2",
     "coverage==7.2.7",
     "httpx==0.28.1",
+    # text of the activity report PDF in tests (Liviere/plane fork)
+    "pypdf==6.21.4",
 ]
 
 [tool.uv]

@@ -4,4 +4,11 @@
  * See the LICENSE file for details.
  */
 
-export type TPageExtended = object;
+export type TPageExtended = {
+  // Liviere/plane fork: page view properties stored on the server; the fork keeps
+  // "Block API changes" in `liviere_block_api`.
+  view_props?: {
+    liviere_block_api?: boolean;
+    [key: string]: unknown;
+  };
+};

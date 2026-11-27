@@ -26,6 +26,7 @@ import {
   usePersonalNavigationPreferences,
   useWorkspaceNavigationPreferences,
 } from "@/hooks/use-navigation-preferences";
+import { LiviereNewWorkItemsSidebarItem } from "@/liviere/unread/sidebar-item"; // Liviere/plane fork
 import { SidebarItemBase } from "./sidebar-item";
 
 export const SidebarMenuItems = observer(function SidebarMenuItems() {
@@ -100,6 +101,7 @@ export const SidebarMenuItems = observer(function SidebarMenuItems() {
           // oxlint-disable-next-line react/no-array-index-key
           <SidebarItemBase key={`static_${_index}`} item={item} />
         ))}
+        <LiviereNewWorkItemsSidebarItem /> {/* Liviere/plane fork: "New" work items */}
       </div>
       <Collapsible
         placement="sidebar"

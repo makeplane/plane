@@ -17,6 +17,7 @@ import {
 } from "@makeplane/propel/icons";
 import type { EUserProjectRoles, IPartialProject } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
+import { useLiviereNavigationItems } from "@/liviere/navigation"; // Liviere/plane fork
 
 type UseNavigationItemsProps = {
   workspaceSlug: string;
@@ -36,6 +37,7 @@ export const useNavigationItems = ({
   project,
   allowPermissions,
 }: UseNavigationItemsProps): TNavigationItem[] => {
+  const liviereNavigation = useLiviereNavigationItems(workspaceSlug); // Liviere/plane fork
   // Base navigation items
   const baseNavigation = useCallback(
     // oxlint-disable-next-line no-shadow
@@ -106,7 +108,7 @@ export const useNavigationItems = ({
 
   // Combine, filter, and sort navigation items
   const navigationItems = useMemo(() => {
-    const navItems = baseNavigation(workspaceSlug, projectId);
+    const navItems = [...baseNavigation(workspaceSlug, projectId), ...liviereNavigation(workspaceSlug, projectId)];
 
     // Filter by permissions and shouldRender
     const filteredItems = navItems.filter((item) => {
@@ -118,7 +120,7 @@ export const useNavigationItems = ({
     // Sort by sortOrder
     // oxlint-disable-next-line unicorn/no-array-sort
     return filteredItems.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-  }, [workspaceSlug, projectId, baseNavigation, allowPermissions, project?.id]);
+  }, [workspaceSlug, projectId, baseNavigation, liviereNavigation, allowPermissions, project?.id]);
 
   return navigationItems;
 };
