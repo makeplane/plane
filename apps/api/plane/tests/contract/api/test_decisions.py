@@ -685,3 +685,242 @@ class TestImportReview:
         response = session.post(_app(project, f"{old}/import-review/"), {"status": "active"}, format="json")
         assert response.status_code == 400 and response.json()["field"] == "status"
         assert Decision.objects.get(number=old).status == "superseded"
+
+
+@pytest.mark.contract
+class TestReviewFixes:
+    """Findings of the coordinator's review (27.11)."""
+
+    @pytest.mark.django_db
+    def test_hard_delete_of_a_project_with_decisions(self, key, project):
+        from django.db.models import RestrictedError
+
+        old = _new(key, _v1(project), area2="platnosci")["number"]
+        key.post(_v1(project, f"{old}/supersede/"), {"title": "Nowsza", "mechanism": "wysylka"}, format="json")
+        area = DecisionArea.objects.get(project=project, key="zamowienia", parent__isnull=True)
+        # An area with decisions cannot be deleted on its own
+        with pytest.raises(RestrictedError):
+            DecisionArea.objects.filter(pk=area.pk).delete()
+        # The nightly hard_delete of a deleted project takes everything with it
+        Project.all_objects.filter(pk=project.pk).delete()
+        assert (Decision.objects.count(), DecisionArea.objects.count(), DecisionEvent.objects.count()) == (0, 0, 0)
+
+    def test_session_routes_are_private_too(self):
+        assert is_private_api_path("/api/workspaces/w/projects/p/liviere/decisions/")
+        assert is_private_api_path("/api/workspaces/w/projects/p/liviere/decisions/3/supersede/")
+        assert not is_private_api_path("/api/workspaces/w/projects/p/liviere/activity/logs/")
+
+    @pytest.mark.django_db
+    def test_key_on_the_session_tree_is_not_logged_with_its_body(self, key, project):
+        secret = "Herbata-zielona-4410"
+        with mock.patch("plane.middleware.logger.process_logs") as stored:
+            response = key.post(
+                _app(project), {"title": secret, "area": "zamowienia", "kind": "product"}, format="json"
+            )
+        assert response.status_code in (401, 403)
+        (call,) = stored.delay.call_args_list
+        assert secret not in str(call.kwargs["log_data"])
+
+    @pytest.mark.django_db
+    def test_number_and_sort_order_bounds(self, key, project):
+        assert key.get(_v1(project, f"{10**12}/")).status_code == 404
+        assert key.post(_v1(project, f"{10**12}/done/"), {}, format="json").status_code == 404
+        response = _new(key, _v1(project))
+        bad = key.patch(_v1(project, f"{response['number']}/"), {"related": [2147483647]}, format="json").json()
+        assert (bad["code"], bad["field"]) == ("validation_error", "related")
+        area = key.post(_v1(project, "areas/"), {"key": "x", "name": "X", "sort_order": 2**40}, format="json").json()
+        assert (area["code"], area["field"]) == ("validation_error", "sort_order")
+        assert key.patch(_v1(project, f"areas/{10**30}/"), {"name": "x"}, format="json").status_code == 404
+
+    @pytest.mark.django_db
+    def test_characters_postgres_cannot_store(self, key, project):
+        for field in ("title", "rationale", "rejected", "note", "review_condition"):
+            body = {"title": RETURNS, "area": "zamowienia", "kind": "product", field: "zwrot\x00 do 30 dni"}
+            response = key.post(_v1(project), body, format="json").json()
+            assert (response["code"], response["field"]) == ("validation_error", field)
+        response = key.post(
+            _v1(project), {"title": "x", "area": "zamowienia", "kind": "product", "sources": ["a\x00"]}, format="json"
+        ).json()
+        assert response["field"] == "sources"
+        assert key.post(_v1(project, "search/"), {"q": "zwr\x00ot"}, format="json").json()["field"] == "q"
+        assert Decision.objects.count() == 0
+
+    @pytest.mark.django_db
+    def test_supersede_through_a_key_keeps_a_pending_rollout(self, key, session, project):
+        n = _new(session, _app(project))["number"]
+        body = key.post(_v1(project, f"{n}/supersede/"), {"title": "Nowsza"}, format="json").json()
+        new = body["created"][0]
+        assert body["superseded"]["pending_rollout"] is False
+        assert (new["pending_rollout"], new["rollout"]["reason"]) == (True, "supersedes")
+        assert [d["number"] for d in key.get(_v1(project, "inbox/")).json()["results"]] == [new["number"]]
+
+    @pytest.mark.django_db
+    def test_pending_rollout_takes_the_latest_reason(self, key, session, project):
+        n = _new(session, _app(project))["number"]
+        revoked = key.post(_v1(project, f"{n}/revoke/"), {}, format="json").json()
+        assert (revoked["status"], revoked["rollout"]["reason"], revoked["rollout"]["channel"]) == (
+            "revoked",
+            "revoked",
+            "api",
+        )
+        m = _new(session, _app(project))["number"]
+        deferred = key.post(_v1(project, f"{m}/defer/"), {"review_on": "2027-01-10"}, format="json").json()
+        assert deferred["rollout"]["reason"] == "deferred"
+        # Without a pending change, a key's operation still waits for nothing
+        k = _new(key, _v1(project), by="user")["number"]
+        assert key.post(_v1(project, f"{k}/revoke/"), {}, format="json").json()["pending_rollout"] is False
+
+    @pytest.mark.django_db
+    def test_import_review_to_done_clears_the_review(self, key, session, project):
+        n = _new(key, _v1(project), by="user", review_on="2026-12-01", review_condition="po sezonie")["number"]
+        Decision.objects.filter(number=n).update(needs_review=True)
+        done = session.post(_app(project, f"{n}/import-review/"), {"status": "done"}, format="json").json()
+        assert (done["status"], done["review_on"], done["review_condition"], done["queues"]) == ("done", None, None, [])
+
+    @pytest.mark.django_db
+    def test_messages_name_the_operation(self, key, project):
+        n = _new(key, _v1(project))["number"]
+        key.post(_v1(project, f"{n}/done/"), {}, format="json")
+        error = key.post(_v1(project, f"{n}/done/"), {}, format="json").json()["error"]
+        assert error.startswith(f"Cannot mark DEMO-D{n} as done: it is done")
+
+
+@pytest.mark.contract
+class TestOtherProject:
+    @pytest.mark.django_db
+    def test_numbers_areas_and_related_stay_in_their_project(self, key, project, workspace, create_user):
+        other = Project.objects.create(name="Magazyn", identifier="MAG", workspace=workspace, created_by=create_user)
+        ProjectMember.objects.create(project=other, member=create_user, role=20, is_active=True)
+        DecisionSettings.objects.create(project=other, enabled=True)
+        stock = DecisionArea.objects.create(workspace=workspace, project=other, key="regaly", name="Regały")
+        theirs = _new(key, _v1(other), area="regaly", mechanism=None, title="Regały numerujemy od wejścia")
+        assert theirs["number"] == 1
+        # Number 1 of MAG is not number 1 of DEMO
+        assert key.get(_v1(project, "1/")).status_code == 404
+        assert key.post(_v1(project, "1/done/"), {}, format="json").status_code == 404
+        assert key.patch(_v1(project, f"areas/{stock.id}/"), {"name": "x"}, format="json").status_code == 404
+        assert (
+            key.post(_v1(project), {"title": "x", "area": "regaly", "kind": "product"}, format="json").json()["code"]
+            == "unknown_area"
+        )
+        mine = _new(key, _v1(project))["number"]
+        response = key.patch(_v1(project, f"{mine}/"), {"related": [2]}, format="json").json()
+        assert response["code"] == "decision_not_found"
+        assert Decision.objects.get(project=other).status == "active"
+
+
+@pytest.mark.contract
+class TestDisabledEveryRoute:
+    @pytest.mark.django_db
+    def test_every_route_group(self, key, session, project):
+        n = _new(key, _v1(project))["number"]
+        area = DecisionArea.objects.filter(project=project).first()
+        DecisionSettings.objects.filter(project=project).update(enabled=False)
+        routes = [
+            ("get", ""),
+            ("post", ""),
+            ("post", "propose/"),
+            ("post", "search/"),
+            ("get", "queues/"),
+            ("get", "inbox/"),
+            ("get", f"{n}/"),
+            ("patch", f"{n}/"),
+            ("get", "areas/"),
+            ("post", "areas/"),
+            ("patch", f"areas/{area.id}/"),
+            ("post", "import/"),
+        ] + [("post", f"{n}/{op}/") for op in ("accept", "confirm", "defer", "resume", "done", "revoke", "review")]
+        routes += [("post", f"{n}/{op}/") for op in ("import-review", "supersede", "link", "ack")]
+        for client, url in ((key, _v1(project)), (session, _app(project))):
+            for method, path in routes:
+                response = getattr(client, method)(url + path, {"title": "x", "q": "zwrot"}, format="json")
+                assert response.status_code == 404, (method, path)
+                assert response.json()["code"] == "decisions_disabled", (method, path)
+        assert Decision.objects.get().title == RETURNS
+
+
+@pytest.mark.contract
+class TestRolesEverywhere:
+    @pytest.mark.django_db
+    def test_guest_and_outsider_get_nothing(self, key, project, workspace):
+        n = _new(key, _v1(project))["number"]
+        guest = _member(project, 5, "guest")
+        outsider = _user(workspace, "outsider")
+        member = _member(project, 15, "member")
+        paths = [
+            ("post", f"{n}/done/"),
+            ("post", f"{n}/supersede/"),
+            ("post", "import/"),
+            ("get", "areas/"),
+            ("post", "areas/"),
+            ("patch", "settings/"),
+            ("post", "search/"),
+            ("get", "inbox/"),
+        ]
+        for user in (guest, outsider):
+            for client, url in ((_key_client(user), _v1(project)), (_session_client(user), _app(project))):
+                for method, path in paths:
+                    response = getattr(client, method)(url + path, {"enabled": False, "title": "x"}, format="json")
+                    assert response.status_code == 403, (user.display_name, method, path)
+        for client, url in ((_key_client(member), _v1(project)), (_session_client(member), _app(project))):
+            assert client.patch(url + "settings/", {"enabled": False}, format="json").status_code == 403
+        assert DecisionSettings.objects.get(project=project).enabled is True
+        assert Decision.objects.get().status == "active"
+
+
+@pytest.mark.contract
+class TestParallelSupersede:
+    @pytest.mark.django_db(transaction=True)
+    def test_two_supersedes_of_one_decision(self, project, create_user):
+        token = APIToken.objects.create(user=create_user, label="parallel", token=f"plane_api_{uuid4().hex}")
+        client = APIClient()
+        client.credentials(HTTP_X_API_KEY=token.token)
+        n = _new(client, _v1(project))["number"]
+        barrier = threading.Barrier(2)
+        results = []
+
+        def supersede(title):
+            own = APIClient()
+            own.credentials(HTTP_X_API_KEY=token.token)
+            try:
+                barrier.wait(timeout=10)
+                response = own.post(_v1(project, f"{n}/supersede/"), {"title": title}, format="json")
+                results.append((response.status_code, response.json().get("code")))
+            finally:
+                connection.close()
+
+        threads = [threading.Thread(target=supersede, args=(f"Wersja {i}",)) for i in range(2)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(timeout=30)
+        assert sorted(results, key=lambda r: r[0]) == [(201, None), (400, "already_superseded")]
+        assert Decision.objects.get(number=n).successors.count() == 1
+
+    @pytest.mark.django_db(transaction=True)
+    def test_two_writes_relating_the_same_pair_the_other_way_round(self, project, create_user):
+        token = APIToken.objects.create(user=create_user, label="parallel", token=f"plane_api_{uuid4().hex}")
+        client = APIClient()
+        client.credentials(HTTP_X_API_KEY=token.token)
+        a = _new(client, _v1(project))["number"]
+        b = _new(client, _v1(project))["number"]
+        barrier = threading.Barrier(2)
+        results = []
+
+        def relate(number, other):
+            own = APIClient()
+            own.credentials(HTTP_X_API_KEY=token.token)
+            try:
+                barrier.wait(timeout=10)
+                response = own.patch(_v1(project, f"{number}/"), {"related": [other], "note": "x"}, format="json")
+                results.append(response.status_code)
+            finally:
+                connection.close()
+
+        threads = [threading.Thread(target=relate, args=pair) for pair in ((a, b), (b, a))]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(timeout=30)
+        assert results == [200, 200]
+        assert client.get(_v1(project, f"{a}/")).json()["related"] == [b]

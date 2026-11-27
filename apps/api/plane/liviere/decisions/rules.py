@@ -70,6 +70,9 @@ MAX_LIST = 50
 MAX_NOTE = 2000
 MAX_AREA_KEY = 40
 MAX_AREA_NAME = 100
+# Decision numbers and sort orders stay far below the 32-bit columns, so a wrong file cannot exhaust the counter
+MAX_NUMBER = 1_000_000
+MAX_SORT_ORDER = 1_000_000
 
 # Fields of a decision as in the import file and the API
 RECORD_FIELDS = (
@@ -171,11 +174,11 @@ def display_id(project_identifier, number):
 
 def parse_decision_ref(value):
     """A decision number from 12, "12", "D12" or "DEMO-D12"."""
-    if isinstance(value, int) and not isinstance(value, bool) and value > 0:
+    if isinstance(value, int) and not isinstance(value, bool) and 0 < value <= MAX_NUMBER:
         return value
     if isinstance(value, str):
         found = DECISION_REF.match(value.strip())
-        if found and int(found.group(1)) > 0:
+        if found and 0 < int(found.group(1)) <= MAX_NUMBER:
             return int(found.group(1))
     raise DecisionError("A decision is a number such as 12, D12 or DEMO-D12")
 
@@ -187,6 +190,13 @@ def today_in(zone, now):
 # Field checks
 
 
+def storable(value, field, number=None):
+    """`value` unless it holds characters Postgres cannot store (NUL) or that are not Unicode (lone surrogates)."""
+    if "\x00" in value or any("\ud800" <= ch <= "\udfff" for ch in value):
+        raise DecisionError(f"'{field}' holds characters that cannot be stored", field, number)
+    return value
+
+
 def text(value, field, limit, required=False, number=None):
     """A string of at most `limit` characters, stripped; None or "" is None unless required."""
     if value is None or (isinstance(value, str) and not value.strip()):
@@ -195,7 +205,7 @@ def text(value, field, limit, required=False, number=None):
         return None
     if not isinstance(value, str):
         raise DecisionError(f"'{field}' must be text", field, number)
-    value = value.strip()
+    value = storable(value.strip(), field, number)
     if len(value) > limit:
         raise DecisionError(f"'{field}' must not be longer than {limit} characters", field, number)
     return value
@@ -237,7 +247,7 @@ def string_list(value, field, limit=MAX_SOURCE, number=None):
     for item in value:
         if not isinstance(item, str) or not item.strip():
             raise DecisionError(f"'{field}' must be a list of non-empty texts", field, number)
-        item = item.strip()
+        item = storable(item.strip(), field, number)
         if len(item) > limit:
             raise DecisionError(f"an item of '{field}' is longer than {limit} characters", field, number)
         if item not in result:
@@ -246,8 +256,14 @@ def string_list(value, field, limit=MAX_SOURCE, number=None):
 
 
 def number_value(value, field, number=None):
-    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
-        raise DecisionError(f"'{field}' must be a positive whole number", field, number)
+    if isinstance(value, bool) or not isinstance(value, int) or not 1 <= value <= MAX_NUMBER:
+        raise DecisionError(f"'{field}' must be a whole number from 1 to {MAX_NUMBER}", field, number)
+    return value
+
+
+def sort_order_value(value, field="sort_order"):
+    if isinstance(value, bool) or not isinstance(value, int) or not -MAX_SORT_ORDER <= value <= MAX_SORT_ORDER:
+        raise DecisionError(f"'{field}' must be a whole number from -{MAX_SORT_ORDER} to {MAX_SORT_ORDER}", field)
     return value
 
 
@@ -329,11 +345,25 @@ def content_fields(data, partial, number=None):
     return result
 
 
+# How the error of an operation names it: "Cannot mark DEMO-D4 as done: ..."
+OPERATION_PHRASES = {
+    "accept": "accept {}",
+    "confirm": "confirm {}",
+    "defer": "defer {}",
+    "resume": "resume {}",
+    "done": "mark {} as done",
+    "revoke": "revoke {}",
+    "supersede": "supersede {}",
+    "review": "mark {} as reviewed",
+}
+
+
 def check_transition(operation, status, display):
     allowed = TRANSITIONS[operation]
     if status not in allowed:
         raise DecisionError(
-            f"Cannot {operation} {display}: it is {status} (allowed from: {', '.join(allowed)})",
+            f"Cannot {OPERATION_PHRASES[operation].format(display)}: it is {status} "
+            f"(allowed from: {', '.join(allowed)})",
             "status",
             code="already_superseded" if status == SUPERSEDED else "invalid_transition",
         )
