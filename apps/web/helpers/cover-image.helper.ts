@@ -4,6 +4,7 @@
  * See the LICENSE file for details.
  */
 
+import { API_BASE_URL } from "@plane/constants";
 import type { EFileAssetType } from "@plane/types";
 import { getFileURL } from "@plane/utils";
 
@@ -252,6 +253,21 @@ export const uploadCoverImage = async (
 };
 
 /**
+ * Converts an asset path/URL to an absolute URL.
+ * The backend `cover_image` field is a Django URLField and rejects relative paths, so when the
+ * API is served same-origin (self-hosted setups with an empty API_BASE_URL) the current origin
+ * is used to build the absolute URL.
+ */
+const toAbsoluteCoverURL = (path: string): string => {
+  if (path.startsWith("http")) return path;
+  try {
+    return new URL(path, API_BASE_URL || window.location.origin).href;
+  } catch {
+    return getFileURL(path) || path;
+  }
+};
+
+/**
  * Main utility to handle cover image changes with upload
  */
 export const handleCoverImageChange = async (
@@ -274,11 +290,11 @@ export const handleCoverImageChange = async (
   if (analysis.needsUpload) {
     const assetUrl = await uploadCoverImage(newImage, uploadConfig);
     // cover_image requires an absolute URL; cover_image_url is relative (matches GET /api/users/me/ format)
-    return { cover_image: getFileURL(assetUrl) || assetUrl, cover_image_url: assetUrl };
+    return { cover_image: toAbsoluteCoverURL(assetUrl), cover_image_url: assetUrl };
   }
 
-  // cover_image requires an absolute URL; getFileURL converts relative paths from the Upload tab
-  return { cover_image: getFileURL(newImage) || newImage, cover_image_url: newImage };
+  // cover_image requires an absolute URL; converts relative paths from the Upload tab
+  return { cover_image: toAbsoluteCoverURL(newImage), cover_image_url: newImage };
 };
 
 /**
