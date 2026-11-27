@@ -228,3 +228,48 @@ class TestImport:
         print(f"\nimport of 250 decisions: {size // 1024} KB, {elapsed:.2f} s")
         assert size < 5 * 1024 * 1024
         assert elapsed < 30
+
+
+@pytest.mark.contract
+class TestImportReviewFixes:
+    @pytest.mark.django_db
+    def test_number_bounds_and_characters(self, key, project):
+        data = copy.deepcopy(SAMPLE)
+        data["decisions"][7]["number"] = 2147483647
+        data["decisions"][6]["number"] = 10**30
+        data["decisions"][5]["title"] = "Zmiany cennika\x00 w poniedziałki"
+        data["decisions"][4]["note"] = "zły znak \ud800"
+        # Raw JSON: the test client's renderer cannot encode a lone surrogate, a client sending "\ud800" can
+        response = key.post(_url(project, commit=True), json.dumps(data), content_type="application/json")
+        assert response.status_code == 400
+        codes = _codes(response)
+        assert (2147483647, "number") in codes and (10**30, "number") in codes
+        assert (6, "title") in codes and (5, "note") in codes
+        assert DecisionSettings.objects.get(project=project).last_number == 0
+
+    @pytest.mark.django_db
+    def test_import_into_a_project_with_decisions(self, key, project):
+        base = f"/api/v1/workspaces/{project.workspace.slug}/projects/{project.id}/liviere/decisions/"
+        _import(key, project, SAMPLE, commit=True)
+        DecisionSettings.objects.filter(project=project).update(last_number=50)
+        more = {
+            "format": 2,
+            "areas": [],
+            "decisions": [
+                # A second successor of the superseded nr 1 (a split), and one pointing to the active nr 2
+                {**SAMPLE["decisions"][1], "number": 20, "title": "Zwrot elektroniki do 14 dni", "related": [2]},
+                {**SAMPLE["decisions"][1], "number": 21, "title": "Inna", "supersedes": 2, "related": []},
+            ],
+        }
+        refused = _import(key, project, more)
+        assert _codes(refused) == [(21, "supersedes")]
+        more["decisions"].pop()
+        response = _import(key, project, more, commit=True)
+        assert response.status_code == 201, response.json()
+        assert sorted(Decision.objects.get(number=1).successors.values_list("number", flat=True)) == [2, 20]
+        assert key.get(base + "2/").json()["related"] == [3, 7, 20]
+        # The counter stays above the file's numbers
+        assert DecisionSettings.objects.get(project=project).last_number == 50
+        assert (
+            key.post(base, {"title": "Nowa", "area": "praca", "kind": "process"}, format="json").json()["number"] == 51
+        )

@@ -31,6 +31,7 @@ from plane.liviere.decisions.rules import (
     USER,
     DecisionError,
     area_key,
+    storable,
 )
 from plane.liviere.models import Decision
 
@@ -127,7 +128,7 @@ def parse_search(data):
     q = data.get("q")
     if not isinstance(q, str):
         raise DecisionError("'q' is required", "q")
-    q = " ".join(q.split())
+    q = storable(" ".join(q.split()), "q")
     if len(q) < MIN_QUERY_LENGTH:
         raise DecisionError(f"'q' must be at least {MIN_QUERY_LENGTH} characters", "q")
     if len(q) > MAX_QUERY_LENGTH:

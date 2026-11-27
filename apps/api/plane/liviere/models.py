@@ -294,9 +294,11 @@ class Decision(models.Model):
     rationale = models.TextField(null=True)
     rejected = models.TextField(null=True)
     note = models.TextField(null=True)
-    area = models.ForeignKey(DecisionArea, on_delete=models.PROTECT, related_name="+")
-    mechanism = models.ForeignKey(DecisionArea, on_delete=models.PROTECT, null=True, related_name="+")
-    area2 = models.ForeignKey(DecisionArea, on_delete=models.PROTECT, null=True, related_name="+")
+    # RESTRICT, not PROTECT: an area with decisions cannot be deleted on its own, but a project (or workspace)
+    # deleted for good takes its areas and decisions with it (plane/bgtasks/deletion_task.py, hard_delete)
+    area = models.ForeignKey(DecisionArea, on_delete=models.RESTRICT, related_name="+")
+    mechanism = models.ForeignKey(DecisionArea, on_delete=models.RESTRICT, null=True, related_name="+")
+    area2 = models.ForeignKey(DecisionArea, on_delete=models.RESTRICT, null=True, related_name="+")
     kind = models.CharField(max_length=20)
     status = models.CharField(max_length=20)
     decided_by = models.CharField(max_length=20)
@@ -306,7 +308,7 @@ class Decision(models.Model):
     review_condition = models.CharField(max_length=500, null=True)
     sources = models.JSONField(default=list)
     # A decision split into several rules has several successors
-    supersedes = models.ForeignKey("self", on_delete=models.PROTECT, null=True, related_name="successors")
+    supersedes = models.ForeignKey("self", on_delete=models.RESTRICT, null=True, related_name="successors")
     # "Waiting for rollout": a change the project coordinator still has to carry into rules and code
     pending_rollout = models.BooleanField(default=False)
     rollout_reason = models.CharField(max_length=20, null=True)

@@ -11,8 +11,9 @@ import re
 
 _PRIVATE_API_PATHS = (
     re.compile(r"^/api/v1/workspaces/[^/]+/liviere/search/?$"),
-    # Decision register (plane/liviere/decisions): requests and responses carry the text of decisions
-    re.compile(r"^/api/v1/workspaces/[^/]+/projects/[^/]+/liviere/decisions(/.*)?$"),
+    # Decision register (plane/liviere/decisions): requests and responses carry the text of decisions. Both
+    # trees: a request with an X-Api-Key header to the session routes is refused (401) but logged all the same
+    re.compile(r"^/api/(v1/)?workspaces/[^/]+/projects/[^/]+/liviere/decisions(/.*)?$"),
 )
 
 

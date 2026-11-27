@@ -108,7 +108,7 @@ class Migration(migrations.Migration):
                     "supersedes",
                     models.ForeignKey(
                         null=True,
-                        on_delete=django.db.models.deletion.PROTECT,
+                        on_delete=django.db.models.deletion.RESTRICT,
                         related_name="successors",
                         to="liviere.decision",
                     ),
@@ -133,7 +133,7 @@ class Migration(migrations.Migration):
                 (
                     "area",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT,
+                        on_delete=django.db.models.deletion.RESTRICT,
                         related_name="+",
                         to="liviere.decisionarea",
                     ),
@@ -142,7 +142,7 @@ class Migration(migrations.Migration):
                     "area2",
                     models.ForeignKey(
                         null=True,
-                        on_delete=django.db.models.deletion.PROTECT,
+                        on_delete=django.db.models.deletion.RESTRICT,
                         related_name="+",
                         to="liviere.decisionarea",
                     ),
@@ -151,7 +151,7 @@ class Migration(migrations.Migration):
                     "mechanism",
                     models.ForeignKey(
                         null=True,
-                        on_delete=django.db.models.deletion.PROTECT,
+                        on_delete=django.db.models.deletion.RESTRICT,
                         related_name="+",
                         to="liviere.decisionarea",
                     ),

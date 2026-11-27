@@ -6,6 +6,7 @@
 plane/liviere/api); the view sets `decision_channel` and the permissions (project admins and members). Every
 route but settings/ answers 404 "decisions_disabled" while the feature is off in the project."""
 
+from django.db import OperationalError
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -19,10 +20,13 @@ from plane.liviere.decisions.queries import (
     queue_counts,
     search_q,
 )
-from plane.liviere.decisions.rules import ACTIVE, QUEUE_ROLLOUT, DecisionError, boolean
+from plane.liviere.decisions.rules import ACTIVE, MAX_NUMBER, QUEUE_ROLLOUT, DecisionError, boolean
 from plane.liviere.decisions.serialize import serialize_area, serialize_areas, serialize_decisions, serialize_detail
 
 DISABLED = {"error": "Decisions are not enabled in this project", "code": "decisions_disabled"}
+# Postgres aborted one of two transactions waiting for each other (should not happen: locks are taken in one
+# order and FOR NO KEY UPDATE), answered as a conflict the client may retry
+DEADLOCK = {"error": "The decision was changed by another request at the same time; try again", "code": "conflict"}
 
 
 def _bad_request(error):
@@ -56,6 +60,10 @@ class DecisionHandlers:
             return _bad_request(e)
         except services.DecisionNotFound as e:
             return _not_found(str(e))
+        except OperationalError as e:
+            if getattr(getattr(e, "__cause__", None), "sqlstate", None) == "40P01":
+                return Response(DEADLOCK, status=status.HTTP_409_CONFLICT)
+            raise
 
     def _one(self, ctx, decision):
         decision = decisions_of(ctx.project.id).get(id=decision.id)
@@ -140,7 +148,7 @@ class DecisionHandlers:
 
     def get_decision(self, request, slug, project_id, number):
         def handler(ctx):
-            decision = decisions_of(project_id).filter(number=number).first()
+            decision = decisions_of(project_id).filter(number=number).first() if number <= MAX_NUMBER else None
             if decision is None:
                 return _not_found(f"{ctx.display(number)} not found")
             return Response(serialize_detail(decision, slug, request.user, ctx.today), status=status.HTTP_200_OK)

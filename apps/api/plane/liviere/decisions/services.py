@@ -34,6 +34,7 @@ from plane.liviere.decisions.rules import (
     MAX_AREA_NAME,
     MAX_CONDITION,
     MAX_NOTE,
+    MAX_NUMBER,
     OPERATION_FIELDS,
     PROPOSED,
     REVIEW_STATUSES,
@@ -50,6 +51,7 @@ from plane.liviere.decisions.rules import (
     date_value,
     display_id,
     issue_refs,
+    sort_order_value,
     string_list,
     text,
     today_in,
@@ -155,9 +157,14 @@ def _take_numbers(project_id, count):
 
 
 def _get(ctx, number, lock=False):
+    if not 0 < number <= MAX_NUMBER:
+        raise DecisionNotFound(f"{ctx.display(number)} not found")
     rows = Decision.objects.filter(project_id=ctx.project.id, number=number)
     if lock:
-        rows = rows.select_for_update()
+        # FOR NO KEY UPDATE: rows of other tables that point to this decision (relations, successors) take a
+        # KEY SHARE lock, which this one does not block; with FOR UPDATE two writes linking A and B the other way
+        # round would deadlock
+        rows = rows.select_for_update(no_key=True)
     decision = rows.first()
     if decision is None:
         raise DecisionNotFound(f"{ctx.display(number)} not found")
@@ -394,7 +401,11 @@ def edit(ctx, number, data):
             _set_issues(decision, new_issues)
         # A value set by hand is no longer an estimate
         decision.estimated = [name for name in decision.estimated if name not in changes]
-        if "title" in changes and decision.status in (ACTIVE, DEFERRED) and (ctx.channel == APP or rollout):
+        if (
+            "title" in changes
+            and decision.status in (ACTIVE, DEFERRED)
+            and (ctx.channel == APP or rollout or decision.pending_rollout)
+        ):
             _set_rollout(ctx, decision, "corrected")
         decision.updated_by = ctx.user
         decision.save()
@@ -531,7 +542,9 @@ def transition(ctx, number, operation, data):
             decision.review_on = date_value(data.get("review_on"), "review_on")
             decision.review_condition = text(data.get("review_condition"), "review_condition", MAX_CONDITION)
             kind = "reviewed"
-        if reason and _rollout_requested(ctx, data):
+        # A change still waiting for rollout takes the reason and time of the latest operation, also through a
+        # key without `rollout`, so the inbox never shows an outdated reason
+        if reason and (_rollout_requested(ctx, data) or decision.pending_rollout):
             _set_rollout(ctx, decision, reason)
         changes = {
             name: (old, getattr(decision, name)) for name, old in before.items() if old != getattr(decision, name)
@@ -556,7 +569,16 @@ def import_review(ctx, number, data):
             )
         before = {
             name: getattr(decision, name)
-            for name in ("decided_by", "confirmed", "decided_on", "status", "needs_review", "estimated")
+            for name in (
+                "decided_by",
+                "confirmed",
+                "decided_on",
+                "status",
+                "review_on",
+                "review_condition",
+                "needs_review",
+                "estimated",
+            )
         }
         if "decided_by" in data:
             decision.decided_by = choice(data["decided_by"], "decided_by", (USER, AGENT), number)
@@ -580,6 +602,8 @@ def import_review(ctx, number, data):
                     f"The state of {ctx.display(number)} ({decision.status}) cannot be corrected here", "status", number
                 )
             decision.status = status
+            if status in (DONE, REVOKED):
+                decision.review_on, decision.review_condition = None, None
         decision.needs_review = False
         decision.estimated = []
         changes = {
@@ -621,6 +645,8 @@ def supersede(ctx, number, data):
         check_transition("supersede", old.status, ctx.display(number))
         old_issues = _linked_issues(old)
         old_related = _related(old)
+        # A change of the old decision that still waits for rollout moves to the new ones (never lost)
+        new_rollout = rollout or old.pending_rollout
         created = []
         for new_number, fields in zip(numbers, checked):
             if "area" in fields or "mechanism" in fields or "area2" in fields:
@@ -658,7 +684,7 @@ def supersede(ctx, number, data):
                 created_by=ctx.user,
                 updated_by=ctx.user,
             )
-            if rollout:
+            if new_rollout:
                 _set_rollout(ctx, new, "supersedes")
             new.save()
             _add_issues(new, issues)
@@ -686,8 +712,8 @@ def create_area(ctx, data):
     name = text(data.get("name"), "name", MAX_AREA_NAME, required=True)
     parent_key = area_key(data.get("parent"), "parent")
     sort_order = data.get("sort_order")
-    if sort_order is not None and (isinstance(sort_order, bool) or not isinstance(sort_order, int)):
-        raise DecisionError("'sort_order' must be a whole number", "sort_order")
+    if sort_order is not None:
+        sort_order = sort_order_value(sort_order)
     with transaction.atomic():
         parent = None
         siblings = DecisionArea.objects.filter(project_id=ctx.project.id, parent__isnull=True)
@@ -714,16 +740,13 @@ def create_area(ctx, data):
 def update_area(ctx, area_id, data):
     data = _object(data)
     _only(data, ("name", "sort_order"))
-    area = DecisionArea.objects.filter(project_id=ctx.project.id, id=area_id).first()
+    area = DecisionArea.objects.filter(project_id=ctx.project.id, id=area_id).first() if 0 < area_id < 2**62 else None
     if area is None:
         raise DecisionNotFound("Area not found")
     if "name" in data:
         area.name = text(data["name"], "name", MAX_AREA_NAME, required=True)
     if "sort_order" in data:
-        value = data["sort_order"]
-        if isinstance(value, bool) or not isinstance(value, int):
-            raise DecisionError("'sort_order' must be a whole number", "sort_order")
-        area.sort_order = value
+        area.sort_order = sort_order_value(data["sort_order"])
     if not data:
         raise DecisionError("Nothing to change: send 'name' and/or 'sort_order'", code="nothing_to_change")
     area.save()

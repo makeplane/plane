@@ -51,6 +51,9 @@ class TestDecisionRules:
         with pytest.raises(DecisionError) as raised:
             check_transition("accept", "active", "DEMO-D4")
         assert raised.value.code == "invalid_transition"
+        with pytest.raises(DecisionError) as raised:
+            check_transition("done", "revoked", "DEMO-D4")
+        assert str(raised.value).startswith("Cannot mark DEMO-D4 as done: it is revoked")
 
     def test_queues(self):
         def queues(status="active", by="user", confirmed=True, review_on=None, rollout=False, needs_review=False):
