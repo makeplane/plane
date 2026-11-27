@@ -15,6 +15,7 @@ import {
   groupDecisions,
   hiddenByStatus,
   importFixChange,
+  importFixNeedsReturn,
   localSearchHits,
   mapEdges,
   parseDecisionNumber,
@@ -458,31 +459,79 @@ describe("card actions", () => {
   });
 });
 
+const form = (fields = {}) => ({
+  author: "user",
+  date: "",
+  status: "active",
+  reviewOn: "",
+  reviewCondition: "",
+  ...fields,
+});
+
 describe("import correction", () => {
   const imported = decision(3, { decided_by: "unknown", confirmed: false, decided_on: null, needs_review: true });
 
   test("an unknown author must be chosen", () => {
-    assert.equal(importFixChange(imported, { author: "", date: "", status: "active" }), null);
-    assert.deepEqual(importFixChange(imported, { author: "user", date: "", status: "active" }), {
-      decided_by: "user",
-    });
+    assert.equal(importFixChange(imported, form({ author: "" })), null);
+    assert.deepEqual(importFixChange(imported, form()), { decided_by: "user" });
   });
 
   test("only changed fields", () => {
     const known = decision(4, { decided_by: "user", decided_on: "2026-09-02", needs_review: true });
-    assert.equal(importFixChange(known, { author: "user", date: "2026-09-02", status: "active" }), null);
-    assert.deepEqual(importFixChange(known, { author: "agent", date: "2026-09-03", status: "done" }), {
+    assert.equal(importFixChange(known, form({ date: "2026-09-02" })), null);
+    assert.deepEqual(importFixChange(known, form({ author: "agent", date: "2026-09-03", status: "done" })), {
       decided_by: "agent",
       decided_on: "2026-09-03",
       status: "done",
     });
-    assert.deepEqual(importFixChange(known, { author: "user", date: "", status: "active" }), { decided_on: null });
+    assert.deepEqual(importFixChange(known, form()), { decided_on: null });
   });
 
   test("states outside the import review are not sent", () => {
     const superseded = decision(5, { status: "superseded", needs_review: true });
-    assert.equal(importFixChange(superseded, { author: "user", date: "2026-10-01", status: "active" }), null);
-    assert.equal(importFixChange(decision(6), { author: "user", date: "2026-10-01", status: "proposed" }), null);
+    assert.equal(
+      importFixChange(superseded, form({ date: "2026-10-01", status: "deferred", reviewOn: "2026-12-01" })),
+      null
+    );
+    assert.equal(importFixChange(decision(6), form({ date: "2026-10-01", status: "proposed" })), null);
+  });
+
+  test("corrected to deferred: a return date or condition is required and sent", () => {
+    const active = decision(7, { decided_on: "2026-10-01", needs_review: true });
+    const base = { date: "2026-10-01", status: "deferred" };
+    assert.ok(importFixNeedsReturn(active, form(base)));
+    assert.equal(importFixChange(active, form({ ...base, reviewCondition: "  " })), null);
+    assert.deepEqual(importFixChange(active, form({ ...base, reviewOn: "2026-12-27" })), {
+      status: "deferred",
+      review_on: "2026-12-27",
+    });
+    assert.deepEqual(importFixChange(active, form({ ...base, reviewCondition: " gdy zwrotów będzie więcej " })), {
+      status: "deferred",
+      review_condition: "gdy zwrotów będzie więcej",
+    });
+  });
+
+  test("already deferred: the return may change, may stay, may stay empty", () => {
+    const deferred = decision(8, {
+      status: "deferred",
+      decided_on: "2026-10-01",
+      review_condition: "gdy zwrotów będzie więcej",
+      needs_review: true,
+    });
+    const keep = form({ date: "2026-10-01", status: "deferred", reviewCondition: "gdy zwrotów będzie więcej" });
+    assert.ok(!importFixNeedsReturn(deferred, form({ date: "2026-10-01", status: "deferred" })));
+    assert.equal(importFixChange(deferred, keep), null);
+    assert.deepEqual(importFixChange(deferred, { ...keep, reviewOn: "2027-01-15" }), { review_on: "2027-01-15" });
+  });
+
+  test("done, revoked and active do not send the return", () => {
+    const deferred = decision(9, { status: "deferred", decided_on: "2026-10-01", review_on: "2026-12-01" });
+    assert.deepEqual(importFixChange(deferred, form({ date: "2026-10-01", status: "done", reviewOn: "2026-12-01" })), {
+      status: "done",
+    });
+    assert.deepEqual(importFixChange(deferred, form({ date: "2026-10-01", status: "active", reviewOn: "" })), {
+      status: "active",
+    });
   });
 });
 

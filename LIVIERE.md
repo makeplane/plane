@@ -580,9 +580,9 @@ text for others. `ack/` and the import stay in the terminal (`plane-decision`).
 **Map.** All areas at once, rows with a number dot coloured by state; dashed lines for "supersedes" (one per
 successor), solid ones for "related". Hover highlights a decision's lines, a click opens its card in a side panel
 with the same actions. Kind, search and queue dim what does not match; the state filter is off (old versions are
-part of the chains). "Related" lines within one area box are drawn only for the highlighted or opened decision
-(their arcs through the left margin merge otherwise); above 120 of the other lines only that decision's lines are
-drawn; a switch shows all of them; below 768 px the boxes stack without lines. Drawing is measured as `liviere-decisions-map-lines`
+part of the chains). By default no line is drawn (the owner's decision: the full web is unreadable at a few
+hundred decisions); pointing at a decision or opening it shows its "supersedes" and "related" lines, and _Show all
+lines_ shows every line until the map is left (not remembered); below 768 px the boxes stack without lines. Drawing is measured as `liviere-decisions-map-lines`
 (`performance.getEntriesByName(...)` in the console). An invented register to try it on:
 `node apps/web/liviere/decisions/fixtures/generate-sample.mjs --decisions 300 --areas 20 > /tmp/sample.json`,
 then `plane-decision import` into a project with the register on.

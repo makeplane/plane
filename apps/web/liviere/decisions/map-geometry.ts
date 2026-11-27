@@ -12,13 +12,10 @@ import type { TMapEdge } from "./model";
 // Centre of a number dot relative to the map container, and its width
 export type TDotPosition = { x: number; y: number; width: number };
 
-// local: both ends are in the same area box
-export type TMapLine = TMapEdge & { path: string; local: boolean };
+export type TMapLine = TMapEdge & { path: string };
 
 // Dots closer than this horizontally are in the same column: the line bends out through the left margin
 export const SAME_COLUMN_PX = 40;
-// Above this many lines the map draws only those of the highlighted or opened decision, unless asked for all
-export const ALL_LINES_LIMIT = 120;
 
 const round = (value: number) => value.toFixed(1);
 
@@ -42,37 +39,24 @@ export function linePath(from: TDotPosition, to: TDotPosition): string {
 export const touches = (line: TMapEdge, number: number | null) =>
   number !== null && (line.from === number || line.to === number);
 
-/**
- * Lines of the edges whose both ends are on the map (a dot of a decision not shown has no position); `boxOf`
- * gives the area box of each decision.
- */
-export function mapLines(
-  edges: TMapEdge[],
-  positions: Map<number, TDotPosition>,
-  boxOf: Map<number, string> = new Map()
-): TMapLine[] {
+/** Lines of the edges whose both ends are on the map (a dot of a decision not shown has no position). */
+export function mapLines(edges: TMapEdge[], positions: Map<number, TDotPosition>): TMapLine[] {
   const lines: TMapLine[] = [];
   for (const edge of edges) {
     const from = positions.get(edge.from);
     const to = positions.get(edge.to);
-    const box = boxOf.get(edge.from);
-    if (from && to)
-      lines.push({ ...edge, path: linePath(from, to), local: box !== undefined && box === boxOf.get(edge.to) });
+    if (from && to) lines.push({ ...edge, path: linePath(from, to) });
   }
   return lines;
 }
 
 /**
- * The lines to draw, so that a busy map stays readable:
- * - "related" lines within one area box only for the highlighted or opened decision (their arcs through the
- *   left margin of a box merge into one thick line otherwise);
- * - above ALL_LINES_LIMIT of the rest, only the lines of the highlighted or opened decision;
- * - everything when asked for all.
+ * The lines to draw (the owner's decision: a full web of lines is unreadable). None by default; those of the
+ * highlighted or opened decision ("supersedes" and "related", within a box and between boxes); all of them only
+ * when asked for.
  */
 export function visibleLines(lines: TMapLine[], focus: number | null, showAll: boolean): TMapLine[] {
   if (showAll) return lines;
-  const drawn = lines.filter((line) => !line.local || line.type !== "related" || touches(line, focus));
-  if (drawn.length <= ALL_LINES_LIMIT) return drawn;
   if (focus === null) return [];
-  return drawn.filter((line) => touches(line, focus));
+  return lines.filter((line) => touches(line, focus));
 }

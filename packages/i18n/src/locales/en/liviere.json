@@ -479,7 +479,6 @@
           "author_required": "The author is unknown: choose who decided.",
           "date": "Decision date",
           "status": "State",
-          "deferred_hint": "The return date or condition cannot be set here. If the decision should come back, use “Back to it” after saving, then “Defer” with a date or a condition.",
           "submit": "Save the corrections"
         }
       },
@@ -511,10 +510,10 @@
           "supersedes": "supersedes",
           "related": "related"
         },
-        "hint": "Hover a decision to highlight its links (links within one area show only then); click it to open it.",
+        "hint": "Hover a decision to see its links; click it to open it.",
         "narrow": "Links show on a wider screen; click a decision to open it.",
         "all_lines": "Show all lines ({count})",
-        "focus_lines": "Only the lines of the pointed decision",
+        "focus_lines": "Show only for the pointed decision",
         "close": "Close"
       }
     }

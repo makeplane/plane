@@ -459,26 +459,44 @@ export type TImportFix = {
   decided_by?: "user" | "agent";
   decided_on?: string | null;
   status?: TDecisionStatus;
+  review_on?: string | null;
+  review_condition?: string | null;
 };
+
+export type TImportFixForm = {
+  author: "user" | "agent" | "";
+  date: string;
+  status: TDecisionStatus;
+  // The return of a decision corrected to (or kept) deferred, as in defer/
+  reviewOn: string;
+  reviewCondition: string;
+};
+
+/** The corrected state shows the return fields and a decision becoming deferred needs a date or a condition. */
+export const importFixNeedsReturn = (decision: TDecision, form: TImportFixForm) =>
+  form.status === "deferred" && decision.status !== "deferred" && !form.reviewOn && !form.reviewCondition.trim();
 
 /**
  * The body of `import-review/` for the corrections of the dialog: only the fields that change. An unknown
- * author must be chosen; null when there is nothing to send (no change, or the author is still unknown).
+ * author must be chosen and a decision corrected to deferred needs a return date or condition; null when there
+ * is nothing to send or the form is not complete. The return is sent only for a deferred state: done and
+ * revoked clear it on the server, and an active decision keeps its review.
  */
-export function importFixChange(
-  decision: TDecision,
-  form: { author: "user" | "agent" | ""; date: string; status: TDecisionStatus }
-): TImportFix | null {
-  if (!form.author) return null;
+export function importFixChange(decision: TDecision, form: TImportFixForm): TImportFix | null {
+  if (!form.author || importFixNeedsReturn(decision, form)) return null;
   const change: TImportFix = {};
   if (form.author !== decision.decided_by) change.decided_by = form.author;
   if ((form.date || null) !== decision.decided_on) change.decided_on = form.date || null;
-  if (
-    form.status !== decision.status &&
+  const statusEditable =
     (IMPORT_FIX_STATUSES as readonly string[]).includes(decision.status) &&
-    (IMPORT_FIX_STATUSES as readonly string[]).includes(form.status)
-  )
-    change.status = form.status;
+    (IMPORT_FIX_STATUSES as readonly string[]).includes(form.status);
+  if (form.status !== decision.status && statusEditable) change.status = form.status;
+  if (form.status === "deferred" && statusEditable) {
+    const reviewOn = form.reviewOn || null;
+    const reviewCondition = form.reviewCondition.trim() || null;
+    if (reviewOn !== decision.review_on) change.review_on = reviewOn;
+    if (reviewCondition !== decision.review_condition) change.review_condition = reviewCondition;
+  }
   return Object.keys(change).length ? change : null;
 }
 

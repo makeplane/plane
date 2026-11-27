@@ -23,7 +23,7 @@ import {
 import { InputField } from "@makeplane/propel/components/input-field";
 import { TextAreaField } from "@makeplane/propel/components/text-area-field";
 import { useTranslation } from "@plane/i18n";
-import { IMPORT_FIX_STATUSES, addDays, importFixChange } from "./model";
+import { IMPORT_FIX_STATUSES, addDays, importFixChange, importFixNeedsReturn } from "./model";
 import type { TImportFix } from "./model";
 import type { TDecision } from "./types";
 
@@ -186,22 +186,35 @@ export function DecisionRevokeDialog(props: {
   );
 }
 
-/** Correction of an imported decision: author, date and state, sent as one `import-review/`. */
+/**
+ * Correction of an imported decision: author, date and state, and for a deferred one the date or condition of its
+ * return (required when it becomes deferred), sent as one `import-review/`.
+ */
 export function DecisionImportFixDialog(props: {
   decision: TDecision;
+  today: string | null;
   submitting: boolean;
   onClose: () => void;
   onSubmit: (fix: TImportFix) => void;
 }) {
-  const { decision, submitting, onClose, onSubmit } = props;
+  const { decision, today, submitting, onClose, onSubmit } = props;
   const { t } = useTranslation();
   const [author, setAuthor] = useState<"user" | "agent" | "">(
     decision.decided_by === "unknown" ? "" : decision.decided_by
   );
   const [date, setDate] = useState(decision.decided_on ?? "");
   const [status, setStatus] = useState(decision.status);
+  // The return as it is, or the suggestion of "Defer" once the decision becomes deferred
+  const [reviewOn, setReviewOn] = useState(decision.review_on ?? "");
+  const [reviewCondition, setReviewCondition] = useState(decision.review_condition ?? "");
   const statusAllowed = (IMPORT_FIX_STATUSES as readonly string[]).includes(decision.status);
-  const change = importFixChange(decision, { author, date, status });
+  const form = { author, date, status, reviewOn, reviewCondition };
+  const change = importFixChange(decision, form);
+  const chooseStatus = (value: TDecision["status"]) => {
+    setStatus(value);
+    if (value === "deferred" && decision.status !== "deferred" && !reviewOn && !reviewCondition && today)
+      setReviewOn(addDays(today, SUGGESTED_DAYS));
+  };
   return (
     <DecisionDialog
       title={t("liviere.decisions.dialogs.import_fix.title", { number: decision.identifier })}
@@ -242,7 +255,7 @@ export function DecisionImportFixDialog(props: {
           <select
             className={selectClass}
             value={status}
-            onChange={(event) => setStatus(event.target.value as TDecision["status"])}
+            onChange={(event) => chooseStatus(event.target.value as TDecision["status"])}
           >
             {IMPORT_FIX_STATUSES.map((value) => (
               <option key={value} value={value}>
@@ -252,8 +265,34 @@ export function DecisionImportFixDialog(props: {
           </select>
         </label>
       )}
-      {status === "deferred" && decision.status !== "deferred" && (
-        <p className="text-12 text-tertiary">{t("liviere.decisions.dialogs.import_fix.deferred_hint")}</p>
+      {statusAllowed && status === "deferred" && (
+        <>
+          <div className="w-48">
+            <InputField
+              size="md"
+              orientation="vertical"
+              name="review_on"
+              type="date"
+              label={t("liviere.decisions.dialogs.defer.date")}
+              value={reviewOn}
+              onChange={(event) => setReviewOn(event.target.value)}
+            />
+          </div>
+          <TextAreaField
+            size="lg"
+            name="review_condition"
+            label={t("liviere.decisions.dialogs.condition")}
+            placeholder={t("liviere.decisions.dialogs.condition_placeholder")}
+            value={reviewCondition}
+            onChange={(event) => setReviewCondition(event.target.value)}
+            maxLength={CONDITION_MAX_LENGTH}
+            resize="vertical"
+            rows={2}
+          />
+          {importFixNeedsReturn(decision, form) && (
+            <p className="text-12 text-tertiary">{t("liviere.decisions.dialogs.date_or_condition")}</p>
+          )}
+        </>
       )}
       {decision.decided_by === "unknown" && author === "" && (
         <p className="text-12 text-tertiary">{t("liviere.decisions.dialogs.import_fix.author_required")}</p>

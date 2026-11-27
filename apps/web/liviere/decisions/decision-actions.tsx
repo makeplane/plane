@@ -158,6 +158,7 @@ export function DecisionActions(props: Props) {
       {dialog === "import-fix" && (
         <DecisionImportFixDialog
           decision={decision}
+          today={context.today}
           submitting={busy !== null}
           onClose={() => setDialog(null)}
           onSubmit={(fix) => void run("import-fix", "import-review", fix)}

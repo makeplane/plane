@@ -206,6 +206,13 @@ export type TDecisionActionBody = {
   done: Record<string, never>;
   revoke: { reason?: string };
   review: { review_on?: string | null; review_condition?: string | null };
-  "import-review": { decided_by?: "user" | "agent"; decided_on?: string | null; status?: TDecisionStatus };
+  "import-review": {
+    decided_by?: "user" | "agent";
+    decided_on?: string | null;
+    status?: TDecisionStatus;
+    // Only for a decision active or deferred after the correction; one of them is required when it becomes deferred
+    review_on?: string | null;
+    review_condition?: string | null;
+  };
 };
 export type TDecisionAction = keyof TDecisionActionBody;

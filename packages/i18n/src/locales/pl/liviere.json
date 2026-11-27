@@ -479,7 +479,6 @@
           "author_required": "Autor jest nieznany: wybierz, kto zdecydował.",
           "date": "Data decyzji",
           "status": "Stan",
-          "deferred_hint": "Datę ani warunek powrotu nie ustawisz tutaj. Jeśli decyzja ma wrócić, po zapisie użyj „Wracamy do tego”, a potem „Odłóż” z datą albo warunkiem.",
           "submit": "Zapisz poprawki"
         }
       },
@@ -511,10 +510,10 @@
           "supersedes": "zastępuje",
           "related": "powiązana"
         },
-        "hint": "Najedź na decyzję, żeby podświetlić jej powiązania (powiązania w obrębie jednego obszaru pokazują się tylko wtedy); kliknij, żeby ją otworzyć.",
+        "hint": "Najedź na decyzję, żeby zobaczyć jej powiązania; kliknij, żeby ją otworzyć.",
         "narrow": "Powiązania widać na szerszym ekranie; kliknij decyzję, żeby ją otworzyć.",
         "all_lines": "Pokaż wszystkie linie ({count})",
-        "focus_lines": "Tylko linie wskazanej decyzji",
+        "focus_lines": "Pokaż tylko dla wskazanej",
         "close": "Zamknij"
       }
     }

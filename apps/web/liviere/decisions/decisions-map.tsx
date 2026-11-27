@@ -152,7 +152,6 @@ export function DecisionsMap(props: Props) {
   const [showAll, setShowAll] = useState(false);
   const wide = useMediaQuery(WIDE_QUERY);
   const edges = useMemo(() => mapEdges(decisions), [decisions]);
-  const boxOf = useMemo(() => new Map(decisions.map((decision) => [decision.number, decision.area])), [decisions]);
 
   // One box per area of the tree, decisions by number; decisions of an area missing from the tree last
   const boxes = useMemo((): TMapBox[] => {
@@ -185,8 +184,8 @@ export function DecisionsMap(props: Props) {
         width: box.width,
       });
     });
-    setLines(mapLines(edges, positions, boxOf));
-  }, [edges, wide, boxOf]);
+    setLines(mapLines(edges, positions));
+  }, [edges, wide]);
 
   // Measured after every layout change of the rows: data, filters (dimming keeps the layout), width
   useLayoutEffect(measure, [measure, boxes]);
@@ -216,9 +215,8 @@ export function DecisionsMap(props: Props) {
   }, [lines]);
 
   const focus = hover ?? selected;
+  // Not remembered: entering the map shows no lines until a decision is pointed at
   const shown = visibleLines(lines, focus, showAll);
-  // Some lines wait for a highlighted decision: offer all of them
-  const limited = visibleLines(lines, null, false).length < lines.length;
 
   return (
     <div className="flex flex-col gap-3">
@@ -250,7 +248,7 @@ export function DecisionsMap(props: Props) {
           </>
         )}
         <span>{t(wide ? "liviere.decisions.map.hint" : "liviere.decisions.map.narrow")}</span>
-        {wide && limited && (
+        {wide && lines.length > 0 && (
           <button type="button" className="text-accent-primary hover:underline" onClick={() => setShowAll((v) => !v)}>
             {t(showAll ? "liviere.decisions.map.focus_lines" : "liviere.decisions.map.all_lines", {
               count: lines.length,

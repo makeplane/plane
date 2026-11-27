@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { describe, test } from "node:test";
-import { ALL_LINES_LIMIT, linePath, mapLines, touches, visibleLines } from "./map-geometry.ts";
+import { linePath, mapLines, touches, visibleLines } from "./map-geometry.ts";
 import { mapEdges } from "./model.ts";
 import { generateDecisions } from "./fixtures/generate-sample.mjs";
 
@@ -46,66 +46,27 @@ describe("line paths", () => {
   });
 });
 
-describe("readable large maps", () => {
-  const many = Array.from({ length: ALL_LINES_LIMIT + 5 }, (_, i) => ({
-    from: i + 1,
-    to: i + 2,
-    type: "related",
-    path: "",
-    local: false,
-  }));
+describe("lines shown", () => {
+  const lines = [
+    { from: 1, to: 2, type: "related", path: "" },
+    { from: 1, to: 3, type: "supersedes", path: "" },
+    { from: 2, to: 9, type: "related", path: "" },
+    { from: 4, to: 5, type: "supersedes", path: "" },
+  ];
 
-  test("related lines within one box only for the focused decision", () => {
-    const lines = [
-      { from: 1, to: 2, type: "related", path: "", local: true },
-      { from: 1, to: 3, type: "supersedes", path: "", local: true },
-      { from: 2, to: 9, type: "related", path: "", local: false },
-    ];
-    assert.deepEqual(pairs(visibleLines(lines, null, false)), ["1-3", "2-9"]);
-    assert.deepEqual(pairs(visibleLines(lines, 2, false)), ["1-2", "1-3", "2-9"]);
-    assert.deepEqual(pairs(visibleLines(lines, 3, false)), ["1-3", "2-9"]);
-    assert.deepEqual(pairs(visibleLines(lines, null, true)), ["1-2", "1-3", "2-9"]);
+  test("none without a pointed or opened decision", () => {
+    assert.deepEqual(visibleLines(lines, null, false), []);
   });
 
-  test("a line is local when both ends are in the same box", () => {
-    const positions = new Map([
-      [1, { x: 10, y: 10, width: 30 }],
-      [2, { x: 10, y: 60, width: 30 }],
-      [3, { x: 400, y: 60, width: 30 }],
-    ]);
-    const boxOf = new Map([
-      [1, "zamowienia"],
-      [2, "zamowienia"],
-      [3, "platnosci"],
-    ]);
-    const lines = mapLines(
-      [
-        { from: 1, to: 2, type: "related" },
-        { from: 2, to: 3, type: "related" },
-      ],
-      positions,
-      boxOf
-    );
-    assert.deepEqual(
-      lines.map((line) => line.local),
-      [true, false]
-    );
+  test("only the lines of the pointed decision, both kinds", () => {
+    assert.deepEqual(pairs(visibleLines(lines, 1, false)), ["1-2", "1-3"]);
+    assert.deepEqual(pairs(visibleLines(lines, 2, false)), ["1-2", "2-9"]);
+    assert.deepEqual(visibleLines(lines, 7, false), []);
   });
 
-  test("all lines up to the limit", () => {
-    assert.equal(visibleLines(many.slice(0, ALL_LINES_LIMIT), null, false).length, ALL_LINES_LIMIT);
-  });
-
-  test("above it only the lines of the focused decision, unless all are asked for", () => {
-    assert.equal(visibleLines(many, null, false).length, 0);
-    assert.deepEqual(
-      visibleLines(many, 5, false).map((line) => [line.from, line.to]),
-      [
-        [4, 5],
-        [5, 6],
-      ]
-    );
-    assert.equal(visibleLines(many, null, true).length, many.length);
+  test("all of them with the switch, pointed or not", () => {
+    assert.equal(visibleLines(lines, null, true).length, 4);
+    assert.equal(visibleLines(lines, 5, true).length, 4);
   });
 
   test("touches", () => {
