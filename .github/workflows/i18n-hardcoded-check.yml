@@ -1,0 +1,61 @@
+name: i18n hardcoded string check
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - "preview"
+    types:
+      - "opened"
+      - "synchronize"
+      - "reopened"
+      - "ready_for_review"
+      # Re-run when the i18n-hardcoded-ok label is added or removed. Every label change runs the whole
+      # job on purpose: a job skipped by a condition reports success and would hide an earlier failure.
+      - "labeled"
+      - "unlabeled"
+    paths:
+      - "apps/web/**"
+      - "apps/admin/**"
+      - "apps/space/**"
+      - "packages/**"
+      - ".github/workflows/i18n-hardcoded-check.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  hardcoded-check:
+    name: check:hardcoded
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          # 2 so HEAD^1 (the base side of the PR merge commit) and its file contents are available
+          # locally for --base; no blob filter, so reading base files never needs a network fetch.
+          fetch-depth: 2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22.22.0"
+
+      - name: Enable Corepack and pnpm
+        run: corepack enable pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --filter=@plane/i18n
+
+      - name: Test scanner
+        run: pnpm --filter=@plane/i18n test:hardcoded
+
+      # A maintainer can add the i18n-hardcoded-ok label to let a PR through: new strings are listed as a warning.
+      - name: Run hardcoded string check
+        run: pnpm --filter=@plane/i18n check:hardcoded --base HEAD^1 ${{ contains(github.event.pull_request.labels.*.name, 'i18n-hardcoded-ok') && '--allow-new' || '' }}
