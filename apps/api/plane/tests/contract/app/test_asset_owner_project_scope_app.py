@@ -18,7 +18,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from plane.db.models import DraftIssue, FileAsset, Page, ProjectPage, User, WorkspaceMember
+from plane.db.models import DraftIssue, FileAsset, Page, Project, ProjectMember, ProjectPage, User, WorkspaceMember
 from plane.tests.contract.app.test_guest_asset_download_scope_app import CHECK_URL, _get_all, _url
 from plane.tests.contract.app.test_guest_issue_subresource_scope_app import (  # noqa: F401
     _make_comment,
@@ -137,3 +137,45 @@ class TestForwardFix:
         assert response.status_code == status.HTTP_200_OK, response.data
         asset = FileAsset.objects.get(issue_id=foreign_issue.id, entity_type=TYPES.ISSUE_DESCRIPTION)
         assert asset.project_id == project.id
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestReviewFollowUps:
+    def test_page_in_several_projects_records_a_project_of_the_uploader(
+        self, session_client, workspace, project, page, create_user
+    ):
+        # A newer link to a project the uploader does not belong to must not be recorded
+        other = Project.objects.create(name="Other", identifier="OT", workspace=workspace, created_by=create_user)
+        ProjectPage.objects.create(workspace=workspace, project=other, page=page)
+        with mock.patch("plane.app.views.asset.v2.S3Storage") as storage:
+            storage.return_value.generate_presigned_post.return_value = {"url": "u", "fields": {}}
+            response = session_client.post(
+                f"/api/assets/v2/workspaces/{workspace.slug}/",
+                {
+                    "name": "a.png",
+                    "type": "image/png",
+                    "size": 100,
+                    "entity_type": TYPES.PAGE_DESCRIPTION,
+                    "entity_identifier": str(page.id),
+                },
+                format="json",
+            )
+        assert response.status_code == status.HTTP_200_OK, response.data
+        assert FileAsset.objects.get(page_id=page.id).project_id == project.id
+
+    def test_bulk_bind_cannot_move_an_owned_legacy_asset_to_another_project(
+        self, session_client, workspace, project, page, create_user
+    ):
+        # Legacy page asset owned by project A that the uploader tries to bind to a comment of project B
+        other = Project.objects.create(name="Other", identifier="OT", workspace=workspace, created_by=create_user)
+        ProjectMember.objects.create(project=other, member=create_user, workspace=workspace, role=20)
+        asset = _asset(workspace, TYPES.COMMENT_DESCRIPTION, creator=create_user, page_id=page.id)
+        response = session_client.post(
+            f"/api/assets/v2/workspaces/{workspace.slug}/projects/{other.id}/{uuid4()}/bulk/",
+            {"asset_ids": [str(asset.id)]},
+            format="json",
+        )
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        asset.refresh_from_db()
+        assert asset.project_id is None

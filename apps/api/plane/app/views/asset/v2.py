@@ -10,7 +10,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from django.db import IntegrityError
-from django.db.models import Q
+from django.db.models import Exists, OuterRef, Q
 
 # Third party imports
 from rest_framework import status
@@ -111,8 +111,12 @@ def can_bind_asset(user, workspace_id, entity_id_field, project_id=None):
     return model.objects.filter(pk=entity_id, workspace_id=workspace_id, **scope).exists()
 
 
-def get_entity_project_id(entity_id_field):
-    """The project that owns the issue, comment or page in entity_id_field, or None."""
+def get_entity_project_id(user, entity_id_field):
+    """The project that owns the issue, comment or page in entity_id_field, or None.
+
+    A page linked to several projects resolves to one the user is an active member of,
+    the link can_bind_asset authorized.
+    """
     field, entity_id = next(iter(entity_id_field.items()), (None, None))
     if not entity_id:
         return None
@@ -121,7 +125,15 @@ def get_entity_project_id(entity_id_field):
     if field == "comment_id":
         return IssueComment.objects.filter(pk=entity_id).values_list("project_id", flat=True).first()
     if field == "page_id":
-        return ProjectPage.objects.filter(page_id=entity_id).values_list("project_id", flat=True).first()
+        return (
+            ProjectPage.objects.filter(
+                page_id=entity_id,
+                project__project_projectmember__member=user,
+                project__project_projectmember__is_active=True,
+            )
+            .values_list("project_id", flat=True)
+            .first()
+        )
     return None
 
 
@@ -487,7 +499,7 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
         # Record the owning project of a bound issue, comment or page (after the cover check above)
-        asset.project_id = asset.project_id or get_entity_project_id(entity_id_field)
+        asset.project_id = asset.project_id or get_entity_project_id(request.user, entity_id_field)
         asset.save()
 
         # Get the presigned URL
@@ -846,6 +858,14 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             workspace__slug=slug,
             created_by=request.user,
         ).filter(Q(project_id=project_id) | Q(project_id__isnull=True))
+        # A legacy asset (empty project_id) already owned through its issue, comment or page
+        # cannot be moved into another project.
+        page_links = ProjectPage.objects.filter(page_id=OuterRef("page_id"))
+        assets = assets.filter(
+            Q(issue__isnull=True) | Q(issue__project_id=project_id),
+            Q(comment__isnull=True) | Q(comment__project_id=project_id),
+            Q(page__isnull=True) | ~Exists(page_links) | Exists(page_links.filter(project_id=project_id)),
+        )
 
         # Get the first asset
         asset = assets.first()
