@@ -399,6 +399,99 @@
         "pending_rollout": "waiting for rollout",
         "needs_review": "to review",
         "estimated": "estimated fields"
+      },
+      "queues": {
+        "label": "Queues",
+        "confirm": "To confirm",
+        "review": "To review",
+        "rollout": "Waiting for rollout",
+        "proposed": "Proposed",
+        "imported": "To review after import",
+        "rollout_info": "The project coordinator sees these changes in their inbox (plane-decision inbox), carries them into the rules and the code, then checks them off."
+      },
+      "actions": {
+        "import-ok": "Reviewed, correct",
+        "import-fix": "Correct",
+        "confirm": "Confirm",
+        "reviewed": "Reviewed, stays",
+        "change": "Change",
+        "defer": "Defer",
+        "done": "Done",
+        "revoke": "Revoke",
+        "accept": "Accept",
+        "change-accept": "Change and accept",
+        "reject": "Reject",
+        "resume": "Back to it",
+        "postpone": "Move the return"
+      },
+      "change": {
+        "title": "New wording of the decision",
+        "why_change": "Why you change it",
+        "why": "Why",
+        "version": "New decision {index}",
+        "remove": "Remove",
+        "add_version": "+ Add another decision (split)",
+        "save": "Save the new version",
+        "save_accept": "Save and accept",
+        "hint": "The new version is in force at once. The old one stays in the chain of versions as superseded, and the project coordinator sees the change in their inbox and carries it into the rules and the code.",
+        "hint_split": "Each new decision is a rule of its own and in force at once. The old one stays in the chain as superseded by all of them, and the project coordinator sees the change in their inbox.",
+        "hint_accept": "The proposal is accepted in this wording as your decision and goes to the project coordinator's inbox."
+      },
+      "dialogs": {
+        "condition": "Condition (optional)",
+        "condition_placeholder": "e.g. when returns exceed 20 a month",
+        "date_or_condition": "Give a date or a condition.",
+        "reason": "Reason (optional)",
+        "defer": {
+          "title": "Defer {number}",
+          "description": "The decision is not in force until the date or until the condition is met. The project coordinator sees this in their inbox.",
+          "date": "Back to it on",
+          "submit": "Defer"
+        },
+        "review": {
+          "title": "Review {number}",
+          "description": "The decision stays as it is. Give the date of the next review, or leave both fields empty if no further review is needed.",
+          "date": "Next review",
+          "submit": "Save the review"
+        },
+        "postpone": {
+          "title": "Move the return of {number}",
+          "description": "The decision stays deferred; only the date or the condition of its return changes.",
+          "submit": "Save"
+        },
+        "revoke": {
+          "title": "Revoke {number}?",
+          "description": "The decision stops being in force and nothing replaces it. The project coordinator sees this in their inbox.",
+          "submit": "Revoke"
+        },
+        "reject": {
+          "title": "Reject the proposal {number}?",
+          "description": "The proposal does not come into force and stays in the register as revoked.",
+          "submit": "Reject"
+        },
+        "import_fix": {
+          "title": "Correct {number}",
+          "description": "Correct what the import estimated or did not know. Once saved, the decision leaves the queue “To review after import”.",
+          "author": "Who decided",
+          "pick_author": "choose…",
+          "author_user": "my decision",
+          "author_agent": "an agent",
+          "author_required": "The author is unknown: choose who decided.",
+          "date": "Decision date",
+          "status": "State",
+          "deferred_hint": "Set the date or condition of the return afterwards with “Move the return”.",
+          "submit": "Save the corrections"
+        }
+      },
+      "errors": {
+        "title": "Could not save the change",
+        "unknown": "The server refused the change.",
+        "invalid_transition": "This action is not possible in the current state of the decision. Reload the page: someone may have just changed it.",
+        "already_superseded": "This decision is already superseded. Change its new version instead.",
+        "already_confirmed": "This decision is already confirmed.",
+        "not_needs_review": "This decision no longer waits for a review after import.",
+        "nothing_to_change": "There is nothing to change.",
+        "validation_error": "Check the fields of the form: one has a wrong value or is too long."
       }
     }
   }

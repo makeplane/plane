@@ -11,6 +11,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
+import { DecisionActions } from "./decision-actions";
 import type { TDecisionsContext } from "./decisions-root";
 import { formatDate, reviewBadge, splitCode, versionChain } from "./model";
 import { DECISION_EVENT_KINDS, DECISION_FIELDS } from "./types";
@@ -306,6 +307,7 @@ function DecisionCardBody(props: { context: TDecisionsContext; decision: TDecisi
         {decision.sources.length ? decision.sources.join("; ") : t("liviere.decisions.card.no_sources")}
       </p>
       <DecisionHistory context={context} number={decision.number} />
+      <DecisionActions context={context} decision={decision} />
     </div>
   );
 }

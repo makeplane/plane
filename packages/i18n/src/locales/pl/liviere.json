@@ -399,6 +399,99 @@
         "pending_rollout": "czeka na wdrożenie",
         "needs_review": "do przejrzenia",
         "estimated": "szacowane pola"
+      },
+      "queues": {
+        "label": "Kolejki",
+        "confirm": "Do potwierdzenia",
+        "review": "Do przeglądu",
+        "rollout": "Czeka na wdrożenie",
+        "proposed": "Proponowane",
+        "imported": "Do przejrzenia po imporcie",
+        "rollout_info": "Koordynator projektu zobaczy te zmiany w swojej skrzynce (plane-decision inbox), przeniesie je do reguł i kodu, a potem odhaczy."
+      },
+      "actions": {
+        "import-ok": "Przejrzane, zgadza się",
+        "import-fix": "Popraw",
+        "confirm": "Potwierdź",
+        "reviewed": "Przejrzane, zostaje",
+        "change": "Zmień",
+        "defer": "Odłóż",
+        "done": "Wykonana",
+        "revoke": "Wycofaj",
+        "accept": "Przyjmij",
+        "change-accept": "Zmień i przyjmij",
+        "reject": "Odrzuć",
+        "resume": "Wracamy do tego",
+        "postpone": "Przesuń powrót"
+      },
+      "change": {
+        "title": "Nowa treść decyzji",
+        "why_change": "Dlaczego zmieniasz",
+        "why": "Dlaczego",
+        "version": "Nowa decyzja {index}",
+        "remove": "Usuń",
+        "add_version": "+ Dodaj kolejną decyzję (podział)",
+        "save": "Zapisz nową wersję",
+        "save_accept": "Zapisz i przyjmij",
+        "hint": "Nowa wersja obowiązuje od razu. Stara zostaje w łańcuchu zmian jako zastąpiona, a koordynator projektu zobaczy zmianę w swojej skrzynce i przeniesie ją do reguł i kodu.",
+        "hint_split": "Każda nowa decyzja to osobna reguła i obowiązuje od razu. Stara zostaje w łańcuchu zmian jako zastąpiona przez wszystkie nowe, a koordynator projektu zobaczy zmianę w swojej skrzynce.",
+        "hint_accept": "Propozycja zostanie przyjęta w tej treści jako Twoja decyzja i trafi do skrzynki koordynatora projektu."
+      },
+      "dialogs": {
+        "condition": "Warunek (opcjonalnie)",
+        "condition_placeholder": "np. gdy liczba zwrotów przekroczy 20 miesięcznie",
+        "date_or_condition": "Podaj datę albo warunek.",
+        "reason": "Powód (opcjonalnie)",
+        "defer": {
+          "title": "Odłóż {number}",
+          "description": "Decyzja przestaje obowiązywać do daty albo do spełnienia warunku. Koordynator projektu zobaczy to w swojej skrzynce.",
+          "date": "Wracamy do tego",
+          "submit": "Odłóż"
+        },
+        "review": {
+          "title": "Przegląd {number}",
+          "description": "Decyzja zostaje bez zmian. Podaj termin kolejnego przeglądu albo zostaw pola puste, jeśli następny przegląd nie jest potrzebny.",
+          "date": "Kolejny przegląd",
+          "submit": "Zapisz przegląd"
+        },
+        "postpone": {
+          "title": "Przesuń powrót {number}",
+          "description": "Decyzja zostaje odłożona; zmieniasz tylko datę albo warunek powrotu.",
+          "submit": "Zapisz"
+        },
+        "revoke": {
+          "title": "Wycofać {number}?",
+          "description": "Decyzja przestanie obowiązywać i nie będzie niczym zastąpiona. Koordynator projektu zobaczy to w swojej skrzynce.",
+          "submit": "Wycofaj"
+        },
+        "reject": {
+          "title": "Odrzucić propozycję {number}?",
+          "description": "Propozycja nie wejdzie w życie i zostanie w rejestrze jako wycofana.",
+          "submit": "Odrzuć"
+        },
+        "import_fix": {
+          "title": "Popraw {number}",
+          "description": "Popraw dane, które import oszacował albo których nie znał. Po zapisie decyzja zniknie z kolejki „Do przejrzenia po imporcie”.",
+          "author": "Kto zdecydował",
+          "pick_author": "wybierz…",
+          "author_user": "moja decyzja",
+          "author_agent": "agent",
+          "author_required": "Autor jest nieznany: wybierz, kto zdecydował.",
+          "date": "Data decyzji",
+          "status": "Stan",
+          "deferred_hint": "Datę albo warunek powrotu ustawisz potem przyciskiem „Przesuń powrót”.",
+          "submit": "Zapisz poprawki"
+        }
+      },
+      "errors": {
+        "title": "Nie udało się zapisać zmiany",
+        "unknown": "Serwer odrzucił zmianę.",
+        "invalid_transition": "Ta akcja nie jest możliwa w obecnym stanie decyzji. Odśwież stronę: ktoś mógł ją właśnie zmienić.",
+        "already_superseded": "Ta decyzja jest już zastąpiona. Zmień jej nową wersję.",
+        "already_confirmed": "Ta decyzja jest już potwierdzona.",
+        "not_needs_review": "Ta decyzja nie czeka już na przejrzenie po imporcie.",
+        "nothing_to_change": "Nie ma czego zmienić.",
+        "validation_error": "Sprawdź pola formularza: któreś ma złą wartość albo jest za długie."
       }
     }
   }

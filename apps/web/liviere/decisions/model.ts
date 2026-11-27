@@ -396,3 +396,108 @@ export function mapEdges(decisions: TDecision[]): TMapEdge[] {
   }
   return edges;
 }
+
+// ---------------------------------------------------------------------------------------------------------
+// Actions of a card
+
+export const CARD_ACTIONS = [
+  "import-ok",
+  "import-fix",
+  "confirm",
+  "reviewed",
+  "change",
+  "defer",
+  "done",
+  "revoke",
+  "accept",
+  "change-accept",
+  "reject",
+  "resume",
+  "postpone",
+] as const;
+export type TCardAction = (typeof CARD_ACTIONS)[number];
+
+// Codes of API errors with a text of their own (decisions/rules.py ERROR_CODES); others show the server text
+export const ERROR_CODES_WITH_TEXT = [
+  "invalid_transition",
+  "already_superseded",
+  "already_confirmed",
+  "not_needs_review",
+  "nothing_to_change",
+  "validation_error",
+] as const;
+
+const CONFIRMABLE: ReadonlySet<TDecisionStatus> = new Set(["active", "deferred", "done"]);
+
+/**
+ * The buttons of a decision, in display order, as allowed by the operation matrix of the API
+ * (apps/api/plane/liviere/decisions/rules.py TRANSITIONS): an imported entry to review first, then by state.
+ */
+export function availableActions(decision: TDecision): TCardAction[] {
+  const actions: TCardAction[] = [];
+  const hasDates = !!decision.review_on || !!decision.review_condition;
+  if (decision.needs_review) actions.push("import-ok", "import-fix");
+  if (!decision.confirmed && CONFIRMABLE.has(decision.status)) actions.push("confirm");
+  if (decision.status === "active") {
+    if (hasDates) actions.push("reviewed");
+    actions.push("change", "defer", "done", "revoke");
+  } else if (decision.status === "proposed") {
+    actions.push("accept", "change-accept", "reject");
+  } else if (decision.status === "deferred") {
+    actions.push("resume");
+    if (hasDates) actions.push("postpone");
+    actions.push("done", "revoke");
+  }
+  return actions;
+}
+
+// States an import review may set (and correct from): REVIEW_STATUSES of the API
+export const IMPORT_FIX_STATUSES = ["active", "deferred", "done", "revoked"] as const;
+
+export type TImportFix = {
+  decided_by?: "user" | "agent";
+  decided_on?: string | null;
+  status?: TDecisionStatus;
+};
+
+/**
+ * The body of `import-review/` for the corrections of the dialog: only the fields that change. An unknown
+ * author must be chosen; null when there is nothing to send (no change, or the author is still unknown).
+ */
+export function importFixChange(
+  decision: TDecision,
+  form: { author: "user" | "agent" | ""; date: string; status: TDecisionStatus }
+): TImportFix | null {
+  if (!form.author) return null;
+  const change: TImportFix = {};
+  if (form.author !== decision.decided_by) change.decided_by = form.author;
+  if ((form.date || null) !== decision.decided_on) change.decided_on = form.date || null;
+  if (
+    form.status !== decision.status &&
+    (IMPORT_FIX_STATUSES as readonly string[]).includes(decision.status) &&
+    (IMPORT_FIX_STATUSES as readonly string[]).includes(form.status)
+  )
+    change.status = form.status;
+  return Object.keys(change).length ? change : null;
+}
+
+// ---------------------------------------------------------------------------------------------------------
+// Change form (supersede, and accept in a changed wording)
+
+// Limits of the API: a title up to 500 characters, a split into at most 10 decisions
+export const TITLE_MAX_LENGTH = 500;
+export const TEXT_MAX_LENGTH = 8000;
+export const SPLIT_MAX = 10;
+
+export type TVersionDraft = { title: string; rationale: string };
+
+/** The new versions to send: trimmed, without empty rationales; null if a title is missing or too long. */
+export function versionsToSend(drafts: TVersionDraft[]): { title: string; rationale?: string }[] | null {
+  if (!drafts.length || drafts.length > SPLIT_MAX) return null;
+  const versions = drafts.map((draft) => {
+    const title = draft.title.trim();
+    const rationale = draft.rationale.trim();
+    return rationale ? { title, rationale } : { title };
+  });
+  return versions.every((version) => version.title && version.title.length <= TITLE_MAX_LENGTH) ? versions : null;
+}

@@ -7,7 +7,7 @@ import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { DECISION_EVENT_KINDS, DECISION_FIELDS, DECISION_KINDS, DECISION_QUEUES, DECISION_STATUSES } from "./types.ts";
-import { STATUS_FILTERS } from "./model.ts";
+import { CARD_ACTIONS, ERROR_CODES_WITH_TEXT, STATUS_FILTERS } from "./model.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const locales = join(here, "../../../../packages/i18n/src/locales");
@@ -56,6 +56,14 @@ test("keys built from values exist", () => {
     fields: DECISION_FIELDS,
     channel: ["app", "api"],
     badges: ["review", "return"],
+    queues: DECISION_QUEUES,
+    actions: CARD_ACTIONS,
+    errors: ERROR_CODES_WITH_TEXT,
+    "dialogs.defer": ["title", "description", "submit", "date"],
+    "dialogs.review": ["title", "description", "submit", "date"],
+    "dialogs.postpone": ["title", "description", "submit"],
+    "dialogs.revoke": ["title", "description", "submit"],
+    "dialogs.reject": ["title", "description", "submit"],
     "unavailable.no_access": ["title", "description"],
     "unavailable.disabled": ["title", "description"],
     "unavailable.error": ["title", "description"],
@@ -64,5 +72,4 @@ test("keys built from values exist", () => {
     values.map((value) => `liviere.decisions.${family}.${value}`).filter((key) => !pl.has(key))
   );
   assert.deepEqual(missing, []);
-  assert.equal(DECISION_QUEUES.length, 5);
 });

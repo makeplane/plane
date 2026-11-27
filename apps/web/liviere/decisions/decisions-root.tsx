@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { observer } from "mobx-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslation } from "@plane/i18n";
+import { cn } from "@plane/utils";
 import { Loader } from "@plane/blocks/skeleton";
 import { useProject } from "@/hooks/store/use-project";
 import { useQueryParams } from "@/hooks/use-query-params";
@@ -28,7 +29,7 @@ import {
   viewStateParams,
 } from "./model";
 import type { TDecisionFilter, TDecisionViewState } from "./model";
-import { DECISION_KINDS } from "./types";
+import { DECISION_KINDS, DECISION_QUEUES } from "./types";
 import type { TDecision } from "./types";
 import { useDecisionAreas, useDecisionList, useDecisionQueues, useDecisionSearch } from "./use-decisions";
 
@@ -50,6 +51,8 @@ export type TDecisionsContext = {
   // IANA name of the project time zone, for the times of the history
   timeZone: string;
   goTo: (number: number) => void;
+  // Opens a decision (e.g. a new version right after it was saved), without changing the filters
+  open: (number: number) => void;
 };
 
 const selectClass =
@@ -167,6 +170,11 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
     today: queues.data?.today ?? null,
     timeZone,
     goTo,
+    open: (number) => {
+      scrollTarget.current = number;
+      setOpen((current) => new Set(current).add(number));
+      setState({ d: number });
+    },
   };
   const selectedAreaName = state.area ? (areaNames.get(state.area) ?? state.area) : t("liviere.decisions.tree.all");
 
@@ -218,6 +226,36 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
           </span>
         )}
       </div>
+
+      <div className="flex shrink-0 flex-wrap gap-2" role="group" aria-label={t("liviere.decisions.queues.label")}>
+        {DECISION_QUEUES.map((queue) => {
+          const count = queues.data?.[queue] ?? 0;
+          const pressed = state.queue === queue;
+          return (
+            <button
+              key={queue}
+              type="button"
+              aria-pressed={pressed}
+              onClick={() => setState({ queue: pressed ? null : queue, area: null, mech: null })}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full border px-3 py-1 text-13",
+                pressed
+                  ? "border-accent-strong bg-accent-subtle text-accent-primary"
+                  : "border-subtle bg-surface-1 hover:bg-layer-transparent-hover",
+                !pressed && count === 0 ? "text-tertiary" : !pressed && "text-primary"
+              )}
+            >
+              {t(`liviere.decisions.queues.${queue}`)}
+              <b className="tabular-nums">{queues.data ? count : "…"}</b>
+            </button>
+          );
+        })}
+      </div>
+      {state.queue === "rollout" && (
+        <p className="rounded-md bg-layer-1 px-3 py-2 text-13 text-secondary">
+          {t("liviere.decisions.queues.rollout_info")}
+        </p>
+      )}
 
       {(search.tooShort || search.loading || search.hasMore || search.error) && (
         <p className="-mt-2 text-12 text-tertiary">

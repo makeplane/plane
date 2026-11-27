@@ -7,12 +7,14 @@ import {
   DEFAULT_VIEW_STATE,
   addDays,
   areaMatches,
+  availableActions,
   baseMatches,
   compareDecisions,
   daysBetween,
   formatDate,
   groupDecisions,
   hiddenByStatus,
+  importFixChange,
   localSearchHits,
   mapEdges,
   parseDecisionNumber,
@@ -22,6 +24,7 @@ import {
   statusMatches,
   treeCounts,
   versionChain,
+  versionsToSend,
   viewStateParams,
 } from "./model.ts";
 
@@ -410,5 +413,96 @@ describe("map edges", () => {
 
   test("lines to decisions outside the list are left out", () => {
     assert.deepEqual(mapEdges([decision(2, { supersedes: 1, related: [9] })]), []);
+  });
+});
+
+describe("card actions", () => {
+  const keys = (fields) => availableActions(decision(1, fields));
+
+  test("in force", () => {
+    assert.deepEqual(keys({}), ["change", "defer", "done", "revoke"]);
+    assert.deepEqual(keys({ review_on: "2026-12-01" }), ["reviewed", "change", "defer", "done", "revoke"]);
+    assert.deepEqual(keys({ decided_by: "agent", confirmed: false }), ["confirm", "change", "defer", "done", "revoke"]);
+  });
+
+  test("proposed, deferred, done and past", () => {
+    assert.deepEqual(keys({ status: "proposed", decided_by: "agent", confirmed: false }), [
+      "accept",
+      "change-accept",
+      "reject",
+    ]);
+    assert.deepEqual(keys({ status: "deferred", review_condition: "gdy zwrotów będzie więcej" }), [
+      "resume",
+      "postpone",
+      "done",
+      "revoke",
+    ]);
+    assert.deepEqual(keys({ status: "deferred" }), ["resume", "done", "revoke"]);
+    assert.deepEqual(keys({ status: "done" }), []);
+    assert.deepEqual(keys({ status: "done", confirmed: false }), ["confirm"]);
+    assert.deepEqual(keys({ status: "superseded" }), []);
+    assert.deepEqual(keys({ status: "revoked", confirmed: false }), []);
+  });
+
+  test("imported entries come first", () => {
+    assert.deepEqual(keys({ needs_review: true, decided_by: "unknown", confirmed: false }), [
+      "import-ok",
+      "import-fix",
+      "confirm",
+      "change",
+      "defer",
+      "done",
+      "revoke",
+    ]);
+    assert.deepEqual(keys({ needs_review: true, status: "superseded" }), ["import-ok", "import-fix"]);
+  });
+});
+
+describe("import correction", () => {
+  const imported = decision(3, { decided_by: "unknown", confirmed: false, decided_on: null, needs_review: true });
+
+  test("an unknown author must be chosen", () => {
+    assert.equal(importFixChange(imported, { author: "", date: "", status: "active" }), null);
+    assert.deepEqual(importFixChange(imported, { author: "user", date: "", status: "active" }), {
+      decided_by: "user",
+    });
+  });
+
+  test("only changed fields", () => {
+    const known = decision(4, { decided_by: "user", decided_on: "2026-09-02", needs_review: true });
+    assert.equal(importFixChange(known, { author: "user", date: "2026-09-02", status: "active" }), null);
+    assert.deepEqual(importFixChange(known, { author: "agent", date: "2026-09-03", status: "done" }), {
+      decided_by: "agent",
+      decided_on: "2026-09-03",
+      status: "done",
+    });
+    assert.deepEqual(importFixChange(known, { author: "user", date: "", status: "active" }), { decided_on: null });
+  });
+
+  test("states outside the import review are not sent", () => {
+    const superseded = decision(5, { status: "superseded", needs_review: true });
+    assert.equal(importFixChange(superseded, { author: "user", date: "2026-10-01", status: "active" }), null);
+    assert.equal(importFixChange(decision(6), { author: "user", date: "2026-10-01", status: "proposed" }), null);
+  });
+});
+
+describe("change form", () => {
+  test("one version and a split", () => {
+    assert.deepEqual(versionsToSend([{ title: "  Zwrot do 45 dni ", rationale: " " }]), [{ title: "Zwrot do 45 dni" }]);
+    assert.deepEqual(
+      versionsToSend([
+        { title: "Zwrot do 30 dni", rationale: "Bez zmian" },
+        { title: "Zwrot paczkomatem bez opłaty", rationale: "" },
+      ]),
+      [{ title: "Zwrot do 30 dni", rationale: "Bez zmian" }, { title: "Zwrot paczkomatem bez opłaty" }]
+    );
+  });
+
+  test("missing, too long or too many titles", () => {
+    assert.equal(versionsToSend([]), null);
+    assert.equal(versionsToSend([{ title: " ", rationale: "x" }]), null);
+    assert.equal(versionsToSend([{ title: "x".repeat(501), rationale: "" }]), null);
+    assert.equal(versionsToSend(Array.from({ length: 11 }, (_, i) => ({ title: `D${i}`, rationale: "" }))), null);
+    assert.equal(versionsToSend(Array.from({ length: 10 }, (_, i) => ({ title: `D${i}`, rationale: "" })))?.length, 10);
   });
 });
