@@ -54,7 +54,8 @@ const OBJECT_KEYS = new Set([
   "errorMessage",
 ]);
 
-const IGNORE_MARKER = "i18n-ignore:";
+/** `i18n-ignore:` followed by a reason; a marker with no reason does not count. */
+const IGNORE_MARKER = /i18n-ignore:\s*[^\s*]/;
 /** A trimmed line holding nothing but one `//`, `/* *\/` or `{/* *\/}` comment. */
 const COMMENT_ONLY_LINE = /^(\/\/.*|\/\*((?!\*\/).)*\*\/|\{\/\*((?!\*\/).)*\*\/\})$/;
 
@@ -99,7 +100,7 @@ export function scanSource(file: string, source: string): Hit[] {
     // Escape hatch: marker on the same line, or on a comment-only line directly above.
     const prev = lines[line - 2]?.trim() ?? "";
     const prevIsComment = COMMENT_ONLY_LINE.test(prev);
-    if (lines[line - 1]?.includes(IGNORE_MARKER) || (prevIsComment && prev.includes(IGNORE_MARKER))) return;
+    if (IGNORE_MARKER.test(lines[line - 1] ?? "") || (prevIsComment && IGNORE_MARKER.test(prev))) return;
     hits.push({ file, line, text: text.trim().replace(/\s+/g, " ") });
   };
 

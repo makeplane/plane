@@ -62,6 +62,20 @@ test("scanSource honours i18n-ignore on the same or previous line", () => {
   );
 });
 
+test("scanSource does not honour i18n-ignore without a reason", () => {
+  const src = [
+    'const a = { title: "Plane Cloud" }; // i18n-ignore:',
+    "const b = (<div>",
+    "{/* i18n-ignore: */}",
+    "<span>Plane Cloud</span>",
+    "</div>);",
+  ].join("\n");
+  assert.deepEqual(
+    scanSource("x.tsx", src).map((h) => h.line),
+    [1, 4]
+  );
+});
+
 test("findNewHits reports only strings missing from the base, ignoring moves", () => {
   const base = [hit(1, "Save"), hit(2, "Cancel"), hit(3, "Cancel")];
   const current = [hit(1, "Cancel"), hit(5, "Save"), hit(6, "Cancel"), hit(7, "Cancel"), hit(9, "Delete page")];
