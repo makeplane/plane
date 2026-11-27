@@ -618,3 +618,70 @@ class TestParallelNumbers:
             thread.join(timeout=30)
         assert sorted(results) == [(201, 1), (201, 2)]
         assert DecisionSettings.objects.get(project=project).last_number == 2
+
+
+@pytest.mark.contract
+class TestAreas:
+    @pytest.mark.django_db
+    def test_list_add_rename(self, key, session, project):
+        tree = key.get(_v1(project, "areas/")).json()["results"]
+        assert [(a["key"], [m["key"] for m in a["mechanisms"]]) for a in tree] == [
+            # The fixture's mechanisms share sort_order 0, so the key decides
+            ("zamowienia", ["wysylka", "zwroty"]),
+            ("platnosci", ["faktury"]),
+        ]
+        area = key.post(_v1(project, "areas/"), {"key": "magazyn", "name": "Magazyn"}, format="json")
+        assert area.status_code == 201 and area.json()["sort_order"] == 3
+        mechanism = session.post(
+            _app(project, "areas/"), {"key": "regaly", "name": "Regały", "parent": "magazyn"}, format="json"
+        ).json()
+        assert key.post(_v1(project, "areas/"), {"key": "magazyn", "name": "X"}, format="json").json()["code"] == (
+            "area_exists"
+        )
+        assert (
+            key.post(_v1(project, "areas/"), {"key": "a", "name": "A", "parent": "brak"}, format="json").json()["code"]
+            == "unknown_area"
+        )
+        assert key.post(_v1(project, "areas/"), {"key": "Zła Nazwa", "name": "A"}, format="json").status_code == 400
+        renamed = key.patch(_v1(project, f"areas/{mechanism['id']}/"), {"name": "Regały wysokie"}, format="json")
+        assert renamed.json()["name"] == "Regały wysokie"
+        assert key.patch(_v1(project, "areas/999999/"), {"name": "x"}, format="json").status_code == 404
+        # A decision in the new mechanism
+        assert _new(key, _v1(project), area="magazyn", mechanism="regaly", kind="operations")["mechanism"] == "regaly"
+
+
+@pytest.mark.contract
+class TestImportReview:
+    @pytest.mark.django_db
+    def test_session_unknown_author_becomes_mine(self, key, session, project):
+        n = _new(key, _v1(project))["number"]
+        Decision.objects.filter(number=n).update(decided_by="unknown", needs_review=True, estimated=["decided_on"])
+        assert key.get(_v1(project, f"{n}/")).json()["queues"] == ["confirm", "imported"]
+        reviewed = session.post(_app(project, f"{n}/import-review/"), {}, format="json").json()
+        assert (reviewed["decided_by"], reviewed["confirmed"], reviewed["needs_review"], reviewed["estimated"]) == (
+            "user",
+            True,
+            False,
+            [],
+        )
+        assert (reviewed["queues"], reviewed["pending_rollout"]) == ([], False)
+        assert session.post(_app(project, f"{n}/import-review/"), {}, format="json").json()["code"] == (
+            "not_needs_review"
+        )
+
+    @pytest.mark.django_db
+    def test_status_correction_and_superseded(self, key, session, project):
+        n = _new(key, _v1(project), by="user")["number"]
+        Decision.objects.filter(number=n).update(needs_review=True)
+        corrected = session.post(
+            _app(project, f"{n}/import-review/"), {"status": "done", "decided_on": "2026-10-20"}, format="json"
+        ).json()
+        assert (corrected["status"], corrected["decided_on"]) == ("done", "2026-10-20")
+        changes = DecisionEvent.objects.get(decision__number=n, kind="import_reviewed").changes
+        assert changes["status"] == ["active", "done"]
+        old = _new(key, _v1(project), by="user")["number"]
+        key.post(_v1(project, f"{old}/supersede/"), {"title": "Nowsza"}, format="json")
+        Decision.objects.filter(number=old).update(needs_review=True)
+        response = session.post(_app(project, f"{old}/import-review/"), {"status": "active"}, format="json")
+        assert response.status_code == 400 and response.json()["field"] == "status"
+        assert Decision.objects.get(number=old).status == "superseded"
