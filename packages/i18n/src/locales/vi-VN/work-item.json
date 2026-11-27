@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Xóa mục công việc",
+      "sub_issue": {
+        "label": "Hủy liên kết mục công việc con"
+      },
       "cycle": {
         "loading": "Đang xóa mục công việc khỏi chu kỳ",
         "success": "Đã xóa mục công việc khỏi chu kỳ thành công.",

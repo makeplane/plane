@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "İş öğesini kaldır",
+      "sub_issue": {
+        "label": "Alt iş öğesinin bağlantısını kaldır"
+      },
       "cycle": {
         "loading": "İş öğesi döngüden kaldırılıyor",
         "success": "İş öğesi döngüden başarıyla kaldırıldı.",

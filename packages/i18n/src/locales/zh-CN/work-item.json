@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "移除工作项",
+      "sub_issue": {
+        "label": "解除子工作项关联"
+      },
       "cycle": {
         "loading": "正在从周期中移除工作项",
         "success": "已成功从周期中移除工作项。",

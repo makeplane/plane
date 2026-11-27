@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Elimină activitatea",
+      "sub_issue": {
+        "label": "Deconectează sub-activitatea"
+      },
       "cycle": {
         "loading": "Se elimină activitatea din ciclu",
         "success": "Activitatea a fost eliminată din ciclu cu succes.",

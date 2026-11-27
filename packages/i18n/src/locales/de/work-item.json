@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Arbeitselement entfernen",
+      "sub_issue": {
+        "label": "Verknüpfung des untergeordneten Arbeitselements aufheben"
+      },
       "cycle": {
         "loading": "Arbeitselement wird aus dem Zyklus entfernt",
         "success": "Arbeitselement aus dem Zyklus entfernt.",
