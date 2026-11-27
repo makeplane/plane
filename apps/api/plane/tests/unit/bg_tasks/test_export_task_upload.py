@@ -35,3 +35,21 @@ def test_export_upload_is_private_and_keyed_by_full_token(settings, workspace, c
     exporter.refresh_from_db()
     assert exporter.key == key
     assert exporter.status == "completed"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("aws_region, region_name", [("ap-southeast-1", "ap-southeast-1"), ("", None)])
+def test_export_client_with_endpoint_signs_for_the_configured_region(
+    settings, workspace, create_user, aws_region, region_name
+):
+    settings.USE_MINIO = False
+    settings.AWS_S3_ENDPOINT_URL = "https://s3.ap-southeast-1.amazonaws.com"
+    settings.AWS_REGION = aws_region
+    exporter = ExporterHistory.objects.create(workspace=workspace, initiated_by=create_user, provider="json")
+
+    with patch("plane.bgtasks.export_task.boto3") as boto3:
+        boto3.client.return_value.generate_presigned_url.return_value = "https://example.com/export.zip"
+        upload_to_s3(io.BytesIO(b"zip"), workspace.id, exporter.token, workspace.slug)
+
+    assert boto3.client.call_args.kwargs["endpoint_url"] == settings.AWS_S3_ENDPOINT_URL
+    assert boto3.client.call_args.kwargs["region_name"] == region_name
