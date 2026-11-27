@@ -336,6 +336,10 @@ class PlaneDecisionTestCase(unittest.TestCase):
         self.assertIn("supersedes: DEMO-D1", out)
         self.assertIn("related:    DEMO-D3, DEMO-D7", out)
         self.assertIn("imported (ai, api)", out)
+        # History times in the local time of the machine, not UTC
+        utc = plane_decision.datetime.fromisoformat("2026-11-27T10:00:00+00:00")
+        local = utc.astimezone().strftime("%Y-%m-%d %H:%M")
+        self.assertIn(f"· {local}  imported", out)
         _, out, _ = self.run_tool("show", "-p", "DEMO", "2", "--json")
         self.assertEqual(json.loads(out)["number"], 2)
 

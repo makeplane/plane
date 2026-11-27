@@ -397,12 +397,13 @@ handlers shared by both trees, `routes.py`), `liviere/app/decisions.py` and `liv
 also with an API key; the settings page comes with the web app). While off, every other route answers
 `404 {"error": "Decisions are not enabled in this project", "code": "decisions_disabled"}` and nothing can be
 written. Project admins and members read and write; guests and people outside the project get 403 (a workspace
-admin who is a guest of the project gets in, as everywhere in `allow_permission`). The same routes and responses
+admin who is a guest of the project gets in, as everywhere in `allow_permission` – also to the switch, which is
+otherwise for project admins only). The same routes and responses
 exist for the app under `/api/workspaces/.../projects/{id}/liviere/decisions/`, plus
 `GET /api/workspaces/{slug}/liviere/decisions/enabled-projects/`.
 
-**A decision** (the fields of the import file): `number` (per project, from a counter row locked for the write, so
-parallel writes get different numbers; never handed out again), shown as `identifier` `DEMO-D12`; `title` (the rule,
+**A decision** (the fields of the import file): `number` (per project, 1–1,000,000, from a counter row locked for
+the write, so parallel writes get different numbers; never handed out again), shown as `identifier` `DEMO-D12`; `title` (the rule,
 ≤ 500), `rationale`, `rejected`, `note`; `area`, `mechanism` (an area of the project's own two-level list) and an
 optional second `area2`; `kind` (`product`, `architecture`, `process`, `operations`); `status`; `decided_by` (`user`
 – the owner, `agent`, `unknown`) and `confirmed`; `decided_on`, `review_on`, `review_condition` (a date or a condition
@@ -436,8 +437,13 @@ fields of an imported decision that are guesses); `queues` (the queues it is in)
 `PATCH` changes `title` (a correction: a change of meaning goes through `supersede/`), `rationale`, `rejected`, `note`,
 areas, `kind`, `issues`, `sources`, `related`, `review_on` and `review_condition`; a changed field leaves `estimated`.
 `supersede/` is one transaction (counter, the old decision locked and checked, the new ones, both history entries);
-new decisions take the areas, kind, rationale, work items and related decisions of the old one unless given.
-Decisions are never deleted. A 400 is `{"error", "code", "field", "number"}`; the codes are `ERROR_CODES` in
+new decisions take the areas, kind, rationale, work items and related decisions of the old one unless given. A
+change still waiting for rollout is never lost: the successors of a decision that waits inherit the flag (reason
+`supersedes`), and an operation on a decision that waits moves the reason and time to itself, also through a key
+without `rollout`. Decisions are never deleted, and an area with decisions cannot be deleted (`RESTRICT`; a project
+deleted for good takes its areas and decisions with it). Decision rows are locked `FOR NO KEY UPDATE`, so two writes
+relating A and B the other way round do not deadlock; should Postgres abort one anyway, the answer is
+`409 {"code": "conflict"}` and the write can be retried. A 400 is `{"error", "code", "field", "number"}`; the codes are `ERROR_CODES` in
 `rules.py` (e.g. `invalid_transition`, `already_superseded`, `issue_not_found`, `validation_error`).
 
 **Queues** (`GET .../queues/`, counts and `today`; `?queue=` on the list): `confirm` – in force, decided by somebody
@@ -485,8 +491,10 @@ mechanisms_created, needs_review, issue_links, issues_not_found}, sources: {sour
 (400 with `code: "import_rejected"` when there are errors).
 
 **Request log.** Decision routes carry decision text, so `APITokenLogMiddleware` keeps their rows in
-`api_activity_logs` without query string and bodies (`liviere/search/privacy.py`); errors name numbers and fields,
-never the text.
+`api_activity_logs` without query string and bodies (`liviere/search/privacy.py`), in both trees: a request with an
+API key sent to the session routes is refused (401) but logged all the same. Errors name numbers and fields, never
+the text; text with NUL characters or lone surrogates (which Postgres cannot store) is refused with
+`validation_error`.
 
 **`liviere/tools/plane-decision`** – the command-line client for agents (Python standard library only, the same
 configuration as `plane-log`: `~/.config/plane-mcp/env` or `$PLANE_LOG_ENV`). Decisions are given as `12`, `D12`

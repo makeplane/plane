@@ -34,6 +34,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime
 
 ENV_FILE = os.path.expanduser(os.environ.get("PLANE_LOG_ENV", "~/.config/plane-mcp/env"))
 KINDS = ("product", "architecture", "process", "operations")
@@ -154,6 +155,15 @@ def area_parts(value):
 # Output
 
 
+def local_time(value, date_only=False):
+    """An ISO date-time of the API (UTC) in the local time of this machine: YYYY-MM-DD HH:MM."""
+    try:
+        moment = datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone()
+    except (AttributeError, ValueError):
+        return value or ""
+    return moment.strftime("%Y-%m-%d" if date_only else "%Y-%m-%d %H:%M")
+
+
 def where(d):
     place = d["area"] + (f"/{d['mechanism']}" if d.get("mechanism") else "")
     return place + (f" (+{d['area2']})" if d.get("area2") else "")
@@ -201,7 +211,7 @@ def detail(d):
         rows.append(f"  waiting for rollout: {REASONS.get(d['rollout']['reason'], d['rollout']['reason'])}")
     for event in d.get("history", []):
         who = (event.get("actor") or {}).get("display_name") or "?"
-        rows.append(f"  · {event['occurred_at'][:16].replace('T', ' ')}  {event['kind']} ({who}, {event['channel']})")
+        rows.append(f"  · {local_time(event['occurred_at'])}  {event['kind']} ({who}, {event['channel']})")
     return rows
 
 
@@ -211,7 +221,7 @@ def inbox_rows(d):
     what = REASONS.get(rollout.get("reason"), rollout.get("reason") or "?")
     if rollout.get("reason") == "supersedes" and d.get("supersedes"):
         what = f"changed, supersedes {prefix}-D{d['supersedes']}"
-    when = (rollout.get("at") or "")[:10]
+    when = local_time(rollout.get("at"), date_only=True)
     return [f"{d['identifier']:<9} {what} · {when} · {where(d)}", f"          „{d['title']}”"]
 
 
