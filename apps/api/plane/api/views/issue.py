@@ -321,7 +321,7 @@ class WorkspaceIssueAPIEndpoint(BaseAPIView):
             if guest_cannot_view_issue(request.user.id, issue, slug):
                 raise Issue.DoesNotExist()
             return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                IssueSerializer(issue, fields=self.fields, expand=self.expand, context={"request": self.request}).data,
                 status=status.HTTP_200_OK,
             )
 
@@ -414,7 +414,7 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             if guest_cannot_view_issue(request.user.id, issue, slug):
                 raise Issue.DoesNotExist()
             return Response(
-                IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+                IssueSerializer(issue, fields=self.fields, expand=self.expand, context={"request": self.request}).data,
                 status=status.HTTP_200_OK,
             )
 
@@ -507,7 +507,9 @@ class IssueListCreateAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(issue_queryset),
             total_count_queryset=total_issue_queryset,
-            on_results=lambda issues: IssueSerializer(issues, many=True, fields=self.fields, expand=self.expand).data,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+            ).data,
         )
 
     @work_item_docs(
@@ -666,7 +668,7 @@ class IssueDetailAPIEndpoint(BaseAPIView):
         if guest_cannot_view_issue(request.user.id, issue, slug):
             raise Issue.DoesNotExist()
         return Response(
-            IssueSerializer(issue, fields=self.fields, expand=self.expand).data,
+            IssueSerializer(issue, fields=self.fields, expand=self.expand, context={"request": self.request}).data,
             status=status.HTTP_200_OK,
         )
 
@@ -1071,7 +1073,9 @@ class LabelListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda labels: LabelSerializer(labels, many=True, fields=self.fields, expand=self.expand).data,
+            on_results=lambda labels: LabelSerializer(
+                labels, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+            ).data,
         )
 
 
@@ -1245,7 +1249,9 @@ class IssueLinkListCreateAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(self.get_queryset()),
             on_results=lambda issue_links: (
-                IssueLinkSerializer(issue_links, many=True, fields=self.fields, expand=self.expand).data
+                IssueLinkSerializer(
+                    issue_links, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+                ).data
             ),
         )
 
@@ -1354,16 +1360,26 @@ class IssueLinkDetailAPIEndpoint(BaseAPIView):
         """
         if pk is None:
             issue_links = self.get_queryset()
-            serializer = IssueLinkSerializer(issue_links, fields=self.fields, expand=self.expand)
+            serializer = IssueLinkSerializer(
+                issue_links, fields=self.fields, expand=self.expand, context={"request": self.request}
+            )
             return self.paginate(
                 request=request,
                 queryset=(self.get_queryset()),
                 on_results=lambda issue_links: (
-                    IssueLinkSerializer(issue_links, many=True, fields=self.fields, expand=self.expand).data
+                    IssueLinkSerializer(
+                        issue_links,
+                        many=True,
+                        fields=self.fields,
+                        expand=self.expand,
+                        context={"request": self.request},
+                    ).data
                 ),
             )
         issue_link = self.get_queryset().get(pk=pk)
-        serializer = IssueLinkSerializer(issue_link, fields=self.fields, expand=self.expand)
+        serializer = IssueLinkSerializer(
+            issue_link, fields=self.fields, expand=self.expand, context={"request": self.request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @issue_link_docs(
@@ -1521,7 +1537,9 @@ class IssueCommentListCreateAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(self.get_queryset()),
             on_results=lambda issue_comments: (
-                IssueCommentSerializer(issue_comments, many=True, fields=self.fields, expand=self.expand).data
+                IssueCommentSerializer(
+                    issue_comments, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+                ).data
             ),
         )
 
@@ -1677,7 +1695,9 @@ class IssueCommentDetailAPIEndpoint(BaseAPIView):
         Retrieve details of a specific comment.
         """
         issue_comment = self.get_queryset().get(pk=pk)
-        serializer = IssueCommentSerializer(issue_comment, fields=self.fields, expand=self.expand)
+        serializer = IssueCommentSerializer(
+            issue_comment, fields=self.fields, expand=self.expand, context={"request": self.request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @issue_comment_docs(
@@ -1873,7 +1893,9 @@ class IssueActivityListAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(issue_activities),
             on_results=lambda issue_activity: (
-                IssueActivitySerializer(issue_activity, many=True, fields=self.fields, expand=self.expand).data
+                IssueActivitySerializer(
+                    issue_activity, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+                ).data
             ),
         )
 
@@ -1938,7 +1960,9 @@ class IssueActivityDetailAPIEndpoint(BaseAPIView):
             return Response({"message": "Activity not found.", "code": "NOT_FOUND"}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(
-            IssueActivitySerializer(issue_activity, fields=self.fields, expand=self.expand).data,
+            IssueActivitySerializer(
+                issue_activity, fields=self.fields, expand=self.expand, context={"request": self.request}
+            ).data,
             status=status.HTTP_200_OK,
         )
 

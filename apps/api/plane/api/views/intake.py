@@ -121,7 +121,9 @@ class IntakeIssueListCreateAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(issue_queryset),
             on_results=lambda intake_issues: (
-                IntakeIssueSerializer(intake_issues, many=True, fields=self.fields, expand=self.expand).data
+                IntakeIssueSerializer(
+                    intake_issues, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+                ).data
             ),
         )
 
@@ -297,7 +299,9 @@ class IntakeIssueDetailAPIEndpoint(BaseAPIView):
         Retrieve details of a specific intake work item.
         """
         intake_issue_queryset = self.get_queryset().get(issue_id=issue_id)
-        intake_issue_data = IntakeIssueSerializer(intake_issue_queryset, fields=self.fields, expand=self.expand).data
+        intake_issue_data = IntakeIssueSerializer(
+            intake_issue_queryset, fields=self.fields, expand=self.expand, context={"request": self.request}
+        ).data
         return Response(intake_issue_data, status=status.HTTP_200_OK)
 
     @intake_docs(

@@ -274,7 +274,7 @@ class ModuleListCreateAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(self.get_queryset().filter(archived_at__isnull=True)),
             on_results=lambda modules: ModuleSerializer(
-                modules, many=True, fields=self.fields, expand=self.expand
+                modules, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
             ).data,
         )
 
@@ -522,7 +522,9 @@ class ModuleDetailAPIEndpoint(BaseAPIView):
         Retrieve details of a specific module.
         """
         queryset = self.get_queryset().filter(archived_at__isnull=True).get(pk=pk)
-        data = ModuleSerializer(queryset, fields=self.fields, expand=self.expand).data
+        data = ModuleSerializer(
+            queryset, fields=self.fields, expand=self.expand, context={"request": self.request}
+        ).data
         return Response(data, status=status.HTTP_200_OK)
 
     @module_docs(
@@ -692,7 +694,9 @@ class ModuleIssueListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issues),
-            on_results=lambda issues: IssueSerializer(issues, many=True, fields=self.fields, expand=self.expand).data,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+            ).data,
         )
 
     @module_issue_docs(
@@ -906,7 +910,9 @@ class ModuleIssueDetailAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issues),
-            on_results=lambda issues: IssueSerializer(issues, many=True, fields=self.fields, expand=self.expand).data,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+            ).data,
         )
 
     @module_issue_docs(
@@ -1074,7 +1080,7 @@ class ModuleArchiveUnarchiveAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(self.get_queryset()),
             on_results=lambda modules: ModuleSerializer(
-                modules, many=True, fields=self.fields, expand=self.expand
+                modules, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
             ).data,
         )
 

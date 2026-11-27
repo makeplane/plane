@@ -213,7 +213,9 @@ class ProjectListCreateAPIEndpoint(BaseAPIView):
             request=request,
             queryset=(projects),
             on_results=lambda projects: (
-                ProjectSerializer(projects, many=True, fields=self.fields, expand=self.expand).data
+                ProjectSerializer(
+                    projects, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+                ).data
             ),
         )
 
@@ -534,7 +536,9 @@ class ProjectDetailAPIEndpoint(BaseAPIView):
         Retrieve details of a specific project.
         """
         project = self.get_queryset().get(workspace__slug=slug, pk=pk)
-        serializer = ProjectSerializer(project, fields=self.fields, expand=self.expand)
+        serializer = ProjectSerializer(
+            project, fields=self.fields, expand=self.expand, context={"request": self.request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @project_docs(

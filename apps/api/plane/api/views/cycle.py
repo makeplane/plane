@@ -207,7 +207,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                 many=True,
                 fields=self.fields,
                 expand=self.expand,
-                context={"project": project},
+                context={"project": project, "request": self.request},
             ).data
             return Response(data, status=status.HTTP_200_OK)
 
@@ -222,7 +222,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                     many=True,
                     fields=self.fields,
                     expand=self.expand,
-                    context={"project": project},
+                    context={"project": project, "request": self.request},
                 ).data,
             )
 
@@ -237,7 +237,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                     many=True,
                     fields=self.fields,
                     expand=self.expand,
-                    context={"project": project},
+                    context={"project": project, "request": self.request},
                 ).data,
             )
 
@@ -252,7 +252,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                     many=True,
                     fields=self.fields,
                     expand=self.expand,
-                    context={"project": project},
+                    context={"project": project, "request": self.request},
                 ).data,
             )
 
@@ -267,7 +267,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                     many=True,
                     fields=self.fields,
                     expand=self.expand,
-                    context={"project": project},
+                    context={"project": project, "request": self.request},
                 ).data,
             )
         return self.paginate(
@@ -278,7 +278,7 @@ class CycleListCreateAPIEndpoint(BaseAPIView):
                 many=True,
                 fields=self.fields,
                 expand=self.expand,
-                context={"project": project},
+                context={"project": project, "request": self.request},
             ).data,
         )
 
@@ -520,7 +520,7 @@ class CycleDetailAPIEndpoint(BaseAPIView):
             queryset,
             fields=self.fields,
             expand=self.expand,
-            context={"project": project},
+            context={"project": project, "request": self.request},
         ).data
         return Response(data, status=status.HTTP_200_OK)
 
@@ -785,7 +785,9 @@ class CycleArchiveUnarchiveAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda cycles: CycleSerializer(cycles, many=True, fields=self.fields, expand=self.expand).data,
+            on_results=lambda cycles: CycleSerializer(
+                cycles, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+            ).data,
         )
 
     @cycle_docs(
@@ -940,7 +942,9 @@ class CycleIssueListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(issues),
-            on_results=lambda issues: IssueSerializer(issues, many=True, fields=self.fields, expand=self.expand).data,
+            on_results=lambda issues: IssueSerializer(
+                issues, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+            ).data,
         )
 
     @cycle_docs(
@@ -1136,7 +1140,9 @@ class CycleIssueDetailAPIEndpoint(BaseAPIView):
             cycle_id=cycle_id,
             issue_id=issue_id,
         )
-        serializer = CycleIssueSerializer(cycle_issue, fields=self.fields, expand=self.expand)
+        serializer = CycleIssueSerializer(
+            cycle_issue, fields=self.fields, expand=self.expand, context={"request": self.request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @cycle_docs(

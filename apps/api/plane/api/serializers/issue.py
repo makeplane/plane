@@ -142,9 +142,9 @@ class IssueSerializer(BaseSerializer):
         # Validate labels are from project
         if data.get("labels", []):
             valid_label_ids = set(
-                Label.objects.filter(
-                    project_id=self.context.get("project_id"), id__in=data["labels"]
-                ).values_list("id", flat=True)
+                Label.objects.filter(project_id=self.context.get("project_id"), id__in=data["labels"]).values_list(
+                    "id", flat=True
+                )
             )
             invalid_label_ids = set(data["labels"]) - valid_label_ids
             if invalid_label_ids:
@@ -331,6 +331,7 @@ class IssueSerializer(BaseSerializer):
                         pk__in=IssueAssignee.objects.filter(issue=instance).values_list("assignee_id", flat=True)
                     ),
                     many=True,
+                    context=self.context,
                 ).data
             else:
                 data["assignees"] = [
@@ -867,7 +868,9 @@ class IssueExpandSerializer(BaseSerializer):
     def get_assignees(self, obj):
         expand = self.context.get("expand", [])
         if "assignees" in expand:
-            return UserLiteSerializer([ia.assignee for ia in obj.issue_assignee.all()], many=True).data
+            return UserLiteSerializer(
+                [ia.assignee for ia in obj.issue_assignee.all()], many=True, context=self.context
+            ).data
         return [ia.assignee_id for ia in obj.issue_assignee.all()]
 
     class Meta:

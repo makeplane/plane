@@ -161,7 +161,9 @@ class StateListCreateAPIEndpoint(BaseAPIView):
         return self.paginate(
             request=request,
             queryset=(self.get_queryset()),
-            on_results=lambda states: StateSerializer(states, many=True, fields=self.fields, expand=self.expand).data,
+            on_results=lambda states: StateSerializer(
+                states, many=True, fields=self.fields, expand=self.expand, context={"request": self.request}
+            ).data,
         )
 
 
@@ -218,6 +220,7 @@ class StateDetailAPIEndpoint(BaseAPIView):
             self.get_queryset().get(pk=state_id),
             fields=self.fields,
             expand=self.expand,
+            context={"request": self.request},
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
 

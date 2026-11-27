@@ -19,8 +19,9 @@ from plane.api.serializers import (
     WorkspaceMemberLiteAPISerializer,
     ProjectMemberLiteAPISerializer,
 )
+from plane.api.serializers.user import is_workspace_guest
 from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
-from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission, ROLE
+from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -40,9 +41,7 @@ def member_fields(request, slug, serializer_class):
     """Fields of a member serializer the caller may see: workspace guests do not get
     email addresses, as in the web app's workspace member list."""
     fields = list(serializer_class.Meta.fields)
-    if not WorkspaceMember.objects.filter(
-        workspace__slug=slug, member=request.user, is_active=True, role__gt=ROLE.GUEST.value
-    ).exists():
+    if is_workspace_guest(request.user, slug):
         fields = [field for field in fields if field != "email"]
     return fields
 
@@ -103,7 +102,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
         # Get all the users with their roles
         users_with_roles = []
         for workspace_member in workspace_members:
-            user_data = UserLiteSerializer(workspace_member.member).data
+            user_data = UserLiteSerializer(workspace_member.member, context={"request": request}).data
             user_data["role"] = workspace_member.role
             users_with_roles.append(user_data)
 
@@ -160,6 +159,7 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
             User.objects.filter(id__in=project_members),
             many=True,
             fields=member_fields(request, slug, UserLiteSerializer),
+            context={"request": request},
         ).data
         return Response(users, status=status.HTTP_200_OK)
 
@@ -211,7 +211,9 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         # Get the workspace members that are present inside the workspace
         project_members = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
         user = User.objects.get(id=project_members.member_id)
-        user = UserLiteSerializer(user, fields=member_fields(request, slug, UserLiteSerializer)).data
+        user = UserLiteSerializer(
+            user, fields=member_fields(request, slug, UserLiteSerializer), context={"request": request}
+        ).data
         return Response(user, status=status.HTTP_200_OK)
 
     @extend_schema(
