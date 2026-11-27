@@ -204,7 +204,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         {
                             "actor_comments": comment,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": f"{base_api}{actor.avatar_url}" if actor.avatar_url else None,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -217,7 +217,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         {
                             "actor_comments": mention,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": f"{base_api}{actor.avatar_url}" if actor.avatar_url else None,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -231,7 +231,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": f"{base_api}{actor.avatar_url}" if actor.avatar_url else None,
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
