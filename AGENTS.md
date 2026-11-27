@@ -58,7 +58,8 @@ Strings live in `packages/i18n/src/locales/<lang>/<namespace>.json`; `en` is the
 
 `pnpm --filter=@plane/i18n check:hardcoded` fails a PR that adds user-facing strings bypassing `t()` in `apps/web`, `apps/admin`, `apps/space` or `packages/*` (JSX text, attributes such as `placeholder`/`title`/`label`, and object props such as `title`/`message`/`description`). It compares the PR's changed files, taken together, with their versions on the base branch, so existing strings, moved or renamed files and removed strings never fail it. Rewording an existing hardcoded string counts as adding one.
 
-- For a string that must not be translated (a standalone product name such as `Wiki` or `Argus`, code samples), add `// i18n-ignore: <reason>` on the same line or on a comment-only line directly above (`{/* i18n-ignore: <reason> */}` inside JSX). A product name inside a sentence still goes through `t()`; keep it untranslated via the Do-Not-Translate glossary in the `translate` skill.
+- For a string that must not be translated (a standalone product name such as `Wiki` or `Argus`, code samples), add `// i18n-ignore: <reason>` on the same line or on a comment-only line directly above (`{/* i18n-ignore: <reason> */}` inside JSX). A product name inside a sentence still goes through `t()`; keep it untranslated via the Do-Not-Translate glossary in the `translate` skill. The reason is required: a marker without one is not honoured.
+- For a string that should be translated but cannot be in this PR (a hotfix, copy that is not final), a maintainer adds the `i18n-hardcoded-ok` label. The check then lists the new strings as a warning and passes. Do not use `i18n-ignore` for this: it hides the string from the cleanup report.
 - `pnpm --filter=@plane/i18n hardcoded:check` prints the remaining hardcoded strings by package.
 
 ## Pull requests

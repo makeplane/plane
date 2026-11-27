@@ -8,6 +8,7 @@
 //   tsx packages/i18n/scripts/hardcoded-check.ts                    # Report hardcoded strings by package
 //   tsx packages/i18n/scripts/hardcoded-check.ts --ci               # Exit 1 if this change adds hardcoded strings
 //   tsx packages/i18n/scripts/hardcoded-check.ts --ci --base <ref>  # Compare against <ref> (default origin/preview)
+//   tsx packages/i18n/scripts/hardcoded-check.ts --ci --allow-new   # List new hardcoded strings but exit 0
 
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
@@ -55,7 +56,7 @@ function report(): void {
  * versions at the merge base, so a string that only moved between files (rename, extract, flatten)
  * cancels out. Git errors fail open: a CI hiccup must never block a PR.
  */
-function ci(baseRef: string): void {
+function ci(baseRef: string, allowNew: boolean): void {
   let baseHits: Hit[] = [];
   let headHits: Hit[] = [];
   try {
@@ -86,13 +87,20 @@ function ci(baseRef: string): void {
     "\nMove these strings to packages/i18n/src/locales and use t(), or add `// i18n-ignore: <reason>` " +
       "on the same line or on a comment-only line above when the string must not be translated."
   );
-  process.exit(1);
+  if (!allowNew) process.exit(1);
+  // The strings stay hardcoded and unmarked, so the report keeps listing them until they are translated.
+  console.warn("\nNot failing: --allow-new is set.");
+  if (process.env.GITHUB_ACTIONS) {
+    console.log(
+      `::warning title=i18n hardcoded strings::${added.length} new hardcoded string(s) allowed by --allow-new.`
+    );
+  }
 }
 
 const argv = process.argv.slice(2);
 if (argv.includes("--ci")) {
   const baseIndex = argv.indexOf("--base");
-  ci((baseIndex >= 0 ? argv[baseIndex + 1] : undefined) ?? "origin/preview");
+  ci((baseIndex >= 0 ? argv[baseIndex + 1] : undefined) ?? "origin/preview", argv.includes("--allow-new"));
 } else {
   report();
 }

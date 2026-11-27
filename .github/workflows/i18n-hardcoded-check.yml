@@ -10,6 +10,10 @@ on:
       - "synchronize"
       - "reopened"
       - "ready_for_review"
+      # Re-run when the i18n-hardcoded-ok label is added or removed. Every label change runs the whole
+      # job on purpose: a job skipped by a condition reports success and would hide an earlier failure.
+      - "labeled"
+      - "unlabeled"
     paths:
       - "apps/web/**"
       - "apps/admin/**"
@@ -52,5 +56,6 @@ jobs:
       - name: Test scanner
         run: pnpm --filter=@plane/i18n test:hardcoded
 
+      # A maintainer can add the i18n-hardcoded-ok label to let a PR through: new strings are listed as a warning.
       - name: Run hardcoded string check
-        run: pnpm --filter=@plane/i18n check:hardcoded --base HEAD^1
+        run: pnpm --filter=@plane/i18n check:hardcoded --base HEAD^1 ${{ contains(github.event.pull_request.labels.*.name, 'i18n-hardcoded-ok') && '--allow-new' || '' }}
