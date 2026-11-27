@@ -240,4 +240,13 @@ class UnsplashEndpoint(BaseAPIView):
         headers = {"Content-Type": "application/json"}
 
         resp = requests.get(url=url, headers=headers)
+        # Never forward Unsplash's own auth errors as-is: a 401 here means the
+        # configured access key was rejected, not that the user's session
+        # expired, and the web app treats any 401 as a sign-out.
+        if not resp.ok:
+            log_exception(f"Unsplash request failed with status {resp.status_code}", warning=True)
+            return Response(
+                {"error": "Unable to fetch images from Unsplash"},
+                status=status.HTTP_502_BAD_GATEWAY,
+            )
         return Response(resp.json(), status=resp.status_code)
