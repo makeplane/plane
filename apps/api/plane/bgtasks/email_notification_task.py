@@ -124,7 +124,7 @@ def create_payload(notification_data):
                         else None
                     )
 
-                if not data.get("actor_id", {}).get("activity_time", False):
+                if not data.get(actor_id, {}).get("activity_time", False):
                     data[actor_id]["activity_time"] = str(
                         datetime.fromisoformat(issue_activity.get("activity_time").rstrip("Z")).strftime(
                             "%Y-%m-%d %H:%M:%S"
