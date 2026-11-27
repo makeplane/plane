@@ -523,3 +523,64 @@ with the scope `/liviere/push/`, so it controls no page and cannot clash with an
 **Going back** to images without our code: nothing queues the push task there; disable the membership sync first
 (the `liviere:` periodic tasks, see _Disabling the sync_ above). To stop pushes while staying on a fork image,
 remove one of the three variables.
+
+### Decision register page (`/:workspace/projects/:id/decisions`)
+
+The owner reviews the decisions of a project in the browser and changes their mind there; the endpoints are the
+session tree of the section above (`/api/workspaces/{slug}/projects/{id}/liviere/decisions/…`).
+
+Code: `apps/web/liviere/decisions/` (page, settings, data hooks, `model.ts` with the logic without React,
+`map-geometry.ts`), `apps/web/liviere/navigation.ts` (the one hook adding our items to the project navigation),
+routes in `app/routes/extended.ts`, i18n `liviere.decisions.*`. Hook points in official files: the navigation hook
+in `components/navigation/use-navigation-items.ts` and `components/workspace/sidebar/projects-list-item.tsx`,
+the settings tab `features_decisions` in `packages/types/src/settings.ts`, `packages/constants/src/settings/project.ts`
+and `components/settings/project/sidebar/item-icon.tsx`. Tests: `node --test apps/web/liviere/decisions/*.test.mjs`
+(Node strips the types of `model.ts` and `map-geometry.ts` itself, so those two files import nothing at run time but
+types; `i18n.test.mjs` checks that `pl` and `en` have the same keys).
+
+**Access.** Project settings → Features → _Decisions_ (project admins) turns the register on and the _Decisions_
+item of the project navigation with it. The page lets in project admins and members; guests get _No access_ without
+a request, a turned-off register (also when it is turned off meanwhile: 404 `decisions_disabled`) _not turned on_.
+A workspace admin who is a guest of the project is let in by the API but not by the page, as for _Activity_.
+
+**Data.** The page loads the whole register once (`GET …/decisions/?status=all&per_page=1000`, following
+`next_cursor`, at most 5 pages; it warns when the list is cut) and filters it in the browser; queue counts
+(`queues/`), areas (`areas/`) and the details of an opened card (`<number>/`, history) come separately, the
+search goes to `POST search/` 300 ms after the last keystroke (3–200 characters; a decision number such as
+`D12`/`DEMO-D12` or a linked work item identifier also matches, in the browser). Fine up to about 2000 decisions
+(the import limit, ~2 MB); beyond that the list should move to the server filters and paging. Every change
+reloads the list, the counts, the areas and open details (SWR keys `LIVIERE_DECISIONS_<project>_*`).
+
+**URL.** `?view=areas|map&area=<key>&mech=<key>&queue=<queue>&status=current|proposed|deferred|done|past|all&kind=<kind>&d=<number>`;
+defaults are left out, `?d=12` opens decision 12 (and widens the filters when they hide it). The search phrase is
+never in the URL, like the API keeps it out of request logs.
+
+**Areas view.** Area tree with counts after the filters (mechanisms unfold under the selected area; on a phone the
+tree folds above the list), cards grouped by area, or by mechanism within an area ("General" for none, "From area:
+X" for decisions having it as their second area). Badges come from the server's `queues` of each decision; review
+and return dates are compared with `today` of `queues/` (the project's day).
+
+**Actions** – one request each; the page never builds a change out of several:
+
+| State                                | Button                              | Request                                                                   |
+| ------------------------------------ | ----------------------------------- | ------------------------------------------------------------------------- |
+| imported (`needs_review`)            | Reviewed, correct / Correct         | `import-review/` with nothing / with `decided_by`, `decided_on`, `status` |
+| active, deferred, done not confirmed | Confirm                             | `confirm/`                                                                |
+| active with a review date/condition  | Reviewed, stays                     | `review/` with the next date or condition, or none                        |
+| active                               | Change                              | `supersede/`: one new version or a split (`decisions`, ≤ 10)              |
+| active                               | Defer                               | `defer/` with a date or a condition                                       |
+| active, deferred                     | Done / Revoke                       | `done/` / `revoke/` (confirmed, optional reason)                          |
+| proposed                             | Accept / Change and accept / Reject | `accept/` / `accept/` with `title`, `rationale` / `revoke/` (confirmed)   |
+| deferred                             | Back to it / Move the return        | `resume/` / `review/`                                                     |
+
+Errors show a text by the API `code` (`invalid_transition`, `already_superseded`, …) and the server text for
+others. `ack/` and the import stay in the terminal (`plane-decision`).
+
+**Map.** All areas at once, rows with a number dot coloured by state; dashed lines for "supersedes" (one per
+successor), solid ones for "related". Hover highlights a decision's lines, a click opens its card in a side panel
+with the same actions. Kind, search and queue dim what does not match; the state filter is off (old versions are
+part of the chains). Above 120 lines only the highlighted or opened decision's lines are drawn, with a switch for
+all of them; below 768 px the boxes stack without lines. Drawing is measured as `liviere-decisions-map-lines`
+(`performance.getEntriesByName(...)` in the console). An invented register to try it on:
+`node apps/web/liviere/decisions/fixtures/generate-sample.mjs --decisions 300 --areas 20 > /tmp/sample.json`,
+then `plane-decision import` into a project with the register on.
