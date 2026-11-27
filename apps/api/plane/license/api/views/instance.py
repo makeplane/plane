@@ -25,6 +25,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_control
 
 
+def _is_config_enabled(value):
+    return str(value).strip().lower() in ("1", "true")
+
+
 class InstanceEndpoint(BaseAPIView):
     def get_permissions(self):
         if self.request.method == "PATCH":
@@ -119,10 +123,10 @@ class InstanceEndpoint(BaseAPIView):
         # Authentication
         data["enable_signup"] = ENABLE_SIGNUP == "1"
         data["is_workspace_creation_disabled"] = DISABLE_WORKSPACE_CREATION == "1"
-        data["is_google_enabled"] = IS_GOOGLE_ENABLED == "1"
-        data["is_github_enabled"] = IS_GITHUB_ENABLED == "1"
-        data["is_gitlab_enabled"] = IS_GITLAB_ENABLED == "1"
-        data["is_gitea_enabled"] = IS_GITEA_ENABLED == "1"
+        data["is_google_enabled"] = _is_config_enabled(IS_GOOGLE_ENABLED)
+        data["is_github_enabled"] = _is_config_enabled(IS_GITHUB_ENABLED)
+        data["is_gitlab_enabled"] = _is_config_enabled(IS_GITLAB_ENABLED)
+        data["is_gitea_enabled"] = _is_config_enabled(IS_GITEA_ENABLED)
         data["is_magic_login_enabled"] = ENABLE_MAGIC_LINK_LOGIN == "1"
         data["is_email_password_enabled"] = ENABLE_EMAIL_PASSWORD == "1"
 
