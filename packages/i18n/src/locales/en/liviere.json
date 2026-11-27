@@ -492,6 +492,29 @@
         "not_needs_review": "This decision no longer waits for a review after import.",
         "nothing_to_change": "There is nothing to change.",
         "validation_error": "Check the fields of the form: one has a wrong value or is too long."
+      },
+      "views": {
+        "areas": "Areas",
+        "map": "Map"
+      },
+      "map": {
+        "count": "{decisions, plural, one {# decision} other {# decisions}} in {areas, plural, one {# area} other {# areas}}",
+        "in_force": "{count} in force",
+        "legend": {
+          "active": "in force",
+          "proposed": "proposed",
+          "deferred": "deferred",
+          "done": "done",
+          "superseded": "superseded or revoked",
+          "attention": "waiting for you or for a rollout",
+          "supersedes": "supersedes",
+          "related": "related"
+        },
+        "hint": "Hover a decision to highlight its links; click it to open it.",
+        "narrow": "Links show on a wider screen; click a decision to open it.",
+        "all_lines": "Show all lines ({count})",
+        "focus_lines": "Only the lines of the pointed decision",
+        "close": "Close"
       }
     }
   }

@@ -7,7 +7,7 @@ import { dirname, join } from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { DECISION_EVENT_KINDS, DECISION_FIELDS, DECISION_KINDS, DECISION_QUEUES, DECISION_STATUSES } from "./types.ts";
-import { CARD_ACTIONS, ERROR_CODES_WITH_TEXT, STATUS_FILTERS } from "./model.ts";
+import { CARD_ACTIONS, DECISION_VIEWS, ERROR_CODES_WITH_TEXT, STATUS_FILTERS } from "./model.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const locales = join(here, "../../../../packages/i18n/src/locales");
@@ -57,6 +57,8 @@ test("keys built from values exist", () => {
     channel: ["app", "api"],
     badges: ["review", "return"],
     queues: DECISION_QUEUES,
+    views: DECISION_VIEWS,
+    "map.legend": ["active", "proposed", "deferred", "done", "superseded"],
     actions: CARD_ACTIONS,
     errors: ERROR_CODES_WITH_TEXT,
     "dialogs.defer": ["title", "description", "submit", "date"],

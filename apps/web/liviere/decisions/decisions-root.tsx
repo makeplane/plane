@@ -17,9 +17,12 @@ import { Loader } from "@plane/blocks/skeleton";
 import { useProject } from "@/hooks/store/use-project";
 import { useQueryParams } from "@/hooks/use-query-params";
 import { DecisionsUnavailable, unavailableReason } from "./decisions-unavailable";
+import { DecisionDrawer } from "./decision-drawer";
 import { DecisionsList } from "./decisions-list";
+import { DecisionsMap } from "./decisions-map";
 import { DecisionsTree } from "./decisions-tree";
 import {
+  DECISION_VIEWS,
   STATUS_FILTERS,
   areaMatches,
   baseMatches,
@@ -101,6 +104,11 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
   const counts = treeCounts(base);
   const shown = base.filter((decision) => areaMatches(decision, state.area, state.mech));
   const hidden = hiddenByStatus(decisions, filter);
+  // The map shows every state; kind, search and queue only dim
+  const mapFilter: TDecisionFilter = { ...filter, status: "all" };
+  const isDimmed = (decision: TDecision) => !baseMatches(decision, mapFilter);
+  const isMap = state.view === "map";
+  const drawerDecision = isMap && state.d !== null ? byNumber.get(state.d) : undefined;
 
   // Scrolled into view once rendered: the decision of a ?d= link and the target of goTo, not every opened card
   const scrollTarget = useRef<number | null>(state.d);
@@ -110,19 +118,24 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
     (number: number) => {
       const decision = byNumber.get(number);
       if (!decision) return;
+      // On the map every decision is on screen: only the side panel changes
+      if (state.view === "map") {
+        setState({ d: number });
+        return;
+      }
       scrollTarget.current = number;
       setPhrase("");
       setOpen((current) => new Set(current).add(number));
       setState({ status: "all", queue: null, area: decision.area, mech: null, d: number });
     },
-    [byNumber, setState]
+    [byNumber, setState, state.view]
   );
 
   // A link with ?d= to a decision the filters hide: show it the way goTo does, once per decision
   const shownNumbers = new Set(shown.map((decision) => decision.number));
   const revealed = useRef<number | null>(null);
   useEffect(() => {
-    if (state.d === null || !byNumber.has(state.d) || revealed.current === state.d) return;
+    if (state.view !== "areas" || state.d === null || !byNumber.has(state.d) || revealed.current === state.d) return;
     revealed.current = state.d;
     if (!shownNumbers.has(state.d)) goTo(state.d);
   });
@@ -181,6 +194,25 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
   return (
     <div className="flex h-full w-full flex-col gap-4 overflow-y-auto px-4 py-4 md:px-6 md:py-5">
       <div className="flex shrink-0 flex-wrap items-center gap-3">
+        <div role="tablist" className="flex overflow-hidden rounded-md border border-subtle bg-surface-1">
+          {DECISION_VIEWS.map((view) => (
+            <button
+              key={view}
+              type="button"
+              role="tab"
+              aria-selected={state.view === view}
+              onClick={() => setState({ view, d: null })}
+              className={cn(
+                "px-3 py-1 text-13",
+                state.view === view
+                  ? "bg-accent-subtle font-medium text-accent-primary"
+                  : "text-secondary hover:bg-layer-transparent-hover"
+              )}
+            >
+              {t(`liviere.decisions.views.${view}`)}
+            </button>
+          ))}
+        </div>
         <input
           type="search"
           value={phrase}
@@ -195,7 +227,7 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
           <select
             className={selectClass}
             value={state.status}
-            disabled={!!state.queue}
+            disabled={!!state.queue || isMap}
             onChange={(event) => setState({ status: event.target.value as TDecisionViewState["status"] })}
           >
             {STATUS_FILTERS.map((value) => (
@@ -222,7 +254,9 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
         </label>
         {list.data && (
           <span className="text-13 text-tertiary">
-            {t("liviere.decisions.count", { shown: shown.length, total: decisions.length })}
+            {isMap
+              ? t("liviere.decisions.map.count", { decisions: decisions.length, areas: areaList.length })
+              : t("liviere.decisions.count", { shown: shown.length, total: decisions.length })}
           </span>
         )}
       </div>
@@ -278,6 +312,14 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
         <Loader className="flex flex-col gap-3">
           <Loader.Item height="320px" width="100%" />
         </Loader>
+      ) : isMap ? (
+        <DecisionsMap
+          decisions={decisions}
+          areas={areaList}
+          isDimmed={isDimmed}
+          selected={state.d}
+          onOpen={(number) => setState({ d: number })}
+        />
       ) : (
         <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-[260px_minmax(0,1fr)]">
           <div className="md:sticky md:top-0">
@@ -313,6 +355,9 @@ export const ProjectDecisionsRoot = observer(function ProjectDecisionsRoot(props
             onShowAllStates={() => setState({ status: "all" })}
           />
         </div>
+      )}
+      {drawerDecision && (
+        <DecisionDrawer context={context} decision={drawerDecision} onClose={() => setState({ d: null })} />
       )}
     </div>
   );

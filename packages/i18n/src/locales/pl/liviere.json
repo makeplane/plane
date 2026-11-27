@@ -492,6 +492,29 @@
         "not_needs_review": "Ta decyzja nie czeka już na przejrzenie po imporcie.",
         "nothing_to_change": "Nie ma czego zmienić.",
         "validation_error": "Sprawdź pola formularza: któreś ma złą wartość albo jest za długie."
+      },
+      "views": {
+        "areas": "Obszary",
+        "map": "Mapa"
+      },
+      "map": {
+        "count": "{decisions, plural, one {# decyzja} few {# decyzje} many {# decyzji} other {# decyzji}} w {areas, plural, one {# obszarze} other {# obszarach}}",
+        "in_force": "{count} obow.",
+        "legend": {
+          "active": "obowiązuje",
+          "proposed": "proponowana",
+          "deferred": "odłożona",
+          "done": "wykonana",
+          "superseded": "zastąpiona lub wycofana",
+          "attention": "czeka na Ciebie albo na wdrożenie",
+          "supersedes": "zastępuje",
+          "related": "powiązana"
+        },
+        "hint": "Najedź na decyzję, żeby podświetlić jej powiązania; kliknij, żeby ją otworzyć.",
+        "narrow": "Powiązania widać na szerszym ekranie; kliknij decyzję, żeby ją otworzyć.",
+        "all_lines": "Pokaż wszystkie linie ({count})",
+        "focus_lines": "Tylko linie wskazanej decyzji",
+        "close": "Zamknij"
       }
     }
   }
