@@ -24,6 +24,7 @@ from rest_framework.generics import GenericAPIView
 # Module imports
 from plane.api.middleware.api_authentication import APIKeyAuthentication
 from plane.api.rate_limit import ApiKeyRateThrottle
+from plane.api.serializers.user import hide_emails_from_guest
 from plane.utils.exception_logger import log_exception
 from plane.utils.paginator import BasePaginator
 from plane.utils.core.mixins import ReadReplicaControlMixin
@@ -58,6 +59,7 @@ class BaseAPIView(TimezoneMixin, GenericAPIView, ReadReplicaControlMixin, BasePa
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
+        hide_emails_from_guest(request, kwargs.get("slug"))
         if request.method in ("POST", "PUT", "PATCH") and not isinstance(request.data, (dict, list)):
             raise ParseError(_NON_CONTAINER_BODY_ERROR)
 

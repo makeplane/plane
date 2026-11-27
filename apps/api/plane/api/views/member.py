@@ -19,8 +19,9 @@ from plane.api.serializers import (
     WorkspaceMemberLiteAPISerializer,
     ProjectMemberLiteAPISerializer,
 )
+from plane.api.serializers.user import is_workspace_guest
 from plane.db.models import User, Workspace, WorkspaceMember, Project, ProjectMember
-from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission, ROLE
+from plane.utils.permissions import ProjectMemberPermission, WorkSpaceAdminPermission, ProjectAdminPermission
 from plane.utils.openapi import (
     WORKSPACE_SLUG_PARAMETER,
     PROJECT_ID_PARAMETER,
@@ -40,9 +41,7 @@ def member_fields(request, slug, serializer_class):
     """Fields of a member serializer the caller may see: workspace guests do not get
     email addresses, as in the web app's workspace member list."""
     fields = list(serializer_class.Meta.fields)
-    if not WorkspaceMember.objects.filter(
-        workspace__slug=slug, member=request.user, is_active=True, role__gt=ROLE.GUEST.value
-    ).exists():
+    if is_workspace_guest(request.user, slug):
         fields = [field for field in fields if field != "email"]
     return fields
 
