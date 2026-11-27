@@ -379,6 +379,144 @@ configuration as `plane-log`: `~/.config/plane-mcp/env` or `$PLANE_LOG_ENV`):
 
 **Going back** to images without our code: nothing to disable; no tables.
 
+## Decision register (`/api/v1/.../projects/{id}/liviere/decisions/`)
+
+A list of the decisions a project keeps to, one rule each ("Returns are accepted for 30 days"), with a state, an
+area, the work items and sources it comes from and a history, so that the owner can look them up and change their
+mind, and AI agents can read and write them. The register is the source of truth for the owner's decisions: agent
+memory and rule files point to decision numbers, and the register wins when they disagree.
+
+Code: `apps/api/plane/liviere/decisions/` (`rules.py` states, operations and field checks, `services.py` writes,
+`queries.py` filters, queues and search, `issues.py` work item links, `importer.py`, `serialize.py`, `endpoints.py`
+handlers shared by both trees, `routes.py`), `liviere/app/decisions.py` and `liviere/api/decisions.py` (views),
+`liviere/models.py`, migration `0010` (tables `liviere_decision_settings`, `_areas`, `liviere_decisions`, `_issues`,
+`_relations`, `_events`). Tests: `plane/tests/contract/api/test_decisions.py`, `test_decisions_import.py` (on
+`data/decisions_sample.json`, an invented tea shop), `plane/tests/unit/liviere/test_decision_rules.py`.
+
+**Switch.** Per project, off by default: `PATCH .../liviere/decisions/settings/ {"enabled": true}` (project admins,
+also with an API key; the settings page comes with the web app). While off, every other route answers
+`404 {"error": "Decisions are not enabled in this project", "code": "decisions_disabled"}` and nothing can be
+written. Project admins and members read and write; guests and people outside the project get 403 (a workspace
+admin who is a guest of the project gets in, as everywhere in `allow_permission`). The same routes and responses
+exist for the app under `/api/workspaces/.../projects/{id}/liviere/decisions/`, plus
+`GET /api/workspaces/{slug}/liviere/decisions/enabled-projects/`.
+
+**A decision** (the fields of the import file): `number` (per project, from a counter row locked for the write, so
+parallel writes get different numbers; never handed out again), shown as `identifier` `DEMO-D12`; `title` (the rule,
+≤ 500), `rationale`, `rejected`, `note`; `area`, `mechanism` (an area of the project's own two-level list) and an
+optional second `area2`; `kind` (`product`, `architecture`, `process`, `operations`); `status`; `decided_by` (`user`
+– the owner, `agent`, `unknown`) and `confirmed`; `decided_on`, `review_on`, `review_condition` (a date or a condition
+to come back); `issues` (work items such as `DEMO-3`), `sources` (where it is written, e.g. `memory:notes.md`),
+`supersedes` and `superseded_by` (a list: a decision split into several rules has several successors), `related`
+(symmetric); `pending_rollout` with `rollout` (`reason`, `at`, `by`, `channel`); `needs_review` and `estimated` (the
+fields of an imported decision that are guesses); `queues` (the queues it is in).
+
+**States and operations.** `proposed`, `active` (in force), `deferred`, `done` (a one-off decision carried out),
+`superseded`, `revoked`. Every change is its own route and leaves a history entry (account, time, channel `app` or
+`api`, `kind`, changes `{field: [old, new]}`). "Session" is the app (the owner in the browser), "key" an API key
+(agents); `by: "user"` says that the owner decided, `rollout: true` puts a key's change in the coordinator's inbox.
+
+| `POST .../{number}/…` or route                                     | From                                    | Result                              | `decided_by` / `confirmed`                                          | Waits for rollout                                                                       |
+| ------------------------------------------------------------------ | --------------------------------------- | ----------------------------------- | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `POST decisions/`                                                  | –                                       | `active`                            | session `user`/true; key `agent`/false, with `by: user` `user`/true | session; key with `rollout`                                                             |
+| `POST decisions/propose/`                                          | –                                       | `proposed`                          | `agent`/false (session `user`/false)                                | never                                                                                   |
+| `accept/` (optional `title`, `rationale`: change and accept)       | proposed                                | active                              | session `user`/true; key unchanged or `by`                          | session; key with `rollout`                                                             |
+| `confirm/`                                                         | active, deferred, done; not confirmed   | –                                   | `user`/true (the owner's word, also with a key)                     | no                                                                                      |
+| `defer/` (`review_on` and/or `review_condition`)                   | active                                  | deferred                            | –                                                                   | session; key with `rollout`                                                             |
+| `resume/`                                                          | deferred                                | active, review fields cleared       | –                                                                   | session; key with `rollout`                                                             |
+| `done/`                                                            | active, deferred                        | done, review fields cleared         | –                                                                   | cleared                                                                                 |
+| `revoke/` (optional `reason`)                                      | active, deferred; proposed (= rejected) | revoked                             | –                                                                   | session; key with `rollout` (never for a proposal)                                      |
+| `supersede/` (one decision, or `{"decisions": [...]}`, at most 10) | active, deferred, done                  | old `superseded`, new `active`      | as for a new decision                                               | new: session; old: cleared                                                              |
+| `review/` (new `review_on`/`review_condition` or none)             | active, deferred                        | –                                   | –                                                                   | no                                                                                      |
+| `import-review/` (optional `decided_by`, `decided_on`, `status`)   | `needs_review`                          | `needs_review`, `estimated` cleared | `unknown` → session `user`/true; key must send `decided_by`         | no                                                                                      |
+| `link/` (`issues`, `sources` to add)                               | any                                     | –                                   | –                                                                   | no                                                                                      |
+| `ack/` (optional `issues` of the rollout)                          | waits for rollout                       | cleared                             | –                                                                   | cleared                                                                                 |
+| `PATCH {number}/`                                                  | any                                     | –                                   | –                                                                   | when the `title` of an active or deferred decision changes: session; key with `rollout` |
+
+`PATCH` changes `title` (a correction: a change of meaning goes through `supersede/`), `rationale`, `rejected`, `note`,
+areas, `kind`, `issues`, `sources`, `related`, `review_on` and `review_condition`; a changed field leaves `estimated`.
+`supersede/` is one transaction (counter, the old decision locked and checked, the new ones, both history entries);
+new decisions take the areas, kind, rationale, work items and related decisions of the old one unless given.
+Decisions are never deleted. A 400 is `{"error", "code", "field", "number"}`; the codes are `ERROR_CODES` in
+`rules.py` (e.g. `invalid_transition`, `already_superseded`, `issue_not_found`, `validation_error`).
+
+**Queues** (`GET .../queues/`, counts and `today`; `?queue=` on the list): `confirm` – in force, decided by somebody
+else than the owner, not confirmed; `review` – active or deferred with `review_on` at most 14 days from today in the
+project time zone, past dates too (a condition alone never enters it); `rollout` – waits for rollout and not
+superseded; `proposed`; `imported` – `needs_review`. `GET .../inbox/` is the coordinator's inbox: the `rollout`
+queue oldest first, each with `rollout.reason` (`created`, `accepted`, `supersedes`, `revoked`, `deferred`,
+`resumed`, `corrected`); `POST .../{number}/ack/` takes it off once rules and code follow.
+
+| Endpoint                                  |                                                                                                                                                                                          |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET`, `PATCH settings/`                  | `{enabled, last_number}`                                                                                                                                                                 |
+| `GET .../decisions/`                      | in force by default; `area` (also as `area2`), `mechanism`, `status` (comma-separated or `all`), `kind`, `queue`; paginated like other v1 lists (`per_page` ≤ 1000, `cursor`), by number |
+| `POST .../decisions/search/`              | `{q, limit (≤ 200), area, mechanism, status, kind, queue}` → `{total, limit, has_more, results}`, newest first, every state by default                                                   |
+| `GET`, `PATCH .../{number}/`              | one decision with `history` and `chain: {previous, next}` (number, identifier, title, status, decided_on, supersedes)                                                                    |
+| `GET`, `POST areas/`, `PATCH areas/{id}/` | `{results: [{id, key, name, sort_order, mechanisms: [...]}]}`; new area or mechanism (`parent`); `name`, `sort_order`                                                                    |
+| `POST import/[?commit=1]`                 | the import file (below)                                                                                                                                                                  |
+
+**Search.** Every word of `q` (3–200 characters) must appear, case-insensitive, in the title, rationale, rejected
+options or note (`icontains`, like the content search): agents search by the stem with Polish letters ("zwrot" finds
+"zwroty"); there is no `unaccent`, so "zolw" does not find "żółw". The phrase goes in the body: it never reaches a URL
+or a request log. A superseded decision in the results names its successors in `superseded_by`.
+
+**Work items.** `issues` are resolved among the work items of the workspace the writer may see (the rules of the
+content search, archived work items included: closed work items are archived after a month and old decisions point
+to them); one that is not found is a 400 (`issue_not_found`). Reading checks again for the reader: everybody gets the
+`identifier`, only a reader who may see the work item gets `id`, `name` and `archived` (`visible: false`
+otherwise), so a decision never shows the title of a work item of a project the reader is not in; a work item
+deleted after it was linked is not visible to anybody.
+
+**Import** (`POST .../import/`, the file as the body; a dry run unless `?commit=1`). Format 2:
+`{"format": 2, "project": "DEMO", "areas": [{"key", "name", "mechanisms": [{"key", "name"}]}], "decisions":
+[{...the fields above...}]}`, at most 2000 decisions (250 are about 150 kB, well under `FILE_SIZE_LIMIT`, 5 MB by
+default, the limit of Django and of the proxy). All checks come first and every error is listed with the decision
+number and the field: known areas and mechanisms, required fields, values, dates, `area2`, an unknown author or date
+needs `needs_review`, targets of `supersedes` and `related` exist (in the file or the project), a `supersedes` target
+is `superseded`, no cycle, numbers unique and not used in the project (a second run is refused with the list of
+collisions, nothing is overwritten). Then one transaction: missing areas are created (existing ones keep their
+names), the decisions come in with their numbers, dates, states, authors, `confirmed` and chains as in the file
+(the channel does not change `decided_by`, `pending_rollout` is never set), one `imported` history entry each, and
+the counter moves past the highest number. The dry run performs the same write and rolls it back. A work item that
+cannot be found is a warning: the decision comes in without that link and `ticket:DEMO-99 (not found)` is added to
+its `sources`. The answer: `{dry_run, errors, warnings, summary: {decisions, by_status, areas_created,
+mechanisms_created, needs_review, issue_links, issues_not_found}, sources: {source: [numbers]}, last_number}`
+(400 with `code: "import_rejected"` when there are errors).
+
+**Request log.** Decision routes carry decision text, so `APITokenLogMiddleware` keeps their rows in
+`api_activity_logs` without query string and bodies (`liviere/search/privacy.py`); errors name numbers and fields,
+never the text.
+
+**`liviere/tools/plane-decision`** – the command-line client for agents (Python standard library only, the same
+configuration as `plane-log`: `~/.config/plane-mcp/env` or `$PLANE_LOG_ENV`). Decisions are given as `12`, `D12`
+or `DEMO-D12`.
+
+```sh
+plane-decision add -p DEMO --area zamowienia/zwroty --kind product --issue DEMO-3 \
+  --rationale "Klienci często otwierają paczkę dopiero po 2–3 tygodniach." "Zwrot przyjmujemy do 30 dni od dostawy"
+plane-decision propose -p DEMO --area zamowienia/zwroty --kind operations "Raport ze zwrotów przychodzi mailem raz w tygodniu"
+plane-decision list -p DEMO --area zamowienia --brief   # every page: "DEMO-D2  Zwrot przyjmujemy do 30 dni od dostawy"
+plane-decision show -p DEMO D2
+plane-decision search -p DEMO zwrot dni                # every state; "[superseded → DEMO-D2]"
+plane-decision supersede -p DEMO D2 "Zwrot przyjmujemy do 60 dni od dostawy" --by user
+plane-decision supersede -p DEMO D9 "Pierwsza reguła" "Druga reguła"   # a split
+plane-decision revoke|defer --until D|--when T|done|confirm|accept -p DEMO D7
+plane-decision link -p DEMO D2 --issue DEMO-20 --source CLAUDE.md:41
+plane-decision inbox -p DEMO; plane-decision ack -p DEMO D10 --issue DEMO-20
+plane-decision areas -p DEMO; plane-decision areas add -p DEMO zamowienia/wysylka "Wysyłka"
+plane-decision import -p DEMO decisions.json [--commit]  # dry run unless --commit; then "source → decisions"
+```
+
+`--json` prints the response of reads. Rules for agents (not permissions – the account is shared): the project
+coordinator writes decisions with `add`, `supersede`, `revoke` and the like; an executing session only uses
+`propose`, `list`, `show` and `search`; `confirm` and `accept --by user` (and `--by user` in general) only on the
+owner's word. Tests: `python3 -m unittest liviere/tools/test_plane_decision.py`. Install like `plane-log`, as a copy
+of the file in `~/.local/bin`.
+
+**Going back** to images without our code: nothing to disable; the tables stay unused. `migrate liviere 0009` on a
+fork image removes them.
+
 ## New work items (`/:workspace/new-work-items`)
 
 Most work items here are created by AI agents (API key, MCP). _New_ lists the work items somebody else created in
