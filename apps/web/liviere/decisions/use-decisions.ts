@@ -32,12 +32,15 @@ export const useDecisionsEnabledProjects = (workspaceSlug: string | undefined) =
     { revalidateOnFocus: false }
   );
 
-/** Settings of the register; only fetched for project admins and members (`canRead`). */
+/**
+ * Settings of the register; only fetched for project admins and members (`canRead`). Asked again when the tab
+ * gets the focus back, so a register turned off in another tab shows as such without waiting for a change.
+ */
 export const useDecisionSettings = (workspaceSlug: string | undefined, projectId: string | undefined, canRead = true) =>
   useSWR(
     workspaceSlug && projectId && canRead ? decisionSettingsKey(projectId) : null,
     workspaceSlug && projectId ? () => decisionsService.getSettings(workspaceSlug, projectId) : null,
-    retryUnlessRefused
+    { ...retryUnlessRefused, revalidateOnFocus: true }
   );
 
 export const useDecisionList = (workspaceSlug: string, projectId: string, enabled: boolean) =>
