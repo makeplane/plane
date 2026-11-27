@@ -558,7 +558,7 @@ def transition(ctx, number, operation, data):
 def import_review(ctx, number, data):
     """An imported decision checked by a person: optional corrections, `needs_review` and `estimated` cleared."""
     data = _object(data or {})
-    _only(data, ("decided_by", "decided_on", "status"))
+    _only(data, ("decided_by", "decided_on", "status", "review_on", "review_condition"))
     with transaction.atomic():
         decision = _get(ctx, number, lock=True)
         if not decision.needs_review:
@@ -604,6 +604,27 @@ def import_review(ctx, number, data):
             decision.status = status
             if status in (DONE, REVOKED):
                 decision.review_on, decision.review_condition = None, None
+        # The date or condition to come back, as in defer/ (a decision corrected to "deferred" gets it at once)
+        if "review_on" in data or "review_condition" in data:
+            if decision.status not in (ACTIVE, DEFERRED):
+                raise DecisionError(
+                    f"{ctx.display(number)} is {decision.status}: only an active or deferred decision has a review",
+                    "review_on",
+                    number,
+                )
+            if "review_on" in data:
+                decision.review_on = date_value(data["review_on"], "review_on", number)
+            if "review_condition" in data:
+                decision.review_condition = text(
+                    data["review_condition"], "review_condition", MAX_CONDITION, number=number
+                )
+        if (
+            decision.status == DEFERRED
+            and before["status"] != DEFERRED
+            and decision.review_on is None
+            and decision.review_condition is None
+        ):
+            raise DecisionError("Deferring needs 'review_on' and/or 'review_condition'", "review_on", number)
         decision.needs_review = False
         decision.estimated = []
         changes = {
