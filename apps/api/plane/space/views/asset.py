@@ -7,6 +7,7 @@ import uuid
 
 # Django imports
 from django.conf import settings
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 
@@ -16,7 +17,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from plane.bgtasks.storage_metadata_task import get_asset_object_metadata
-from plane.db.models import DeployBoard, FileAsset, IssueComment
+from plane.db.models import DeployBoard, FileAsset, Issue, IssueComment
 from plane.settings.storage import S3Storage
 from plane.utils.path_validator import sanitize_filename
 
@@ -44,25 +45,37 @@ class EntityAssetEndpoint(BaseAPIView):
         return [permission() for permission in permission_classes]
 
     def get(self, request, anchor, pk):
-        # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
-        # Check if the project is published
+        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
         if not deploy_board:
             return Response(
                 {"error": "Requested resource could not be found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        # get the asset id — scope to project to prevent cross-project IDOR
-        asset = FileAsset.objects.get(
+        # Only assets of content the public board shows: issues from issue_objects (no
+        # draft/archived/triage) and EXTERNAL comments on those issues, as the space issue views.
+        visible_issues = Issue.issue_objects.filter(
+            project_id=deploy_board.project_id, workspace_id=deploy_board.workspace_id
+        ).values("id")
+        asset = FileAsset.objects.filter(
+            Q(
+                entity_type=FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
+                issue_id__in=visible_issues,
+            )
+            | Q(
+                entity_type=FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
+                comment__access="EXTERNAL",
+                comment__issue_id__in=visible_issues,
+            ),
             workspace_id=deploy_board.workspace_id,
             project_id=deploy_board.project_id,
             pk=pk,
-            entity_type__in=[
-                FileAsset.EntityTypeContext.ISSUE_DESCRIPTION,
-                FileAsset.EntityTypeContext.COMMENT_DESCRIPTION,
-            ],
-        )
+        ).first()
+        if asset is None:
+            return Response(
+                {"error": "The requested asset could not be found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         # Check if the asset is uploaded
         if not asset.is_uploaded:
@@ -86,7 +99,7 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def post(self, request, anchor):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
         # Check if the project is published
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
@@ -176,7 +189,7 @@ class EntityAssetEndpoint(BaseAPIView):
 
     def patch(self, request, anchor, pk):
         # Get the deploy board
-        deploy_board = DeployBoard.objects.filter(anchor=anchor).first()
+        deploy_board = DeployBoard.objects.filter(anchor=anchor, entity_name="project").first()
         # Check if the project is published
         if not deploy_board:
             return Response({"error": "Project is not published"}, status=status.HTTP_404_NOT_FOUND)
