@@ -3,9 +3,11 @@
 # See the LICENSE file for details.
 
 import logging
+import os
 import re
 from datetime import datetime
 
+import pytz
 from bs4 import BeautifulSoup
 
 # Third party imports
@@ -41,6 +43,30 @@ def release_lock(lock_id):
     """Release a lock."""
     redis_client = redis_instance()
     redis_client.delete(lock_id)
+
+
+def resolve_receiver_timezone(user_timezone):
+    """Return the receiver's timezone; a UTC or invalid profile uses EMAIL_NOTIFICATION_FALLBACK_TIMEZONE."""
+    fallback = os.environ.get("EMAIL_NOTIFICATION_FALLBACK_TIMEZONE", "").strip()
+    for name in ([user_timezone] if user_timezone and user_timezone != "UTC" else []) + [fallback]:
+        try:
+            if name:
+                return pytz.timezone(name)
+        except pytz.UnknownTimeZoneError:
+            continue
+    return pytz.UTC
+
+
+def format_activity_time(activity_time, user_timezone):
+    """Format a UTC activity time ("%Y-%m-%d %H:%M:%S") as "3:14 PM" in the receiver's timezone."""
+    utc_time = pytz.UTC.localize(datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S"))
+    local_time = utc_time.astimezone(resolve_receiver_timezone(user_timezone))
+    return local_time.strftime("%I:%M %p").lstrip("0")
+
+
+def actor_avatar_url(base_api, actor):
+    """Return the absolute avatar URL, or "" so the template falls back to the initial."""
+    return f"{base_api}{actor.avatar_url}" if actor.avatar_url else ""
 
 
 @shared_task
@@ -204,7 +230,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         {
                             "actor_comments": comment,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url(base_api, actor),
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -217,7 +243,7 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                         {
                             "actor_comments": mention,
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url(base_api, actor),
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
@@ -225,13 +251,13 @@ def send_email_notification(issue_id, notification_data, receiver_id, email_noti
                     )
                 activity_time = changes.pop("activity_time")
                 # Parse the input string into a datetime object
-                formatted_time = datetime.strptime(activity_time, "%Y-%m-%d %H:%M:%S").strftime("%H:%M %p")
+                formatted_time = format_activity_time(activity_time, receiver.user_timezone)
 
                 if changes:
                     template_data.append(
                         {
                             "actor_detail": {
-                                "avatar_url": f"{base_api}{actor.avatar_url}",
+                                "avatar_url": actor_avatar_url(base_api, actor),
                                 "first_name": actor.first_name,
                                 "last_name": actor.last_name,
                             },
