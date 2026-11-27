@@ -28,6 +28,23 @@ from .unread import (
 )
 from .views import PageApiBlockEndpoint
 
+from . import decisions as decision_views
+from plane.liviere.decisions.routes import decision_patterns
+
+DECISION_VIEWS = {
+    "settings": decision_views.DecisionSettingsEndpoint,
+    "list": decision_views.DecisionsEndpoint,
+    "propose": decision_views.DecisionProposeEndpoint,
+    "search": decision_views.DecisionSearchEndpoint,
+    "queues": decision_views.DecisionQueuesEndpoint,
+    "inbox": decision_views.DecisionInboxEndpoint,
+    "areas": decision_views.DecisionAreasEndpoint,
+    "area": decision_views.DecisionAreaDetailEndpoint,
+    "import": decision_views.DecisionImportEndpoint,
+    "detail": decision_views.DecisionDetailEndpoint,
+    "action": decision_views.DecisionActionEndpoint,
+}
+
 urlpatterns = [
     path(
         "workspaces/<str:slug>/projects/<uuid:project_id>/pages/<uuid:page_id>/liviere/api-block/",
@@ -130,3 +147,13 @@ urlpatterns = [
         name="liviere-push-test",
     ),
 ]
+
+# Decision register (plane/liviere/decisions)
+urlpatterns += decision_patterns(DECISION_VIEWS, "")
+urlpatterns.append(
+    path(
+        "workspaces/<str:slug>/liviere/decisions/enabled-projects/",
+        decision_views.DecisionEnabledProjectsEndpoint.as_view(http_method_names=["get"]),
+        name="liviere-decisions-enabled-projects",
+    )
+)

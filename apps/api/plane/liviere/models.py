@@ -232,3 +232,155 @@ class PushProject(models.Model):
             models.UniqueConstraint(fields=["user", "project"], name="liviere_push_project_unique"),
         ]
         indexes = [models.Index(fields=["project"], name="liviere_push_project_project")]
+
+
+# Decision register (plane/liviere/decisions): one decision is one rule of a project, with a state and a history.
+
+
+class DecisionSettings(models.Model):
+    """Per-project switch of the "Decisions" feature and the counter of decision numbers.
+
+    The row is created when the feature is enabled, so the counter exists before the first decision: every write
+    locks it (select_for_update) and takes the next number, which is never handed out again."""
+
+    project = models.OneToOneField("db.Project", on_delete=models.CASCADE, related_name="+", primary_key=True)
+    enabled = models.BooleanField(default=False)
+    last_number = models.PositiveIntegerField(default=0)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+
+    class Meta:
+        db_table = "liviere_decision_settings"
+
+
+class DecisionArea(models.Model):
+    """An area of a project's decisions (parent empty) or a mechanism of an area (parent set); two levels only."""
+
+    id = models.BigAutoField(primary_key=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, related_name="mechanisms")
+    key = models.CharField(max_length=40)
+    name = models.CharField(max_length=100)
+    sort_order = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "liviere_decision_areas"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["project", "key"],
+                condition=models.Q(parent__isnull=True),
+                name="liviere_decision_area_unique_key",
+            ),
+            models.UniqueConstraint(
+                fields=["parent", "key"],
+                condition=models.Q(parent__isnull=False),
+                name="liviere_decision_mechanism_unique_key",
+            ),
+        ]
+
+
+class Decision(models.Model):
+    """One decision of a project (plane/liviere/decisions/rules.py has the states and the operations)."""
+
+    id = models.BigAutoField(primary_key=True)
+    workspace = models.ForeignKey("db.Workspace", on_delete=models.CASCADE, related_name="+")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    # Next number of the project (DecisionSettings.last_number), shown as "<project identifier>-D<number>"
+    number = models.PositiveIntegerField()
+    title = models.CharField(max_length=500)
+    rationale = models.TextField(null=True)
+    rejected = models.TextField(null=True)
+    note = models.TextField(null=True)
+    area = models.ForeignKey(DecisionArea, on_delete=models.PROTECT, related_name="+")
+    mechanism = models.ForeignKey(DecisionArea, on_delete=models.PROTECT, null=True, related_name="+")
+    area2 = models.ForeignKey(DecisionArea, on_delete=models.PROTECT, null=True, related_name="+")
+    kind = models.CharField(max_length=20)
+    status = models.CharField(max_length=20)
+    decided_by = models.CharField(max_length=20)
+    confirmed = models.BooleanField(default=False)
+    decided_on = models.DateField(null=True)
+    review_on = models.DateField(null=True)
+    review_condition = models.CharField(max_length=500, null=True)
+    sources = models.JSONField(default=list)
+    # A decision split into several rules has several successors
+    supersedes = models.ForeignKey("self", on_delete=models.PROTECT, null=True, related_name="successors")
+    # "Waiting for rollout": a change the project coordinator still has to carry into rules and code
+    pending_rollout = models.BooleanField(default=False)
+    rollout_reason = models.CharField(max_length=20, null=True)
+    rollout_at = models.DateTimeField(null=True)
+    rollout_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+    rollout_channel = models.CharField(max_length=10, null=True)
+    # Imported with an unknown author or date, or with estimated values ("estimated" lists the fields)
+    needs_review = models.BooleanField(default=False)
+    estimated = models.JSONField(default=list)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "liviere_decisions"
+        constraints = [
+            models.UniqueConstraint(fields=["project", "number"], name="liviere_decision_unique_number"),
+        ]
+        indexes = [
+            models.Index(fields=["project", "status"], name="liviere_decision_status"),
+            models.Index(fields=["project", "area"], name="liviere_decision_area"),
+            models.Index(fields=["project", "area2"], name="liviere_decision_area2"),
+            models.Index(
+                fields=["project"],
+                condition=models.Q(pending_rollout=True),
+                name="liviere_decision_rollout",
+            ),
+        ]
+
+
+class DecisionIssue(models.Model):
+    """A work item of the workspace a decision points to (any project, archived work items too)."""
+
+    id = models.BigAutoField(primary_key=True)
+    decision = models.ForeignKey(Decision, on_delete=models.CASCADE, related_name="issue_links")
+    issue = models.ForeignKey("db.Issue", on_delete=models.CASCADE, related_name="+")
+
+    class Meta:
+        db_table = "liviere_decision_issues"
+        constraints = [
+            models.UniqueConstraint(fields=["decision", "issue"], name="liviere_decision_issue_unique"),
+        ]
+
+
+class DecisionRelation(models.Model):
+    """Two related decisions of a project, symmetric: `low` has the smaller number."""
+
+    id = models.BigAutoField(primary_key=True)
+    low = models.ForeignKey(Decision, on_delete=models.CASCADE, related_name="+")
+    high = models.ForeignKey(Decision, on_delete=models.CASCADE, related_name="+")
+
+    class Meta:
+        db_table = "liviere_decision_relations"
+        constraints = [
+            models.UniqueConstraint(fields=["low", "high"], name="liviere_decision_relation_unique"),
+        ]
+        indexes = [models.Index(fields=["high"], name="liviere_decision_relation_high")]
+
+
+class DecisionEvent(models.Model):
+    """One change of a decision: who, when, through which channel (app session or API key) and what changed."""
+
+    id = models.BigAutoField(primary_key=True)
+    decision = models.ForeignKey(Decision, on_delete=models.CASCADE, related_name="events")
+    project = models.ForeignKey("db.Project", on_delete=models.CASCADE, related_name="+")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, related_name="+")
+    channel = models.CharField(max_length=10)
+    kind = models.CharField(max_length=30)
+    # {field: [old value, new value]}
+    changes = models.JSONField(default=dict)
+    note = models.TextField(null=True)
+    occurred_at = models.DateTimeField()
+
+    class Meta:
+        db_table = "liviere_decision_events"
+        indexes = [models.Index(fields=["decision", "occurred_at"], name="liviere_decision_event_time")]

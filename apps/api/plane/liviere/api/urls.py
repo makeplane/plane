@@ -21,6 +21,23 @@ from .activity import (
 from .search import ContentSearchAPIEndpoint
 from .views import PageArchiveUnarchiveAPIEndpoint, PageDetailAPIEndpoint, PageListCreateAPIEndpoint
 
+from . import decisions as decision_views
+from plane.liviere.decisions.routes import decision_patterns
+
+DECISION_VIEWS = {
+    "settings": decision_views.DecisionSettingsAPIEndpoint,
+    "list": decision_views.DecisionsAPIEndpoint,
+    "propose": decision_views.DecisionProposeAPIEndpoint,
+    "search": decision_views.DecisionSearchAPIEndpoint,
+    "queues": decision_views.DecisionQueuesAPIEndpoint,
+    "inbox": decision_views.DecisionInboxAPIEndpoint,
+    "areas": decision_views.DecisionAreasAPIEndpoint,
+    "area": decision_views.DecisionAreaDetailAPIEndpoint,
+    "import": decision_views.DecisionImportAPIEndpoint,
+    "detail": decision_views.DecisionDetailAPIEndpoint,
+    "action": decision_views.DecisionActionAPIEndpoint,
+}
+
 urlpatterns = [
     path(
         "workspaces/<str:slug>/liviere/search/",
@@ -88,3 +105,6 @@ urlpatterns = [
         name="liviere-project-activity-log-detail-v1",
     ),
 ]
+
+# Decision register (plane/liviere/decisions)
+urlpatterns += decision_patterns(DECISION_VIEWS, "-v1")
