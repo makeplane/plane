@@ -749,6 +749,52 @@ ESTIMATE_POINT_UPDATE_EXAMPLE = OpenApiExample(
 )
 
 
+# Page Examples
+PAGE_CREATE_EXAMPLE = OpenApiExample(
+    "PageCreateSerializer",
+    value={
+        "name": "Product Requirements",
+        "description_html": "<p>Requirements for the next release.</p>",
+        "access": 0,
+        "color": "#26b5ce",
+        "external_id": "1234567890",
+        "external_source": "notion",
+    },
+    description="Example request for creating a page",
+)
+PAGE_UPDATE_EXAMPLE = OpenApiExample(
+    "PageUpdateSerializer",
+    value={
+        "name": "Product Requirements (v2)",
+        "description_html": "<p>Updated requirements for the next release.</p>",
+        "access": 1,
+    },
+    description="Example request for updating a page",
+)
+PAGE_EXAMPLE = OpenApiExample(
+    name="Page",
+    value={
+        "id": "550e8400-e29b-41d4-a716-446655440000",
+        "name": "Product Requirements",
+        "description_html": "<p>Requirements for the next release.</p>",
+        "access": 0,
+        "color": "#26b5ce",
+        "is_locked": False,
+        "archived_at": None,
+        "view_props": {"full_width": False},
+        "logo_props": {},
+        "external_id": "1234567890",
+        "external_source": "notion",
+        "owned_by": "550e8400-e29b-41d4-a716-446655440002",
+        "parent": None,
+        "sort_order": 65535.0,
+        "created_at": "2024-01-01T10:30:00Z",
+        "updated_at": "2024-01-10T15:45:00Z",
+    },
+    description="Example response for a page",
+)
+
+
 # Sample data for different entity types
 SAMPLE_ISSUE = {
     "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -882,6 +928,25 @@ SAMPLE_ESTIMATE_POINT = {
     "created_at": "2024-01-01T10:30:00Z",
 }
 
+SAMPLE_PAGE = {
+    "id": "550e8400-e29b-41d4-a716-446655440000",
+    "name": "Product Requirements",
+    "description_html": "<p>Requirements for the next release.</p>",
+    "access": 0,
+    "color": "#26b5ce",
+    "is_locked": False,
+    "archived_at": None,
+    "view_props": {"full_width": False},
+    "logo_props": {},
+    "external_id": "1234567890",
+    "external_source": "notion",
+    "owned_by": "550e8400-e29b-41d4-a716-446655440002",
+    "parent": None,
+    "sort_order": 65535.0,
+    "created_at": "2024-01-01T10:30:00Z",
+    "updated_at": "2024-01-10T15:45:00Z",
+}
+
 # Mapping of schema types to sample data
 SCHEMA_EXAMPLES = {
     "Issue": SAMPLE_ISSUE,
@@ -899,6 +964,7 @@ SCHEMA_EXAMPLES = {
     "Sticky": SAMPLE_STICKY,
     "Estimate": SAMPLE_ESTIMATE,
     "EstimatePoint": SAMPLE_ESTIMATE_POINT,
+    "Page": SAMPLE_PAGE,
 }
 
 
