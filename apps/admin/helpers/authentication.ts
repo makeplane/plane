@@ -34,3 +34,5 @@ export const canDisableAuthMethod = (
   const isCurrentlyEnabled = Boolean(parseInt(formattedConfig?.[configKey] ?? "0"));
   return !(isCurrentlyEnabled && enabledCount === 1);
 };
+
+export const I18N_LABEL_PROBE = { title: "Temporary probe string for the label test" };
