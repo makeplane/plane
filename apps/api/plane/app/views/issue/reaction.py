@@ -10,6 +10,7 @@ from django.utils import timezone
 from django.core.serializers.json import DjangoJSONEncoder
 
 # Third Party imports
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status
 
@@ -25,6 +26,12 @@ from plane.utils.host import base_host
 class IssueReactionViewSet(BaseViewSet):
     serializer_class = IssueReactionSerializer
     model = IssueReaction
+
+    def initial(self, request, *args, **kwargs):
+        super().initial(request, *args, **kwargs)
+        # A restricted guest may only reach sub-resources of issues they created.
+        if issue_hidden_from_guest(request, kwargs["slug"], kwargs["project_id"], kwargs["issue_id"]):
+            raise PermissionDenied("You are not allowed to view this issue")
 
     def get_queryset(self):
         return (
@@ -44,13 +51,6 @@ class IssueReactionViewSet(BaseViewSet):
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
     def list(self, request, slug, project_id, issue_id):
-        # A restricted guest may only see the reactions of issues they created,
-        # mirroring the issue-detail visibility rule.
-        if issue_hidden_from_guest(request, slug, project_id, issue_id):
-            return Response(
-                {"error": "You are not allowed to view this issue"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
         return super().list(request, slug, project_id, issue_id)
 
     @allow_permission([ROLE.ADMIN, ROLE.MEMBER, ROLE.GUEST])
