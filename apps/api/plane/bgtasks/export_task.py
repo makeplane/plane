@@ -84,6 +84,8 @@ def upload_to_s3(zip_file: io.BytesIO, workspace_id: UUID, token_id: str, slug: 
             s3 = boto3.client(
                 "s3",
                 endpoint_url=settings.AWS_S3_ENDPOINT_URL,
+                # boto3 won't infer the region from the endpoint, and presigned URLs are signed for it
+                region_name=settings.AWS_REGION or None,
                 aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
                 aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
                 config=Config(signature_version="s3v4"),
