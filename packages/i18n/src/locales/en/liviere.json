@@ -245,6 +245,161 @@
         "projects": "Could not save the projects.",
         "test": "Could not send a test notification."
       }
+    },
+    "decisions": {
+      "title": "Decisions",
+      "retry": "Try again",
+      "count": "{shown} of {total}",
+      "empty": "No decisions for these filters.",
+      "incomplete": "The list is incomplete: the first {count} decisions were loaded. Narrow it with filters or tell the coordinator.",
+      "unavailable": {
+        "no_access": {
+          "title": "No access",
+          "description": "Project decisions are visible to project admins and members."
+        },
+        "disabled": {
+          "title": "Decisions are not turned on in this project",
+          "description": "A project admin turns them on in the project settings, under Features."
+        },
+        "error": {
+          "title": "Could not load the decisions",
+          "description": "Check the connection and try again."
+        },
+        "open_settings": "Open settings"
+      },
+      "settings": {
+        "title": "Decisions",
+        "description": "The register of decisions the project keeps to: one decision is one rule with a number, a state and a history of changes. Agents record and read them with plane-decision; here you can review and change them.",
+        "toggle_title": "Enable Decisions",
+        "toggle_description": "Shows “Decisions” in the project navigation and opens the register to project admins and members. When turned off, the decisions stay in the database, but nobody reads or changes them.",
+        "open_page": "Go to decisions",
+        "save_error": "Could not save the setting.",
+        "load_error": "Could not load the decision settings."
+      },
+      "tree": {
+        "label": "Areas",
+        "all": "All areas"
+      },
+      "filters": {
+        "status": "State",
+        "kind": "Kind",
+        "all_kinds": "all"
+      },
+      "status_filter": {
+        "current": "in force",
+        "proposed": "proposed",
+        "deferred": "deferred",
+        "done": "done",
+        "past": "superseded and revoked",
+        "all": "all"
+      },
+      "status": {
+        "proposed": "proposed",
+        "active": "in force",
+        "deferred": "deferred",
+        "done": "done",
+        "superseded": "superseded",
+        "revoked": "revoked"
+      },
+      "kinds": {
+        "product": "product",
+        "architecture": "architecture",
+        "process": "way of working",
+        "operations": "operations"
+      },
+      "author": {
+        "user": "owner",
+        "agent": "agent on the owner’s behalf",
+        "unknown": "author unknown"
+      },
+      "search": {
+        "placeholder": "Search decisions…",
+        "too_short": "Type at least {min} characters to search the text; a decision or work item number works at once.",
+        "loading": "Searching…",
+        "has_more": "Showing the newest results; narrow the phrase to see the rest.",
+        "error": "Search is not working; try again in a moment.",
+        "other_states": "{count, plural, one {# more result in other states.} other {# more results in other states.}}",
+        "show_all_states": "Show all"
+      },
+      "groups": {
+        "general": "General",
+        "from_area": "From area: {area}"
+      },
+      "badges": {
+        "confirm": "to confirm",
+        "review": "review",
+        "return": "return",
+        "approx": "approx.",
+        "overdue": "overdue",
+        "rollout": "waiting for rollout",
+        "imported": "imported, to review",
+        "also_area": "also: {area}"
+      },
+      "card": {
+        "estimated": "est.",
+        "date_unknown": "date unknown",
+        "from_area": "from area: {area}",
+        "issue_hidden": "You have no access to this work item",
+        "why": "Why",
+        "rejected": "Rejected",
+        "chain": "Versions of this decision",
+        "split_from": "Split from {from}, together with: {others}.",
+        "related": "Related",
+        "note": "Note",
+        "sources": "Sources",
+        "no_sources": "none",
+        "history": "History",
+        "history_loading": "Loading the history…",
+        "history_error": "Could not load the history.",
+        "yes": "yes",
+        "no": "no"
+      },
+      "channel": {
+        "app": "browser",
+        "api": "terminal"
+      },
+      "events": {
+        "created": "recorded",
+        "proposed": "proposed",
+        "accepted": "accepted",
+        "confirmed": "confirmed",
+        "deferred": "deferred",
+        "resumed": "back from deferral",
+        "done": "done",
+        "revoked": "revoked",
+        "rejected": "proposal rejected",
+        "reviewed": "reviewed, stays",
+        "import_reviewed": "reviewed after import",
+        "edited": "corrected",
+        "linked": "work items or sources added",
+        "superseded": "superseded",
+        "rollout_ack": "rolled out by the coordinator",
+        "imported": "imported"
+      },
+      "fields": {
+        "title": "rule",
+        "rationale": "why",
+        "rejected": "rejected",
+        "note": "note",
+        "area": "area",
+        "mechanism": "mechanism",
+        "area2": "second area",
+        "kind": "kind",
+        "status": "state",
+        "decided_by": "author",
+        "confirmed": "confirmed",
+        "decided_on": "decision date",
+        "review_on": "review date",
+        "review_condition": "review condition",
+        "issues": "work items",
+        "sources": "sources",
+        "related": "related",
+        "supersedes": "supersedes",
+        "superseded_by": "superseded by",
+        "pending_rollout": "waiting for rollout",
+        "needs_review": "to review",
+        "estimated": "estimated fields"
+      }
     }
   }
 }

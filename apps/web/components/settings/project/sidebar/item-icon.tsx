@@ -23,6 +23,7 @@ import type { TProjectSettingsTabs } from "@plane/types";
 // components
 import { SettingIcon } from "@/components/icons/attachment";
 import { ActivityIcon } from "@/liviere/activity/activity-icon"; // Liviere/plane fork
+import { DecisionsIcon } from "@/liviere/decisions/decisions-icon"; // Liviere/plane fork
 
 export const PROJECT_SETTINGS_ICONS: Record<TProjectSettingsTabs, IconGlyph | React.FC<ISvgIcons>> = {
   general: SettingIcon,
@@ -33,6 +34,7 @@ export const PROJECT_SETTINGS_ICONS: Record<TProjectSettingsTabs, IconGlyph | Re
   features_pages: PagesOutline,
   features_intake: IntakeOutline,
   features_activity: ActivityIcon, // Liviere/plane fork
+  features_decisions: DecisionsIcon, // Liviere/plane fork
   states: StateOutline,
   labels: LabelsOutline,
   estimates: EstimateOutline,

@@ -17,7 +17,7 @@ import {
 } from "@makeplane/propel/icons";
 import type { EUserProjectRoles, IPartialProject } from "@plane/types";
 import type { TNavigationItem } from "@/components/navigation/tab-navigation-root";
-import { useActivityNavigationItems } from "@/liviere/activity/use-activity"; // Liviere/plane fork
+import { useLiviereNavigationItems } from "@/liviere/navigation"; // Liviere/plane fork
 
 type UseNavigationItemsProps = {
   workspaceSlug: string;
@@ -37,7 +37,7 @@ export const useNavigationItems = ({
   project,
   allowPermissions,
 }: UseNavigationItemsProps): TNavigationItem[] => {
-  const liviereNavigation = useActivityNavigationItems(workspaceSlug); // Liviere/plane fork
+  const liviereNavigation = useLiviereNavigationItems(workspaceSlug); // Liviere/plane fork
   // Base navigation items
   const baseNavigation = useCallback(
     // oxlint-disable-next-line no-shadow

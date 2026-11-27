@@ -87,6 +87,14 @@ export const PROJECT_SETTINGS: Record<TProjectSettingsTabs, TProjectSettingsItem
     access: [EUserProjectRoles.ADMIN],
     highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/features/activity/`,
   },
+  // Liviere/plane fork: decision register (apps/web/liviere/decisions)
+  features_decisions: {
+    key: "features_decisions",
+    i18n_label: "liviere.decisions.title",
+    href: `/features/decisions`,
+    access: [EUserProjectRoles.ADMIN],
+    highlight: (pathname: string, baseUrl: string) => pathname === `${baseUrl}/features/decisions/`,
+  },
   states: {
     key: "states",
     i18n_label: "common.states",
@@ -128,6 +136,7 @@ export const GROUPED_PROJECT_SETTINGS: Record<PROJECT_SETTINGS_CATEGORY, TProjec
     PROJECT_SETTINGS["features_pages"],
     PROJECT_SETTINGS["features_intake"],
     PROJECT_SETTINGS["features_activity"], // Liviere/plane fork
+    PROJECT_SETTINGS["features_decisions"], // Liviere/plane fork
   ],
   [PROJECT_SETTINGS_CATEGORY.WORK_STRUCTURE]: [
     PROJECT_SETTINGS["states"],

@@ -25,6 +25,13 @@ export const extendedRoutes: RouteConfigEntry[] = [
               "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/activity/page.tsx"
             ),
           ]),
+          // Decision register (liviere/decisions)
+          layout("./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/decisions/layout.tsx", [
+            route(
+              ":workspaceSlug/projects/:projectId/decisions",
+              "./(all)/[workspaceSlug]/(projects)/projects/(detail)/[projectId]/decisions/page.tsx"
+            ),
+          ]),
         ]),
       ]),
       layout("./(all)/[workspaceSlug]/(settings)/layout.tsx", [
@@ -33,6 +40,10 @@ export const extendedRoutes: RouteConfigEntry[] = [
             route(
               ":workspaceSlug/settings/projects/:projectId/features/activity",
               "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/activity/page.tsx"
+            ),
+            route(
+              ":workspaceSlug/settings/projects/:projectId/features/decisions",
+              "./(all)/[workspaceSlug]/(settings)/settings/projects/[projectId]/features/decisions/page.tsx"
             ),
           ]),
         ]),
