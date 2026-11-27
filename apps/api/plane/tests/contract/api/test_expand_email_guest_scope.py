@@ -11,6 +11,7 @@ import pytest
 from rest_framework import status
 from rest_framework.test import APIClient
 
+from plane.api.serializers import UserLiteSerializer
 from plane.db.models import APIToken, Issue, IssueAssignee, Project, ProjectMember, State, User, WorkspaceMember
 
 
@@ -73,3 +74,13 @@ class TestExpandEmailGuestScope:
         response = guest_client.get("/api/v1/users/me/")
 
         assert response.data["email"] == guest_client.guest.email
+
+
+@pytest.mark.contract
+@pytest.mark.django_db
+class TestUserLiteSerializerFailsClosed:
+    def test_no_request_drops_email(self, create_user):
+        assert "email" not in UserLiteSerializer(create_user).data
+
+    def test_include_email_opt_in_keeps_email(self, create_user):
+        assert UserLiteSerializer(create_user, context={"include_email": True}).data["email"] == create_user.email

@@ -120,9 +120,9 @@ class BaseSerializer(serializers.ModelSerializer):
                         # relation raises RelatedObjectDoesNotExist, an AttributeError.
                         related = getattr(instance, expand, _MISSING)
                         if isinstance(related, models.Manager):
-                            response[expand] = expansion[expand](related, many=True).data
+                            response[expand] = expansion[expand](related, many=True, context=self.context).data
                         elif isinstance(related, models.Model):
-                            response[expand] = expansion[expand](related).data
+                            response[expand] = expansion[expand](related, context=self.context).data
                         elif related is None:
                             # A null relation stays null, matching the unexpanded
                             # response. Serializing None emits an object built from the

@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 # See the LICENSE file for details.
 
-from contextvars import ContextVar
-
 from rest_framework import serializers
 
 # Module imports
@@ -12,22 +10,13 @@ from plane.utils.permissions import ROLE
 
 from .base import BaseSerializer
 
-# Id of the calling workspace guest while serializing a request, else None.
-_guest_viewer_id = ContextVar("guest_viewer_id", default=None)
-
 
 def is_workspace_guest(user, slug):
     """Workspace guests do not get other users' email addresses, as in the web app's
-    workspace member list."""
+    workspace member list. Non-members count as guests."""
     return not WorkspaceMember.objects.filter(
         workspace__slug=slug, member=user, is_active=True, role__gt=ROLE.GUEST.value
     ).exists()
-
-
-def hide_emails_from_guest(request, slug):
-    """Called per request: users expanded for a guest are serialized without email."""
-    guest = bool(slug and request.GET.get("expand")) and is_workspace_guest(request.user, slug)
-    _guest_viewer_id.set(request.user.id if guest else None)
 
 
 class UserLiteSerializer(BaseSerializer):
@@ -57,9 +46,24 @@ class UserLiteSerializer(BaseSerializer):
         ]
         read_only_fields = fields
 
+    def _can_see_emails(self, instance):
+        """Fail closed: needs `context["request"]`, or `context["include_email"]` for
+        callers with no request (webhook payloads)."""
+        if self.context.get("include_email"):
+            return True
+        request = self.context.get("request")
+        if request is None or not request.user.is_authenticated:
+            return False
+        if instance.pk == request.user.pk:
+            return True
+        # Looked up once per request, not per serialized user.
+        if not hasattr(request, "_can_see_user_emails"):
+            slug = request.resolver_match.kwargs.get("slug") if request.resolver_match else None
+            request._can_see_user_emails = bool(slug) and not is_workspace_guest(request.user, slug)
+        return request._can_see_user_emails
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        viewer_id = _guest_viewer_id.get()
-        if viewer_id and instance.pk != viewer_id:
+        if not self._can_see_emails(instance):
             data.pop("email", None)
         return data

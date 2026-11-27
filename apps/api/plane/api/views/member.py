@@ -102,7 +102,7 @@ class WorkspaceMemberAPIEndpoint(BaseAPIView):
         # Get all the users with their roles
         users_with_roles = []
         for workspace_member in workspace_members:
-            user_data = UserLiteSerializer(workspace_member.member).data
+            user_data = UserLiteSerializer(workspace_member.member, context={"request": request}).data
             user_data["role"] = workspace_member.role
             users_with_roles.append(user_data)
 
@@ -159,6 +159,7 @@ class ProjectMemberListCreateAPIEndpoint(BaseAPIView):
             User.objects.filter(id__in=project_members),
             many=True,
             fields=member_fields(request, slug, UserLiteSerializer),
+            context={"request": request},
         ).data
         return Response(users, status=status.HTTP_200_OK)
 
@@ -210,7 +211,9 @@ class ProjectMemberDetailAPIEndpoint(ProjectMemberListCreateAPIEndpoint):
         # Get the workspace members that are present inside the workspace
         project_members = ProjectMember.objects.get(project_id=project_id, workspace__slug=slug, pk=pk)
         user = User.objects.get(id=project_members.member_id)
-        user = UserLiteSerializer(user, fields=member_fields(request, slug, UserLiteSerializer)).data
+        user = UserLiteSerializer(
+            user, fields=member_fields(request, slug, UserLiteSerializer), context={"request": request}
+        ).data
         return Response(user, status=status.HTTP_200_OK)
 
     @extend_schema(

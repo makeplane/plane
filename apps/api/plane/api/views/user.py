@@ -37,5 +37,5 @@ class UserEndpoint(BaseAPIView):
         Retrieve the authenticated user's profile information including basic details.
         Returns user data based on the current authentication context.
         """
-        serializer = UserLiteSerializer(request.user)
+        serializer = UserLiteSerializer(request.user, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
