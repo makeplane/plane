@@ -3,6 +3,7 @@
 @import "./power-k.css";
 @import "./emoji.css";
 @plugin "@tailwindcss/typography";
+@config "./typography.config.ts";
 
 /* stickies and editor colors
  * Text colors and the themed light/dark background ramps come from
