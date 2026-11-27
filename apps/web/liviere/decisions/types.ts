@@ -165,7 +165,8 @@ export type TDecisionSearchResult = { total: number; limit: number; has_more: bo
 
 export type TDecisionSupersedeResult = { superseded: TDecision; created: TDecision[] };
 
-// Error of the decision endpoints: 400 {error, code, field, number}, 404 decisions_disabled {error, code}
+// Error of the decision endpoints: 400 {error, code, field, number}, 404 decisions_disabled {error, code},
+// 409 conflict {error, code}
 export type TDecisionErrorCode =
   | "validation_error"
   | "unknown_field"
@@ -183,7 +184,9 @@ export type TDecisionErrorCode =
   | "issue_not_found"
   | "decision_not_found"
   | "import_rejected"
-  | "decisions_disabled";
+  | "decisions_disabled"
+  // 409: two requests changed the decision at once; trying again helps
+  | "conflict";
 
 export type TDecisionError = {
   status: number | null;

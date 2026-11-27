@@ -75,11 +75,11 @@ function DecisionLink(props: { context: TDecisionsContext; number: number; curre
   const { context, number, current } = props;
   const target = context.byNumber.get(number);
   const label = target?.identifier ?? `D${number}`;
-  if (current) return <b className="font-code text-12 text-primary">{label}</b>;
+  if (current) return <b className="font-code text-12 whitespace-nowrap text-primary">{label}</b>;
   return (
     <button
       type="button"
-      className="font-code text-12 text-accent-primary underline-offset-2 hover:underline"
+      className="font-code text-12 whitespace-nowrap text-accent-primary underline-offset-2 hover:underline"
       title={target?.title}
       onClick={() => context.goTo(number)}
     >
@@ -288,6 +288,7 @@ function DecisionCardBody(props: { context: TDecisionsContext; decision: TDecisi
           <ul className="mt-1 flex flex-col gap-0.5">
             {related.map((number) => (
               <li key={number} className="flex items-baseline gap-2">
+                {/* the number keeps its width, the rule wraps */}
                 <DecisionLink context={context} number={number} />
                 <span className="min-w-0 text-secondary">
                   <RichText text={context.byNumber.get(number)!.title} />

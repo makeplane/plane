@@ -479,7 +479,7 @@
           "author_required": "Autor jest nieznany: wybierz, kto zdecydował.",
           "date": "Data decyzji",
           "status": "Stan",
-          "deferred_hint": "Datę albo warunek powrotu ustawisz potem przyciskiem „Przesuń powrót”.",
+          "deferred_hint": "Datę ani warunek powrotu nie ustawisz tutaj. Jeśli decyzja ma wrócić, po zapisie użyj „Wracamy do tego”, a potem „Odłóż” z datą albo warunkiem.",
           "submit": "Zapisz poprawki"
         }
       },
@@ -491,7 +491,8 @@
         "already_confirmed": "Ta decyzja jest już potwierdzona.",
         "not_needs_review": "Ta decyzja nie czeka już na przejrzenie po imporcie.",
         "nothing_to_change": "Nie ma czego zmienić.",
-        "validation_error": "Sprawdź pola formularza: któreś ma złą wartość albo jest za długie."
+        "validation_error": "Sprawdź pola formularza: któreś ma złą wartość albo jest za długie.",
+        "conflict": "Ktoś zmienił tę decyzję w tej samej chwili. Spróbuj ponownie."
       },
       "views": {
         "areas": "Obszary",
@@ -510,7 +511,7 @@
           "supersedes": "zastępuje",
           "related": "powiązana"
         },
-        "hint": "Najedź na decyzję, żeby podświetlić jej powiązania; kliknij, żeby ją otworzyć.",
+        "hint": "Najedź na decyzję, żeby podświetlić jej powiązania (powiązania w obrębie jednego obszaru pokazują się tylko wtedy); kliknij, żeby ją otworzyć.",
         "narrow": "Powiązania widać na szerszym ekranie; kliknij decyzję, żeby ją otworzyć.",
         "all_lines": "Pokaż wszystkie linie ({count})",
         "focus_lines": "Tylko linie wskazanej decyzji",

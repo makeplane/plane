@@ -79,6 +79,7 @@ function generateRecords({ decisions: count, areas: areaCount, seed }) {
     if (split) {
       record.supersedes = split.number;
       record.area = split.area;
+      record.mechanism = split.mechanism;
     } else if (next() < 0.15) {
       const earlier = records.filter((other) => other.area === area.key && other.status === "active");
       if (earlier.length) {
@@ -90,6 +91,8 @@ function generateRecords({ decisions: count, areas: areaCount, seed }) {
         lastSplit = old;
       }
     }
+    // The import refuses a second area equal to the first
+    if (record.area2 === record.area) record.area2 = null;
     if (record.supersedes === null) {
       const state = next();
       if (state < 0.07) record.status = "proposed";

@@ -425,6 +425,7 @@ export const ERROR_CODES_WITH_TEXT = [
   "not_needs_review",
   "nothing_to_change",
   "validation_error",
+  "conflict",
 ] as const;
 
 const CONFIRMABLE: ReadonlySet<TDecisionStatus> = new Set(["active", "deferred", "done"]);

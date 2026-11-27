@@ -7,6 +7,7 @@ import { ALL_LINES_LIMIT, linePath, mapLines, touches, visibleLines } from "./ma
 import { mapEdges } from "./model.ts";
 import { generateDecisions } from "./fixtures/generate-sample.mjs";
 
+const pairs = (list) => list.map((line) => `${line.from}-${line.to}`);
 const numbers = (path) => path.match(/-?\d+(\.\d+)?/g).map(Number);
 
 describe("line paths", () => {
@@ -51,7 +52,45 @@ describe("readable large maps", () => {
     to: i + 2,
     type: "related",
     path: "",
+    local: false,
   }));
+
+  test("related lines within one box only for the focused decision", () => {
+    const lines = [
+      { from: 1, to: 2, type: "related", path: "", local: true },
+      { from: 1, to: 3, type: "supersedes", path: "", local: true },
+      { from: 2, to: 9, type: "related", path: "", local: false },
+    ];
+    assert.deepEqual(pairs(visibleLines(lines, null, false)), ["1-3", "2-9"]);
+    assert.deepEqual(pairs(visibleLines(lines, 2, false)), ["1-2", "1-3", "2-9"]);
+    assert.deepEqual(pairs(visibleLines(lines, 3, false)), ["1-3", "2-9"]);
+    assert.deepEqual(pairs(visibleLines(lines, null, true)), ["1-2", "1-3", "2-9"]);
+  });
+
+  test("a line is local when both ends are in the same box", () => {
+    const positions = new Map([
+      [1, { x: 10, y: 10, width: 30 }],
+      [2, { x: 10, y: 60, width: 30 }],
+      [3, { x: 400, y: 60, width: 30 }],
+    ]);
+    const boxOf = new Map([
+      [1, "zamowienia"],
+      [2, "zamowienia"],
+      [3, "platnosci"],
+    ]);
+    const lines = mapLines(
+      [
+        { from: 1, to: 2, type: "related" },
+        { from: 2, to: 3, type: "related" },
+      ],
+      positions,
+      boxOf
+    );
+    assert.deepEqual(
+      lines.map((line) => line.local),
+      [true, false]
+    );
+  });
 
   test("all lines up to the limit", () => {
     assert.equal(visibleLines(many.slice(0, ALL_LINES_LIMIT), null, false).length, ALL_LINES_LIMIT);
@@ -83,7 +122,18 @@ describe("300 decisions in 20 areas", () => {
     assert.equal(decisions.length, 300);
     assert.equal(areas.length, 20);
     const byNumber = new Map(decisions.map((decision) => [decision.number, decision]));
+    const mechanisms = new Map(areas.map((area) => [area.key, new Set(area.mechanisms.map((item) => item.key))]));
     for (const decision of decisions) {
+      // What the import checks (apps/api/plane/liviere/decisions/importer.py)
+      assert.ok(mechanisms.has(decision.area), `D${decision.number}: unknown area`);
+      if (decision.mechanism)
+        assert.ok(
+          mechanisms.get(decision.area).has(decision.mechanism),
+          `D${decision.number}: mechanism of another area`
+        );
+      assert.notEqual(decision.area2, decision.area, `D${decision.number}: second area equal to the first`);
+      if (decision.decided_by === "unknown" || !decision.decided_on)
+        assert.ok(decision.needs_review, `D${decision.number}: unknown author or date without needs_review`);
       if (decision.supersedes !== null) assert.equal(byNumber.get(decision.supersedes).status, "superseded");
       for (const other of decision.related) assert.ok(byNumber.get(other).related.includes(decision.number));
     }

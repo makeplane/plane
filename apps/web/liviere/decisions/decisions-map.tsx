@@ -14,7 +14,7 @@ import type { CSSProperties } from "react";
 import { useTranslation } from "@plane/i18n";
 import { cn } from "@plane/utils";
 import { RichText } from "./decision-card";
-import { ALL_LINES_LIMIT, mapLines, touches, visibleLines } from "./map-geometry";
+import { mapLines, touches, visibleLines } from "./map-geometry";
 import type { TDotPosition, TMapLine } from "./map-geometry";
 import { isPast, mapEdges } from "./model";
 import type { TDecision, TDecisionArea, TDecisionStatus } from "./types";
@@ -152,6 +152,7 @@ export function DecisionsMap(props: Props) {
   const [showAll, setShowAll] = useState(false);
   const wide = useMediaQuery(WIDE_QUERY);
   const edges = useMemo(() => mapEdges(decisions), [decisions]);
+  const boxOf = useMemo(() => new Map(decisions.map((decision) => [decision.number, decision.area])), [decisions]);
 
   // One box per area of the tree, decisions by number; decisions of an area missing from the tree last
   const boxes = useMemo((): TMapBox[] => {
@@ -184,8 +185,8 @@ export function DecisionsMap(props: Props) {
         width: box.width,
       });
     });
-    setLines(mapLines(edges, positions));
-  }, [edges, wide]);
+    setLines(mapLines(edges, positions, boxOf));
+  }, [edges, wide, boxOf]);
 
   // Measured after every layout change of the rows: data, filters (dimming keeps the layout), width
   useLayoutEffect(measure, [measure, boxes]);
@@ -216,7 +217,8 @@ export function DecisionsMap(props: Props) {
 
   const focus = hover ?? selected;
   const shown = visibleLines(lines, focus, showAll);
-  const limited = lines.length > ALL_LINES_LIMIT;
+  // Some lines wait for a highlighted decision: offer all of them
+  const limited = visibleLines(lines, null, false).length < lines.length;
 
   return (
     <div className="flex flex-col gap-3">

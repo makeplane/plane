@@ -102,7 +102,7 @@ export function useDecisionSearch(
   const { data, error, isLoading } = useSWR(
     asksApi ? [dataKey(projectId, "SEARCH"), debounced] : null,
     () => decisionsService.search(workspaceSlug, projectId, debounced),
-    { revalidateOnFocus: false, keepPreviousData: true }
+    { revalidateOnFocus: false }
   );
   const local = useMemo(() => localSearchHits(decisions, trimmed), [decisions, trimmed]);
   const hits = useMemo(() => {
