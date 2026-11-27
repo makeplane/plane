@@ -14,6 +14,7 @@ from django.db import models
 from plane.utils.path_validator import sanitize_filename
 
 from .base import BaseModel
+from .page import ProjectPage
 from .project import ROLE, ProjectMember
 
 
@@ -106,26 +107,61 @@ class FileAsset(BaseModel):
     def is_project_accessible_to(self, user):
         """Return whether ``user`` may read this asset within its project.
 
-        The user must be an active member of the asset's project. A restricted guest
-        (a GUEST of a project with ``guest_view_all_features`` off) also only reaches
-        the assets of issues they created, together with those issues' comments: the
-        rule ``issue_hidden_from_guest`` applies to the issue sub-resource endpoints.
+        The user must be an active member of the project that owns the asset. That is
+        ``project_id`` or, for rows that never got one (workspace uploads, bulk-bound
+        comment/page assets, legacy editor uploads), the project of the bound issue,
+        comment or project page. A restricted guest (a GUEST of a project with
+        ``guest_view_all_features`` off) only reaches the assets of issues they created,
+        together with those issues' comments, and the project cover: the rule
+        ``issue_hidden_from_guest`` applies to the issue sub-resource endpoints.
+        Draft assets are only reachable by the user who created them.
 
         Callers still check workspace access (the endpoint's permission class or
         ``allow_permission(..., level="WORKSPACE")``). Lives on the model so the app and
         external-API asset views share one rule.
 
-        Assets with no project (workspace logos, user avatars and covers) are
-        workspace-level, so this returns True for them.
+        Assets bound to nothing project-owned (workspace logos, user avatars and covers,
+        workspace-level pages) are workspace-level, so this returns True for them.
         """
-        if self.project_id is None:
+        if self.draft_issue_id or self.entity_type in (
+            self.EntityTypeContext.DRAFT_ISSUE_ATTACHMENT,
+            self.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION,
+        ):
+            return self.created_by_id == user.id
+
+        # One query: the owning entity's project and, for a guest, the issue's creator.
+        # Joins rather than Issue.objects, so archived and draft issues still resolve.
+        owner = (
+            FileAsset.all_objects.filter(pk=self.pk)
+            .annotate(
+                page_project_id=models.Subquery(
+                    ProjectPage.objects.filter(page_id=models.OuterRef("page_id")).values("project_id")[:1]
+                )
+            )
+            .values(
+                "issue__project_id",
+                "issue__created_by_id",
+                "comment__project_id",
+                "comment__issue_id",
+                "comment__issue__created_by_id",
+                "page_project_id",
+            )
+            .first()
+        ) or {}
+        project_id = (
+            self.project_id
+            or owner.get("issue__project_id")
+            or owner.get("comment__project_id")
+            or owner.get("page_project_id")
+        )
+        if project_id is None:
             return True
         # Scope the membership to the asset's workspace as well as its project.
         membership = (
             ProjectMember.objects.filter(
                 member=user,
                 workspace_id=self.workspace_id,
-                project_id=self.project_id,
+                project_id=project_id,
                 is_active=True,
             )
             .values("role", "project__guest_view_all_features")
@@ -136,11 +172,9 @@ class FileAsset(BaseModel):
         if membership["role"] != ROLE.GUEST.value or membership["project__guest_view_all_features"]:
             return True
 
-        issue_id = self.issue_id or (self.comment.issue_id if self.comment_id else None)
-        if issue_id is None:
-            return True
-
-        from .issue import Issue
-
-        # Issue.objects, as issue detail uses, so the guest's own archived and draft issues stay visible.
-        return Issue.objects.filter(pk=issue_id, project_id=self.project_id, created_by=user).exists()
+        if self.issue_id:
+            return owner.get("issue__created_by_id") == user.id
+        if self.comment_id:
+            return owner.get("comment__issue__created_by_id") == user.id
+        # No issue bound: only the project cover is project-level, pages and the rest are not for restricted guests.
+        return self.entity_type == self.EntityTypeContext.PROJECT_COVER

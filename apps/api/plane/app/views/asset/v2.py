@@ -27,6 +27,7 @@ from plane.db.models import (
     Page,
     Project,
     ProjectMember,
+    ProjectPage,
     User,
     Workspace,
     WorkspaceMember,
@@ -108,6 +109,20 @@ def can_bind_asset(user, workspace_id, entity_id_field, project_id=None):
     if field == "page_id":
         scope["project_pages__deleted_at__isnull"] = True
     return model.objects.filter(pk=entity_id, workspace_id=workspace_id, **scope).exists()
+
+
+def get_entity_project_id(entity_id_field):
+    """The project that owns the issue, comment or page in entity_id_field, or None."""
+    field, entity_id = next(iter(entity_id_field.items()), (None, None))
+    if not entity_id:
+        return None
+    if field == "issue_id":
+        return Issue.objects.filter(pk=entity_id).values_list("project_id", flat=True).first()
+    if field == "comment_id":
+        return IssueComment.objects.filter(pk=entity_id).values_list("project_id", flat=True).first()
+    if field == "page_id":
+        return ProjectPage.objects.filter(page_id=entity_id).values_list("project_id", flat=True).first()
+    return None
 
 
 class UserAssetsV2Endpoint(BaseAPIView):
@@ -471,6 +486,8 @@ class WorkspaceFileAssetEndpoint(BaseAPIView):
                 {"error": "You don't have the required permissions."},
                 status=status.HTTP_403_FORBIDDEN,
             )
+        # Record the owning project of a bound issue, comment or page (after the cover check above)
+        asset.project_id = asset.project_id or get_entity_project_id(entity_id_field)
         asset.save()
 
         # Get the presigned URL
@@ -874,18 +891,18 @@ class ProjectBulkAssetEndpoint(BaseAPIView):
             # For some cases, the bulk api is called after the comment is deleted
             # creating an integrity error
             try:
-                assets.update(comment_id=entity_id)
+                assets.update(comment_id=entity_id, project_id=project_id)
             except IntegrityError:
                 pass
 
         if asset.entity_type == FileAsset.EntityTypeContext.PAGE_DESCRIPTION:
-            assets.update(page_id=entity_id)
+            assets.update(page_id=entity_id, project_id=project_id)
 
         if asset.entity_type == FileAsset.EntityTypeContext.DRAFT_ISSUE_DESCRIPTION:
             # For some cases, the bulk api is called after the draft issue is deleted
             # creating an integrity error
             try:
-                assets.update(draft_issue_id=entity_id)
+                assets.update(draft_issue_id=entity_id, project_id=project_id)
             except IntegrityError:
                 pass
 
