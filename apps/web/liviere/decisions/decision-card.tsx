@@ -44,7 +44,7 @@ export function RichText(props: { text: string }) {
     <>
       {splitCode(props.text).map((part) =>
         part.code ? (
-          <code key={part.start} className="font-mono rounded bg-layer-2 px-1 text-[0.92em]">
+          <code key={part.start} className="rounded bg-layer-2 px-1 font-code text-[0.92em]">
             {part.text}
           </code>
         ) : (
@@ -75,11 +75,11 @@ function DecisionLink(props: { context: TDecisionsContext; number: number; curre
   const { context, number, current } = props;
   const target = context.byNumber.get(number);
   const label = target?.identifier ?? `D${number}`;
-  if (current) return <b className="font-mono text-12 text-primary">{label}</b>;
+  if (current) return <b className="font-code text-12 text-primary">{label}</b>;
   return (
     <button
       type="button"
-      className="font-mono text-12 text-accent-primary underline-offset-2 hover:underline"
+      className="font-code text-12 text-accent-primary underline-offset-2 hover:underline"
       title={target?.title}
       onClick={() => context.goTo(number)}
     >
@@ -146,7 +146,7 @@ export function DecisionCard(props: Props) {
   const titleId = `decision-${decision.number}-title`;
   const head = (
     <>
-      <span className="font-mono text-12 whitespace-nowrap text-tertiary">{decision.identifier}</span>
+      <span className="font-code text-12 whitespace-nowrap text-tertiary">{decision.identifier}</span>
       <span
         id={titleId}
         className={cn(
