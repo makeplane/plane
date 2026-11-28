@@ -15,6 +15,11 @@ export async function setLanguage(lng: TLanguage): Promise<void> {
   // A later change may have won while this one was loading; i18next then keeps
   // the newer language active, so skip the stale update.
   if (i18nInstance.language !== lng || typeof window === "undefined") return;
-  localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+  // Apply the direction first so a failed write (e.g. storage quota) can't block it.
   applyDocumentLanguage(lng);
+  try {
+    localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+  } catch (err) {
+    console.warn("[i18n] Could not save the language preference:", err);
+  }
 }

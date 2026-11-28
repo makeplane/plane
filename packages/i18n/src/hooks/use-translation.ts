@@ -50,8 +50,13 @@ export function useTranslation(): TTranslationStore {
           await i18n.changeLanguage(lng);
           // Skip a stale change that finished after a newer one took over.
           if (i18n.language !== lng || typeof window === "undefined") return;
-          localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+          // Apply the direction first so a failed write (e.g. storage quota) can't block it.
           applyDocumentLanguage(lng);
+          try {
+            localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+          } catch (err) {
+            console.warn("[i18n] Could not save the language preference:", err);
+          }
         } catch (err) {
           console.error("Failed to change language:", err);
         }
