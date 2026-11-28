@@ -378,8 +378,8 @@
   "copied_to_clipboard": "تم النسخ إلى الحافظة",
   "copied_to_clipboard_description": "تم نسخ الرابط إلى الحافظة بنجاح",
   "toast": {
-    "success": "تم بنجاح!",
-    "error": "خطأ!"
+    "success": "تم بنجاح",
+    "error": "خطأ"
   },
   "links": {
     "toasts": {
@@ -460,10 +460,10 @@
     "activity": "النشاط",
     "analytics": "التحليلات",
     "dates": "التواريخ",
-    "success": "تم بنجاح!",
+    "success": "تم بنجاح",
     "something_went_wrong": "حدث خطأ ما",
     "error": {
-      "label": "خطأ!",
+      "label": "خطأ",
       "message": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
     },
     "group_by": "التجميع حسب",
@@ -539,8 +539,8 @@
     "updates": "التحديثات",
     "additional_updates": "تحديثات إضافية",
     "clear_all": "مسح الكل",
-    "copied": "تم النسخ!",
-    "link_copied": "تم نسخ الرابط!",
+    "copied": "تم النسخ",
+    "link_copied": "تم نسخ الرابط",
     "link_copied_to_clipboard": "تم نسخ الرابط إلى الحافظة",
     "copied_to_clipboard": "تم نسخ رابط عنصر العمل إلى الحافظة",
     "clipboard_copy_failed": "تعذّر النسخ إلى الحافظة",
@@ -560,7 +560,7 @@
     "dependencies": "الاعتماديات",
     "errors": {
       "default": {
-        "title": "خطأ!",
+        "title": "خطأ",
         "message": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
       },
       "required": "هذا الحقل مطلوب",
@@ -860,7 +860,7 @@
     "processing": "جارٍ المعالجة",
     "invalid_file_type": "نوع ملف غير صالح",
     "missing_fields": "حقول مفقودة",
-    "success": "تم رفع {fileName}!"
+    "success": "تم رفع {fileName}"
   },
   "date": "التاريخ",
   "exporter": {
