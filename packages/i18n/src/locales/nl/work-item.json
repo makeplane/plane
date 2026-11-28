@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Werkitem verwijderen",
+      "sub_issue": {
+        "label": "Subwerkitem ontkoppelen"
+      },
       "cycle": {
         "loading": "Werkitem verwijderen uit de cyclus",
         "success": "Werkitem succesvol verwijderd uit de cyclus.",

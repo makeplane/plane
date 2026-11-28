@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Odebrat pracovní položku",
+      "sub_issue": {
+        "label": "Zrušit propojení s podřízenou pracovní položkou"
+      },
       "cycle": {
         "loading": "Odebírání pracovní položky z cyklu",
         "success": "Pracovní položka odebrána z cyklu.",

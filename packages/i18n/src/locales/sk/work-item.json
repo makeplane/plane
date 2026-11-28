@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Odstrániť pracovnú položku",
+      "sub_issue": {
+        "label": "Zrušiť prepojenie s podriadenou pracovnou položkou"
+      },
       "cycle": {
         "loading": "Odstraňovanie pracovnej položky z cyklu",
         "success": "Pracovná položka odstránená z cyklu.",

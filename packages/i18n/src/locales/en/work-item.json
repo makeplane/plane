@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Remove work item",
+      "sub_issue": {
+        "label": "Unlink sub-work item"
+      },
       "cycle": {
         "loading": "Removing work item from the cycle",
         "success": "Work item removed from the cycle successfully.",

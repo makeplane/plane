@@ -13,6 +13,7 @@
     "check:lint": "oxlint --max-warnings=11957 .",
     "check:types": "react-router typegen && tsc --noEmit",
     "check:format": "oxfmt --check .",
+    "test": "vitest run",
     "fix:lint": "oxlint --fix .",
     "fix:format": "oxfmt ."
   },
@@ -74,13 +75,17 @@
     "@react-router/dev": "catalog:",
     "@tailwindcss/postcss": "catalog:",
     "@tailwindcss/typography": "catalog:",
+    "@testing-library/react": "catalog:",
+    "@testing-library/user-event": "catalog:",
     "@types/lodash-es": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "dotenv": "catalog:",
+    "jsdom": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:"
   }
 }

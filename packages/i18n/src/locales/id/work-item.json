@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Hapus item kerja",
+      "sub_issue": {
+        "label": "Lepaskan tautan sub-item kerja"
+      },
       "cycle": {
         "loading": "Menghapus item kerja dari siklus",
         "success": "Item kerja berhasil dihapus dari siklus.",

@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "Rimuovi elemento di lavoro",
+      "sub_issue": {
+        "label": "Scollega sotto-elemento di lavoro"
+      },
       "cycle": {
         "loading": "Rimuovendo l'elemento di lavoro dal ciclo",
         "success": "Elemento di lavoro rimosso dal ciclo con successo.",

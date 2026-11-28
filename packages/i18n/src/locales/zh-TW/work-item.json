@@ -31,6 +31,9 @@
     },
     "remove": {
       "label": "移除工作事項",
+      "sub_issue": {
+        "label": "解除子工作事項關聯"
+      },
       "cycle": {
         "loading": "正在從週期移除工作事項",
         "success": "已成功從週期移除工作事項。",

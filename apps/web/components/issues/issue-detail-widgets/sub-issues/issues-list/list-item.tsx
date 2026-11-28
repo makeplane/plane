@@ -97,7 +97,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
   const displayProperties = subIssueFilters?.displayProperties ?? {};
 
   //
-  const handleIssuePeekOverview = (issue: TIssue) => handleRedirection(workspaceSlug, issue, isMobile);
+  const handleIssuePeekOverview = (selectedIssue: TIssue) => handleRedirection(workspaceSlug, selectedIssue, isMobile);
 
   if (!issue) return <></>;
 
@@ -134,7 +134,10 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                       <LinkOutline width={14} height={14} className="animate-spin" />
                     </div>
                   ) : (
-                    <div
+                    <button
+                      type="button"
+                      aria-label={t("issue.display.extra.show_sub_issues")}
+                      aria-expanded={subIssueHelpers.issue_visibility.includes(issue.id)}
                       className="flex h-full w-full cursor-pointer items-center justify-center text-placeholder hover:text-tertiary"
                       onClick={async (e) => {
                         e.preventDefault();
@@ -146,13 +149,16 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                         }
                         setSubIssueHelpers(parentIssueId, "issue_visibility", issueId);
                       }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") e.stopPropagation();
+                      }}
                     >
                       <ChevronRightOutline
                         className={cn("size-3.5 transition-all", {
                           "rotate-90": subIssueHelpers.issue_visibility.includes(issue.id),
                         })}
                       />
-                    </div>
+                    </button>
                   )}
                 </>
               )}
@@ -179,10 +185,14 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
             </div>
 
             <div
+              role="presentation"
               className="flex-shrink-0 text-body-xs-regular"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") e.stopPropagation();
               }}
             >
               <SubIssuesListItemProperties
@@ -243,7 +253,7 @@ export const SubIssuesListItem = observer(function SubIssuesListItem(props: Prop
                       icon={<Icon icon={CloseOutline} />}
                       label={
                         issueServiceType === EIssueServiceType.ISSUES
-                          ? t("issue.remove.parent.label")
+                          ? t("issue.remove.sub_issue.label")
                           : t("issue.remove.label")
                       }
                       onClick={() => {
