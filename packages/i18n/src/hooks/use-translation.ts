@@ -7,6 +7,7 @@
 import { useCallback } from "react";
 import { useTranslation as useI18nextTranslation } from "react-i18next";
 import { SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "../constants/language";
+import { applyDocumentLanguage } from "../core/apply-language";
 import type { TLanguage, ILanguageOption } from "../types";
 
 export type TTranslationStore = {
@@ -47,9 +48,15 @@ export function useTranslation(): TTranslationStore {
       void (async () => {
         try {
           await i18n.changeLanguage(lng);
-          if (typeof window === "undefined") return;
-          localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
-          document.documentElement.lang = lng;
+          // Skip a stale change that finished after a newer one took over.
+          if (i18n.language !== lng || typeof window === "undefined") return;
+          // Apply the direction first so a failed write (e.g. storage quota) can't block it.
+          applyDocumentLanguage(lng);
+          try {
+            localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
+          } catch (err) {
+            console.warn("[i18n] Could not save the language preference:", err);
+          }
         } catch (err) {
           console.error("Failed to change language:", err);
         }

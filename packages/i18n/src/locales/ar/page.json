@@ -1,0 +1,128 @@
+{
+  "page_navigation_pane": {
+    "tabs": {
+      "outline": {
+        "label": "المخطط التفصيلي",
+        "empty_state": {
+          "title": "لا توجد عناوين",
+          "description": "أضف بعض العناوين إلى هذه الصفحة لتظهر هنا."
+        }
+      },
+      "info": {
+        "label": "معلومات",
+        "document_info": {
+          "words": "الكلمات",
+          "characters": "الأحرف",
+          "paragraphs": "الفقرات",
+          "read_time": "مدة القراءة"
+        },
+        "actors_info": {
+          "edited_by": "عدّلها",
+          "created_by": "أنشأها"
+        },
+        "version_history": {
+          "label": "سجل الإصدارات",
+          "current_version": "الإصدار الحالي",
+          "highlight_changes": "إبراز التغييرات"
+        }
+      },
+      "version_history": {
+        "view_only": "عرض فقط",
+        "loading_details": "جارٍ تحميل تفاصيل الإصدار",
+        "load_error_description": "تعذّر تحميل الإصدار. يرجى المحاولة مرة أخرى.",
+        "list_error_description": "تعذّر تحميل سجل الإصدارات.",
+        "try_again": "حاول مرة أخرى",
+        "restoring": "جارٍ الاستعادة",
+        "restore_success": "تمت استعادة إصدار الصفحة.",
+        "restore_failed": "فشلت استعادة إصدار الصفحة."
+      },
+      "assets": {
+        "label": "الملفات",
+        "download_button": "تنزيل",
+        "empty_state": {
+          "title": "لا توجد صور",
+          "description": "أضف صورًا لتظهر هنا."
+        }
+      },
+      "comments": {
+        "label": "التعليقات",
+        "empty_state": {
+          "title": "لا توجد تعليقات",
+          "description": "أضف تعليقات لتظهر هنا."
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "لا يمكن أن يزيد اسم Sticky على 100 حرف.",
+        "already_exists": "يوجد بالفعل Sticky بلا وصف"
+      },
+      "created": {
+        "title": "تم إنشاء Sticky",
+        "message": "تم إنشاء Sticky بنجاح"
+      },
+      "not_created": {
+        "title": "لم يتم إنشاء Sticky",
+        "message": "تعذّر إنشاء Sticky"
+      },
+      "updated": {
+        "title": "تم تحديث Sticky",
+        "message": "تم تحديث Sticky بنجاح"
+      },
+      "not_updated": {
+        "title": "لم يتم تحديث Sticky",
+        "message": "تعذّر تحديث Sticky"
+      },
+      "removed": {
+        "title": "تمت إزالة Sticky",
+        "message": "تمت إزالة Sticky بنجاح"
+      },
+      "not_removed": {
+        "title": "لم تتم إزالة Sticky",
+        "message": "تعذّرت إزالة Sticky"
+      }
+    },
+    "open_button": "فتح لوحة التنقل",
+    "close_button": "إغلاق لوحة التنقل",
+    "outline_floating_button": "فتح المخطط التفصيلي"
+  },
+  "page_actions": {
+    "move_page": {
+      "submit_button": {
+        "default": "نقل",
+        "loading": "جارٍ النقل"
+      },
+      "cannot_move_to_teamspace": "لا يمكن نقل الصفحات الخاصة والمشتركة إلى مساحة فريق.",
+      "placeholders": {
+        "workspace_to_all": "ابحث عن المشاريع ومساحات الفرق",
+        "workspace_to_project": "ابحث عن المشاريع",
+        "project_to_all": "ابحث عن المشاريع ومساحات الفرق",
+        "project_to_project": "ابحث عن المشاريع",
+        "project_to_all_with_wiki": "ابحث عن مجموعات الويكي والمشاريع ومساحات الفرق",
+        "project_to_project_with_wiki": "ابحث عن مجموعات الويكي والمشاريع"
+      },
+      "toasts": {
+        "success": {
+          "title": "تم بنجاح!",
+          "message": "تم نقل الصفحة بنجاح."
+        },
+        "error": {
+          "title": "خطأ!",
+          "message": "تعذّر نقل الصفحة. يرجى المحاولة لاحقًا."
+        },
+        "collection_error": {
+          "title": "تم النقل إلى الويكي",
+          "message": "تم نقل الصفحة إلى الويكي، لكن تعذّرت إضافتها إلى المجموعة المحددة. ستبقى في القسم العام."
+        }
+      }
+    },
+    "remove_from_collection": {
+      "label": "إزالة من المجموعة",
+      "success_message": "تمت إزالة الصفحة من المجموعة.",
+      "error_message": "تعذّرت إزالة الصفحة من المجموعة. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "page_content_limit_banner": {
+    "message": "تم بلوغ حد المحتوى وتوقفت المزامنة المباشرة. أنشئ صفحة جديدة أو استخدم صفحات متداخلة لمواصلة المزامنة."
+  }
+}

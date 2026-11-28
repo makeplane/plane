@@ -1,0 +1,87 @@
+{
+  "inbox_issue": {
+    "status": {
+      "pending": {
+        "title": "قيد الانتظار",
+        "description": "قيد الانتظار"
+      },
+      "declined": {
+        "title": "مرفوض",
+        "description": "مرفوض"
+      },
+      "snoozed": {
+        "title": "مؤجَّل",
+        "description": "{days, plural, zero {متبقٍ # يوم} one {متبقٍ يوم واحد} two {متبقٍ يومان} few {متبقٍ # أيام} many {متبقٍ # يومًا} other {متبقٍ # يوم}}"
+      },
+      "accepted": {
+        "title": "مقبول",
+        "description": "مقبول"
+      },
+      "duplicate": {
+        "title": "مكرر",
+        "description": "مكرر"
+      }
+    },
+    "modals": {
+      "decline": {
+        "title": "رفض عنصر العمل",
+        "content": "هل أنت متأكد من أنك تريد رفض عنصر العمل {value}؟"
+      },
+      "delete": {
+        "title": "حذف عنصر العمل",
+        "content": "هل أنت متأكد من أنك تريد حذف عنصر العمل {value}؟",
+        "success": "تم حذف عنصر العمل بنجاح"
+      }
+    },
+    "errors": {
+      "snooze_permission": "يمكن لمسؤولي المشروع فقط تأجيل عناصر العمل أو إلغاء تأجيلها",
+      "accept_permission": "يمكن لمسؤولي المشروع فقط قبول عناصر العمل",
+      "decline_permission": "يمكن لمسؤولي المشروع فقط رفض عناصر العمل"
+    },
+    "actions": {
+      "accept": "قبول",
+      "decline": "رفض",
+      "snooze": "تأجيل",
+      "unsnooze": "إلغاء التأجيل",
+      "copy": "نسخ رابط عنصر العمل",
+      "delete": "حذف",
+      "open": "فتح عنصر العمل",
+      "mark_as_duplicate": "وضع علامة مكرر",
+      "move": "نقل {value} إلى عناصر عمل المشروع"
+    },
+    "source": {
+      "in-app": "داخل التطبيق"
+    },
+    "order_by": {
+      "created_at": "تاريخ الإنشاء",
+      "updated_at": "تاريخ التحديث",
+      "id": "ID"
+    },
+    "label": "Intake",
+    "page_label": "{workspace} - Intake",
+    "modal": {
+      "title": "إنشاء عنصر عمل في Intake"
+    },
+    "tabs": {
+      "open": "مفتوحة",
+      "closed": "مغلقة"
+    },
+    "empty_state": {
+      "sidebar_open_tab": {
+        "title": "لا توجد عناصر عمل مفتوحة",
+        "description": "ستجد عناصر العمل المفتوحة هنا. أنشئ عنصر عمل جديدًا."
+      },
+      "sidebar_closed_tab": {
+        "title": "لا توجد عناصر عمل مغلقة",
+        "description": "يمكنك العثور هنا على جميع عناصر العمل، سواء أكانت مقبولة أم مرفوضة."
+      },
+      "sidebar_filter": {
+        "title": "لا توجد عناصر عمل مطابقة",
+        "description": "لا يطابق أي عنصر عمل عامل التصفية المطبّق في Intake. أنشئ عنصر عمل جديدًا."
+      },
+      "detail": {
+        "title": "اختر عنصر عمل لعرض تفاصيله."
+      }
+    }
+  }
+}

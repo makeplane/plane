@@ -1,0 +1,198 @@
+{
+  "power_k": {
+    "actions_commands": {
+      "bulk_delete_work_items": "حذف عناصر عمل متعددة"
+    },
+    "contextual_actions": {
+      "work_item": {
+        "title": "إجراءات عنصر العمل",
+        "indicator": "عنصر العمل",
+        "change_state": "تغيير الحالة",
+        "change_priority": "تغيير الأولوية",
+        "change_assignees": "الإسناد إلى",
+        "assign_to_me": "الإسناد إليّ",
+        "unassign_from_me": "إلغاء الإسناد عني",
+        "change_estimate": "تغيير التقدير",
+        "add_to_cycle": "إضافة إلى دورة",
+        "add_to_modules": "إضافة إلى وحدات",
+        "add_labels": "إضافة تسميات",
+        "subscribe": "الاشتراك في الإشعارات",
+        "unsubscribe": "إلغاء الاشتراك في الإشعارات",
+        "delete": "حذف",
+        "copy_id": "نسخ المعرّف",
+        "copy_id_toast_success": "تم نسخ معرّف عنصر العمل إلى الحافظة.",
+        "copy_id_toast_error": "حدث خطأ أثناء نسخ معرّف عنصر العمل إلى الحافظة.",
+        "copy_title": "نسخ العنوان",
+        "copy_title_toast_success": "تم نسخ عنوان عنصر العمل إلى الحافظة.",
+        "copy_title_toast_error": "حدث خطأ أثناء نسخ عنوان عنصر العمل إلى الحافظة.",
+        "copy_url": "نسخ URL",
+        "copy_url_toast_success": "تم نسخ عنوان URL لعنصر العمل إلى الحافظة.",
+        "copy_url_toast_error": "حدث خطأ أثناء نسخ عنوان URL لعنصر العمل إلى الحافظة."
+      },
+      "cycle": {
+        "title": "إجراءات الدورة",
+        "indicator": "الدورة",
+        "add_to_favorites": "إضافة إلى المفضلة",
+        "remove_from_favorites": "إزالة من المفضلة",
+        "copy_url": "نسخ URL",
+        "copy_url_toast_success": "تم نسخ عنوان URL للدورة إلى الحافظة.",
+        "copy_url_toast_error": "حدث خطأ أثناء نسخ عنوان URL للدورة إلى الحافظة."
+      },
+      "module": {
+        "title": "إجراءات الوحدة",
+        "indicator": "الوحدة",
+        "add_remove_members": "إضافة/إزالة أعضاء",
+        "change_status": "تغيير الحالة",
+        "add_to_favorites": "إضافة إلى المفضلة",
+        "remove_from_favorites": "إزالة من المفضلة",
+        "copy_url": "نسخ URL",
+        "copy_url_toast_success": "تم نسخ عنوان URL للوحدة إلى الحافظة.",
+        "copy_url_toast_error": "حدث خطأ أثناء نسخ عنوان URL للوحدة إلى الحافظة."
+      },
+      "page": {
+        "title": "إجراءات الصفحة",
+        "indicator": "الصفحة",
+        "lock": "قفل",
+        "unlock": "إلغاء القفل",
+        "make_private": "جعلها خاصة",
+        "make_public": "جعلها عامة",
+        "archive": "أرشفة",
+        "restore": "استعادة",
+        "add_to_favorites": "إضافة إلى المفضلة",
+        "remove_from_favorites": "إزالة من المفضلة",
+        "copy_url": "نسخ URL",
+        "copy_url_toast_success": "تم نسخ عنوان URL للصفحة إلى الحافظة.",
+        "copy_url_toast_error": "حدث خطأ أثناء نسخ عنوان URL للصفحة إلى الحافظة."
+      }
+    },
+    "creation_actions": {
+      "create_work_item": "عنصر عمل جديد",
+      "create_page": "صفحة جديدة",
+      "create_view": "طريقة عرض جديدة",
+      "create_cycle": "دورة جديدة",
+      "create_module": "وحدة جديدة",
+      "create_project": "مشروع جديد",
+      "create_workspace": "مساحة عمل جديدة",
+      "create_project_automation": "أتمتة جديدة"
+    },
+    "navigation_actions": {
+      "open_workspace": "فتح مساحة عمل",
+      "nav_home": "الانتقال إلى الرئيسية",
+      "nav_inbox": "الانتقال إلى صندوق الوارد",
+      "nav_your_work": "الانتقال إلى عملك",
+      "nav_account_settings": "الانتقال إلى إعدادات الحساب",
+      "open_project": "فتح مشروع",
+      "nav_projects_list": "الانتقال إلى قائمة المشاريع",
+      "nav_all_workspace_work_items": "الانتقال إلى جميع عناصر العمل",
+      "nav_assigned_workspace_work_items": "الانتقال إلى عناصر العمل المُسنَدة",
+      "nav_created_workspace_work_items": "الانتقال إلى عناصر العمل المُنشأة",
+      "nav_subscribed_workspace_work_items": "الانتقال إلى عناصر العمل المشترَك فيها",
+      "nav_workspace_analytics": "الانتقال إلى تحليلات مساحة العمل",
+      "nav_workspace_drafts": "الانتقال إلى مسودات مساحة العمل",
+      "nav_workspace_archives": "الانتقال إلى أرشيف مساحة العمل",
+      "open_workspace_setting": "فتح أحد إعدادات مساحة العمل",
+      "nav_workspace_settings": "الانتقال إلى إعدادات مساحة العمل",
+      "nav_project_work_items": "الانتقال إلى عناصر العمل",
+      "open_project_cycle": "فتح دورة",
+      "nav_project_cycles": "الانتقال إلى الدورات",
+      "open_project_module": "فتح وحدة",
+      "nav_project_modules": "الانتقال إلى الوحدات",
+      "open_project_view": "فتح طريقة عرض للمشروع",
+      "nav_project_views": "الانتقال إلى طرق عرض المشروع",
+      "nav_project_pages": "الانتقال إلى الصفحات",
+      "nav_project_intake": "الانتقال إلى Intake",
+      "nav_project_archives": "الانتقال إلى أرشيف المشروع",
+      "open_project_setting": "فتح أحد إعدادات المشروع",
+      "nav_project_settings": "الانتقال إلى إعدادات المشروع",
+      "nav_workspace_active_cycle": "الانتقال إلى جميع الدورات النشطة",
+      "nav_project_overview": "الانتقال إلى نظرة عامة على المشروع"
+    },
+    "account_actions": {
+      "sign_out": "تسجيل الخروج",
+      "workspace_invites": "دعوات مساحة العمل"
+    },
+    "miscellaneous_actions": {
+      "toggle_app_sidebar": "تبديل الشريط الجانبي للتطبيق",
+      "copy_current_page_url": "نسخ عنوان URL للصفحة الحالية",
+      "copy_current_page_url_toast_success": "تم نسخ عنوان URL للصفحة الحالية إلى الحافظة.",
+      "copy_current_page_url_toast_error": "حدث خطأ أثناء نسخ عنوان URL للصفحة الحالية إلى الحافظة.",
+      "focus_top_nav_search": "التركيز على حقل البحث"
+    },
+    "preferences_actions": {
+      "update_theme": "تغيير مظهر الواجهة",
+      "update_timezone": "تغيير المنطقة الزمنية",
+      "update_start_of_week": "تغيير أول يوم في الأسبوع",
+      "update_language": "تغيير لغة الواجهة",
+      "toast": {
+        "theme": {
+          "success": "تم تحديث المظهر بنجاح.",
+          "error": "فشل تحديث المظهر. يرجى المحاولة مرة أخرى."
+        },
+        "timezone": {
+          "success": "تم تحديث المنطقة الزمنية بنجاح.",
+          "error": "فشل تحديث المنطقة الزمنية. يرجى المحاولة مرة أخرى."
+        },
+        "generic": {
+          "success": "تم تحديث التفضيلات بنجاح.",
+          "error": "فشل تحديث التفضيلات. يرجى المحاولة مرة أخرى."
+        }
+      }
+    },
+    "help_actions": {
+      "open_keyboard_shortcuts": "فتح اختصارات لوحة المفاتيح",
+      "open_plane_documentation": "فتح وثائق Plane",
+      "join_forum": "انضم إلى منتدانا",
+      "report_bug": "الإبلاغ عن خطأ",
+      "chat_with_us": "تحدّث معنا"
+    },
+    "page_placeholders": {
+      "default": "اكتب أمرًا أو ابحث",
+      "open_workspace": "فتح مساحة عمل",
+      "open_project": "فتح مشروع",
+      "open_workspace_setting": "فتح أحد إعدادات مساحة العمل",
+      "open_project_cycle": "فتح دورة",
+      "open_project_module": "فتح وحدة",
+      "open_project_view": "فتح طريقة عرض للمشروع",
+      "open_project_setting": "فتح أحد إعدادات المشروع",
+      "update_work_item_state": "تغيير الحالة",
+      "update_work_item_priority": "تغيير الأولوية",
+      "update_work_item_assignee": "الإسناد إلى",
+      "update_work_item_estimate": "تغيير التقدير",
+      "update_work_item_cycle": "إضافة إلى دورة",
+      "update_work_item_module": "إضافة إلى وحدات",
+      "update_work_item_labels": "إضافة تسميات",
+      "update_module_member": "تغيير الأعضاء",
+      "update_module_status": "تغيير الحالة",
+      "update_theme": "تغيير المظهر",
+      "update_timezone": "تغيير المنطقة الزمنية",
+      "update_start_of_week": "تغيير أول يوم في الأسبوع",
+      "update_language": "تغيير اللغة"
+    },
+    "search_menu": {
+      "no_results": "لم يتم العثور على نتائج",
+      "clear_search": "مسح البحث",
+      "go_to_advanced_search": "الانتقال إلى البحث المتقدم",
+      "search_commands": "البحث في الأوامر..."
+    },
+    "footer": {
+      "workspace_level": "على مستوى مساحة العمل"
+    },
+    "shortcuts_modal": {
+      "search_placeholder": "البحث عن الاختصارات",
+      "no_results": "لم يتم العثور على اختصارات لـ \"{query}\"",
+      "sequence_separator": "ثم"
+    },
+    "group_titles": {
+      "actions": "الإجراءات",
+      "contextual": "حسب السياق",
+      "navigation": "التنقل",
+      "create": "إنشاء",
+      "general": "عام",
+      "settings": "الإعدادات",
+      "account": "الحساب",
+      "miscellaneous": "متفرقات",
+      "preferences": "التفضيلات",
+      "help": "المساعدة"
+    }
+  }
+}

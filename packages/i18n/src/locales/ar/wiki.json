@@ -1,0 +1,113 @@
+{
+  "wiki_collections": {
+    "predefined": {
+      "general": "عام",
+      "private": "خاص",
+      "shared": "مشترك",
+      "archived": "مؤرشف"
+    },
+    "fallback_name": "المجموعة",
+    "form": {
+      "name_required": "عنوان المجموعة مطلوب",
+      "name_max_length": "يجب أن يكون اسم المجموعة أقل من 255 حرفًا",
+      "name_placeholder_create": "امنح المجموعة عنوانًا",
+      "name_placeholder_edit": "اسم المجموعة"
+    },
+    "create_modal": {
+      "title": "إنشاء مجموعة",
+      "submit": "إنشاء المجموعة"
+    },
+    "edit_modal": {
+      "title": "تعديل المجموعة"
+    },
+    "delete_modal": {
+      "title": "حذف المجموعة",
+      "page_count": "تحتوي هذه المجموعة على {pageCount, plural, zero {لا صفحات} one {صفحة واحدة} two {صفحتين} few {# صفحات} many {# صفحة} other {# صفحة}}. اختر ما سيحدث لها.",
+      "transfer_title": "نقل الصفحات وحذف المجموعة",
+      "transfer_description": "انقل جميع الصفحات إلى مجموعة أخرى قبل الحذف. ستُحفظ الصفحات وصلاحياتها.",
+      "transfer_warning": "سترث الصفحات المنقولة صلاحيات المجموعة المحددة.",
+      "transfer_target_label": "نقل الصفحات إلى",
+      "transfer_target_placeholder": "اختر مجموعة",
+      "delete_with_pages_title": "حذف المجموعة مع صفحاتها",
+      "delete_with_pages_description": "احذف المجموعة وجميع صفحاتها نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+      "submit": "حذف المجموعة"
+    },
+    "header": {
+      "add_page": "إضافة صفحة"
+    },
+    "menu": {
+      "create_new_page": "إنشاء صفحة جديدة",
+      "add_existing_page": "إضافة صفحة موجودة",
+      "edit_collection": "تعديل المجموعة",
+      "collection_options": "خيارات المجموعة"
+    },
+    "add_existing_page_modal": {
+      "search_placeholder": "البحث عن الصفحات",
+      "success_message": "{count, plural, zero {لم تُضف أي صفحة} one {تمت إضافة صفحة واحدة} two {تمت إضافة صفحتين} few {تمت إضافة # صفحات} many {تمت إضافة # صفحة} other {تمت إضافة # صفحة}} إلى المجموعة.",
+      "error_message": "تعذّر نقل الصفحات. يرجى المحاولة مرة أخرى.",
+      "no_pages_found": "لم يتم العثور على صفحات تطابق بحثك",
+      "no_pages_available": "لا توجد صفحات متاحة للنقل",
+      "submit": "نقل"
+    },
+    "list": {
+      "invite_only": "بالدعوة فقط",
+      "remove_error": "فشلت إزالة الصفحة من المجموعة.",
+      "no_matching_pages": "لا توجد صفحات مطابقة",
+      "remove_search_criteria": "أزل معايير البحث لعرض جميع الصفحات",
+      "remove_filters": "أزل عوامل التصفية لعرض جميع الصفحات",
+      "no_pages_title": "لا توجد صفحات بعد",
+      "no_pages_description": "لا تحتوي هذه المجموعة على أي صفحات حاليًا.",
+      "untitled": "بلا عنوان",
+      "restricted_access": "وصول مقيّد",
+      "collapse_page": "طي الصفحة",
+      "expand_page": "توسيع الصفحة",
+      "page_actions": "إجراءات الصفحة",
+      "page_link_copied": "تم نسخ رابط الصفحة إلى الحافظة.",
+      "columns": {
+        "page_name": "اسم الصفحة",
+        "owner": "المالك",
+        "nested_pages": "الصفحات المتداخلة",
+        "last_activity": "آخر نشاط",
+        "actions": "الإجراءات"
+      }
+    },
+    "toasts": {
+      "created": "تم إنشاء المجموعة بنجاح.",
+      "create_error": "تعذّر إنشاء المجموعة. يرجى المحاولة مرة أخرى.",
+      "renamed": "تمت إعادة تسمية المجموعة بنجاح.",
+      "rename_error": "تعذّر تحديث المجموعة. يرجى المحاولة مرة أخرى.",
+      "transferred_deleted": "تم نقل الصفحات وحذف المجموعة.",
+      "deleted_with_pages": "تم حذف المجموعة وصفحاتها.",
+      "delete_error": "تعذّر حذف المجموعة. يرجى المحاولة مرة أخرى.",
+      "target_required": "يرجى اختيار مجموعة لنقل الصفحات إليها.",
+      "create_page_error": "تعذّر إنشاء الصفحة. يرجى المحاولة مرة أخرى.",
+      "create_page_in_collection_error": "تعذّر إنشاء الصفحة أو إضافتها إلى المجموعة. يرجى المحاولة مرة أخرى.",
+      "collection_link_copied": "تم نسخ رابط المجموعة إلى الحافظة."
+    }
+  },
+  "wiki": {
+    "upgrade_flow": {
+      "title": "قم بالترقية لفتح الويكي",
+      "description": "افتح الصفحات العامة وسجل الإصدارات والصفحات المشتركة والتعاون الفوري وصفحات مساحة العمل للويكي ووثائق الشركة وقواعد المعرفة مع Plane Pro.",
+      "upgrade_button": {
+        "text": "ترقية"
+      },
+      "learn_more_button": {
+        "text": "اعرف المزيد"
+      },
+      "download_button": {
+        "text": "تنزيل البيانات",
+        "loading": "جارٍ التنزيل"
+      },
+      "tabs": {
+        "nested_pages": "الصفحات المتداخلة",
+        "add_embeds": "إضافة محتوى مضمّن",
+        "publish_pages": "نشر الصفحات",
+        "comments": "التعليقات"
+      }
+    },
+    "nested_pages_download_banner": {
+      "title": "تتطلب الصفحات المتداخلة خطة مدفوعة. قم بالترقية لفتحها."
+    }
+  }
+}

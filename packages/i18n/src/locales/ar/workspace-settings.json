@@ -1,0 +1,518 @@
+{
+  "workspace_settings": {
+    "label": "إعدادات مساحة العمل",
+    "page_label": "{workspace} - الإعدادات العامة",
+    "key_created": "تم إنشاء المفتاح",
+    "copy_key": "انسخ هذا المفتاح السري واحفظه في صفحات Plane. لن تتمكن من رؤية هذا المفتاح بعد النقر على إغلاق. تم تنزيل ملف CSV يحتوي على المفتاح.",
+    "token_copied": "تم نسخ الرمز إلى الحافظة.",
+    "settings": {
+      "general": {
+        "title": "عام",
+        "upload_logo": "رفع الشعار",
+        "edit_logo": "تعديل الشعار",
+        "name": "اسم مساحة العمل",
+        "company_size": "حجم الشركة",
+        "url": "رابط مساحة العمل",
+        "workspace_timezone": "المنطقة الزمنية لمساحة العمل",
+        "update_workspace": "تحديث مساحة العمل",
+        "delete_workspace": "حذف مساحة العمل هذه",
+        "delete_workspace_description": "عند حذف مساحة عمل، ستُزال جميع البيانات والموارد ضمن مساحة العمل هذه نهائيًا ولا يمكن استعادتها.",
+        "delete_btn": "حذف مساحة العمل هذه",
+        "delete_modal": {
+          "title": "هل أنت متأكد من أنك تريد حذف مساحة العمل هذه؟",
+          "description": "لديك فترة تجربة نشطة لإحدى خططنا المدفوعة. يرجى إلغاؤها أولًا للمتابعة.",
+          "dismiss": "تجاهل",
+          "cancel": "إلغاء التجربة",
+          "success_title": "تم حذف مساحة العمل.",
+          "success_message": "ستنتقل قريبًا إلى صفحة ملفك الشخصي.",
+          "error_title": "لم ينجح ذلك.",
+          "error_message": "يرجى المحاولة مرة أخرى.",
+          "confirm_description": "أنت على وشك حذف مساحة العمل {workspaceName}. ستفقد الوصول إلى جميع بيانات العمل في مساحة العمل هذه، ولا يمكن استعادتها."
+        },
+        "errors": {
+          "name": {
+            "required": "الاسم مطلوب",
+            "max_length": "يجب ألا يزيد اسم مساحة العمل على 80 حرفًا"
+          },
+          "company_size": {
+            "required": "حجم الشركة مطلوب",
+            "select_a_range": "اختر حجم المؤسسة"
+          }
+        }
+      },
+      "members": {
+        "title": "الأعضاء",
+        "add_member": "إضافة عضو",
+        "pending_invites": "الدعوات المعلّقة",
+        "invitations_sent_successfully": "تم إرسال الدعوات بنجاح",
+        "leave_confirmation": "هل أنت متأكد من أنك تريد مغادرة مساحة العمل؟ لن تتمكن من الوصول إلى مساحة العمل هذه بعد الآن. لا يمكن التراجع عن هذا الإجراء.",
+        "details": {
+          "full_name": "الاسم الكامل",
+          "display_name": "الاسم المعروض",
+          "email_address": "عنوان البريد الإلكتروني",
+          "account_type": "نوع الحساب",
+          "authentication": "المصادقة",
+          "joining_date": "تاريخ الانضمام"
+        },
+        "modal": {
+          "title": "ادعُ أشخاصًا للتعاون",
+          "description": "ادعُ أشخاصًا للتعاون في مساحة عملك.",
+          "button": "إرسال الدعوات",
+          "button_loading": "جارٍ إرسال الدعوات",
+          "placeholder": "name@company.com",
+          "errors": {
+            "required": "نحتاج إلى عنوان بريد إلكتروني لدعوتهم.",
+            "invalid": "البريد الإلكتروني غير صالح"
+          }
+        },
+        "leave_input_label": "اكتب اسم مساحة العمل هذه للمتابعة.",
+        "description": "أدِر الوصول إلى مساحة العمل هذه.",
+        "leave_title": "مغادرة مساحة العمل؟"
+      },
+      "billing_and_plans": {
+        "heading": "الفوترة والخطط",
+        "description": "اختر خطتك، وأدِر الاشتراكات، وقم بالترقية بسهولة مع نمو احتياجاتك.",
+        "title": "الفوترة والخطط",
+        "current_plan": "الخطة الحالية",
+        "free_plan": "أنت تستخدم الخطة المجانية حاليًا",
+        "view_plans": "عرض الخطط"
+      },
+      "exports": {
+        "heading": "عمليات التصدير",
+        "description": "صدّر بيانات مشروعك بتنسيقات متعددة واطّلع على سجل التصدير مع روابط التنزيل.",
+        "title": "عمليات التصدير",
+        "exporting": "جارٍ التصدير",
+        "previous_exports": "عمليات التصدير السابقة",
+        "export_separate_files": "تصدير البيانات في ملفات منفصلة",
+        "exporting_projects": "جارٍ تصدير المشروع",
+        "format": "التنسيق",
+        "filters_info": "طبّق عوامل التصفية لتصدير عناصر عمل محددة وفق معاييرك.",
+        "modal": {
+          "title": "التصدير إلى",
+          "toasts": {
+            "success": {
+              "title": "تم التصدير بنجاح",
+              "message": "ستتمكن من تنزيل {entity} المُصدَّرة من عمليات التصدير السابقة."
+            },
+            "error": {
+              "title": "فشل التصدير",
+              "message": "لم ينجح التصدير. يرجى المحاولة مرة أخرى."
+            }
+          }
+        }
+      },
+      "webhooks": {
+        "heading": "Webhooks",
+        "description": "أتمِت الإشعارات إلى الخدمات الخارجية عند وقوع أحداث في المشروع.",
+        "title": "Webhooks",
+        "add_webhook": "إضافة Webhook",
+        "modal": {
+          "title": "إنشاء Webhook",
+          "details": "تفاصيل Webhook",
+          "payload": "عنوان URL للحمولة",
+          "question": "ما الأحداث التي تريد أن تُشغّل هذا الـ Webhook؟",
+          "error": "عنوان URL مطلوب"
+        },
+        "secret_key": {
+          "title": "المفتاح السري",
+          "message": "أنشئ رمزًا لتوقيع حمولة الـ Webhook"
+        },
+        "options": {
+          "all": "أرسل لي كل شيء",
+          "individual": "اختر أحداثًا بعينها"
+        },
+        "toasts": {
+          "created": {
+            "title": "تم إنشاء Webhook",
+            "message": "تم إنشاء Webhook بنجاح"
+          },
+          "not_created": {
+            "title": "لم يتم إنشاء Webhook",
+            "message": "تعذّر إنشاء Webhook"
+          },
+          "updated": {
+            "title": "تم تحديث Webhook",
+            "message": "تم تحديث Webhook بنجاح"
+          },
+          "not_updated": {
+            "title": "لم يتم تحديث Webhook",
+            "message": "تعذّر تحديث Webhook"
+          },
+          "removed": {
+            "title": "تمت إزالة Webhook",
+            "message": "تمت إزالة Webhook بنجاح"
+          },
+          "not_removed": {
+            "title": "لم تتم إزالة Webhook",
+            "message": "تعذّرت إزالة Webhook"
+          },
+          "secret_key_copied": {
+            "message": "تم نسخ المفتاح السري إلى الحافظة."
+          },
+          "secret_key_not_copied": {
+            "message": "حدث خطأ أثناء نسخ المفتاح السري."
+          }
+        }
+      },
+      "api_tokens": {
+        "heading": "رموز الوصول",
+        "description": "أنشئ رموز API آمنة لدمج بياناتك مع الأنظمة والتطبيقات الخارجية.",
+        "title": "رموز الوصول",
+        "add_token": "إضافة رمز وصول",
+        "create_token": "إنشاء رمز",
+        "never_expires": "لا تنتهي صلاحيته",
+        "generate_token": "إنشاء رمز",
+        "generating": "جارٍ الإنشاء",
+        "delete": {
+          "title": "حذف رمز الوصول",
+          "description": "لن يتمكن أي تطبيق يستخدم هذا الرمز من الوصول إلى بيانات Plane بعد الآن. لا يمكن التراجع عن هذا الإجراء.",
+          "success": {
+            "title": "تم بنجاح!",
+            "message": "تم حذف الرمز بنجاح"
+          },
+          "error": {
+            "title": "خطأ!",
+            "message": "تعذّر حذف الرمز"
+          }
+        },
+        "columns": {
+          "expires": "تنتهي الصلاحية",
+          "last_used": "آخر استخدام"
+        },
+        "expired": "منتهي الصلاحية",
+        "not_used_yet": "لم يُستخدم بعد"
+      },
+      "integrations": {
+        "title": "عمليات التكامل",
+        "heading": "عمليات التكامل",
+        "description": "اتصل بالأدوات والخدمات الشائعة لمزامنة عملك عبر منظومة سير عملك بالكامل.",
+        "page_title": "اعمل على بياناتك في Plane عبر التطبيقات المتاحة أو تطبيقاتك الخاصة.",
+        "page_description": "اعرض جميع عمليات التكامل المستخدمة في مساحة العمل هذه أو من قبلك."
+      },
+      "imports": {
+        "title": "عمليات الاستيراد",
+        "heading": "عمليات الاستيراد",
+        "description": "اتصل بأدوات إدارة المشاريع الحالية واستورد بياناتك منها لتبسيط دمج سير عملك."
+      },
+      "worklogs": {
+        "title": "سجلات العمل",
+        "heading": "سجلات العمل",
+        "description": "نزّل سجلات العمل (الجداول الزمنية) لأي شخص في أي مشروع."
+      },
+      "group_syncing": {
+        "title": "مزامنة المجموعات",
+        "heading": "مزامنة المجموعات",
+        "description": "اربط مجموعات موفّر الهوية بالمشاريع والأدوار. تُحدَّث صلاحيات وصول المستخدمين تلقائيًا عند تغيّر عضوية المجموعات لدى موفّر الهوية، مما يبسّط انضمام المستخدمين ومغادرتهم.",
+        "enable": {
+          "title": "تفعيل مزامنة المجموعات",
+          "description": "أضف المستخدمين تلقائيًا إلى المشاريع بناءً على مجموعات موفّر الهوية."
+        },
+        "config": {
+          "title": "ضبط مزامنة المجموعات",
+          "description": "حدّد كيفية ربط مجموعات موفّر الهوية بالمشاريع والأدوار.",
+          "sync_on_login": {
+            "title": "المزامنة عند تسجيل الدخول",
+            "description": "حدّث عضوية المجموعات وصلاحيات الوصول إلى المشاريع عند تسجيل دخول المستخدم."
+          },
+          "sync_offline": {
+            "title": "المزامنة دون اتصال",
+            "description": "تُشغّل المزامنة تلقائيًا كل ست ساعات دون انتظار تسجيل دخول المستخدمين."
+          },
+          "auto_remove": {
+            "title": "الإزالة التلقائية",
+            "description": "أزل المستخدمين تلقائيًا من المشاريع عندما لا يعودون مطابقين للمجموعة."
+          },
+          "group_attribute_key": {
+            "title": "مفتاح سمة المجموعة",
+            "description": "سمة موفّر الهوية المستخدمة لتحديد مجموعات المستخدمين ومزامنتها.",
+            "placeholder": "Groups"
+          }
+        },
+        "group_mapping": {
+          "title": "ربط المجموعات",
+          "description": "اربط مجموعات موفّر الهوية بالمشاريع والأدوار.",
+          "button_text": "إضافة مزامنة مجموعة جديدة"
+        },
+        "toast": {
+          "updating": "جارٍ تحديث ميزة مزامنة المجموعات",
+          "success": "تم تحديث ميزة مزامنة المجموعات بنجاح.",
+          "error": "فشل تحديث ميزة مزامنة المجموعات!"
+        },
+        "delete_modal": {
+          "title": "حذف مزامنة المجموعة",
+          "content": "لن يُضاف المستخدمون الجدد من مجموعة الهوية هذه إلى المشروع بعد الآن. سيحتفظ المستخدمون المضافون بالفعل بأدوارهم الحالية."
+        },
+        "modal": {
+          "idp_group_name": {
+            "text": "مجموعة المستخدمين",
+            "required": "مجموعة المستخدمين مطلوبة",
+            "placeholder": "أدخل أسماء مجموعات موفّر الهوية"
+          },
+          "project": {
+            "text": "المشروع",
+            "required": "المشروع مطلوب",
+            "placeholder": "اختر مشروعًا"
+          },
+          "default_role": {
+            "text": "الدور في المشروع",
+            "required": "الدور في المشروع مطلوب",
+            "placeholder": "اختر دورًا في المشروع"
+          }
+        }
+      },
+      "identity": {
+        "title": "الهوية",
+        "heading": "الهوية",
+        "description": "اضبط نطاقك وفعّل تسجيل الدخول الموحّد"
+      },
+      "project_states": {
+        "title": "حالات المشاريع",
+        "heading": "اطّلع على نظرة عامة على تقدّم جميع المشاريع.",
+        "description": "حالات المشاريع ميزة خاصة بـ Plane لمتابعة تقدّم جميع مشاريعك حسب أي خاصية من خصائص المشروع.",
+        "go_to_settings": "الانتقال إلى الإعدادات"
+      },
+      "projects": {
+        "title": "المشاريع",
+        "description": "أدِر حالات المشاريع، وفعّل تسميات المشاريع وغيرها من الإعدادات.",
+        "tabs": {
+          "states": "حالات المشاريع",
+          "labels": "تسميات المشاريع"
+        }
+      },
+      "templates": {
+        "title": "القوالب",
+        "heading": "القوالب",
+        "description": "وفّر 80% من الوقت المستغرق في إنشاء المشاريع وعناصر العمل والصفحات عند استخدام القوالب."
+      },
+      "relations": {
+        "title": "العلاقات",
+        "heading": "العلاقات",
+        "description": "أنشئ أنواع العلاقات التي تربط عناصر العمل عبر مساحة عملك وأدِرها."
+      },
+      "cancel_trial": {
+        "title": "ألغِ فترة التجربة أولًا.",
+        "description": "لديك فترة تجربة نشطة لإحدى خططنا المدفوعة. يرجى إلغاؤها أولًا للمتابعة.",
+        "dismiss": "تجاهل",
+        "cancel": "إلغاء التجربة",
+        "cancel_success_title": "تم إلغاء التجربة.",
+        "cancel_success_message": "يمكنك الآن حذف مساحة العمل.",
+        "cancel_error_title": "لم ينجح ذلك.",
+        "cancel_error_message": "يرجى المحاولة مرة أخرى."
+      },
+      "applications": {
+        "internal": "داخلي",
+        "title": "التطبيقات",
+        "applicationId_copied": "تم نسخ معرّف التطبيق إلى الحافظة",
+        "clientId_copied": "تم نسخ Client ID إلى الحافظة",
+        "clientSecret_copied": "تم نسخ Client Secret إلى الحافظة",
+        "third_party_apps": "تطبيقات الجهات الخارجية",
+        "your_apps": "تطبيقاتك",
+        "connect": "اتصال",
+        "connected": "متصل",
+        "disconnect": "قطع الاتصال",
+        "install": "تثبيت",
+        "installed": "مثبّت",
+        "configure": "ضبط",
+        "app_available": "لقد أتحت هذا التطبيق للاستخدام مع مساحة عمل في Plane",
+        "app_credentials_regenrated": {
+          "title": "تمت إعادة إنشاء بيانات اعتماد التطبيق بنجاح",
+          "description": "استبدل السر الخاص بالعميل في كل مكان يُستخدم فيه. لم يعد السر السابق صالحًا."
+        },
+        "app_created": {
+          "title": "تم إنشاء التطبيق بنجاح",
+          "description": "استخدم بيانات الاعتماد لتثبيت التطبيق في مساحة عمل في Plane"
+        },
+        "installed_apps": "التطبيقات المثبّتة",
+        "all_apps": "جميع التطبيقات",
+        "internal_apps": "التطبيقات الداخلية",
+        "app_name_title": "اسم التطبيق",
+        "app_description_title": {
+          "label": "الوصف المفصّل",
+          "placeholder": "اكتب وصفًا مفصّلًا للمتجر. اضغط '/' لعرض الأوامر."
+        },
+        "authorization_grant_type": {
+          "title": "نوع الاتصال",
+          "description": "اختر ما إذا كان تطبيقك يُثبّت مرة واحدة لمساحة العمل، أو يسمح لكل مستخدم بربط حسابه الخاص"
+        },
+        "website": {
+          "title": "الموقع الإلكتروني",
+          "description": "رابط الموقع الإلكتروني لتطبيقك.",
+          "placeholder": "https://example.com"
+        },
+        "app_maker": {
+          "title": "مطوّر التطبيق",
+          "description": "الشخص أو المؤسسة التي تنشئ التطبيق."
+        },
+        "app_maker_error": "اسم المطوّر مطلوب",
+        "setup_url": {
+          "label": "رابط الإعداد",
+          "description": "سيُعاد توجيه المستخدمين إلى هذا الرابط عند تثبيت التطبيق.",
+          "placeholder": "https://example.com/setup"
+        },
+        "webhook_url": {
+          "label": "عنوان URL للـ Webhook",
+          "description": "هنا سنرسل أحداث الـ Webhook والتحديثات من مساحات العمل التي ثُبّت فيها تطبيقك.",
+          "placeholder": "https://example.com/webhook"
+        },
+        "webhook_secret": {
+          "label": "Webhook Secret",
+          "description": "السر المستخدم للتحقق من طلبات الـ Webhook الواردة.",
+          "placeholder": "أدخل مفتاحًا سريًا عشوائيًا"
+        },
+        "redirect_uris": {
+          "label": "عناوين URI لإعادة التوجيه (مفصولة بمسافات)",
+          "description": "سيُعاد توجيه المستخدمين إلى هذا المسار بعد مصادقتهم مع Plane.",
+          "placeholder": "https://example.com https://example.com/"
+        },
+        "app_available_description": "اربط مساحة عمل في Plane لتبدأ استخدامه",
+        "client_id_and_secret": "Client ID وClient Secret",
+        "client_id_and_secret_description": "انسخ هذا المفتاح السري واحفظه. لن تتمكن من رؤية هذا المفتاح مرة أخرى بعد النقر على إغلاق.",
+        "client_id_and_secret_download": "يمكنك تنزيل ملف CSV يحتوي على المفتاح من هنا.",
+        "application_id": "معرّف التطبيق",
+        "client_id": "Client ID",
+        "client_secret": "Client Secret",
+        "export_as_csv": "التصدير بتنسيق CSV",
+        "slug_already_exists": "الاسم المختصر (Slug) موجود بالفعل",
+        "failed_to_create_application": "فشل إنشاء التطبيق",
+        "upload_logo": "رفع الشعار",
+        "app_name_error": "اسم التطبيق مطلوب",
+        "app_short_description_title": "الوصف المختصر",
+        "app_short_description_error": "الوصف المختصر للتطبيق مطلوب",
+        "app_description_error": "وصف التطبيق مطلوب",
+        "app_slug_title": "الاسم المختصر للتطبيق",
+        "app_slug_error": "الاسم المختصر للتطبيق مطلوب",
+        "invalid_website_error": "موقع إلكتروني غير صالح",
+        "webhook_url_title": "عنوان URL للـ Webhook",
+        "webhook_url_error": "عنوان URL للـ Webhook مطلوب",
+        "invalid_webhook_url_error": "عنوان URL للـ Webhook غير صالح",
+        "redirect_uris_title": "عناوين URI لإعادة التوجيه",
+        "redirect_uris_error": "عناوين URI لإعادة التوجيه مطلوبة",
+        "invalid_redirect_uris_error": "عناوين URI لإعادة التوجيه غير صالحة",
+        "redirect_uris_description": "أدخل عناوين URI مفصولة بمسافات سيُعيد التطبيق التوجيه إليها بعد المستخدم، مثال: https://example.com https://example.com/",
+        "authorized_javascript_origins_title": "مصادر JavaScript المصرّح بها",
+        "authorized_javascript_origins_error": "مصادر JavaScript المصرّح بها مطلوبة",
+        "invalid_authorized_javascript_origins_error": "مصادر JavaScript المصرّح بها غير صالحة",
+        "authorized_javascript_origins_description": "أدخل مصادر مفصولة بمسافات يُسمح للتطبيق بإرسال الطلبات منها، مثال: app.com example.com",
+        "create_app": "إنشاء التطبيق",
+        "update_app": "تحديث التطبيق",
+        "build_your_own_app": "أنشئ تطبيقك الخاص",
+        "edit_app_details": "تعديل تفاصيل التطبيق",
+        "regenerate_client_secret_description": "أعد إنشاء السر الخاص بالعميل. إذا أعدت إنشاء السر، يمكنك نسخ المفتاح أو تنزيله في ملف CSV مباشرةً بعد ذلك.",
+        "regenerate_client_secret": "إعادة إنشاء Client Secret",
+        "regenerate_client_secret_confirm_title": "هل أنت متأكد من أنك تريد إعادة إنشاء Client Secret؟",
+        "regenerate_client_secret_confirm_description": "سيتوقف التطبيق الذي يستخدم هذا السر عن العمل، وستحتاج إلى تحديث السر في التطبيق.",
+        "regenerate_client_secret_confirm_cancel": "إلغاء",
+        "regenerate_client_secret_confirm_regenerate": "إعادة الإنشاء",
+        "read_only_access_to_workspace": "صلاحية قراءة فقط لمساحة عملك",
+        "write_access_to_workspace": "صلاحية كتابة لمساحة عملك",
+        "read_only_access_to_user_profile": "صلاحية قراءة فقط لملفك الشخصي",
+        "write_access_to_user_profile": "صلاحية كتابة لملفك الشخصي",
+        "connect_app_to_workspace": "ربط {app} بمساحة عملك {workspace}",
+        "user_permissions": "صلاحيات المستخدم",
+        "user_permissions_description": "تُستخدم صلاحيات المستخدم لمنح الوصول إلى ملف المستخدم الشخصي.",
+        "workspace_permissions": "صلاحيات مساحة العمل",
+        "workspace_permissions_description": "تُستخدم صلاحيات مساحة العمل لمنح الوصول إلى مساحة العمل.",
+        "with_the_permissions": "بالصلاحيات التالية",
+        "app_consent_title": "يطلب {app} الوصول إلى مساحة عملك وملفك الشخصي في Plane.",
+        "choose_workspace_to_connect_app_with": "اختر مساحة عمل لربط التطبيق بها",
+        "app_consent_workspace_permissions_title": "يرغب {app} في",
+        "app_consent_user_permissions_title": "يمكن لـ {app} أيضًا طلب إذن المستخدم للوصول إلى الموارد التالية. لن تُطلب هذه الصلاحيات ولن يُصرَّح بها إلا من المستخدم نفسه.",
+        "app_consent_accept_title": "بالقبول، فإنك",
+        "app_consent_accept_1": "تمنح التطبيق الوصول إلى بياناتك في Plane أينما استخدمت التطبيق داخل Plane أو خارجه",
+        "app_consent_accept_2": "توافق على سياسة الخصوصية وشروط الاستخدام الخاصة بـ {app}",
+        "accepting": "جارٍ القبول...",
+        "accept": "قبول",
+        "categories": "الفئات",
+        "select_app_categories": "اختر فئات التطبيق",
+        "categories_title": "الفئات",
+        "categories_error": "الفئات مطلوبة",
+        "invalid_categories_error": "فئات غير صالحة",
+        "categories_description": "اختر الفئات التي تصف التطبيق على أفضل وجه",
+        "supported_plans": "الخطط المدعومة",
+        "supported_plans_description": "اختر خطط مساحات العمل التي يمكنها تثبيت هذا التطبيق. اتركه فارغًا للسماح بجميع الخطط.",
+        "select_plans": "اختر الخطط",
+        "privacy_policy_url_title": "رابط سياسة الخصوصية",
+        "privacy_policy_url_error": "رابط سياسة الخصوصية مطلوب",
+        "invalid_privacy_policy_url_error": "رابط سياسة الخصوصية غير صالح",
+        "terms_of_service_url_title": "رابط شروط الخدمة",
+        "terms_of_service_url_error": "رابط شروط الخدمة مطلوب",
+        "invalid_terms_of_service_url_error": "رابط شروط الخدمة غير صالح",
+        "support_url_title": "رابط الدعم",
+        "support_url_error": "رابط الدعم مطلوب",
+        "invalid_support_url_error": "رابط الدعم غير صالح",
+        "video_url_title": "رابط الفيديو",
+        "video_url_error": "رابط الفيديو مطلوب",
+        "invalid_video_url_error": "رابط الفيديو غير صالح",
+        "setup_url_error": "رابط الإعداد مطلوب",
+        "invalid_setup_url_error": "رابط الإعداد غير صالح",
+        "configuration_url_title": "رابط الضبط",
+        "configuration_url_error": "رابط الضبط مطلوب",
+        "invalid_configuration_url_error": "رابط الضبط غير صالح",
+        "contact_email_title": "البريد الإلكتروني للتواصل",
+        "contact_email_error": "البريد الإلكتروني للتواصل مطلوب",
+        "invalid_contact_email_error": "البريد الإلكتروني للتواصل غير صالح",
+        "upload_attachments": "رفع المرفقات",
+        "uploading_images": "جارٍ رفع {count, plural, zero {الصور} one {صورة واحدة} two {صورتين} few {# صور} many {# صورة} other {# صورة}}",
+        "drop_images_here": "أفلت الصور هنا",
+        "click_to_upload_images": "انقر لرفع الصور",
+        "invalid_file_or_exceeds_size_limit": "ملف غير صالح أو يتجاوز حد الحجم ({size} ميغابايت)",
+        "uploading": "جارٍ الرفع...",
+        "upload_and_save": "الرفع والحفظ",
+        "app_consent_no_access_title": "طلب التثبيت",
+        "app_consent_no_access_description": "لا يمكن تثبيت هذا التطبيق إلا بعد أن يثبّته مسؤول مساحة العمل. تواصل مع مسؤول مساحة العمل للمتابعة.",
+        "app_consent_unapproved_title": "لم يراجع Plane هذا التطبيق أو يعتمده بعد.",
+        "app_consent_unapproved_description": "تأكد من أنك تثق في هذا التطبيق قبل ربطه بمساحة عملك.",
+        "go_to_app": "الانتقال إلى التطبيق",
+        "enable_app_mentions": "تفعيل الإشارات إلى التطبيق",
+        "enable_app_mentions_tooltip": "عند التفعيل، يمكن للمستخدمين الإشارة إلى هذا التطبيق أو إسناد عناصر العمل إليه.",
+        "scopes": "النطاقات",
+        "select_scopes": "اختر النطاقات",
+        "read_access_to": "صلاحية قراءة فقط لـ",
+        "write_access_to": "صلاحية كتابة لـ",
+        "global_permission_expiration": "ستنتهي صلاحية النطاقات الشاملة قريبًا. استخدم النطاقات الدقيقة بدلًا منها، مثل project:read بدلًا من صلاحية القراءة الشاملة.",
+        "selected_scopes": "تم اختيار {count}",
+        "scopes_and_permissions": "النطاقات والصلاحيات",
+        "read": "قراءة",
+        "write": "كتابة",
+        "scope_description": {
+          "projects": "الوصول إلى المشاريع وجميع الكيانات المتعلقة بها",
+          "wiki": "الوصول إلى الويكي وجميع الكيانات المتعلقة به",
+          "workspaces": "الوصول إلى مساحات العمل وجميع الكيانات المتعلقة بها",
+          "stickies": "الوصول إلى Stickies وجميع الكيانات المتعلقة بها",
+          "profile": "الوصول إلى معلومات الملف الشخصي للمستخدم",
+          "agents": "الوصول إلى الوكلاء وجميع الكيانات المتعلقة بهم",
+          "assets": "الوصول إلى الأصول وجميع الكيانات المتعلقة بها"
+        }
+      },
+      "plane-intelligence": {
+        "title": "Plane AI",
+        "heading": "Plane AI",
+        "description": "اجعل عملك أذكى وأسرع مع ذكاء اصطناعي مرتبط مباشرةً بعملك وقاعدة معرفتك. "
+      },
+      "runners": {
+        "title": "Plane Runner",
+        "heading": "البرامج النصية",
+        "new_script": "برنامج نصي جديد",
+        "description": "أتمِت سير عملك باستخدام برامج نصية مخصصة وقواعد أتمتة."
+      }
+    },
+    "empty_state": {
+      "api_tokens": {
+        "title": "لم يُنشأ أي رمز وصول",
+        "description": "يمكن استخدام واجهات Plane API لدمج بياناتك في Plane مع أي نظام خارجي. أنشئ رمزًا للبدء."
+      },
+      "webhooks": {
+        "title": "لم يُضف أي Webhook",
+        "description": "أنشئ Webhooks لتلقي التحديثات الفورية وأتمتة الإجراءات."
+      },
+      "exports": {
+        "title": "لا توجد عمليات تصدير بعد",
+        "description": "في كل مرة تصدّر فيها، ستُحفظ نسخة هنا للرجوع إليها."
+      },
+      "imports": {
+        "title": "لا توجد عمليات استيراد بعد",
+        "description": "ستجد هنا جميع عمليات الاستيراد السابقة ويمكنك تنزيلها."
+      }
+    }
+  }
+}
