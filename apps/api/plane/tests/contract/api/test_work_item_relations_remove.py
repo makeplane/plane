@@ -341,18 +341,19 @@ def test_remove_inverse_relation_type_in_deletion_activity(
 
 @pytest.mark.unit
 @pytest.mark.django_db
-def test_delete_relation_activity_scopes_counterpart_to_its_own_project(
+def test_delete_relation_activity_records_counterpart_in_workspace(
     workspace, own_project, own_issue, other_project, other_issue, create_user
 ):
-    """COUNTERPART PROJECT SCOPING: the counterpart's activity belongs to its own project.
+    """CROSS-PROJECT COUNTERPART: a counterpart in another project still gets a row.
 
-    Exercises delete_issue_relation_activity directly (no mocked delay call), so a
-    counterpart row stamped with the path project actually fails here.
+    Exercises delete_issue_relation_activity directly (no mocked delay call). The
+    counterpart is looked up workspace-wide, so a cross-project pair is recorded and
+    the row is stamped like the create path stamps it: the activity's own project.
     """
     issue_activities = []
 
     delete_issue_relation_activity(
-        requested_data=json.dumps({"related_issue": str(other_issue.id), "relation_type": "blocking"}),
+        requested_data=json.dumps({"related_issue": str(other_issue.id), "relation_type": "start_after"}),
         current_instance=None,
         issue_id=str(own_issue.id),
         project_id=str(own_project.id),
@@ -367,8 +368,10 @@ def test_delete_relation_activity_scopes_counterpart_to_its_own_project(
 
     assert str(path_activity.issue_id) == str(own_issue.id)
     assert str(path_activity.project_id) == str(own_project.id)
-    assert path_activity.field == "blocking"
+    assert str(path_activity.workspace_id) == str(workspace.id)
+    assert path_activity.field == "start_after"
 
     assert str(counterpart_activity.issue_id) == str(other_issue.id)
-    assert str(counterpart_activity.project_id) == str(other_project.id)
-    assert counterpart_activity.field == "blocked_by"
+    assert str(counterpart_activity.project_id) == str(own_project.id)
+    assert str(counterpart_activity.workspace_id) == str(workspace.id)
+    assert counterpart_activity.field == "start_before"

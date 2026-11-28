@@ -1406,9 +1406,7 @@ def delete_issue_relation_activity(
             old_value=f"{current_issue.project.identifier}-{current_issue.sequence_id}",
             new_value="",
             field=get_inverse_relation(requested_data.get("relation_type")),
-            # The counterpart may live in another project; its activity must be
-            # project-scoped to its own project to show up in that project's feed.
-            project_id=issue.project_id,
+            project_id=project_id,
             workspace_id=workspace_id,
             comment=f"deleted {requested_data.get('relation_type')} relation",
             old_identifier=requested_data.get("related_issue"),
