@@ -1,0 +1,68 @@
+{
+  "attachmentComponent": {
+    "uploader": {
+      "drag_and_drop": "أفلت الملفات هنا أو انقر للرفع"
+    },
+    "errors": {
+      "file_too_large": {
+        "title": "الملف كبير جدًا.",
+        "description": "الحد الأقصى لحجم الملف {maxFileSize} ميغابايت"
+      },
+      "unsupported_file_type": {
+        "title": "نوع الملف غير مدعوم.",
+        "description": "اطّلع على التنسيقات المدعومة"
+      },
+      "default": {
+        "title": "فشل الرفع.",
+        "description": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+      }
+    },
+    "upgrade": {
+      "description": "قم بترقية خطتك لعرض هذا المرفق."
+    },
+    "aria": {
+      "click_to_upload": "انقر لرفع مرفق"
+    }
+  },
+  "externalEmbedComponent": {
+    "block_menu": {
+      "convert_to_embed": "التحويل إلى محتوى مضمّن",
+      "convert_to_link": "التحويل إلى رابط",
+      "convert_to_richcard": "التحويل إلى بطاقة غنية"
+    },
+    "placeholder": {
+      "insert_embed": "أدرج رابط المحتوى المضمّن الذي تفضّله هنا، مثل فيديو YouTube أو تصميم Figma وغيرها.",
+      "link": "أدخل رابطًا أو الصقه"
+    },
+    "input_modal": {
+      "embed": "تضمين",
+      "works_with_links": "يعمل مع YouTube وFigma وGoogle Docs وغيرها"
+    },
+    "error": {
+      "not_valid_link": "يرجى إدخال عنوان URL صالح."
+    }
+  },
+  "ai_block": {
+    "content": {
+      "placeholder": "صِف محتوى هذه الكتلة",
+      "generated_here": "سيُنشأ محتوى الذكاء الاصطناعي هنا"
+    },
+    "block_types": {
+      "placeholder": "اختر نوع الكتلة",
+      "summarize_page": "تلخيص الصفحة",
+      "custom_prompt": "موجّه مخصص"
+    },
+    "actions": {
+      "discard": "تجاهل",
+      "generate": "إنشاء",
+      "generating": "جارٍ الإنشاء",
+      "rewriting": "جارٍ إعادة الصياغة",
+      "rewrite": "إعادة الصياغة",
+      "use_this": "استخدام هذا",
+      "refine": "تحسين"
+    }
+  },
+  "formatting_toolbar": {
+    "label": "التنسيق"
+  }
+}

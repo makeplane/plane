@@ -31,6 +31,12 @@ export const SUPPORTED_LANGUAGES: ILanguageOption[] = [
   { label: "ქართული", value: "ka-ge" },
   { label: "Nederlands", value: "nl" },
   { label: "Български", value: "bg" },
+  { label: "العربية", value: "ar" },
 ];
 
 export const LANGUAGE_STORAGE_KEY = "userLanguage";
+
+/** Languages written right to left; the document direction follows them. */
+export const RTL_LANGUAGES: TLanguage[] = ["ar"];
+
+export const getLanguageDirection = (lng: TLanguage): "ltr" | "rtl" => (RTL_LANGUAGES.includes(lng) ? "rtl" : "ltr");

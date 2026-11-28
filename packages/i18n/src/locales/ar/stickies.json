@@ -1,0 +1,59 @@
+{
+  "stickies": {
+    "title": "ملاحظاتك في Stickies",
+    "placeholder": "انقر للكتابة هنا",
+    "all": "جميع Stickies",
+    "no-data": "دوّن فكرة، أو التقط لحظة إلهام، أو سجّل خاطرة. أضف Sticky للبدء.",
+    "add": "إضافة Sticky",
+    "search_placeholder": "البحث بالعنوان",
+    "delete": "حذف Sticky",
+    "delete_confirmation": "هل أنت متأكد من أنك تريد حذف Sticky هذه؟",
+    "empty_state": {
+      "simple": "دوّن فكرة، أو التقط لحظة إلهام، أو سجّل خاطرة. أضف Sticky للبدء.",
+      "general": {
+        "title": "Stickies ملاحظات سريعة وقوائم مهام تدوّنها على عجل.",
+        "description": "التقط أفكارك بسهولة بإنشاء Stickies يمكنك الوصول إليها في أي وقت ومن أي مكان.",
+        "primary_button": {
+          "text": "إضافة Sticky"
+        }
+      },
+      "search": {
+        "title": "لا يطابق ذلك أيًّا من Stickies الخاصة بك.",
+        "description": "جرّب عبارة أخرى أو أخبرنا\nإذا كنت متأكدًا من صحة بحثك. ",
+        "primary_button": {
+          "text": "إضافة Sticky"
+        }
+      }
+    },
+    "toasts": {
+      "errors": {
+        "wrong_name": "لا يمكن أن يزيد اسم Sticky على 100 حرف.",
+        "already_exists": "يوجد بالفعل Sticky بلا وصف"
+      },
+      "created": {
+        "title": "تم إنشاء Sticky",
+        "message": "تم إنشاء Sticky بنجاح"
+      },
+      "not_created": {
+        "title": "لم يتم إنشاء Sticky",
+        "message": "تعذّر إنشاء Sticky"
+      },
+      "updated": {
+        "title": "تم تحديث Sticky",
+        "message": "تم تحديث Sticky بنجاح"
+      },
+      "not_updated": {
+        "title": "لم يتم تحديث Sticky",
+        "message": "تعذّر تحديث Sticky"
+      },
+      "removed": {
+        "title": "تمت إزالة Sticky",
+        "message": "تمت إزالة Sticky بنجاح"
+      },
+      "not_removed": {
+        "title": "لم تتم إزالة Sticky",
+        "message": "تعذّرت إزالة Sticky"
+      }
+    }
+  }
+}

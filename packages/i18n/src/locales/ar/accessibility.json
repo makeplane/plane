@@ -1,0 +1,59 @@
+{
+  "aria_labels": {
+    "projects_sidebar": {
+      "main_sidebar": "الشريط الجانبي الرئيسي",
+      "resize_sidebar": "تغيير حجم الشريط الجانبي",
+      "sidebar_peek_view": "عرض الشريط الجانبي السريع",
+      "workspace_logo": "شعار مساحة العمل",
+      "open_workspace_switcher": "فتح مبدّل مساحات العمل",
+      "open_user_menu": "فتح قائمة المستخدم",
+      "open_command_palette": "فتح لوحة الأوامر",
+      "open_extended_sidebar": "فتح الشريط الجانبي الموسّع",
+      "close_extended_sidebar": "إغلاق الشريط الجانبي الموسّع",
+      "create_favorites_folder": "إنشاء مجلد للمفضلة",
+      "open_folder": "فتح المجلد",
+      "close_folder": "إغلاق المجلد",
+      "open_favorites_menu": "فتح قائمة المفضلة",
+      "close_favorites_menu": "إغلاق قائمة المفضلة",
+      "enter_folder_name": "أدخل اسم المجلد",
+      "create_new_project": "إنشاء مشروع جديد",
+      "open_projects_menu": "فتح قائمة المشاريع",
+      "close_projects_menu": "إغلاق قائمة المشاريع",
+      "toggle_quick_actions_menu": "تبديل قائمة الإجراءات السريعة",
+      "open_project_menu": "فتح قائمة المشروع",
+      "close_project_menu": "إغلاق قائمة المشروع",
+      "collapse_sidebar": "طي الشريط الجانبي",
+      "expand_sidebar": "توسيع الشريط الجانبي",
+      "edition_badge": "فتح نافذة الخطط المدفوعة"
+    },
+    "auth_forms": {
+      "clear_email": "مسح البريد الإلكتروني",
+      "show_password": "إظهار كلمة المرور",
+      "hide_password": "إخفاء كلمة المرور",
+      "close_alert": "إغلاق التنبيه",
+      "close_popover": "إغلاق النافذة المنبثقة"
+    },
+    "breadcrumb": {
+      "trail": "مسار التنقل",
+      "show_more": "إظهار المزيد من مسار التنقل"
+    },
+    "common": {
+      "more_actions": "المزيد من الإجراءات",
+      "remove": "إزالة"
+    },
+    "color_picker": {
+      "open": "فتح منتقي الألوان",
+      "swatches": "ألوان مُعدّة مسبقًا",
+      "hex_input": "لون Hex"
+    },
+    "project_board": {
+      "collapse_group": "طي المجموعة"
+    },
+    "pagination": {
+      "root": "ترقيم الصفحات",
+      "previous_page": "الانتقال إلى الصفحة السابقة",
+      "next_page": "الانتقال إلى الصفحة التالية",
+      "go_to_page": "الانتقال إلى الصفحة {page}"
+    }
+  }
+}

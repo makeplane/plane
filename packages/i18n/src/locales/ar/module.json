@@ -1,0 +1,14 @@
+{
+  "module": {
+    "label": "{count, plural, zero {الوحدات} one {الوحدة} two {الوحدات} few {الوحدات} many {الوحدات} other {الوحدات}}",
+    "no_module": "بدون وحدة",
+    "select": "إضافة وحدات",
+    "details_drawer": {
+      "progress": {
+        "done": "تم إنجاز {completed} من أصل {scope, plural, zero {# عنصر عمل} one {عنصر عمل واحد} two {عنصرَي عمل} few {# عناصر عمل} many {# عنصر عمل} other {# عنصر عمل}}",
+        "points_done": "تم إنجاز {completed} من أصل {scope, plural, zero {# نقطة} one {نقطة واحدة} two {نقطتين} few {# نقاط} many {# نقطة} other {# نقطة}}",
+        "empty": "أضف عناصر عمل إلى الوحدة لمتابعة التقدّم."
+      }
+    }
+  }
+}

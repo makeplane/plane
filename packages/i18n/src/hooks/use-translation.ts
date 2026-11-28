@@ -6,7 +6,7 @@
 
 import { useCallback } from "react";
 import { useTranslation as useI18nextTranslation } from "react-i18next";
-import { SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY } from "../constants/language";
+import { SUPPORTED_LANGUAGES, LANGUAGE_STORAGE_KEY, getLanguageDirection } from "../constants/language";
 import type { TLanguage, ILanguageOption } from "../types";
 
 export type TTranslationStore = {
@@ -50,6 +50,7 @@ export function useTranslation(): TTranslationStore {
           if (typeof window === "undefined") return;
           localStorage.setItem(LANGUAGE_STORAGE_KEY, lng);
           document.documentElement.lang = lng;
+          document.documentElement.dir = getLanguageDirection(lng);
         } catch (err) {
           console.error("Failed to change language:", err);
         }

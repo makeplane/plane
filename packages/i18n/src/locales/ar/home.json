@@ -1,0 +1,77 @@
+{
+  "home": {
+    "empty": {
+      "quickstart_guide": "دليل البدء السريع",
+      "not_right_now": "ليس الآن",
+      "create_project": {
+        "title": "إنشاء مشروع",
+        "description": "تبدأ معظم الأشياء في Plane بمشروع.",
+        "cta": "ابدأ الآن"
+      },
+      "invite_team": {
+        "title": "ادعُ فريقك",
+        "description": "ابنِ وأطلق وأدِر مع زملائك.",
+        "cta": "ادعُهم"
+      },
+      "configure_workspace": {
+        "title": "أعدّ مساحة عملك.",
+        "description": "فعّل الميزات أو عطّلها، أو اذهب إلى أبعد من ذلك.",
+        "cta": "ضبط مساحة العمل هذه"
+      },
+      "personalize_account": {
+        "title": "اجعل Plane خاصًا بك.",
+        "description": "اختر صورتك وألوانك والمزيد.",
+        "cta": "خصّص الآن"
+      },
+      "widgets": {
+        "title": "المكان هادئ بلا أدوات، فعّلها",
+        "description": "يبدو أن جميع أدواتك معطّلة. فعّلها\nالآن لتحسين تجربتك!",
+        "primary_button": {
+          "text": "إدارة الأدوات"
+        }
+      }
+    },
+    "quick_links": {
+      "empty": "احفظ روابط لأمور العمل التي تريدها في متناولك.",
+      "add": "إضافة رابط سريع",
+      "title": "رابط سريع",
+      "title_plural": "الروابط السريعة"
+    },
+    "recents": {
+      "title": "الأخيرة",
+      "empty": {
+        "project": "ستظهر مشاريعك الأخيرة هنا بمجرد زيارة أحدها.",
+        "page": "ستظهر صفحاتك الأخيرة هنا بمجرد زيارة إحداها.",
+        "issue": "ستظهر عناصر عملك الأخيرة هنا بمجرد زيارة أحدها.",
+        "default": "ليست لديك أي عناصر حديثة بعد."
+      },
+      "filters": {
+        "all": "الكل",
+        "projects": "المشاريع",
+        "pages": "الصفحات",
+        "issues": "عناصر العمل"
+      }
+    },
+    "new_at_plane": {
+      "title": "الجديد في Plane"
+    },
+    "quick_tutorial": {
+      "title": "شرح سريع"
+    },
+    "widget": {
+      "reordered_successfully": "تمت إعادة ترتيب الأداة بنجاح.",
+      "reordering_failed": "حدث خطأ أثناء إعادة ترتيب الأداة."
+    },
+    "manage_widgets": "إدارة الأدوات",
+    "title": "الرئيسية",
+    "star_us_on_github": "امنحنا نجمة على GitHub",
+    "business_trial_banner": {
+      "title": "بدأت فترة تجربة خطة Business لمدة 14 يومًا!",
+      "description": "استكشف جميع ميزات Business، وعندما تكون مستعدًا، اختر الاشتراك. لن تُحاسَب تلقائيًا.",
+      "trial_ends_today": "تنتهي التجربة اليوم",
+      "trial_ends_in_days": "تنتهي التجربة خلال {days, plural, zero {# يوم} one {يوم واحد} two {يومين} few {# أيام} many {# يومًا} other {# يوم}}",
+      "start_subscription": "بدء الاشتراك",
+      "explore_business_features": "استكشف ميزات Business"
+    }
+  }
+}

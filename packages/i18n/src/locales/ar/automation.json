@@ -1,0 +1,273 @@
+{
+  "automations": {
+    "settings": {
+      "title": "الأتمتة المخصصة",
+      "create_automation": "إنشاء أتمتة"
+    },
+    "scope": {
+      "label": "النطاق",
+      "run_on": "التشغيل على"
+    },
+    "trigger": {
+      "label": "المُشغِّل",
+      "add_trigger": "إضافة مُشغِّل",
+      "sidebar_header": "إعداد المُشغِّل",
+      "input_label": "ما المُشغِّل لهذه الأتمتة؟",
+      "input_placeholder": "اختر خيارًا",
+      "section_plane_events": "أحداث Plane",
+      "section_time_based": "حسب الوقت",
+      "fixed_schedule": "جدول ثابت",
+      "schedule": {
+        "frequency": "التكرار",
+        "select_day": "اختر اليوم",
+        "day_of_month": "يوم الشهر",
+        "monthly_every": "كل",
+        "monthly_day_aria": "اليوم {day}",
+        "time": "الوقت",
+        "hour": "الساعة",
+        "minute": "الدقيقة",
+        "hour_suffix": "س",
+        "minute_suffix": "د",
+        "am": "ص",
+        "pm": "م",
+        "timezone": "المنطقة الزمنية",
+        "timezone_placeholder": "اختر منطقة زمنية",
+        "frequency_daily": "يوميًا",
+        "frequency_weekly": "أسبوعيًا",
+        "frequency_monthly": "شهريًا",
+        "on": "في",
+        "validation_weekly_day_required": "اختر يومًا واحدًا على الأقل من أيام الأسبوع.",
+        "validation_monthly_date_required": "اختر يومًا من أيام الشهر.",
+        "main_content_schedule_summary_daily": "كل يوم في الساعة {time} ({timezone}).",
+        "main_content_schedule_summary_weekly": "كل أسبوع في {days} الساعة {time} ({timezone}).",
+        "main_content_schedule_summary_monthly": "كل شهر في اليوم {day} الساعة {time} ({timezone}).",
+        "schedule_mode": "وضع الجدولة",
+        "schedule_mode_fixed": "ثابت",
+        "schedule_mode_cron": "Cron",
+        "cron_expression_label": "أدخل تعبير Cron",
+        "cron_expression_placeholder": "0 9 * * 1-5",
+        "cron_invalid": "تعبير Cron غير صالح.",
+        "cron_preview": "يعمل تعبير Cron هذا \"{description}\".",
+        "main_content_cron_summary": "{description} ({timezone})."
+      },
+      "button": {
+        "previous": "رجوع",
+        "next": "إضافة إجراء"
+      },
+      "warning": {
+        "disabled_trigger_switching": "لا يمكنك تغيير نوع المُشغِّل بعد إنشائه"
+      }
+    },
+    "condition": {
+      "label": "بشرط",
+      "add_condition": "إضافة شرط",
+      "adding_condition": "جارٍ إضافة الشرط"
+    },
+    "action": {
+      "label": "الإجراء",
+      "add_action": "إضافة إجراء",
+      "sidebar_header": "الإجراءات",
+      "input_label": "ماذا تفعل الأتمتة؟",
+      "input_placeholder": "اختر خيارًا",
+      "handler_name": {
+        "add_comment": "إضافة تعليق",
+        "change_property": "تغيير خاصية",
+        "run_script": "تشغيل برنامج نصي"
+      },
+      "configuration": {
+        "label": "الإعداد",
+        "change_property": {
+          "placeholders": {
+            "property_name": "اختر خاصية",
+            "change_type": "اختر",
+            "property_value_select": "{count, plural, zero{اختر قيمًا} one{اختر قيمة} two{اختر قيمتين} few{اختر قيمًا} many{اختر قيمًا} other{اختر قيمًا}}",
+            "property_value_select_date": "اختر تاريخًا"
+          },
+          "validation": {
+            "property_name_required": "اسم الخاصية مطلوب",
+            "change_type_required": "نوع التغيير مطلوب",
+            "property_value_required": "قيمة الخاصية مطلوبة"
+          }
+        }
+      },
+      "comment_block": {
+        "title": "إضافة تعليق"
+      },
+      "run_script_block": {
+        "title": "تشغيل برنامج نصي"
+      },
+      "change_property_block": {
+        "title": "تغيير خاصية"
+      },
+      "validation": {
+        "delete_only_action": "عطّل الأتمتة قبل حذف إجرائها الوحيد."
+      }
+    },
+    "conjunctions": {
+      "and": "و",
+      "or": "أو",
+      "if": "إذا",
+      "then": "فإن"
+    },
+    "enable": {
+      "alert": "انقر على \"تفعيل\" عندما تكتمل الأتمتة. بعد التفعيل ستكون الأتمتة جاهزة للتشغيل.",
+      "validation": {
+        "required": "يجب أن تحتوي الأتمتة على مُشغِّل وإجراء واحد على الأقل لتفعيلها."
+      }
+    },
+    "delete": {
+      "validation": {
+        "enabled": "يجب تعطيل الأتمتة قبل حذفها."
+      }
+    },
+    "table": {
+      "title": "عنوان الأتمتة",
+      "scope": "النطاق",
+      "projects": "المشاريع",
+      "last_run_on": "آخر تشغيل في",
+      "created_on": "تاريخ الإنشاء",
+      "last_updated_on": "آخر تحديث في",
+      "last_run_status": "حالة آخر تشغيل",
+      "average_duration": "متوسط المدة",
+      "owner": "المالك",
+      "executions": "مرات التنفيذ"
+    },
+    "create_modal": {
+      "heading": {
+        "create": "إنشاء أتمتة",
+        "update": "تحديث الأتمتة"
+      },
+      "title": {
+        "placeholder": "سمِّ الأتمتة.",
+        "required_error": "العنوان مطلوب"
+      },
+      "description": {
+        "placeholder": "صِف الأتمتة."
+      },
+      "submit_button": {
+        "create": "إنشاء أتمتة",
+        "update": "تحديث الأتمتة"
+      }
+    },
+    "delete_modal": {
+      "heading": "حذف الأتمتة"
+    },
+    "activity": {
+      "filters": {
+        "show_fails": "إظهار حالات الفشل",
+        "all": "الكل",
+        "only_activity": "النشاط فقط",
+        "only_run_history": "سجل التشغيل فقط"
+      },
+      "run_history": {
+        "initiator": "المُبادِر"
+      }
+    },
+    "toasts": {
+      "create": {
+        "success": {
+          "title": "تم بنجاح!",
+          "message": "تم إنشاء الأتمتة بنجاح."
+        },
+        "error": {
+          "title": "خطأ!",
+          "message": "فشل إنشاء الأتمتة."
+        }
+      },
+      "update": {
+        "success": {
+          "title": "تم بنجاح!",
+          "message": "تم تحديث الأتمتة بنجاح."
+        },
+        "error": {
+          "title": "خطأ!",
+          "message": "فشل تحديث الأتمتة."
+        }
+      },
+      "enable": {
+        "success": {
+          "title": "تم بنجاح!",
+          "message": "تم تفعيل الأتمتة بنجاح."
+        },
+        "error": {
+          "title": "خطأ!",
+          "message": "فشل تفعيل الأتمتة."
+        }
+      },
+      "disable": {
+        "success": {
+          "title": "تم بنجاح!",
+          "message": "تم تعطيل الأتمتة بنجاح."
+        },
+        "error": {
+          "title": "خطأ!",
+          "message": "فشل تعطيل الأتمتة."
+        }
+      },
+      "delete": {
+        "success": {
+          "title": "تم حذف الأتمتة",
+          "message": "تم حذف الأتمتة {name} من مشروعك."
+        },
+        "error": {
+          "title": "لم نتمكن من حذف هذه الأتمتة هذه المرة.",
+          "message": "حاول حذفها مرة أخرى أو عُد إليها لاحقًا. إذا لم تتمكن من حذفها حينها، فتواصل معنا."
+        }
+      },
+      "action": {
+        "create": {
+          "error": {
+            "title": "خطأ!",
+            "message": "فشل إنشاء الإجراء. يرجى المحاولة مرة أخرى!"
+          }
+        },
+        "update": {
+          "error": {
+            "title": "خطأ!",
+            "message": "فشل تحديث الإجراء. يرجى المحاولة مرة أخرى!"
+          }
+        }
+      }
+    },
+    "empty_state": {
+      "no_automations": {
+        "title": "لا توجد أتمتة لعرضها بعد.",
+        "description": "تساعدك الأتمتة على التخلص من المهام المتكررة عبر تحديد المُشغِّلات والشروط والإجراءات. أنشئ واحدة لتوفير الوقت والحفاظ على سير العمل بسلاسة."
+      },
+      "upgrade": {
+        "title": "الأتمتة",
+        "description": "الأتمتة طريقة لأتمتة المهام في مشروعك.",
+        "sub_description": "استعد 80% من وقتك الإداري عند استخدام الأتمتة."
+      }
+    },
+    "global_automations": {
+      "project_select": {
+        "label": "اختر المشاريع التي تعمل عليها هذه الأتمتة",
+        "all_projects": {
+          "label": "جميع المشاريع",
+          "description": "ستعمل الأتمتة على جميع المشاريع في مساحة العمل."
+        },
+        "select_projects": {
+          "label": "اختر المشاريع",
+          "description": "ستعمل الأتمتة على المشاريع المحددة في مساحة العمل.",
+          "placeholder": "اختر المشاريع"
+        }
+      },
+      "settings": {
+        "sidebar_label": "الأتمتة",
+        "title": "الأتمتة",
+        "description": "وحّد العمليات في مساحة عملك باستخدام الأتمتة الشاملة."
+      },
+      "table": {
+        "scope": {
+          "global": "شامل",
+          "project": {
+            "label": "المشروع",
+            "multiple": "متعدد",
+            "all": "الكل"
+          }
+        }
+      }
+    }
+  }
+}
